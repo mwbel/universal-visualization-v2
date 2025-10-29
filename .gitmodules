@@ -1,6 +1,6 @@
 [submodule "GeneralVisualization"]
 	path = GeneralVisualization
-	url = https://github.com/mwbel/GeneralVisualization.git
+	url = ssh://git@ssh.github.com:443/mwbel/GeneralVisualization.git
 [submodule "ai_visual_astronomy"]
 	path = ai_visual_astronomy
-	url = https://github.com/mwbel/ai_visual_astronomy.git
+	url = ssh://git@ssh.github.com:443/mwbel/ai_visual_astronomy.git
