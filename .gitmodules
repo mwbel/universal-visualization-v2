@@ -1,3 +1,6 @@
 [submodule "GeneralVisualization"]
 	path = GeneralVisualization
-	url = https://github.com/mwbel/GeneralVisualization.git
+	url = git@github.com:mwbel/GeneralVisualization.git
+[submodule "ai_visual_astronomy"]
+	path = ai_visual_astronomy
+	url = git@github.com:mwbel/ai_visual_astronomy.git
