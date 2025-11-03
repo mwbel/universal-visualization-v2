@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>响应式测试 - 万物可视化</title>
+    <link rel="stylesheet" href="main-app/styles/new-design.css">
+    <style>
+        /* 测试专用样式 */
+        .test-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            z-index: 1000;
+            font-size: 12px;
+        }
+
+        .device-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--color-primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .test-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .test-controls button {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 12px;
+        }
+
+        .test-controls button:hover {
+            background: var(--color-primary-dark);
+        }
+
+        /* 断点指示器 */
+        .breakpoint-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--bg-card);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .breakpoint-indicator.active {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        /* 响应式测试类 */
+        .test-border {
+            border: 2px dashed red !important;
+        }
+
+        .test-margin {
+            background-color: rgba(255, 0, 0, 0.1) !important;
+        }
+
+        @media (max-width: 480px) {
+            .device-indicator { background: #ef4444; }
+            .breakpoint-mobile { background: var(--color-primary); color: white; }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .device-indicator { background: #f59e0b; }
+            .breakpoint-tablet { background: var(--color-primary); color: white; }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .device-indicator { background: #10b981; }
+            .breakpoint-desktop { background: var(--color-primary); color: white; }
+        }
+
+        @media (min-width: 1025px) {
+            .device-indicator { background: #3b82f6; }
+            .breakpoint-large { background: var(--color-primary); color: white; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- 测试信息面板 -->
+    <div class="test-info" id="testInfo">
+        <div>宽度: <span id="screenWidth">0</span>px</div>
+        <div>高度: <span id="screenHeight">0</span>px</div>
+        <div>比例: <span id="aspectRatio">0</span></div>
+        <div>设备: <span id="deviceType">未知</span></div>
+    </div>
+
+    <!-- 设备指示器 -->
+    <div class="device-indicator" id="deviceIndicator">
+        检测中...
+    </div>
+
+    <!-- 断点指示器 -->
+    <div class="breakpoint-indicator">
+        <div class="breakpoint-mobile" id="breakMobile">📱 移动端 (&lt;480px)</div>
+        <div class="breakpoint-tablet" id="breakTablet">📱 平板端 (481-768px)</div>
+        <div class="breakpoint-desktop" id="breakDesktop">💻 桌面端 (769-1024px)</div>
+        <div class="breakpoint-large" id="breakLarge">🖥️ 大屏 (&gt;1024px)</div>
+    </div>
+
+    <!-- 测试控制面板 -->
+    <div class="test-controls">
+        <button onclick="toggleTestBorders()">显示边框</button>
+        <button onclick="toggleTestMargins()">显示边距</button>
+        <button onclick="testInteractions()">测试交互</button>
+        <button onclick="generateReport()">生成报告</button>
+    </div>
+
+    <!-- 导入新的页面内容 -->
+    <div class="viewport-container">
+        <!-- 页头 -->
+        <header class="app-header">
+            <div class="content-wrapper">
+                <div class="header-content">
+                    <h1 class="app-title">
+                        <span class="title-icon">🌌</span>
+                        万物可视化
+                        <span class="title-subtitle">一图胜千言</span>
+                    </h1>
+                    <nav class="header-nav">
+                        <button class="nav-btn" id="theme-toggle" title="切换主题">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <button class="nav-btn" title="菜单">
+                            <span>📋</span>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容 -->
+        <main class="app-main">
+            <div class="content-wrapper">
+                <!-- Hero 区域 -->
+                <section class="hero-section">
+                    <div class="hero-content">
+                        <h1 class="hero-title">探索万物之理，可视化一切可能</h1>
+                        <p class="hero-description">
+                            万物可视化是一个强大的AI驱动平台，能够将复杂的数学概念、物理现象、天文数据转化为直观的视觉图形。
+                            无论是函数图像、物理模拟还是星系演化，都能为您呈现精彩的可视化效果。
+                        </p>
+
+                        <!-- 快速开始卡片 -->
+                        <div class="quick-start-cards">
+                            <a href="#" class="quick-start-card" data-action="text">
+                                <div class="card-icon">✏️</div>
+                                <h3>文本描述</h3>
+                                <p>用自然语言描述您想要可视化的内容</p>
+                            </a>
+                            <a href="#" class="quick-start-card" data-action="template">
+                                <div class="card-icon">📋</div>
+                                <h3>选择模板</h3>
+                                <p>从预设模板开始快速创建</p>
+                            </a>
+                            <a href="#" class="quick-start-card" data-action="upload">
+                                <div class="card-icon">📁</div>
+                                <h3>上传数据</h3>
+                                <p>上传您的数据文件进行可视化</p>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 功能模块区域 -->
+                <section class="modules-section">
+                    <div class="section-header">
+                        <h2 class="section-title">核心功能模块</h2>
+                        <p class="section-subtitle">选择您感兴趣的可视化领域，开始探索之旅</p>
+                    </div>
+
+                    <div class="modules-grid">
+                        <!-- 数学模块 -->
+                        <div class="module-card" data-module="mathematics">
+                            <div class="module-header">
+                                <div class="module-icon">📐</div>
+                                <div class="module-info">
+                                    <h3 class="module-title">数学可视化</h3>
+                                    <p class="module-description">将抽象的数学概念转化为直观的视觉图形</p>
+                                </div>
+                                <span class="module-badge">核心</span>
+                            </div>
+                            <div class="module-subcategories">
+                                <a href="#" class="subcategory" data-category="probability">
+                                    <span class="subcategory-icon">📊</span>
+                                    <span class="subcategory-name">概率统计</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="linear">
+                                    <span class="subcategory-icon">🔢</span>
+                                    <span class="subcategory-name">线性代数</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="differential">
+                                    <span class="subcategory-icon">📐</span>
+                                    <span class="subcategory-name">微分几何</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="calculus">
+                                    <span class="subcategory-icon">∫</span>
+                                    <span class="subcategory-name">微积分</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 物理模块 -->
+                        <div class="module-card" data-module="physics">
+                            <div class="module-header">
+                                <div class="module-icon">⚛️</div>
+                                <div class="module-info">
+                                    <h3 class="module-title">物理模拟</h3>
+                                    <p class="module-description">模拟物理现象，探索科学规律</p>
+                                </div>
+                                <span class="module-badge">热门</span>
+                            </div>
+                            <div class="module-subcategories">
+                                <a href="#" class="subcategory" data-category="mechanics">
+                                    <span class="subcategory-icon">⚙️</span>
+                                    <span class="subcategory-name">力学模拟</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="quantum">
+                                    <span class="subcategory-icon">⚛️</span>
+                                    <span class="subcategory-name">量子物理</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="relativity">
+                                    <span class="subcategory-icon">🌌</span>
+                                    <span class="subcategory-name">相对论</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="thermodynamics">
+                                    <span class="subcategory-icon">🌡️</span>
+                                    <span class="subcategory-name">热力学</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 天文模块 -->
+                        <div class="module-card" data-module="astronomy">
+                            <div class="module-header">
+                                <div class="module-icon">🌌</div>
+                                <div class="module-info">
+                                    <h3 class="module-title">天文可视化</h3>
+                                    <p class="module-description">探索宇宙奥秘，可视化天体运动</p>
+                                </div>
+                                <span class="module-badge">精选</span>
+                            </div>
+                            <div class="module-subcategories">
+                                <a href="#" class="subcategory" data-category="solar">
+                                    <span class="subcategory-icon">☀️</span>
+                                    <span class="subcategory-name">太阳系</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="galaxy">
+                                    <span class="subcategory-icon">🌟</span>
+                                    <span class="subcategory-name">星系演化</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="blackhole">
+                                    <span class="subcategory-icon">⚫</span>
+                                    <span class="subcategory-name">黑洞模拟</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="cosmology">
+                                    <span class="subcategory-icon">🌠</span>
+                                    <span class="subcategory-name">宇宙学</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 几何模块 -->
+                        <div class="module-card" data-module="geometry">
+                            <div class="module-header">
+                                <div class="module-icon">🔷</div>
+                                <div class="module-info">
+                                    <h3 class="module-title">几何图形</h3>
+                                    <p class="module-description">创建和操控各种几何图形</p>
+                                </div>
+                                <span class="module-badge">实用</span>
+                            </div>
+                            <div class="module-subcategories">
+                                <a href="#" class="subcategory" data-category="plane">
+                                    <span class="subcategory-icon">📐</span>
+                                    <span class="subcategory-name">平面几何</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="solid">
+                                    <span class="subcategory-icon">🔷</span>
+                                    <span class="subcategory-name">立体几何</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="fractal">
+                                    <span class="subcategory-icon">🌀</span>
+                                    <span class="subcategory-name">分形几何</span>
+                                </a>
+                                <a href="#" class="subcategory" data-category="topology">
+                                    <span class="subcategory-icon">🔗</span>
+                                    <span class="subcategory-name">拓扑学</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 输入区域 -->
+                <section class="input-section">
+                    <div class="input-container">
+                        <!-- 输入模式切换 -->
+                        <div class="input-modes">
+                            <button class="mode-btn active" data-mode="text">
+                                <span class="mode-icon">✏️</span>
+                                文本描述
+                            </button>
+                            <button class="mode-btn" data-mode="template">
+                                <span class="mode-icon">📋</span>
+                                模板选择
+                            </button>
+                            <button class="mode-btn" data-mode="upload">
+                                <span class="mode-icon">📁</span>
+                                文件上传
+                            </button>
+                        </div>
+
+                        <!-- 文本输入面板 -->
+                        <div class="input-panel active" data-mode="text">
+                            <div class="input-wrapper">
+                                <textarea
+                                    class="main-input"
+                                    id="main-input"
+                                    placeholder="请描述您想要可视化的内容，例如：绘制一个正弦函数图像，展示其在区间[-2π, 2π]上的变化..."
+                                    maxlength="5000"
+                                ></textarea>
+                            </div>
+                            <div class="input-footer">
+                                <div class="input-info">
+                                    <div class="char-count">0/5000</div>
+                                    <div class="input-tips">💡 提示：描述越详细，生成效果越好</div>
+                                </div>
+                                <button class="generate-btn" id="generate-btn">
+                                    <span class="btn-icon">✨</span>
+                                    开始生成
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 模板选择面板 -->
+                        <div class="input-panel" data-mode="template">
+                            <div class="template-search">
+                                <input
+                                    type="text"
+                                    class="template-search-input"
+                                    id="template-search"
+                                    placeholder="搜索模板..."
+                                >
+                            </div>
+                            <div class="template-categories">
+                                <div class="template-category" data-category="mathematics">
+                                    <h4 class="category-title">数学模板</h4>
+                                    <div class="template-list">
+                                        <!-- 模板项将由JavaScript动态生成 -->
+                                    </div>
+                                </div>
+                                <div class="template-category" data-category="physics">
+                                    <h4 class="category-title">物理模板</h4>
+                                    <div class="template-list">
+                                        <!-- 模板项将由JavaScript动态生成 -->
+                                    </div>
+                                </div>
+                                <div class="template-category" data-category="astronomy">
+                                    <h4 class="category-title">天文模板</h4>
+                                    <div class="template-list">
+                                        <!-- 模板项将由JavaScript动态生成 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 文件上传面板 -->
+                        <div class="input-panel" data-mode="upload">
+                            <div class="upload-area">
+                                <div class="upload-icon">📁</div>
+                                <h3>拖拽文件到这里或点击选择</h3>
+                                <p>支持的格式：CSV, JSON, TXT (最大 10MB)</p>
+                                <button class="upload-btn">选择文件</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="app-footer">
+            <div class="content-wrapper">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4 class="footer-title">万物可视化</h4>
+                        <p class="footer-desc">
+                            探索万物之理，可视化一切可能。让复杂的概念变得简单直观。
+                        </p>
+                        <div class="footer-social">
+                            <div class="social-item">
+                                <span>📧</span>
+                                <span>contact@universalvis.com</span>
+                            </div>
+                            <div class="social-item">
+                                <span>🐙</span>
+                                <span>GitHub</span>
+                            </div>
+                            <div class="social-item">
+                                <span>🐦</span>
+                                <span>Twitter</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-section">
+                        <h4>功能</h4>
+                        <ul class="footer-links">
+                            <li><a href="#" class="footer-link">数学可视化</a></li>
+                            <li><a href="#" class="footer-link">物理模拟</a></li>
+                            <li><a href="#" class="footer-link">天文可视化</a></li>
+                            <li><a href="#" class="footer-link">几何图形</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>资源</h4>
+                        <ul class="footer-links">
+                            <li><a href="#" class="footer-link">使用指南</a></li>
+                            <li><a href="#" class="footer-link">API文档</a></li>
+                            <li><a href="#" class="footer-link">示例库</a></li>
+                            <li><a href="#" class="footer-link">社区论坛</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p class="footer-copyright">
+                        © 2024 万物可视化. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 导入新的JavaScript -->
+    <script src="main-app/app-new.js"></script>
+
+    <!-- 测试专用JavaScript -->
+    <script>
+        let testBordersVisible = false;
+        let testMarginsVisible = false;
+        let testResults = [];
+
+        // 更新屏幕信息
+        function updateScreenInfo() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const ratio = (width / height).toFixed(2);
+            const deviceType = getDeviceType(width);
+
+            document.getElementById('screenWidth').textContent = width;
+            document.getElementById('screenHeight').textContent = height;
+            document.getElementById('aspectRatio').textContent = ratio;
+            document.getElementById('deviceType').textContent = deviceType;
+
+            // 更新设备指示器
+            const indicator = document.getElementById('deviceIndicator');
+            indicator.textContent = deviceType;
+
+            // 更新断点指示器
+            updateBreakpointIndicators(width);
+
+            // 记录测试结果
+            testResults.push({
+                timestamp: new Date().toISOString(),
+                width: width,
+                height: height,
+                deviceType: deviceType,
+                testType: 'resize'
+            });
+        }
+
+        // 获取设备类型
+        function getDeviceType(width) {
+            if (width <= 480) return '📱 小屏手机';
+            if (width <= 768) return '📱 大屏手机';
+            if (width <= 1024) return '💻 平板';
+            if (width <= 1280) return '🖥️ 笔记本';
+            return '🖥️ 桌面';
+        }
+
+        // 更新断点指示器
+        function updateBreakpointIndicators(width) {
+            const indicators = ['breakMobile', 'breakTablet', 'breakDesktop', 'breakLarge'];
+            indicators.forEach(id => {
+                const element = document.getElementById(id);
+                element.classList.remove('active');
+            });
+
+            if (width <= 480) {
+                document.getElementById('breakMobile').classList.add('active');
+            } else if (width <= 768) {
+                document.getElementById('breakTablet').classList.add('active');
+            } else if (width <= 1024) {
+                document.getElementById('breakDesktop').classList.add('active');
+            } else {
+                document.getElementById('breakLarge').classList.add('active');
+            }
+        }
+
+        // 切换测试边框
+        function toggleTestBorders() {
+            testBordersVisible = !testBordersVisible;
+            const elements = [
+                '.viewport-container', '.content-wrapper', '.app-header',
+                '.app-main', '.hero-section', '.modules-grid', '.module-card',
+                '.input-container', '.app-footer'
+            ];
+
+            elements.forEach(selector => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    element.classList.toggle('test-border');
+                }
+            });
+        }
+
+        // 切换测试边距
+        function toggleTestMargins() {
+            testMarginsVisible = !testMarginsVisible;
+            const elements = [
+                '.content-wrapper', '.module-card', '.quick-start-card',
+                '.input-container', '.footer-content'
+            ];
+
+            elements.forEach(selector => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    element.classList.toggle('test-margin');
+                }
+            });
+        }
+
+        // 测试交互
+        function testInteractions() {
+            console.log('🧪 开始交互测试...');
+
+            // 测试主题切换
+            if (window.UniversalVis && window.UniversalVis.toggleTheme) {
+                setTimeout(() => {
+                    window.UniversalVis.toggleTheme();
+                    console.log('✅ 主题切换测试完成');
+                }, 500);
+            }
+
+            // 测试模块点击
+            const moduleCard = document.querySelector('.module-card');
+            if (moduleCard && window.UniversalVis && window.UniversalVis.handleModuleClick) {
+                setTimeout(() => {
+                    window.UniversalVis.handleModuleClick(moduleCard);
+                    console.log('✅ 模块点击测试完成');
+                }, 1000);
+            }
+
+            // 测试输入模式切换
+            const templateBtn = document.querySelector('.mode-btn[data-mode="template"]');
+            if (templateBtn && window.UniversalVis && window.UniversalVis.switchInputMode) {
+                setTimeout(() => {
+                    window.UniversalVis.switchInputMode('template');
+                    console.log('✅ 输入模式切换测试完成');
+                }, 1500);
+            }
+
+            console.log('🧪 交互测试完成');
+        }
+
+        // 生成测试报告
+        function generateReport() {
+            const report = {
+                testDate: new Date().toISOString(),
+                screenSize: {
+                    width: window.innerWidth,
+                    height: window.innerHeight
+                },
+                deviceType: getDeviceType(window.innerWidth),
+                testResults: testResults,
+                layoutTest: {
+                    heroVisible: document.querySelector('.hero-section') !== null,
+                    modulesCount: document.querySelectorAll('.module-card').length,
+                    inputSectionVisible: document.querySelector('.input-section') !== null,
+                    footerVisible: document.querySelector('.app-footer') !== null
+                },
+                responsiveTest: {
+                    contentWrapperMaxWidth: getComputedStyle(document.querySelector('.content-wrapper')).maxWidth,
+                    gridColumns: getComputedStyle(document.querySelector('.modules-grid')).gridTemplateColumns,
+                    gapSize: getComputedStyle(document.querySelector('.modules-grid')).gap
+                }
+            };
+
+            console.log('📊 测试报告:', report);
+
+            // 显示简化的报告
+            alert(`测试报告\n\n设备类型: ${report.deviceType}\n屏幕尺寸: ${report.screenSize.width}x${report.screenSize.height}\n模块数量: ${report.layoutTest.modulesCount}\n布局正常: ${report.layoutTest.heroVisible && report.layoutTest.inputSectionVisible && report.layoutTest.footerVisible ? '是' : '否'}`);
+
+            return report;
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            updateScreenInfo();
+
+            // 监听窗口大小变化
+            window.addEventListener('resize', updateScreenInfo);
+
+            // 监听设备方向变化
+            window.addEventListener('orientationchange', () => {
+                setTimeout(updateScreenInfo, 100);
+            });
+
+            console.log('🧪 响应式测试已启动');
+            console.log('📱 使用开发者工具模拟不同设备进行测试');
+            console.log('🎯 测试重点：水平布局、内容居中、响应式断点');
+        });
+    </script>
+</body>
+</html>
