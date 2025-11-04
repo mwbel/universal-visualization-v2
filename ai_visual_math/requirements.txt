@@ -1,0 +1,6 @@
+numpy>=1.24  # 数值计算
+scipy  # 数值计算
+matplotlib/plotly # 可视化，2D/3D 绘制
+sympy # 符号计算（函数绘制、代数演示）
+
+jupyter # 交互式展示

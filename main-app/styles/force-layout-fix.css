@@ -1,0 +1,166 @@
+/* 强制布局修复 - 覆盖所有布局相关样式 */
+
+/* 重置所有容器样式 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 100vh;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: static !important;
+  overflow-x: hidden;
+}
+
+/* 强制块级布局 */
+header, main, footer, section, article, aside, nav, div {
+  display: block !important;
+  width: 100% !important;
+  position: static !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 覆盖所有flex布局 */
+[class*="flex"],
+[class*="grid"],
+[class*="container"] {
+  display: block !important;
+  flex: none !important;
+  grid-template-columns: none !important;
+  grid-template-rows: none !important;
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+
+/* 具体元素修复 */
+.app-header {
+  display: block !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-content {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 20px !important;
+}
+
+.app-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  margin: 0 !important;
+}
+
+.header-nav {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+}
+
+.app-main {
+  display: block !important;
+  width: 100% !important;
+  flex: none !important;
+  padding: 40px 0 !important;
+  position: static !important;
+}
+
+.container {
+  display: block !important;
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+}
+
+.app-footer {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  position: relative !important;
+  margin-top: 0 !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: auto !important;
+}
+
+.footer-content {
+  display: block !important;
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 48px 20px !important;
+  text-align: center !important;
+}
+
+/* 重置所有flex子元素 */
+.app-title > *,
+.header-content > *,
+.header-nav > *,
+.app-main > *,
+.container > *,
+.footer-content > * {
+  display: inline-block !important;
+  float: none !important;
+  position: static !important;
+}
+
+/* 移动端修复 */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column !important;
+    gap: 16px !important;
+    text-align: center !important;
+  }
+
+  .app-title {
+    font-size: 20px !important;
+  }
+
+  .container {
+    padding: 0 16px !important;
+  }
+
+  .app-main {
+    padding: 20px 0 !important;
+  }
+
+  .footer-content {
+    padding: 32px 16px !important;
+  }
+}
+
+/* 强制重置可能的JavaScript动态样式 */
+[style],
+.style-app,
+.style-header,
+.style-main,
+.style-footer {
+  all: initial !important;
+  display: block !important;
+  position: static !important;
+}

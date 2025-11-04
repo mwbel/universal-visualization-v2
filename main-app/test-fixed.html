@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 修复测试</title>
+    <link rel="stylesheet" href="styles/force-layout-fix.css">
+    <link rel="stylesheet" href="styles/design-system.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/layout-fix.css">
+    <style>
+        /* 添加布局检查指示器 */
+        .layout-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 10000;
+            font-weight: bold;
+        }
+
+        .layout-debug {
+            position: fixed;
+            top: 60px;
+            right: 10px;
+            background: rgba(0, 0, 255, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 10000;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-status" id="layoutStatus">检查布局中...</div>
+    <div class="layout-debug" id="layoutDebug">分析中...</div>
+
+    <!-- 应用头部 -->
+    <header class="app-header">
+        <div class="container header-content">
+            <h1 class="app-title">
+                <span class="title-icon">🌌</span>
+                万物可视化
+                <span class="title-subtitle">一图胜千言</span>
+                <span class="title-version">v2.0</span>
+            </h1>
+            <nav class="header-nav">
+                <!-- 访客模式信息显示 -->
+                <div class="user-info guest-mode">
+                    <div class="guest-avatar">👤</div>
+                    <div class="guest-details">
+                        <span class="guest-name">访客用户</span>
+                        <span class="guest-status">演示模式</span>
+                    </div>
+                </div>
+
+                <!-- 导航按钮 -->
+                <button class="nav-btn demo-btn" id="demoFeatures" title="演示功能">
+                    <span>🎯</span>
+                </button>
+                <button class="nav-btn" id="themeToggle" title="切换主题">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button class="nav-btn" id="helpBtn" title="帮助">
+                    <span>❓</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main class="app-main">
+        <div class="container">
+            <!-- 欢迎区域 -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h2 class="hero-title">让复杂概念变得直观易懂</h2>
+                    <p class="hero-description">
+                        通过AI驱动的可视化技术，将抽象的数学公式、天文现象、物理原理转化为直观的交互式图表。
+                        只需输入您的需求，即可生成专业的可视化页面。
+                    </p>
+                </div>
+            </section>
+
+            <!-- 简化的模块展示 -->
+            <section class="modules-section">
+                <h3 class="section-title">探索可视化模块</h3>
+                <div class="modules-grid">
+                    <div class="module-card">
+                        <div class="module-header">
+                            <span class="module-icon">📐</span>
+                            <h4 class="module-title">数学可视化</h4>
+                        </div>
+                        <div class="module-content">
+                            <p>函数图像、几何图形、统计分析等数学概念的可视化展示</p>
+                        </div>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="module-header">
+                            <span class="module-icon">🔭</span>
+                            <h4 class="module-title">天文可视化</h4>
+                        </div>
+                        <div class="module-content">
+                            <p>天体运行、星座分布、宇宙探索等天文现象的动态演示</p>
+                        </div>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="module-header">
+                            <span class="module-icon">⚛️</span>
+                            <h4 class="module-title">物理可视化</h4>
+                        </div>
+                        <div class="module-content">
+                            <p>力学实验、电磁现象、量子物理等物理原理的交互演示</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 应用底部 -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4 class="footer-title">万物可视化</h4>
+                <p class="footer-text">AI驱动的交互式可视化平台</p>
+                <p class="footer-text">让复杂概念变得直观易懂</p>
+            </div>
+            <div class="footer-section">
+                <h5>快速链接</h5>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link">关于我们</a></li>
+                    <li><a href="#" class="footer-link">使用指南</a></li>
+                    <li><a href="#" class="footer-link">API文档</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h5>联系我们</h5>
+                <p class="footer-text">邮箱: info@visualization.com</p>
+                <p class="footer-text">GitHub: @visualization</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 万物可视化项目. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('修复测试页面加载完成');
+
+            setTimeout(() => {
+                const header = document.querySelector('.app-header');
+                const main = document.querySelector('.app-main');
+                const footer = document.querySelector('.app-footer');
+                const title = document.querySelector('.app-title');
+
+                if (header && main && footer) {
+                    const headerRect = header.getBoundingClientRect();
+                    const mainRect = main.getBoundingClientRect();
+                    const footerRect = footer.getBoundingClientRect();
+                    const titleRect = title.getBoundingClientRect();
+
+                    console.log('布局分析结果:');
+                    console.log('头部位置:', headerRect.top, headerRect.height);
+                    console.log('主内容位置:', mainRect.top, mainRect.height);
+                    console.log('底部位置:', footerRect.top, footerRect.height);
+                    console.log('标题位置:', titleRect.left, titleRect.top);
+
+                    const statusElement = document.getElementById('layoutStatus');
+                    const debugElement = document.getElementById('layoutDebug');
+
+                    // 检查是否为正常的上下布局
+                    const isNormalLayout = headerRect.top < 100 &&
+                                         mainRect.top > headerRect.bottom &&
+                                         footerRect.top > mainRect.bottom;
+
+                    // 检查标题是否在头部中央而不是左侧
+                    const isTitleCentered = titleRect.left > 100 &&
+                                          window.innerWidth - titleRect.right > 100;
+
+                    if (isNormalLayout && isTitleCentered) {
+                        statusElement.textContent = '✅ 布局修复成功';
+                        statusElement.style.background = 'rgba(0, 255, 0, 0.8)';
+                        debugElement.innerHTML = `
+                            <strong>✅ 布局正常</strong><br>
+                            头部: ${headerRect.top.toFixed(0)}px<br>
+                            内容: ${mainRect.top.toFixed(0)}px<br>
+                            底部: ${footerRect.top.toFixed(0)}px<br>
+                            标题位置: 居中<br>
+                            网页结构: 上下布局 ✓
+                        `;
+                        console.log('✅ 布局修复成功！');
+                    } else {
+                        statusElement.textContent = '❌ 布局仍有问题';
+                        statusElement.style.background = 'rgba(255, 0, 0, 0.8)';
+                        debugElement.innerHTML = `
+                            <strong>❌ 布局异常</strong><br>
+                            头部: ${headerRect.top.toFixed(0)}px<br>
+                            内容: ${mainRect.top.toFixed(0)}px<br>
+                            底部: ${footerRect.top.toFixed(0)}px<br>
+                            标题位置: ${titleRect.left < 100 ? '左侧' : '居中'}<br>
+                            网页结构: ${isNormalLayout ? '正常' : '异常'}
+                        `;
+                        console.log('❌ 布局仍有问题');
+                    }
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

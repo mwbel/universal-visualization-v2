@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 干净测试</title>
+    <style>
+        /* 完全重置所有样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+            position: static !important;
+            overflow-x: hidden;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            line-height: 1.6;
+        }
+
+        /* 强制所有元素为块级布局 */
+        header, main, footer, section, div, article, aside, nav {
+            display: block !important;
+            position: static !important;
+            float: none !important;
+            width: 100% !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* 覆盖任何可能的flex/grid布局 */
+        [class*="flex"], [class*="grid"], [class*="container"] {
+            display: block !important;
+            flex: none !important;
+            grid-template-columns: none !important;
+            grid-template-rows: none !important;
+            flex-direction: column !important;
+            flex-wrap: nowrap !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
+        }
+
+        /* 头部样式 */
+        .test-header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+        }
+
+        .test-header h1 {
+            font-size: 2rem;
+            margin: 0;
+            color: white;
+        }
+
+        /* 主要内容样式 */
+        .test-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 60vh;
+            width: 100%;
+        }
+
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .test-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        /* 底部样式 */
+        .test-footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            margin-top: auto;
+        }
+
+        /* 调试指示器 */
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 255, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 9999;
+        }
+
+        .layout-check {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 255, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 9999;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .test-main {
+                padding: 20px 15px;
+            }
+            .test-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-info">🔧 干净测试页面</div>
+    <div class="layout-check">📐 检查布局中...</div>
+
+    <!-- 头部 -->
+    <header class="test-header">
+        <h1>🌌 万物可视化 - 一图胜千言</h1>
+        <p>这是一个完全干净的测试页面，用于验证布局问题</p>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="test-main">
+        <section class="test-section">
+            <h2>📊 主要内容区域</h2>
+            <p>这个内容应该在页面中央，包含所有可视化模块内容。</p>
+            <ul>
+                <li>✅ 头部在顶部</li>
+                <li>✅ 内容在中间</li>
+                <li>✅ 底部在页面底部</li>
+                <li>✅ 没有左中右三栏布局</li>
+                <li>✅ 标题"万物可视化,一图胜千言"在头部中央</li>
+            </ul>
+        </section>
+
+        <section class="test-section">
+            <h2>🚀 布局验证</h2>
+            <p>如果页面显示正常，说明CSS样式被正确应用。</p>
+            <p>如果依然出现左中右布局，说明可能有JavaScript在动态修改样式。</p>
+        </section>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="test-footer">
+        <p>© 2025 万物可视化项目 - 干净测试页面</p>
+        <p>如果这个页面显示正常，但主页面不正常，说明问题出在外部CSS或JS文件中</p>
+    </footer>
+
+    <script>
+        // 禁用所有可能的样式修改
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('干净测试页面加载完成');
+
+            // 冻结body样式，防止被JS修改
+            const body = document.body;
+            const bodyStyle = body.style;
+
+            // 使用Object.freeze来防止样式被修改
+            Object.defineProperty(body.style, 'display', {
+                writable: false,
+                value: 'block'
+            });
+
+            Object.defineProperty(body.style, 'flexDirection', {
+                writable: false,
+                value: ''
+            });
+
+            // 检查布局
+            setTimeout(() => {
+                const header = document.querySelector('.test-header');
+                const main = document.querySelector('.test-main');
+                const footer = document.querySelector('.test-footer');
+
+                if (header && main && footer) {
+                    const headerRect = header.getBoundingClientRect();
+                    const mainRect = main.getBoundingClientRect();
+                    const footerRect = footer.getBoundingClientRect();
+
+                    console.log('布局检查结果:');
+                    console.log('头部位置:', headerRect.top, headerRect.height);
+                    console.log('主内容位置:', mainRect.top, mainRect.height);
+                    console.log('底部位置:', footerRect.top, footerRect.height);
+
+                    // 验证是否是正常的上下布局
+                    if (headerRect.top < 100 && mainRect.top > headerRect.bottom && footerRect.top > mainRect.bottom) {
+                        document.querySelector('.layout-check').textContent = '✅ 上下布局正常';
+                        document.querySelector('.layout-check').style.background = 'rgba(0, 255, 0, 0.8)';
+                        console.log('✅ 布局正常');
+                    } else {
+                        document.querySelector('.layout-check').textContent = '❌ 布局异常';
+                        document.querySelector('.layout-check').style.background = 'rgba(255, 0, 0, 0.8)';
+                        console.log('❌ 布局异常');
+                    }
+                }
+            }, 1000);
+
+            // 监听并阻止任何试图修改body样式的行为
+            const originalSetAttribute = Element.prototype.setAttribute;
+            Element.prototype.setAttribute = function(name, value) {
+                if (this === body && name === 'style') {
+                    console.warn('阻止了对body样式的修改:', value);
+                    return;
+                }
+                return originalSetAttribute.call(this, name, value);
+            };
+        });
+
+        // 防止任何外部脚本修改布局
+        window.addEventListener('load', function() {
+            console.log('页面完全加载完成');
+
+            // 强制重置所有可能的布局样式
+            document.body.style.display = 'block';
+            document.body.style.flexDirection = '';
+            document.body.style.justifyContent = '';
+            document.body.style.alignItems = '';
+
+            console.log('强制布局样式已应用');
+        });
+    </script>
+</body>
+</html>

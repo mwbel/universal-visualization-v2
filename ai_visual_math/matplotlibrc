@@ -1,0 +1,27 @@
+# Matplotlib 配置文件 for 概率论与数理统计课程
+# 中文字体 + 负号显示修复 + 图表美化
+
+# 设置字体（macOS 推荐 Arial Unicode MS，Linux 推荐 Noto Sans CJK，Windows 推荐 SimHei）
+font.sans-serif : Arial Unicode MS, PingFang SC, SimHei, Microsoft YaHei, Noto Sans CJK SC
+axes.unicode_minus : False
+
+# 图像大小
+figure.figsize : 8, 6
+
+# 线条粗细
+lines.linewidth : 2
+
+# 网格
+axes.grid : True
+grid.linestyle : --
+
+# 字体大小
+font.size : 12
+axes.titlesize : 14
+axes.labelsize : 12
+xtick.labelsize : 10
+ytick.labelsize : 10
+
+# 图例
+legend.fontsize : 10
+legend.frameon : True

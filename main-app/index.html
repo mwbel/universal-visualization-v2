@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 一图胜千言</title>
+    <meta name="description" content="AI驱动的交互式可视化平台，支持数学、天文、物理等多学科可视化">
+
+    <!-- 预连接优化 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="styles/force-layout-fix.css">
+    <link rel="stylesheet" href="styles/design-system.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/layout-fix.css">
+</head>
+<body>
+    <!-- 应用头部 -->
+    <header class="app-header">
+        <div class="container header-content">
+            <h1 class="app-title">
+                <span class="title-icon">🌌</span>
+                万物可视化
+                <span class="title-subtitle">一图胜千言</span>
+                <span class="title-version">v2.0</span>
+            </h1>
+            <nav class="header-nav">
+                <!-- 用户认证区域 - 临时禁用 -->
+                <!--
+                <div id="userAuthArea" class="user-auth-area">
+                    // 登录状态显示
+                    <div id="userInfo" class="user-info" style="display: none;">
+                        <div class="user-avatar" id="userAvatar">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciL3RyYW5zYWRvL2JvcmRlci9maXJlbS9tYXRlcmlhbC9yYXNlL2Zha2xlLWZ1cmUucG5nPj4" alt="默认头像" class="avatar-img">
+                        </div>
+                        <div class="user-details">
+                            <span class="user-name" id="userName">用户</span>
+                            <span class="user-role" id="userRole">普通用户</span>
+                        </div>
+                        <div class="user-dropdown" id="userDropdown">
+                            <button class="dropdown-toggle" id="dropdownToggle">
+                                <span class="dropdown-arrow">▼</span>
+                            </button>
+                            <div class="dropdown-menu" id="dropdownMenu">
+                                <a href="pages/profile.html" class="dropdown-item">
+                                    <span class="dropdown-icon">👤</span>
+                                    个人中心
+                                </a>
+                                <a href="pages/settings.html" class="dropdown-item">
+                                    <span class="dropdown-icon">⚙️</span>
+                                    设置
+                                </a>
+                                <a href="#" class="dropdown-item" id="logoutBtn">
+                                    <span class="dropdown-icon">🚪</span>
+                                    登出
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    // 访客状态显示
+                    <div id="guestAuth" class="guest-auth">
+                        <button class="auth-btn login-btn" id="loginBtn">
+                            <span>登录</span>
+                        </button>
+                        <button class="auth-btn register-btn" id="registerBtn">
+                            <span>注册</span>
+                        </button>
+                    </div>
+                </div>
+                -->
+
+                <!-- 访客模式信息显示 -->
+                <div class="user-info guest-mode">
+                    <div class="guest-avatar">👤</div>
+                    <div class="guest-details">
+                        <span class="guest-name">访客用户</span>
+                        <span class="guest-status">演示模式</span>
+                    </div>
+                </div>
+
+                <!-- 导航按钮 -->
+                <button class="nav-btn demo-btn" id="demoFeatures" title="演示功能">
+                    <span>🎯</span>
+                </button>
+                <button class="nav-btn" id="themeToggle" title="切换主题">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button class="nav-btn" id="helpBtn" title="帮助">
+                    <span>❓</span>
+                </button>
+
+                <!-- 测试账号信息 - 临时禁用 -->
+                <!--
+                <div class="test-accounts-info" id="testAccountsInfo">
+                    <button class="test-accounts-toggle" id="testAccountsToggle" title="查看测试账号">
+                        <span>👥</span>
+                    </button>
+                    <div class="test-accounts-dropdown" id="testAccountsDropdown">
+                        <div class="test-accounts-header">
+                            <h4>🧪 演示账号</h4>
+                            <span class="test-accounts-subtitle">点击任意账号快速登录</span>
+                        </div>
+                        <div class="test-accounts-list">
+                            <div class="test-account-item" data-username="admin" data-password="admin123">
+                                <div class="test-account-info">
+                                    <div class="test-account-role admin">管理员</div>
+                                    <div class="test-account-details">
+                                        <span class="test-account-name">admin</span>
+                                        <span class="test-account-credentials">admin123</span>
+                                    </div>
+                                </div>
+                                <div class="test-account-action">🚀</div>
+                            </div>
+                            <div class="test-account-item" data-username="user" data-password="user123">
+                                <div class="test-account-info">
+                                    <div class="test-account-role user">普通用户</div>
+                                    <div class="test-account-details">
+                                        <span class="test-account-name">user</span>
+                                        <span class="test-account-credentials">user123</span>
+                                    </div>
+                                </div>
+                                <div class="test-account-action">🚀</div>
+                            </div>
+                            <div class="test-account-item" data-username="premium" data-password="premium123">
+                                <div class="test-account-info">
+                                    <div class="test-account-role premium">高级用户</div>
+                                    <div class="test-account-details">
+                                        <span class="test-account-name">premium</span>
+                                        <span class="test-account-credentials">premium123</span>
+                                    </div>
+                                </div>
+                                <div class="test-account-action">🚀</div>
+                            </div>
+                            <div class="test-account-item" data-username="educator" data-password="edu123">
+                                <div class="test-account-info">
+                                    <div class="test-account-role educator">教育者</div>
+                                    <div class="test-account-details">
+                                        <span class="test-account-name">educator</span>
+                                        <span class="test-account-credentials">edu123</span>
+                                    </div>
+                                </div>
+                                <div class="test-account-action">🚀</div>
+                            </div>
+                            <div class="test-account-item" data-username="researcher" data-password="research123">
+                                <div class="test-account-info">
+                                    <div class="test-account-role researcher">研究员</div>
+                                    <div class="test-account-details">
+                                        <span class="test-account-name">researcher</span>
+                                        <span class="test-account-credentials">research123</span>
+                                    </div>
+                                </div>
+                                <div class="test-account-action">🚀</div>
+                            </div>
+                        </div>
+                        <div class="test-accounts-footer">
+                            <small>💡 提示：点击账号自动填充登录信息</small>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main class="app-main">
+        <div class="container">
+            <!-- 欢迎区域 -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h2 class="hero-title">让复杂概念变得直观易懂</h2>
+                    <p class="hero-description">
+                        通过AI驱动的可视化技术，将抽象的数学公式、天文现象、物理原理转化为直观的交互式图表。
+                        只需输入您的需求，即可生成专业的可视化页面。
+                    </p>
+
+                    <!-- 快速开始指南 -->
+                    <div class="getting-started">
+                        <h4 class="getting-started-title">🚀 快速开始</h4>
+                        <div class="getting-started-steps">
+                            <div class="step-item">
+                                <span class="step-number">1</span>
+                                <span class="step-text">选择学科或输入需求</span>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-number">2</span>
+                                <span class="step-text">AI智能生成可视化</span>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-number">3</span>
+                                <span class="step-text">交互式探索和学习</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快速导航 -->
+                    <div class="quick-nav">
+                        <a href="#math-section" class="quick-nav-item">
+                            <span class="nav-icon">📐</span>
+                            <span class="nav-label">数学可视化</span>
+                        </a>
+                        <a href="#astronomy-section" class="quick-nav-item">
+                            <span class="nav-icon">🔭</span>
+                            <span class="nav-label">天文可视化</span>
+                        </a>
+                        <a href="#physics-section" class="quick-nav-item">
+                            <span class="nav-icon">⚛️</span>
+                            <span class="nav-label">物理可视化</span>
+                        </a>
+                        <a href="#chemistry-section" class="quick-nav-item">
+                            <span class="nav-icon">🧪</span>
+                            <span class="nav-label">化学可视化</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 输入区域 -->
+            <section class="input-section">
+                <div class="input-container">
+                    <h3 class="section-title">开始创建您的可视化</h3>
+
+                    <!-- 全局搜索 -->
+                    <div class="global-search">
+                        <div class="search-container">
+                            <input
+                                type="text"
+                                id="globalSearchInput"
+                                class="global-search-input"
+                                placeholder="搜索可视化概念..."
+                                autocomplete="off"
+                            >
+                            <button class="search-btn" id="globalSearchBtn" title="搜索">
+                                <span>🔍</span>
+                            </button>
+                        </div>
+                        <div class="search-suggestions" id="searchSuggestions" style="display: none;">
+                            <div class="suggestions-header">
+                                <span class="suggestions-title">💡 搜索建议</span>
+                                <button class="close-suggestions" id="closeSearchSuggestions">×</button>
+                            </div>
+                            <div class="suggestions-list" id="searchSuggestionsList">
+                                <!-- 动态生成搜索建议 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 输入模式切换 -->
+                    <div class="input-mode-toggle">
+                        <button class="mode-btn active" data-mode="text">文本输入</button>
+                        <button class="mode-btn" data-mode="template">模板选择</button>
+                        <button class="mode-btn" data-mode="concept">概念搜索</button>
+                    </div>
+
+                    <!-- 文本输入模式 -->
+                    <div class="input-mode-panel active" id="textInputPanel">
+                        <div class="smart-input-container">
+                            <textarea
+                                id="mainInput"
+                                class="smart-input"
+                                placeholder="请描述您想要创建的可视化，例如：&#10;• 正态分布 均值0 标准差1&#10;• 行星运动轨迹 地球 火星&#10;• 简谐振动 振幅2 频率1Hz&#10;• 二次函数 y = x² + 2x + 1"
+                                rows="4"
+                                maxlength="500"
+                            ></textarea>
+                            <div class="input-footer">
+                                <div class="input-info">
+                                    <span class="char-count">0 / 500</span>
+                                    <span class="input-tips">支持自然语言描述，Ctrl+Enter 快速提交</span>
+                                </div>
+                                <button class="generate-btn" id="generateBtn" disabled>
+                                    <span class="btn-icon">✨</span>
+                                    生成可视化
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 智能提示区域 -->
+                        <div class="suggestions-container" id="suggestionsContainer" style="display: none;">
+                            <div class="suggestions-header">
+                                <span class="suggestions-title">💡 智能建议</span>
+                                <button class="close-suggestions" id="closeSuggestions">×</button>
+                            </div>
+                            <div class="suggestions-list" id="suggestionsList">
+                                <!-- 动态生成建议内容 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 模板选择模式 -->
+                    <div class="input-mode-panel" id="templateInputPanel">
+                        <div class="template-search">
+                            <input
+                                type="text"
+                                id="templateSearch"
+                                class="template-search-input"
+                                placeholder="搜索模板..."
+                            >
+                        </div>
+                        <div class="template-categories" id="templateCategories">
+                            <!-- 动态生成模板分类 -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 学科模块展示 -->
+            <section class="modules-section">
+                <h3 class="section-title">探索可视化模块</h3>
+
+                <div class="modules-grid">
+                    <!-- 数学可视化模块 -->
+                    <div class="module-card" id="math-section">
+                        <div class="module-header">
+                            <span class="module-icon">📐</span>
+                            <h4 class="module-title">数学可视化</h4>
+                            <div class="module-badge">包含22个可视化概念</div>
+                        </div>
+                        <p class="module-description">
+                            交互式数学概念可视化，涵盖概率统计、线性代数、微分几何等核心数学领域
+                        </p>
+                        <div class="module-features">
+                            <span class="feature-tag">正态分布</span>
+                            <span class="feature-tag">矩阵运算</span>
+                            <span class="feature-tag">特征值</span>
+                            <span class="feature-tag">测地线</span>
+                            <span class="feature-tag">函数图像</span>
+                        </div>
+                        <div class="module-subcategories">
+                            <div class="subcategory" data-submodule="probability-stats">
+                                <span class="subcategory-icon">📊</span>
+                                <span class="subcategory-name">概率统计</span>
+                                <span class="subcategory-count">7个概念</span>
+                            </div>
+                            <div class="subcategory" data-submodule="linear-algebra">
+                                <span class="subcategory-icon">🔢</span>
+                                <span class="subcategory-name">线性代数</span>
+                                <span class="subcategory-count">11个概念</span>
+                            </div>
+                            <div class="subcategory" data-submodule="differential-geometry">
+                                <span class="subcategory-icon">🌐</span>
+                                <span class="subcategory-name">微分几何</span>
+                                <span class="subcategory-count">4个概念</span>
+                            </div>
+                        </div>
+                        <div class="module-actions">
+                            <button class="module-btn explore-btn" data-module="math">
+                                🚀 探索完整模块
+                            </button>
+                            <button class="module-btn examples-btn" data-module="math">
+                                📋 查看概念列表
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 天文学可视化模块 -->
+                    <div class="module-card" id="astronomy-section">
+                        <div class="module-header">
+                            <span class="module-icon">🔭</span>
+                            <h4 class="module-title">天文学可视化</h4>
+                            <div class="module-badge">包含13个可视化工具</div>
+                        </div>
+                        <p class="module-description">
+                            探索宇宙的奥秘，通过交互式可视化理解天体运动、星系结构、行星轨道等天文学核心概念
+                        </p>
+                        <div class="module-features">
+                            <span class="feature-tag">3D太阳系</span>
+                            <span class="feature-tag">实时月相</span>
+                            <span class="feature-tag">行星轨迹</span>
+                            <span class="feature-tag">天球坐标</span>
+                            <span class="feature-tag">天文观测</span>
+                        </div>
+                        <div class="module-subcategories">
+                            <div class="subcategory" data-submodule="astronomy-tools">
+                                <span class="subcategory-icon">🛠️</span>
+                                <span class="subcategory-name">Trae可视化工具</span>
+                                <span class="subcategory-count">13个工具</span>
+                            </div>
+                            <div class="subcategory" data-submodule="solar-system">
+                                <span class="subcategory-icon">🌍</span>
+                                <span class="subcategory-name">3D太阳系</span>
+                                <span class="subcategory-count">1个模拟</span>
+                            </div>
+                        </div>
+                        <div class="module-actions">
+                            <button class="module-btn explore-btn" data-module="astronomy">
+                                🚀 探索完整模块
+                            </button>
+                            <button class="module-btn examples-btn" data-module="astronomy">
+                                📋 查看天文概念
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 物理学可视化模块 -->
+                    <div class="module-card" id="physics-section">
+                        <div class="module-header">
+                            <span class="module-icon">⚛️</span>
+                            <h4 class="module-title">物理学可视化</h4>
+                            <div class="module-badge">包含6个物理模拟</div>
+                        </div>
+                        <p class="module-description">
+                            通过交互式可视化深入理解力学、电磁学、波动光学等物理学核心原理，支持参数调节和实时计算
+                        </p>
+                        <div class="module-features">
+                            <span class="feature-tag">Python计算</span>
+                            <span class="feature-tag">交互模拟</span>
+                            <span class="feature-tag">实时渲染</span>
+                            <span class="feature-tag">物理实验</span>
+                            <span class="feature-tag">数值分析</span>
+                        </div>
+                        <div class="module-subcategories">
+                            <div class="subcategory" data-submodule="physics-basics">
+                                <span class="subcategory-icon">📊</span>
+                                <span class="subcategory-name">基础物理模拟</span>
+                                <span class="subcategory-count">3个模块</span>
+                            </div>
+                            <div class="subcategory" data-submodule="physics-interactive">
+                                <span class="subcategory-icon">🎮</span>
+                                <span class="subcategory-name">交互式物理</span>
+                                <span class="subcategory-count">3个模块</span>
+                            </div>
+                        </div>
+                        <div class="module-actions">
+                            <button class="module-btn explore-btn" data-module="physics">
+                                🚀 探索完整模块
+                            </button>
+                            <button class="module-btn examples-btn" data-module="physics">
+                                📋 查看物理概念
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 化学可视化模块 -->
+                    <div class="module-card" id="chemistry-section">
+                        <div class="module-header">
+                            <span class="module-icon">🧪</span>
+                            <h4 class="module-title">化学可视化</h4>
+                            <div class="module-badge">开发中</div>
+                        </div>
+                        <p class="module-description">
+                            探索分子世界的奥秘，通过3D可视化深入理解分子结构、化学键、反应机理等化学核心概念
+                        </p>
+                        <div class="module-features">
+                            <span class="feature-tag">3D分子结构</span>
+                            <span class="feature-tag">化学键分析</span>
+                            <span class="feature-tag">反应模拟</span>
+                            <span class="feature-tag">元素周期表</span>
+                            <span class="feature-tag">量子化学</span>
+                        </div>
+                        <div class="module-subcategories">
+                            <div class="subcategory" data-submodule="molecular-structure">
+                                <span class="subcategory-icon">🔬</span>
+                                <span class="subcategory-name">分子结构可视化</span>
+                                <span class="subcategory-count">开发中</span>
+                            </div>
+                            <div class="subcategory" data-submodule="chemical-reactions">
+                                <span class="subcategory-icon">⚗️</span>
+                                <span class="subcategory-name">化学反应模拟</span>
+                                <span class="subcategory-count">开发中</span>
+                            </div>
+                        </div>
+                        <div class="module-actions">
+                            <button class="module-btn explore-btn" data-module="chemistry">
+                                🚀 探索完整模块
+                            </button>
+                            <button class="module-btn examples-btn" data-module="chemistry">
+                                📋 查看化学概念
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 高中学科可视化模块 -->
+                    <div class="module-card" id="highschool-section">
+                        <div class="module-header">
+                            <span class="module-icon">📚</span>
+                            <h4 class="module-title">高中学科</h4>
+                        </div>
+                        <p class="module-description">
+                            基于上海高中教材的交互式可视化学习平台，教材同步，考点覆盖
+                        </p>
+                        <div class="module-features">
+                            <span class="feature-tag">教材同步</span>
+                            <span class="feature-tag">考点覆盖</span>
+                            <span class="feature-tag">互动学习</span>
+                        </div>
+                        <div class="module-actions">
+                            <button class="module-btn explore-btn" data-module="highschool">
+                                进入学习
+                            </button>
+                            <button class="module-btn examples-btn" data-module="highschool">
+                                查看教材
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 平台统计 -->
+            <section class="stats-section">
+                <h3 class="section-title">平台能力概览</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">5+</div>
+                        <div class="stat-label">学科领域</div>
+                        <div class="stat-desc">数学、天文、物理、化学、高中学科</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">可视化模板</div>
+                        <div class="stat-desc">覆盖各学科核心概念</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">3D</div>
+                        <div class="stat-label">交互式展示</div>
+                        <div class="stat-desc">支持多种可视化形式</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">AI</div>
+                        <div class="stat-label">智能驱动</div>
+                        <div class="stat-desc">自然语言生成图表</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 历史记录区域 -->
+            <section class="history-section" id="historySection" style="display: none;">
+                <div class="history-header">
+                    <h3 class="section-title">最近生成的可视化</h3>
+                    <button class="clear-history-btn" id="clearHistoryBtn">清空历史</button>
+                </div>
+                <div class="history-grid" id="historyGrid">
+                    <!-- 动态生成历史记录 -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 应用底部 -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4 class="footer-title">万物可视化</h4>
+                <p class="footer-desc">AI驱动的交互式可视化平台，让复杂概念变得直观易懂</p>
+                <div class="footer-social">
+                    <span class="social-item">📧 contact@alvis.com</span>
+                    <span class="social-item">🌐 www.alvis.com</span>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h5 class="footer-heading">产品功能</h5>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link">数学可视化</a></li>
+                    <li><a href="#" class="footer-link">天文可视化</a></li>
+                    <li><a href="#" class="footer-link">物理可视化</a></li>
+                    <li><a href="#" class="footer-link">化学可视化</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h5 class="footer-heading">帮助支持</h5>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link">使用指南</a></li>
+                    <li><a href="#" class="footer-link">API文档</a></li>
+                    <li><a href="#" class="footer-link">常见问题</a></li>
+                    <li><a href="#" class="footer-link">反馈建议</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h5 class="footer-heading">关于项目</h5>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link">开发团队</a></li>
+                    <li><a href="#" class="footer-link">开源协议</a></li>
+                    <li><a href="#" class="footer-link">更新日志</a></li>
+                    <li><a href="#" class="footer-link">路线图</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 万物可视化项目. 基于现代Web技术构建 | 开源教育项目</p>
+        </div>
+    </footer>
+
+    <!-- 加载遮罩 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在生成可视化...</div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误提示 -->
+    <div class="error-toast" id="errorToast" style="display: none;">
+        <div class="error-content">
+            <span class="error-icon">⚠️</span>
+            <span class="error-message" id="errorMessage"></span>
+            <button class="error-close" id="errorClose">×</button>
+        </div>
+    </div>
+
+    <!-- 成功提示 -->
+    <div class="success-toast" id="successToast" style="display: none;">
+        <div class="success-content">
+            <span class="success-icon">✅</span>
+            <span class="success-message" id="successMessage"></span>
+            <button class="success-close" id="successClose">×</button>
+        </div>
+    </div>
+
+    <!-- 路由容器 -->
+    <div class="router-container" data-router-container>
+        <!-- 路由内容将在这里动态加载 -->
+    </div>
+
+    <!-- JavaScript 模块 -->
+    <script src="components/StateManager.js"></script>
+    <script src="components/ThemeManager.js"></script>
+    <script src="components/MobileEnhancer.js"></script>
+    <script src="components/ApiClient.js"></script>
+    <script src="components/SmartInput.js"></script>
+    <script src="components/TemplateSelector.js"></script>
+    <script src="components/LoadingStates.js"></script>
+    <script src="components/ParamSync.js"></script>
+    <script src="components/Router.js"></script>
+    <script src="components/VizContainer.js"></script>
+    <script src="data/concepts.js"></script>
+    <script src="app.js"></script>
+
+    <!-- 组件生命周期由主应用管理 -->
+
+    <!-- Authentication Modals - 临时禁用 -->
+    <!--
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">登录万物可视化</h2>
+                <button class="modal-close" id="closeLoginModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginIdentifier">用户名或邮箱</label>
+                        <input type="text" id="loginIdentifier" name="loginIdentifier"
+                               class="form-control" placeholder="请输入用户名或邮箱" required>
+                        <span class="form-error" id="loginIdentifierError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">密码</label>
+                        <input type="password" id="loginPassword" name="loginPassword"
+                               class="form-control" placeholder="请输入密码" required>
+                        <span class="form-error" id="loginPasswordError"></span>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                            <span class="checkmark"></span>
+                            记住我（7天内自动登录）
+                        </label>
+                        <a href="#" class="forgot-password-link" id="forgotPasswordLink">忘记密码？</a>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-block" id="loginSubmitBtn">
+                            <span class="btn-text">登录</span>
+                            <span class="btn-loading" style="display: none;">登录中...</span>
+                        </button>
+                    </div>
+                    <div class="auth-switch">
+                        <span>还没有账户？</span>
+                        <a href="#" class="auth-link" id="switchToRegister">立即注册</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">注册万物可视化</h2>
+                <button class="modal-close" id="closeRegisterModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="registerUsername">用户名</label>
+                        <input type="text" id="registerUsername" name="registerUsername"
+                               class="form-control" placeholder="3-20字符，支持字母数字下划线" required>
+                        <span class="form-error" id="registerUsernameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">邮箱地址</label>
+                        <input type="email" id="registerEmail" name="registerEmail"
+                               class="form-control" placeholder="请输入有效的邮箱地址" required>
+                        <span class="form-error" id="registerEmailError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">密码</label>
+                        <input type="password" id="registerPassword" name="registerPassword"
+                               class="form-control" placeholder="至少8字符，包含大小写字母和数字" required>
+                        <span class="form-error" id="registerPasswordError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerConfirmPassword">确认密码</label>
+                        <input type="password" id="registerConfirmPassword" name="registerConfirmPassword"
+                               class="form-control" placeholder="请再次输入密码" required>
+                        <span class="form-error" id="registerConfirmPasswordError"></span>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="agreeToTerms" name="agreeToTerms" required>
+                            <span class="checkmark"></span>
+                            我已阅读并同意<a href="#" class="terms-link">服务条款</a>和<a href="#" class="privacy-link">隐私政策</a>
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-block" id="registerSubmitBtn">
+                            <span class="btn-text">注册</span>
+                            <span class="btn-loading" style="display: none;">注册中...</span>
+                        </button>
+                    </div>
+                    <div class="auth-switch">
+                        <span>已有账户？</span>
+                        <a href="#" class="auth-link" id="switchToLogin">立即登录</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="forgotPasswordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">重置密码</h2>
+                <button class="modal-close" id="closeForgotPasswordModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="forgotPasswordForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="resetEmail">注册邮箱</label>
+                        <input type="email" id="resetEmail" name="resetEmail"
+                               class="form-control" placeholder="请输入注册时使用的邮箱地址" required>
+                        <span class="form-error" id="resetEmailError"></span>
+                    </div>
+                    <div class="form-info">
+                        <p>输入您的注册邮箱后，我们将向您发送密码重置链接。</p>
+                        <p><strong>注意：</strong>当前为演示版本，重置链接将显示在页面上。</p>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-block" id="resetSubmitBtn">
+                            <span class="btn-text">发送重置链接</span>
+                            <span class="btn-loading" style="display: none;">发送中...</span>
+                        </button>
+                    </div>
+                    <div class="auth-switch">
+                        <a href="#" class="auth-link" id="backToLogin">返回登录</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    -->
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- 用户管理脚本 -->
+    <script src="components/UserManagement.js"></script>
+
+    <!-- 认证脚本 -->
+    <!-- <script src="components/authentication.js"></script> <!-- 临时禁用：等其他功能模块完善后再启用 -->
+</body>
+</html>

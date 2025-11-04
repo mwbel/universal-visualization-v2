@@ -1,0 +1,86 @@
+/* 布局修复 - 确保正常的上下布局结构 */
+
+/* 重置body样式，确保使用标准文档流 */
+body {
+  display: block !important;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* 确保主要内容区域正常显示 */
+.app-main {
+  display: block !important;
+  flex: none !important;
+  min-height: auto !important;
+}
+
+/* 确保头部正常显示 */
+.app-header {
+  position: relative !important;
+  top: auto !important;
+  z-index: 100;
+}
+
+/* 确保底部正常显示 */
+.app-footer {
+  display: block !important;
+  margin-top: 0 !important;
+  position: relative;
+}
+
+/* 容器样式修复 */
+.container {
+  display: block !important;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+/* 头部内容修复 */
+.header-content {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  min-height: 64px;
+}
+
+/* 标题修复 */
+.app-title {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary, #1f2937);
+}
+
+/* 底部内容修复 */
+.footer-content {
+  display: block !important;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .app-title {
+    font-size: 20px;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .footer-content {
+    padding: 32px 16px;
+  }
+}
