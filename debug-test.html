@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试可视化测试</title>
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover { background: #0056b3; }
+        #vizResult {
+            border: 1px solid #ccc;
+            padding: 20px;
+            min-height: 500px;
+            background: #f9f9f9;
+        }
+        .log {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>🔍 调试可视化测试页面</h1>
+
+    <div class="section">
+        <h3>环境检查</h3>
+        <button onclick="checkEnvironment()">检查环境</button>
+        <div id="envResult"></div>
+    </div>
+
+    <div class="section">
+        <h3>API测试</h3>
+        <button onclick="testAPI()">测试API</button>
+        <button onclick="testNormal()">测试正态分布</button>
+        <button onclick="testUniform()">测试均匀分布</button>
+        <div id="apiResult"></div>
+    </div>
+
+    <div class="section">
+        <h3>可视化结果</h3>
+        <div id="vizResult">等待测试...</div>
+    </div>
+
+    <div class="section">
+        <h3>调试日志</h3>
+        <div id="debugLog" class="log"></div>
+        <button onclick="clearLog()">清空日志</button>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logEl.appendChild(logEntry);
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function clearLog() {
+            document.getElementById('debugLog').innerHTML = '';
+        }
+
+        function checkEnvironment() {
+            const resultEl = document.getElementById('envResult');
+            let html = '<h4>环境检查结果:</h4>';
+
+            // 检查Plotly
+            if (typeof Plotly !== 'undefined') {
+                html += '<p class="success">✅ Plotly已加载 (版本: ' + Plotly.version + ')</p>';
+                log('Plotly版本: ' + Plotly.version, 'success');
+            } else {
+                html += '<p class="error">❌ Plotly未加载</p>';
+                log('Plotly未加载', 'error');
+            }
+
+            // 检查fetch
+            if (typeof fetch !== 'undefined') {
+                html += '<p class="success">✅ fetch API可用</p>';
+                log('fetch API可用', 'success');
+            } else {
+                html += '<p class="error">❌ fetch API不可用</p>';
+                log('fetch API不可用', 'error');
+            }
+
+            // 检查URL
+            const currentUrl = window.location.href;
+            html += `<p class="info">📍 当前页面: ${currentUrl}</p>`;
+            log(`当前页面: ${currentUrl}`, 'info');
+
+            resultEl.innerHTML = html;
+        }
+
+        async function testAPI() {
+            const resultEl = document.getElementById('apiResult');
+            resultEl.innerHTML = '<p>🔄 测试API连接...</p>';
+            log('开始API连接测试', 'info');
+
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                log(`API响应状态: ${response.status}`, 'info');
+
+                const data = await response.json();
+                log(`API响应数据: ${JSON.stringify(data)}`, 'info');
+
+                if (data.status === 'healthy') {
+                    resultEl.innerHTML = '<p class="success">✅ API连接正常</p>';
+                    log('API连接正常', 'success');
+                } else {
+                    resultEl.innerHTML = '<p class="error">⚠️ API状态异常</p>';
+                    log('API状态异常', 'error');
+                }
+            } catch (error) {
+                resultEl.innerHTML = `<p class="error">❌ API连接失败: ${error.message}</p>`;
+                log(`API连接失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testNormal() {
+            await generateVisualization('正态分布 均值0 标准差1');
+        }
+
+        async function testUniform() {
+            await generateVisualization('均匀分布 0到1');
+        }
+
+        async function generateVisualization(prompt) {
+            const resultEl = document.getElementById('vizResult');
+            resultEl.innerHTML = '<p>🔄 生成可视化...</p>';
+            log(`开始生成可视化: ${prompt}`, 'info');
+
+            try {
+                log(`发送POST请求到: http://localhost:8000/resolve_or_generate`, 'info');
+                log(`请求体: ${JSON.stringify({prompt: prompt, vizType: "auto", complexity: "中等", params: {}})}`, 'info');
+
+                const response = await fetch('http://localhost:8000/resolve_or_generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        vizType: 'auto',
+                        complexity: '中等',
+                        params: {}
+                    })
+                });
+
+                log(`响应状态: ${response.status} ${response.statusText}`, 'info');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                log(`响应成功: ${result.success}`, result.success ? 'success' : 'error');
+                log(`HTML内容长度: ${result.htmlContent ? result.htmlContent.length : 0}`, 'info');
+
+                if (result.success && result.htmlContent) {
+                    resultEl.innerHTML = result.htmlContent;
+                    log('HTML内容已插入到页面', 'success');
+
+                    // 检查是否有Plotly相关内容
+                    if (result.htmlContent.includes('plotly') || result.htmlContent.includes('Plotly')) {
+                        log('检测到Plotly相关内容', 'info');
+                    }
+
+                    // 强制执行脚本
+                    setTimeout(() => {
+                        const scripts = resultEl.querySelectorAll('script');
+                        log(`发现 ${scripts.length} 个脚本标签`, 'info');
+
+                        scripts.forEach((script, index) => {
+                            log(`执行脚本 ${index + 1}`, 'info');
+                            const newScript = document.createElement('script');
+                            if (script.src) {
+                                newScript.src = script.src;
+                            } else {
+                                newScript.textContent = script.textContent;
+                            }
+                            script.parentNode.replaceChild(newScript, script);
+                        });
+
+                        // 检查Plotly图表是否生成
+                        setTimeout(() => {
+                            const plotlyDivs = document.querySelectorAll('#vizResult .plotly-graph-div');
+                            log(`发现 ${plotlyDivs.length} 个Plotly图表`, plotlyDivs.length > 0 ? 'success' : 'error');
+
+                            if (plotlyDivs.length === 0) {
+                                // 检查是否有其他图表容器
+                                const allDivs = resultEl.querySelectorAll('div[id]');
+                                log(`发现 ${allDivs.length} 个带ID的div`, 'info');
+                                allDivs.forEach((div, index) => {
+                                    log(`Div ${index + 1}: ID=${div.id}, 内容长度=${div.innerHTML.length}`, 'info');
+                                });
+                            }
+                        }, 1000);
+                    }, 100);
+                } else {
+                    resultEl.innerHTML = `<p class="error">❌ 生成失败: ${result.message || '未知错误'}</p>`;
+                    log(`生成失败: ${result.message || '未知错误'}`, 'error');
+                }
+            } catch (error) {
+                resultEl.innerHTML = `<p class="error">❌ 请求失败: ${error.message}</p>`;
+                log(`请求失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 页面加载时自动检查环境
+        window.addEventListener('load', function() {
+            log('页面加载完成', 'success');
+            checkEnvironment();
+        });
+    </script>
+</body>
+</html>

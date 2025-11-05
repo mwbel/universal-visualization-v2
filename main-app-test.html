@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主应用API连接测试</title>
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-section {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        #result {
+            border: 1px solid #ccc;
+            padding: 20px;
+            min-height: 400px;
+            background: #f9f9f9;
+            margin-top: 20px;
+        }
+        .log {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>主应用API连接测试</h1>
+
+    <div class="test-section">
+        <h3>步骤1: 检查API连接</h3>
+        <button onclick="testHealth()">测试Health端点</button>
+        <div id="healthResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>步骤2: 测试可视化生成</h3>
+        <input type="text" id="vizInput" placeholder="输入可视化描述，如: 正态分布 均值0 标准差1" value="正态分布 均值0 标准差1">
+        <button onclick="testVizGeneration()">生成可视化</button>
+        <div id="vizResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>步骤3: 调试日志</h3>
+        <div id="debugLog" class="log"></div>
+        <button onclick="clearLog()">清空日志</button>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logEl.appendChild(logEntry);
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            document.getElementById('debugLog').innerHTML = '';
+        }
+
+        async function testHealth() {
+            const resultEl = document.getElementById('healthResult');
+            resultEl.innerHTML = '测试中...';
+
+            try {
+                log('开始测试health端点...');
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+
+                log(`Health响应: ${JSON.stringify(data)}`, 'success');
+                resultEl.innerHTML = `<div style="color: green;">✅ Health端点正常: ${data.status}</div>`;
+            } catch (error) {
+                log(`Health端点错误: ${error.message}`, 'error');
+                resultEl.innerHTML = `<div style="color: red;">❌ Health端点失败: ${error.message}</div>`;
+            }
+        }
+
+        async function testVizGeneration() {
+            const input = document.getElementById('vizInput').value.trim();
+            const resultEl = document.getElementById('vizResult');
+
+            if (!input) {
+                log('请输入可视化描述', 'error');
+                return;
+            }
+
+            resultEl.innerHTML = '生成中...';
+            log(`开始生成可视化: ${input}`);
+
+            try {
+                const response = await fetch('http://localhost:8000/resolve_or_generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: input,
+                        vizType: 'auto',
+                        complexity: '中等',
+                        params: {}
+                    })
+                });
+
+                log(`响应状态: ${response.status}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                log(`生成结果: ${result.success ? '成功' : '失败'}`, result.success ? 'success' : 'error');
+
+                if (result.success && result.htmlContent) {
+                    resultEl.innerHTML = result.htmlContent;
+                    log('HTML内容长度: ' + result.htmlContent.length, 'success');
+
+                    // 重新执行脚本
+                    setTimeout(() => {
+                        const scripts = resultEl.querySelectorAll('script');
+                        scripts.forEach((script, index) => {
+                            log(`执行脚本 ${index + 1}`);
+                            const newScript = document.createElement('script');
+                            newScript.textContent = script.textContent;
+                            script.parentNode.replaceChild(newScript, script);
+                        });
+                    }, 100);
+                } else {
+                    resultEl.innerHTML = `<div style="color: red;">生成失败: ${result.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                log(`生成错误: ${error.message}`, 'error');
+                resultEl.innerHTML = `<div style="color: red;">生成失败: ${error.message}</div>`;
+            }
+        }
+
+        // 页面加载时自动测试
+        window.addEventListener('load', function() {
+            log('页面加载完成');
+            testHealth();
+        });
+    </script>
+</body>
+</html>

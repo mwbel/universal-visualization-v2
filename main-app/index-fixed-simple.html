@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 简化版</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .input-section {
+            margin: 20px 0;
+        }
+        .input-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .button-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.loading { background: #d1ecf1; color: #0c5460; }
+        .char-count {
+            text-align: right;
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        #result {
+            border: 1px solid #ddd;
+            padding: 20px;
+            min-height: 400px;
+            background: white;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .examples {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .examples h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .example-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .example-btn {
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌌 万物可视化</h1>
+            <p>AI驱动的可视化平台 - 简化版</p>
+        </div>
+
+        <div class="content">
+            <div class="input-section">
+                <h3>🎯 输入您的可视化需求</h3>
+                <textarea
+                    id="mainInput"
+                    placeholder="请描述您想要的可视化，例如：&#10;• 正态分布 均值0 标准差1&#10;• 二项分布 n=20 p=0.5&#10;• 泊松分布 λ=3&#10;• 均匀分布 0到1"
+                ></textarea>
+                <div class="char-count">
+                    <span id="charCount">0 / 5000</span>
+                </div>
+
+                <div class="button-container">
+                    <button class="generate-btn" id="generateBtn" disabled>
+                        <span>✨</span>
+                        <span id="btnText">开始生成</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="status" class="status loading">
+                💡 请输入可视化需求后点击生成按钮
+            </div>
+
+            <div id="result">
+                <p style="text-align: center; color: #666; padding: 50px 0;">
+                    在上方输入框中描述您的可视化需求，然后点击"开始生成"按钮
+                </p>
+            </div>
+
+            <div class="examples">
+                <h4>💡 示例输入（点击快速填充）</h4>
+                <div class="example-buttons">
+                    <button class="example-btn" onclick="fillExample('正态分布 均值0 标准差1')">
+                        正态分布 N(0,1)
+                    </button>
+                    <button class="example-btn" onclick="fillExample('二项分布 n=20 p=0.5')">
+                        二项分布 B(20,0.5)
+                    </button>
+                    <button class="example-btn" onclick="fillExample('泊松分布 λ=3')">
+                        泊松分布 P(3)
+                    </button>
+                    <button class="example-btn" onclick="fillExample('均匀分布 0到1')">
+                        均匀分布 U(0,1)
+                    </button>
+                    <button class="example-btn" onclick="fillExample('指数分布 λ=0.5')">
+                        指数分布 Exp(0.5)
+                    </button>
+                    <button class="example-btn" onclick="fillExample('卡方分布 自由度5')">
+                        卡方分布 χ²(5)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isGenerating = false;
+
+        // 预加载Plotly
+        function loadPlotly() {
+            return new Promise((resolve, reject) => {
+                if (typeof Plotly !== 'undefined') {
+                    console.log('✅ Plotly已存在，版本:', Plotly.version);
+                    resolve();
+                    return;
+                }
+
+                console.log('📊 开始加载Plotly...');
+                const script = document.createElement('script');
+                script.src = 'https://cdn.plot.ly/plotly-2.26.0.min.js';
+                script.onload = () => {
+                    console.log('✅ Plotly加载成功，版本:', Plotly.version);
+                    resolve();
+                };
+                script.onerror = (error) => {
+                    console.error('❌ Plotly加载失败:', error);
+                    reject(error);
+                };
+                document.head.appendChild(script);
+            });
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 页面加载完成');
+
+            // 预加载Plotly
+            loadPlotly().catch(error => {
+                console.error('❌ Plotly预加载失败:', error);
+                updateStatus('⚠️ Plotly库加载失败，可视化功能可能受影响', 'error');
+            });
+
+            const input = document.getElementById('mainInput');
+            const btn = document.getElementById('generateBtn');
+            const charCount = document.getElementById('charCount');
+            const status = document.getElementById('status');
+
+            // 输入事件监听
+            input.addEventListener('input', function() {
+                const length = this.value.length;
+                charCount.textContent = `${length} / 5000`;
+
+                // 更新按钮状态
+                const hasContent = this.value.trim().length > 0;
+                btn.disabled = !hasContent;
+
+                if (hasContent) {
+                    status.className = 'status success';
+                    status.textContent = '✅ 已输入内容，可以开始生成';
+                } else {
+                    status.className = 'status loading';
+                    status.textContent = '💡 请输入可视化需求后点击生成按钮';
+                }
+            });
+
+            // 回车键监听
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey && !btn.disabled) {
+                    e.preventDefault();
+                    generateVisualization();
+                }
+            });
+
+            // 按钮点击事件
+            btn.addEventListener('click', generateVisualization);
+
+            // 初始状态
+            updateStatus('💡 请输入可视化需求后点击生成按钮', 'loading');
+        });
+
+        // 填充示例
+        function fillExample(text) {
+            const input = document.getElementById('mainInput');
+            input.value = text;
+            input.dispatchEvent(new Event('input'));
+        }
+
+        // 更新状态
+        function updateStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+        }
+
+        // 生成可视化
+        async function generateVisualization() {
+            if (isGenerating) return;
+
+            // 确保Plotly已加载
+            try {
+                await loadPlotly();
+                console.log('✅ Plotly已准备就绪');
+            } catch (error) {
+                console.error('❌ Plotly加载失败:', error);
+                updateStatus('❌ Plotly库加载失败，无法显示可视化', 'error');
+                return;
+            }
+
+            const input = document.getElementById('mainInput').value.trim();
+            if (!input) {
+                updateStatus('❌ 请输入可视化需求', 'error');
+                return;
+            }
+
+            if (input.length < 3) {
+                updateStatus('❌ 描述太短，请提供更多详细信息', 'error');
+                return;
+            }
+
+            isGenerating = true;
+            const btn = document.getElementById('generateBtn');
+            const btnText = document.getElementById('btnText');
+
+            btn.disabled = true;
+            btnText.textContent = '生成中...';
+
+            updateStatus('🔄 正在生成可视化...', 'loading');
+
+            const resultContainer = document.getElementById('result');
+            resultContainer.innerHTML = '<p style="text-align: center; padding: 50px 0;">🔄 正在处理您的请求...</p>';
+
+            try {
+                console.log('🔄 开始API调用:', input);
+
+                const response = await fetch('http://localhost:8000/resolve_or_generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: input,
+                        vizType: 'auto',
+                        complexity: '中等',
+                        params: {}
+                    })
+                });
+
+                console.log('📡 API响应状态:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('📊 API响应结果:', result);
+
+                if (result.success && result.htmlContent) {
+                    resultContainer.innerHTML = result.htmlContent;
+                    updateStatus('✅ 可视化生成成功！', 'success');
+
+                    // 重新执行脚本
+                    setTimeout(() => {
+                        console.log('🔧 开始执行脚本...');
+                        const scripts = resultContainer.querySelectorAll('script');
+                        console.log(`📊 发现 ${scripts.length} 个脚本`);
+
+                        scripts.forEach((script, index) => {
+                            console.log(`🔧 执行脚本 ${index + 1}/${scripts.length}`);
+                            console.log(`📝 脚本内容预览: ${script.textContent.substring(0, 100)}...`);
+
+                            const newScript = document.createElement('script');
+                            newScript.textContent = script.textContent;
+
+                            // 添加错误处理
+                            newScript.onerror = (error) => {
+                                console.error(`❌ 脚本 ${index + 1} 执行失败:`, error);
+                            };
+
+                            // 添加成功回调
+                            newScript.onload = () => {
+                                console.log(`✅ 脚本 ${index + 1} 执行成功`);
+                            };
+
+                            script.parentNode.replaceChild(newScript, script);
+                        });
+
+                        // 检查Plotly是否加载
+                        setTimeout(() => {
+                            if (typeof Plotly !== 'undefined') {
+                                console.log('✅ Plotly已加载，版本:', Plotly.version);
+                                console.log('📊 可视化应该已经显示');
+                            } else {
+                                console.error('❌ Plotly未加载');
+                                updateStatus('❌ Plotly库加载失败，请检查网络连接', 'error');
+                            }
+                        }, 200);
+                    }, 100);
+                } else {
+                    throw new Error(result.message || '生成失败');
+                }
+            } catch (error) {
+                console.error('❌ 生成失败:', error);
+                resultContainer.innerHTML = `
+                    <div style="text-align: center; padding: 50px 0; color: #e74c3c;">
+                        <h3>❌ 生成失败</h3>
+                        <p>${error.message}</p>
+                        <p>请检查后端服务是否运行在 http://localhost:8000</p>
+                    </div>
+                `;
+                updateStatus('❌ 生成失败: ' + error.message, 'error');
+            } finally {
+                isGenerating = false;
+                btn.disabled = false;
+                btnText.textContent = '开始生成';
+            }
+        }
+    </script>
+</body>
+</html>
