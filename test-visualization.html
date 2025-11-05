@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 前后端集成测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status.success {
+            background: #d1edff;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .quick-examples {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-examples h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .example-btn {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .result-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-container h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .result-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon {
+            display: inline-block;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 万物可视化</h1>
+            <p>前后端集成测试 - 输入需求，生成交互式可视化</p>
+        </div>
+
+        <div class="content">
+            <div id="status" class="status"></div>
+
+            <div class="input-group">
+                <label for="prompt">📝 输入您的可视化需求：</label>
+                <input type="text" id="prompt" placeholder="例如：正态分布 均值0 标准差1" value="正态分布 均值0 标准差1">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="generateVisualization()">
+                    <span class="icon">✨</span>生成可视化
+                </button>
+                <button class="btn btn-secondary" onclick="clearResults()">
+                    <span class="icon">🗑️</span>清除结果
+                </button>
+            </div>
+
+            <div class="quick-examples">
+                <h3>🚀 快速示例：</h3>
+                <button class="example-btn" onclick="setExample('正态分布 均值0 标准差1')">正态分布</button>
+                <button class="example-btn" onclick="setExample('二项分布 n=20 p=0.3')">二项分布</button>
+                <button class="example-btn" onclick="setExample('泊松分布 λ=5')">泊松分布</button>
+                <button class="example-btn" onclick="setExample('正态分布 均值2 标准差1.5')">高斯分布 μ=2 σ=1.5</button>
+            </div>
+
+            <div id="resultContainer" class="result-container">
+                <h3>📊 生成结果：</h3>
+                <div id="resultInfo" class="result-info"></div>
+                <div class="result-actions">
+                    <button class="btn btn-primary" onclick="openVisualization()">
+                        <span class="icon">👁️</span>查看可视化
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard()">
+                        <span class="icon">📋</span>复制HTML
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentResult = null;
+
+        // API客户端
+        class ApiClient {
+            constructor() {
+                this.baseURL = 'http://localhost:8000';
+            }
+
+            async request(endpoint, data) {
+                const response = await fetch(`${this.baseURL}${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            }
+
+            async generateVisualization(prompt) {
+                return this.request('/resolve_or_generate', {
+                    prompt: prompt,
+                    vizType: 'auto',
+                    complexity: '中等',
+                    params: {}
+                });
+            }
+        }
+
+        const api = new ApiClient();
+
+        // 设置示例
+        function setExample(text) {
+            document.getElementById('prompt').value = text;
+        }
+
+        // 显示状态消息
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // 生成可视化
+        async function generateVisualization() {
+            const prompt = document.getElementById('prompt').value.trim();
+
+            if (!prompt) {
+                showStatus('请输入可视化需求', 'error');
+                return;
+            }
+
+            showStatus('🔄 正在生成可视化，请稍候...', 'loading');
+
+            try {
+                currentResult = await api.generateVisualization(prompt);
+
+                if (currentResult.success) {
+                    showStatus('✅ 可视化生成成功！', 'success');
+                    displayResult(currentResult);
+                } else {
+                    showStatus(`❌ 生成失败: ${currentResult.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('生成可视化失败:', error);
+                showStatus('❌ 网络错误，请检查后端服务是否运行', 'error');
+            }
+        }
+
+        // 显示结果
+        function displayResult(result) {
+            const container = document.getElementById('resultContainer');
+            const infoDiv = document.getElementById('resultInfo');
+
+            console.log('显示结果:', result); // 调试信息
+
+            infoDiv.innerHTML = `
+                <p><strong>可视化ID:</strong> ${result.visualizationId}</p>
+                <p><strong>消息:</strong> ${result.message}</p>
+                <p><strong>HTML内容:</strong> ${result.htmlContent ? '✅ 有内容 (' + result.htmlContent.length + ' 字符)' : '❌ 无内容'}</p>
+                ${result.config ? `<p><strong>配置:</strong> <pre>${JSON.stringify(result.config, null, 2)}</pre></p>` : ''}
+                ${result.relatedTemplates && result.relatedTemplates.length > 0 ?
+                    `<p><strong>相关模板:</strong> ${result.relatedTemplates.map(t => t.name).join(', ')}</p>` : ''}
+            `;
+
+            container.style.display = 'block';
+        }
+
+        // 打开可视化
+        function openVisualization() {
+            if (!currentResult || !currentResult.htmlContent) {
+                showStatus('没有可用的可视化内容', 'error');
+                return;
+            }
+
+            try {
+                const newWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+
+                if (newWindow) {
+                    newWindow.document.write(currentResult.htmlContent);
+                    newWindow.document.close();
+                    newWindow.document.title = currentResult.config?.templateId ?
+                        `${currentResult.config.templateId} - 可视化` : '可视化结果';
+                    newWindow.focus();
+                    showStatus('✨ 可视化已在新窗口中打开', 'success');
+                } else {
+                    showStatus('❌ 无法打开新窗口，请允许弹窗', 'error');
+                }
+            } catch (error) {
+                console.error('打开可视化失败:', error);
+                showStatus('❌ 打开可视化失败', 'error');
+            }
+        }
+
+        // 复制到剪贴板
+        async function copyToClipboard() {
+            if (!currentResult || !currentResult.htmlContent) {
+                showStatus('没有可复制的内容', 'error');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(currentResult.htmlContent);
+                showStatus('📋 HTML代码已复制到剪贴板', 'success');
+            } catch (error) {
+                console.error('复制失败:', error);
+                showStatus('❌ 复制失败', 'error');
+            }
+        }
+
+        // 清除结果
+        function clearResults() {
+            currentResult = null;
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('prompt').value = '';
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加回车键支持
+            document.getElementById('prompt').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    generateVisualization();
+                }
+            });
+
+            // 检查后端连接
+            fetch('http://localhost:8000/health')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'healthy') {
+                        showStatus('✅ 后端服务连接正常', 'success');
+                    }
+                })
+                .catch(error => {
+                    console.error('后端连接失败:', error);
+                    showStatus('⚠️ 无法连接到后端服务，请确保后端正在运行', 'error');
+                });
+        });
+    </script>
+</body>
+</html>
