@@ -130,3 +130,14 @@ temp/
 
 # Claude AI files
 .claude/
+node_modules/
+dist/
+build/
+.next/
+.out/
+.turbo/
+.DS_Store
+*.zip
+*.mp4
+*.mov
+*.psd
