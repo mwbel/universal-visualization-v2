@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 修复版主应用</title>
+    <meta name="description" content="AI驱动的交互式可视化平台，支持数学、天文、物理等多学科可视化">
+
+    <!-- 预连接优化 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="styles/fusion-design.css">
+    <style>
+        /* 简化的样式用于测试 */
+        .test-section {
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #f8f9fa;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        #mainInput {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        #mainInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        #generateBtn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #generateBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        #generateBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        #resultContainer {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 500px;
+            background: white;
+            border-radius: 8px;
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.loading { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <!-- 原始的viewport容器 -->
+    <div class="viewport-container">
+        <!-- 应用头部 -->
+        <header class="app-header">
+            <div class="content-wrapper">
+                <div class="header-content">
+                    <h1 class="app-title">
+                        <span class="title-icon">🌌</span>
+                        万物可视化
+                        <span class="title-subtitle">一图胜千言</span>
+                        <span class="title-version">v3.0</span>
+                    </h1>
+
+                    <!-- 用户认证区域 -->
+                    <div class="user-auth-area">
+                        <!-- 访客模式信息显示 -->
+                        <div class="user-info guest-mode">
+                            <div class="guest-avatar">👤</div>
+                            <div class="guest-details">
+                                <span class="guest-name">访客用户</span>
+                                <span class="guest-status">演示模式</span>
+                            </div>
+                        </div>
+
+                        <!-- 导航按钮 -->
+                        <button class="nav-btn demo-btn" id="demoFeatures" title="演示功能">
+                            <span>🎯</span>
+                        </button>
+                        <button class="nav-btn" id="themeToggle" title="切换主题">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <button class="nav-btn" id="helpBtn" title="帮助">
+                            <span>❓</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- 欢迎区域 -->
+                <section class="welcome-section">
+                    <div class="welcome-container">
+                        <div class="welcome-text">
+                            <h2>🚀 欢迎使用万物可视化</h2>
+                            <p>输入你的可视化需求，AI将为你生成交互式图表</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 简化的输入区域 -->
+                <section class="test-section">
+                    <h3>🎯 开始创建您的可视化</h3>
+                    <div class="input-container">
+                        <textarea
+                            id="mainInput"
+                            placeholder="请描述你想要的可视化，例如：&#10;• 正态分布 均值0 标准差1&#10;• 二项分布 n=20 p=0.5&#10;• 泊松分布 λ=3&#10;• 均匀分布 0到1"
+                            rows="4"
+                        ></textarea>
+                        <button id="generateBtn" onclick="generateVisualization()">
+                            <span>✨ 生成可视化</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 状态显示 -->
+                <div id="statusContainer" class="status">
+                    <span id="statusText">准备就绪</span>
+                </div>
+
+                <!-- 结果区域 -->
+                <div id="resultContainer">
+                    <p style="text-align: center; color: #666; padding: 50px 0;">
+                        输入可视化需求描述，点击"生成可视化"按钮开始
+                    </p>
+                </div>
+
+                <!-- 示例提示 -->
+                <section class="test-section">
+                    <h3>💡 示例输入</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px;">
+                        <button onclick="fillExample('正态分布 均值0 标准差1')" class="example-btn" style="padding: 8px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
+                            正态分布 N(0,1)
+                        </button>
+                        <button onclick="fillExample('二项分布 n=20 p=0.5')" class="example-btn" style="padding: 8px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
+                            二项分布 B(20,0.5)
+                        </button>
+                        <button onclick="fillExample('泊松分布 λ=3')" class="example-btn" style="padding: 8px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
+                            泊松分布 P(3)
+                        </button>
+                        <button onclick="fillExample('均匀分布 0到1')" class="example-btn" style="padding: 8px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
+                            均匀分布 U(0,1) 🆕
+                        </button>
+                        <button onclick="fillExample('指数分布 λ=0.5')" class="example-btn" style="padding: 8px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
+                            指数分布 Exp(0.5) 🆕
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="app-footer">
+            <div class="content-wrapper">
+                <div class="footer-content">
+                    <p>&copy; 2025 万物可视化 v3.0 - AI驱动的可视化平台</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let currentVisualization = null;
+
+        function fillExample(text) {
+            document.getElementById('mainInput').value = text;
+            updateGenerateButton();
+        }
+
+        function updateGenerateButton() {
+            const input = document.getElementById('mainInput').value.trim();
+            const btn = document.getElementById('generateBtn');
+
+            if (input.length >= 3) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            } else {
+                btn.disabled = true;
+                btn.style.opacity = '0.6';
+            }
+        }
+
+        function updateStatus(message, type = 'success') {
+            const statusEl = document.getElementById('statusContainer');
+            const textEl = document.getElementById('statusText');
+
+            statusEl.className = `status ${type}`;
+            textEl.textContent = message;
+        }
+
+        async function generateVisualization() {
+            const prompt = document.getElementById('mainInput').value.trim();
+
+            if (!prompt) {
+                updateStatus('请输入可视化需求描述', 'error');
+                return;
+            }
+
+            if (prompt.length < 3) {
+                updateStatus('描述太短，请提供更多详细信息', 'error');
+                return;
+            }
+
+            // 禁用按钮防止重复提交
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳ 生成中...</span>';
+
+            updateStatus('正在生成可视化...', 'loading');
+            const resultContainer = document.getElementById('resultContainer');
+            resultContainer.innerHTML = '<p style="text-align: center; padding: 50px 0;">🔄 正在处理您的请求...</p>';
+
+            try {
+                console.log('发送请求到:', prompt);
+
+                const response = await fetch('http://localhost:8000/resolve_or_generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        vizType: 'auto',
+                        complexity: '中等',
+                        params: {}
+                    })
+                });
+
+                console.log('响应状态:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('生成结果:', result);
+
+                if (result.success && result.htmlContent) {
+                    resultContainer.innerHTML = result.htmlContent;
+                    currentVisualization = result;
+                    updateStatus('✅ 可视化生成成功！', 'success');
+
+                    // 重新执行脚本
+                    setTimeout(() => {
+                        const scripts = resultContainer.querySelectorAll('script');
+                        scripts.forEach((script, index) => {
+                            console.log(`执行脚本 ${index + 1}`);
+                            const newScript = document.createElement('script');
+                            newScript.textContent = script.textContent;
+                            script.parentNode.replaceChild(newScript, script);
+                        });
+                    }, 100);
+                } else {
+                    resultContainer.innerHTML = `
+                        <div style="text-align: center; padding: 50px 0; color: #e74c3c;">
+                            <h3>❌ 生成失败</h3>
+                            <p>${result.message || '未知错误'}</p>
+                        </div>
+                    `;
+                    updateStatus(`生成失败: ${result.message || '未知错误'}`, 'error');
+                }
+            } catch (error) {
+                console.error('生成错误:', error);
+                resultContainer.innerHTML = `
+                    <div style="text-align: center; padding: 50px 0; color: #e74c3c;">
+                        <h3>❌ 网络错误</h3>
+                        <p>${error.message}</p>
+                        <p>请检查后端服务是否运行在 http://localhost:8000</p>
+                    </div>
+                `;
+                updateStatus(`网络错误: ${error.message}`, 'error');
+            } finally {
+                // 恢复按钮状态
+                btn.disabled = false;
+                btn.innerHTML = '<span>✨ 生成可视化</span>';
+                updateGenerateButton();
+            }
+        }
+
+        // 输入事件监听
+        document.getElementById('mainInput').addEventListener('input', updateGenerateButton);
+
+        // 回车键触发生成
+        document.getElementById('mainInput').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                generateVisualization();
+            }
+        });
+
+        // 页面加载时检查后端连接
+        window.addEventListener('load', async function() {
+            console.log('页面加载完成，开始检查后端连接...');
+
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+
+                if (data.status === 'healthy') {
+                    updateStatus('✅ 后端服务连接正常', 'success');
+                    console.log('后端连接正常');
+                } else {
+                    updateStatus('⚠️ 后端服务状态异常', 'error');
+                    console.warn('后端状态异常:', data);
+                }
+            } catch (error) {
+                updateStatus('❌ 后端服务连接失败', 'error');
+                console.error('后端连接失败:', error);
+            }
+        });
+
+        // 初始化按钮状态
+        updateGenerateButton();
+    </script>
+</body>
+</html>

@@ -609,32 +609,49 @@ async function handleGenerate() {
  */
 async function callGenerateAPI(prompt) {
   try {
-    // 使用真实的API客户端调用后端
-    const result = await api.resolveOrGenerate(prompt, {
-      vizType: determineVisualizationType(prompt),
-      complexity: '中等',
-      params: {}
+    console.log('🔄 开始调用API:', prompt);
+
+    // 直接调用后端API
+    const response = await fetch('http://localhost:8000/resolve_or_generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        vizType: 'auto',
+        complexity: '中等',
+        params: {}
+      })
     });
+
+    console.log('📡 API响应状态:', response.status);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('📊 API响应结果:', result);
 
     if (result.success) {
       return {
-        id: result.visualizationId,
+        id: 'viz_' + Date.now(),
         type: determineVisualizationType(prompt),
         title: extractTitle(prompt),
         description: prompt,
         htmlContent: result.htmlContent,
-        config: result.config,
-        relatedTemplates: result.relatedTemplates,
+        config: result.config || {},
         createdAt: new Date().toISOString()
       };
     } else {
       throw new Error(result.message || '生成失败');
     }
   } catch (error) {
-    console.error('API调用失败:', error);
+    console.error('❌ API调用失败:', error);
 
     // 如果API调用失败，回退到模拟数据
-    console.warn('回退到模拟数据模式');
+    console.warn('⚠️ 回退到模拟数据模式');
     return new Promise(resolve => {
       setTimeout(() => {
         resolve({
@@ -918,6 +935,15 @@ function handleModuleClick(card) {
  * 处理子分类点击
  */
 function handleSubcategoryClick(e, subcategory) {
+  // 检查是否点击了链接
+  const clickedLink = e.target.closest('.subcategory-link');
+  if (clickedLink) {
+    // 如果点击的是链接，允许正常的链接跳转，不阻止默认行为
+    console.log('🔗 点击模块链接，允许跳转:', clickedLink.href);
+    return;
+  }
+
+  // 如果点击的是子分类的其他区域（非链接），则执行原来的逻辑
   e.preventDefault();
   e.stopPropagation();
 

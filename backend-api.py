@@ -137,6 +137,63 @@ def create_basic_templates():
                 {"name": "lambda", "label": "强度参数 (λ)", "type": "number", "default": 5, "min": 0.1, "max": 20, "step": 0.1}
             ],
             "examples": ["泊松分布 λ=5", "单位时间内事件发生次数", "计数分布"]
+        },
+        "uniform_distribution": {
+            "id": "uniform_distribution",
+            "name": "均匀分布",
+            "description": "均匀分布概率密度函数",
+            "category": "mathematics",
+            "subcategory": "probability",
+            "difficulty": "初级",
+            "tags": ["概率", "统计", "连续分布", "均匀概率"],
+            "keywords": ["均匀", "uniform", "连续均匀", "矩形分布", "等概率", "区间"],
+            "parameters": [
+                {"name": "a", "label": "下界 (a)", "type": "number", "default": 0, "min": -10, "max": 0, "step": 0.1},
+                {"name": "b", "label": "上界 (b)", "type": "number", "default": 1, "min": 0, "max": 10, "step": 0.1}
+            ],
+            "examples": ["均匀分布 0到1", "区间[2,5]上的均匀分布", "矩形分布 a=-1 b=1"]
+        },
+        "exponential_distribution": {
+            "id": "exponential_distribution",
+            "name": "指数分布",
+            "description": "指数分布概率密度函数",
+            "category": "mathematics",
+            "subcategory": "probability",
+            "difficulty": "中级",
+            "tags": ["概率", "统计", "连续分布", "等待时间"],
+            "keywords": ["指数", "exponential", "等待时间", "寿命", "衰减", "率参数"],
+            "parameters": [
+                {"name": "lambda", "label": "率参数 (λ)", "type": "number", "default": 1, "min": 0.1, "max": 5, "step": 0.1}
+            ],
+            "examples": ["指数分布 λ=1", "等待时间的概率分布", "寿命分布 失效率2"]
+        },
+        "chi_square_distribution": {
+            "id": "chi_square_distribution",
+            "name": "卡方分布",
+            "description": "卡方分布概率密度函数",
+            "category": "mathematics",
+            "subcategory": "probability",
+            "difficulty": "高级",
+            "tags": ["概率", "统计", "连续分布", "假设检验"],
+            "keywords": ["卡方", "chi-square", "chisquare", "自由度", "检验统计量", "拟合优度"],
+            "parameters": [
+                {"name": "k", "label": "自由度 (k)", "type": "integer", "default": 5, "min": 1, "max": 20, "step": 1}
+            ],
+            "examples": ["卡方分布 自由度5", "chi-square k=10", "拟合优度检验统计量分布"]
+        },
+        "t_distribution": {
+            "id": "t_distribution",
+            "name": "t分布",
+            "description": "学生t分布概率密度函数",
+            "category": "mathematics",
+            "subcategory": "probability",
+            "difficulty": "高级",
+            "tags": ["概率", "统计", "连续分布", "假设检验"],
+            "keywords": ["t分布", "student-t", "学生分布", "自由度", "小样本", "置信区间"],
+            "parameters": [
+                {"name": "df", "label": "自由度 (df)", "type": "integer", "default": 5, "min": 1, "max": 30, "step": 1}
+            ],
+            "examples": ["t分布 自由度5", "student-t df=10", "小样本均值分布"]
         }
     }
 
@@ -294,6 +351,14 @@ class VisualizationGenerator:
             return await self.generate_binomial_distribution_html(config)
         elif config.get("templateId") == "poisson_distribution":
             return await self.generate_poisson_distribution_html(config)
+        elif config.get("templateId") == "uniform_distribution":
+            return await self.generate_uniform_distribution_html(config)
+        elif config.get("templateId") == "exponential_distribution":
+            return await self.generate_exponential_distribution_html(config)
+        elif config.get("templateId") == "chi_square_distribution":
+            return await self.generate_chi_square_distribution_html(config)
+        elif config.get("templateId") == "t_distribution":
+            return await self.generate_t_distribution_html(config)
         else:
             # 通用可视化页面
             return await self.generate_generic_html(config, template)
@@ -1181,6 +1246,1068 @@ class VisualizationGenerator:
 </html>
         """
 
+    async def generate_uniform_distribution_html(self, config: Dict[str, Any]) -> str:
+        """生成均匀分布可视化HTML"""
+        a = config["parameters"].get("a", 0)
+        b = config["parameters"].get("b", 1)
+
+        return f"""
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>均匀分布可视化</title>
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+    <style>
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            min-height: 100vh;
+        }}
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }}
+        .content {{
+            padding: 30px;
+        }}
+        .controls {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }}
+        .control-group {{
+            display: flex;
+            flex-direction: column;
+        }}
+        .control-group label {{
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }}
+        .control-group input {{
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }}
+        .control-group input:focus {{
+            outline: none;
+            border-color: #FF6B6B;
+        }}
+        .value-display {{
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }}
+        #plot {{
+            width: 100%;
+            height: 500px;
+            border-radius: 10px;
+            overflow: hidden;
+        }}
+        .stats {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }}
+        .stat-card {{
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #FF6B6B;
+        }}
+        .stat-value {{
+            font-size: 24px;
+            font-weight: bold;
+            color: #FF6B6B;
+        }}
+        .stat-label {{
+            color: #666;
+            margin-top: 5px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 均匀分布可视化</h1>
+            <p>均匀分布概率密度函数的交互式展示</p>
+        </div>
+
+        <div class="content">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="a">下界 (a)</label>
+                    <input type="range" id="a" min="-10" max="0" step="0.1" value="{a}">
+                    <div class="value-display">a = <span id="aValue">{a}</span></div>
+                </div>
+
+                <div class="control-group">
+                    <label for="b">上界 (b)</label>
+                    <input type="range" id="b" min="0" max="10" step="0.1" value="{b}">
+                    <div class="value-display">b = <span id="bValue">{b}</span></div>
+                </div>
+            </div>
+
+            <div id="plot"></div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="meanStat">{(a + b) / 2:.2f}</div>
+                    <div class="stat-label">均值 E[X]</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="varStat">{((b - a) ** 2) / 12:.2f}</div>
+                    <div class="stat-label">方差 Var(X)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stdStat">{((b - a) / (2 * 3.464)):.2f}</div>
+                    <div class="stat-label">标准差 σ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="rangeStat">[{a}, {b}]</div>
+                    <div class="stat-label">支持域</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 均匀分布概率密度函数
+        function uniformPDF(x, a, b) {{
+            if (x >= a && x <= b) {{
+                return 1 / (b - a);
+            }} else {{
+                return 0;
+            }}
+        }}
+
+        // 生成均匀分布数据（固定范围）
+        function generateUniformData(a, b) {{
+            const x = [];
+            const y = [];
+            // 固定 x 轴范围为 [-15, 15]
+            for (let xVal = -15; xVal <= 15; xVal += 0.01) {{
+                x.push(xVal);
+                y.push(uniformPDF(xVal, a, b));
+            }}
+            return {{ x, y }};
+        }}
+
+        // 更新图表
+        function updatePlot() {{
+            const a = parseFloat(document.getElementById('a').value);
+            const b = parseFloat(document.getElementById('b').value);
+
+            const data = generateUniformData(a, b);
+
+            const trace = {{
+                x: data.x,
+                y: data.y,
+                type: 'scatter',
+                mode: 'lines',
+                name: '概率密度函数',
+                line: {{
+                    color: '#FF6B6B',
+                    width: 3
+                }},
+                fill: 'tozeroy',
+                fillcolor: 'rgba(255, 107, 107, 0.1)'
+            }};
+
+            const layout = {{
+                title: {{
+                    text: `均匀分布 U(${{a.toFixed(1)}}, ${{b.toFixed(1)}})`,
+                    font: {{
+                        size: 20,
+                        color: '#333'
+                    }}
+                }},
+                xaxis: {{
+                    title: '值 (x)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef',
+                    range: [-15, 15],
+                    autorange: false
+                }},
+                yaxis: {{
+                    title: '概率密度 f(x)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef',
+                    range: [0, 1],
+                    autorange: false
+                }},
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff',
+                hovermode: 'x',
+                margin: {{ t: 50, r: 30, b: 60, l: 70 }}
+            }};
+
+            const config = {{
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['pan2d', 'select2d', 'lasso2d', 'autoScale2d']
+            }};
+
+            Plotly.newPlot('plot', [trace], layout, config);
+
+            // 更新统计信息
+            const mean = (a + b) / 2;
+            const variance = ((b - a) ** 2) / 12;
+            const std = Math.sqrt(variance);
+
+            document.getElementById('aValue').textContent = a.toFixed(1);
+            document.getElementById('bValue').textContent = b.toFixed(1);
+            document.getElementById('meanStat').textContent = mean.toFixed(2);
+            document.getElementById('varStat').textContent = variance.toFixed(2);
+            document.getElementById('stdStat').textContent = std.toFixed(2);
+            document.getElementById('rangeStat').textContent = `[${{a.toFixed(1)}}, ${{b.toFixed(1)}}]`;
+        }}
+
+        // 事件监听
+        document.getElementById('a').addEventListener('input', updatePlot);
+        document.getElementById('b').addEventListener('input', updatePlot);
+
+        // 初始化图表
+        updatePlot();
+
+        // 添加窗口大小改变时的重绘
+        window.addEventListener('resize', function() {{
+            Plotly.Plots.resize('plot');
+        }});
+    </script>
+</body>
+</html>
+        """
+
+    async def generate_exponential_distribution_html(self, config: Dict[str, Any]) -> str:
+        """生成指数分布可视化HTML"""
+        lambda_param = config["parameters"].get("lambda", 1)
+
+        return f"""
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指数分布可视化</title>
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+    <style>
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B6B 100%);
+            min-height: 100vh;
+        }}
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B6B 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }}
+        .content {{
+            padding: 30px;
+        }}
+        .controls {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }}
+        .control-group {{
+            display: flex;
+            flex-direction: column;
+        }}
+        .control-group label {{
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }}
+        .control-group input {{
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }}
+        .control-group input:focus {{
+            outline: none;
+            border-color: #FF8C42;
+        }}
+        .value-display {{
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }}
+        #plot {{
+            width: 100%;
+            height: 500px;
+            border-radius: 10px;
+            overflow: hidden;
+        }}
+        .stats {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }}
+        .stat-card {{
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #FF8C42;
+        }}
+        .stat-value {{
+            font-size: 24px;
+            font-weight: bold;
+            color: #FF8C42;
+        }}
+        .stat-label {{
+            color: #666;
+            margin-top: 5px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 指数分布可视化</h1>
+            <p>指数分布概率密度函数的交互式展示</p>
+        </div>
+
+        <div class="content">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="lambda">率参数 (λ)</label>
+                    <input type="range" id="lambda" min="0.1" max="5" step="0.1" value="{lambda_param}">
+                    <div class="value-display">λ = <span id="lambdaValue">{lambda_param}</span></div>
+                </div>
+            </div>
+
+            <div id="plot"></div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="meanStat">{1/lambda_param:.2f}</div>
+                    <div class="stat-label">均值 E[X]</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="varStat">{1/(lambda_param**2):.2f}</div>
+                    <div class="stat-label">方差 Var(X)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stdStat">{1/lambda_param:.2f}</div>
+                    <div class="stat-label">标准差 σ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="medianStat">{0.6931/lambda_param:.2f}</div>
+                    <div class="stat-label">中位数</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 指数分布概率密度函数
+        function exponentialPDF(x, lambda) {{
+            if (x >= 0) {{
+                return lambda * Math.exp(-lambda * x);
+            }} else {{
+                return 0;
+            }}
+        }}
+
+        // 生成指数分布数据（固定范围）
+        function generateExponentialData(lambda) {{
+            const x = [];
+            const y = [];
+            // 固定 x 轴范围为 [0, 15]
+            for (let xVal = 0; xVal <= 15; xVal += 0.01) {{
+                x.push(xVal);
+                y.push(exponentialPDF(xVal, lambda));
+            }}
+            return {{ x, y }};
+        }}
+
+        // 更新图表
+        function updatePlot() {{
+            const lambda = parseFloat(document.getElementById('lambda').value);
+
+            const data = generateExponentialData(lambda);
+
+            const trace = {{
+                x: data.x,
+                y: data.y,
+                type: 'scatter',
+                mode: 'lines',
+                name: '概率密度函数',
+                line: {{
+                    color: '#FF8C42',
+                    width: 3
+                }},
+                fill: 'tozeroy',
+                fillcolor: 'rgba(255, 140, 66, 0.1)'
+            }};
+
+            const layout = {{
+                title: {{
+                    text: `指数分布 Exp(${{lambda.toFixed(1)}})`,
+                    font: {{
+                        size: 20,
+                        color: '#333'
+                    }}
+                }},
+                xaxis: {{
+                    title: '值 (x)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef',
+                    range: [0, 15],
+                    autorange: false
+                }},
+                yaxis: {{
+                    title: '概率密度 f(x)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef',
+                    range: [0, 5],
+                    autorange: false
+                }},
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff',
+                hovermode: 'x',
+                margin: {{ t: 50, r: 30, b: 60, l: 70 }}
+            }};
+
+            const config = {{
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['pan2d', 'select2d', 'lasso2d', 'autoScale2d']
+            }};
+
+            Plotly.newPlot('plot', [trace], layout, config);
+
+            // 更新统计信息
+            const mean = 1 / lambda;
+            const variance = 1 / (lambda * lambda);
+            const std = Math.sqrt(variance);
+            const median = Math.log(2) / lambda;
+
+            document.getElementById('lambdaValue').textContent = lambda.toFixed(1);
+            document.getElementById('meanStat').textContent = mean.toFixed(2);
+            document.getElementById('varStat').textContent = variance.toFixed(2);
+            document.getElementById('stdStat').textContent = std.toFixed(2);
+            document.getElementById('medianStat').textContent = median.toFixed(2);
+        }}
+
+        // 事件监听
+        document.getElementById('lambda').addEventListener('input', updatePlot);
+
+        // 初始化图表
+        updatePlot();
+
+        // 添加窗口大小改变时的重绘
+        window.addEventListener('resize', function() {{
+            Plotly.Plots.resize('plot');
+        }});
+    </script>
+</body>
+</html>
+        """
+
+    async def generate_chi_square_distribution_html(self, config: Dict[str, Any]) -> str:
+        """生成卡方分布可视化HTML"""
+        k = config["parameters"].get("k", 5)
+
+        return f"""
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡方分布可视化</title>
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+    <style>
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #9B59B6 0%, #3498DB 100%);
+            min-height: 100vh;
+        }}
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #9B59B6 0%, #3498DB 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }}
+        .content {{
+            padding: 30px;
+        }}
+        .controls {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }}
+        .control-group {{
+            display: flex;
+            flex-direction: column;
+        }}
+        .control-group label {{
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }}
+        .control-group input {{
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }}
+        .control-group input:focus {{
+            outline: none;
+            border-color: #9B59B6;
+        }}
+        .value-display {{
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }}
+        #plot {{
+            width: 100%;
+            height: 500px;
+            border-radius: 10px;
+            overflow: hidden;
+        }}
+        .stats {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }}
+        .stat-card {{
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #9B59B6;
+        }}
+        .stat-value {{
+            font-size: 24px;
+            font-weight: bold;
+            color: #9B59B6;
+        }}
+        .stat-label {{
+            color: #666;
+            margin-top: 5px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 卡方分布可视化</h1>
+            <p>卡方分布概率密度函数的交互式展示</p>
+        </div>
+
+        <div class="content">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="k">自由度 (k)</label>
+                    <input type="range" id="k" min="1" max="20" step="1" value="{k}">
+                    <div class="value-display">k = <span id="kValue">{k}</span></div>
+                </div>
+            </div>
+
+            <div id="plot"></div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="meanStat">{k}</div>
+                    <div class="stat-label">均值 E[X]</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="varStat">{2*k}</div>
+                    <div class="stat-label">方差 Var(X)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stdStat">{(2*k)**0.5:.2f}</div>
+                    <div class="stat-label">标准差 σ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="modeStat">{max(0, k-2)}</div>
+                    <div class="stat-label">众数</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 卡方分布概率密度函数（使用近似计算）
+        function chiSquarePDF(x, k) {{
+            if (x <= 0) return 0;
+
+            // 使用伽马函数近似
+            const logGamma = (z) => {{
+                // Lanczos近似
+                const g = 7;
+                const coeff = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+                              771.32342877765313, -176.61502916214059, 12.507343278686905,
+                              -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+
+                if (z < 0.5) {{
+                    return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - logGamma(1 - z);
+                }}
+
+                z -= 1;
+                let x = coeff[0];
+                for (let i = 1; i < g + 2; i++) {{
+                    x += coeff[i] / (z + i);
+                }}
+
+                const t = z + g + 0.5;
+                return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+            }};
+
+            const halfK = k / 2;
+            const logGammaHalfK = logGamma(halfK);
+
+            return Math.exp(-x/2) * Math.pow(x, halfK-1) / (Math.pow(2, halfK) * Math.exp(logGammaHalfK));
+        }}
+
+        // 生成卡方分布数据（固定范围）
+        function generateChiSquareData(k) {{
+            const x = [];
+            const y = [];
+            // 固定 x 轴范围为 [0, 50]
+            for (let xVal = 0; xVal <= 50; xVal += 0.01) {{
+                x.push(xVal);
+                y.push(chiSquarePDF(xVal, k));
+            }}
+            return {{ x, y }};
+        }}
+
+        // 更新图表
+        function updatePlot() {{
+            const k = parseInt(document.getElementById('k').value);
+
+            const data = generateChiSquareData(k);
+
+            const trace = {{
+                x: data.x,
+                y: data.y,
+                type: 'scatter',
+                mode: 'lines',
+                name: '概率密度函数',
+                line: {{
+                    color: '#9B59B6',
+                    width: 3
+                }},
+                fill: 'tozeroy',
+                fillcolor: 'rgba(155, 89, 182, 0.1)'
+            }};
+
+            const layout = {{
+                title: {{
+                    text: `卡方分布 χ²(${{k}})`,
+                    font: {{
+                        size: 20,
+                        color: '#333'
+                    }}
+                }},
+                xaxis: {{
+                    title: '值 (x)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef',
+                    range: [0, 50],
+                    autorange: false
+                }},
+                yaxis: {{
+                    title: '概率密度 f(x)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef',
+                    range: [0, 0.5],
+                    autorange: false
+                }},
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff',
+                hovermode: 'x',
+                margin: {{ t: 50, r: 30, b: 60, l: 70 }}
+            }};
+
+            const config = {{
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['pan2d', 'select2d', 'lasso2d', 'autoScale2d']
+            }};
+
+            Plotly.newPlot('plot', [trace], layout, config);
+
+            // 更新统计信息
+            const mean = k;
+            const variance = 2 * k;
+            const std = Math.sqrt(variance);
+            const mode = Math.max(0, k - 2);
+
+            document.getElementById('kValue').textContent = k;
+            document.getElementById('meanStat').textContent = mean.toFixed(2);
+            document.getElementById('varStat').textContent = variance.toFixed(2);
+            document.getElementById('stdStat').textContent = std.toFixed(2);
+            document.getElementById('modeStat').textContent = mode.toFixed(2);
+        }}
+
+        // 事件监听
+        document.getElementById('k').addEventListener('input', updatePlot);
+
+        // 初始化图表
+        updatePlot();
+
+        // 添加窗口大小改变时的重绘
+        window.addEventListener('resize', function() {{
+            Plotly.Plots.resize('plot');
+        }});
+    </script>
+</body>
+</html>
+        """
+
+    async def generate_t_distribution_html(self, config: Dict[str, Any]) -> str:
+        """生成t分布可视化HTML"""
+        df = config["parameters"].get("df", 5)
+
+        return f"""
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>t分布可视化</title>
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+    <style>
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%);
+            min-height: 100vh;
+        }}
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }}
+        .content {{
+            padding: 30px;
+        }}
+        .controls {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }}
+        .control-group {{
+            display: flex;
+            flex-direction: column;
+        }}
+        .control-group label {{
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }}
+        .control-group input {{
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }}
+        .control-group input:focus {{
+            outline: none;
+            border-color: #2ECC71;
+        }}
+        .value-display {{
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }}
+        #plot {{
+            width: 100%;
+            height: 500px;
+            border-radius: 10px;
+            overflow: hidden;
+        }}
+        .stats {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }}
+        .stat-card {{
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #2ECC71;
+        }}
+        .stat-value {{
+            font-size: 24px;
+            font-weight: bold;
+            color: #2ECC71;
+        }}
+        .stat-label {{
+            color: #666;
+            margin-top: 5px;
+        }}
+        .comparison-note {{
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #2ECC71;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 t分布可视化</h1>
+            <p>学生t分布概率密度函数的交互式展示</p>
+        </div>
+
+        <div class="content">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="df">自由度 (df)</label>
+                    <input type="range" id="df" min="1" max="30" step="1" value="{df}">
+                    <div class="value-display">df = <span id="dfValue">{df}</span></div>
+                </div>
+            </div>
+
+            <div id="plot"></div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="meanStat">0</div>
+                    <div class="stat-label">均值 E[X]</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="varStat">{df/(df-2):.2f}</div>
+                    <div class="stat-label">方差 Var(X)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stdStat">{(df/(df-2))**0.5:.2f}</div>
+                    <div class="stat-label">标准差 σ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="dfDisplay">{df}</div>
+                    <div class="stat-label">自由度</div>
+                </div>
+            </div>
+
+            <div class="comparison-note">
+                <strong>💡 说明：</strong> 随着自由度增加，t分布逐渐趋近于标准正态分布。当df > 30时，t分布与正态分布非常相似。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // t分布概率密度函数
+        function tPDF(x, df) {{
+            const gamma = (z) => {{
+                // 使用近似计算
+                if (z < 0.5) {{
+                    return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
+                }}
+                z -= 1;
+                let result = Math.sqrt(2 * Math.PI) / z;
+                result *= Math.pow((z + Math.E) / Math.E, z);
+                return result;
+            }};
+
+            const coeff = gamma((df + 1) / 2) / (Math.sqrt(df * Math.PI) * gamma(df / 2));
+            return coeff * Math.pow(1 + (x * x) / df, -(df + 1) / 2);
+        }}
+
+        // 标准正态分布（用于对比）
+        function normalPDF(x) {{
+            return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * x * x);
+        }}
+
+        // 生成t分布数据（固定范围）
+        function generateTData(df) {{
+            const x = [];
+            const tY = [];
+            const normalY = [];
+
+            // 固定 x 轴范围为 [-6, 6]
+            for (let xVal = -6; xVal <= 6; xVal += 0.01) {{
+                x.push(xVal);
+                tY.push(tPDF(xVal, df));
+                normalY.push(normalPDF(xVal));
+            }}
+            return {{ x, tY, normalY }};
+        }}
+
+        // 更新图表
+        function updatePlot() {{
+            const df = parseInt(document.getElementById('df').value);
+
+            const data = generateTData(df);
+
+            const tTrace = {{
+                x: data.x,
+                y: data.tY,
+                type: 'scatter',
+                mode: 'lines',
+                name: `t分布 (df=${{df}})`,
+                line: {{
+                    color: '#2ECC71',
+                    width: 3
+                }}
+            }};
+
+            const normalTrace = {{
+                x: data.x,
+                y: data.normalY,
+                type: 'scatter',
+                mode: 'lines',
+                name: '标准正态分布',
+                line: {{
+                    color: '#95A5A6',
+                    width: 2,
+                    dash: 'dash'
+                }}
+            }};
+
+            const layout = {{
+                title: {{
+                    text: `t分布 vs 标准正态分布 (df=${{df}})`,
+                    font: {{
+                        size: 20,
+                        color: '#333'
+                    }}
+                }},
+                xaxis: {{
+                    title: '值 (x)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef',
+                    range: [-6, 6],
+                    autorange: false
+                }},
+                yaxis: {{
+                    title: '概率密度 f(x)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef',
+                    range: [0, 0.45],
+                    autorange: false
+                }},
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff',
+                hovermode: 'x',
+                margin: {{ t: 50, r: 30, b: 60, l: 70 }},
+                legend: {{
+                    x: 0.7,
+                    y: 0.9,
+                    bgcolor: 'rgba(255,255,255,0.8)'
+                }}
+            }};
+
+            const config = {{
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['pan2d', 'select2d', 'lasso2d', 'autoScale2d']
+            }};
+
+            Plotly.newPlot('plot', [tTrace, normalTrace], layout, config);
+
+            // 更新统计信息
+            const mean = 0;
+            const variance = df > 2 ? df / (df - 2) : 'undefined';
+            const std = df > 2 ? Math.sqrt(variance) : 'undefined';
+
+            document.getElementById('dfValue').textContent = df;
+            document.getElementById('meanStat').textContent = mean.toFixed(2);
+            document.getElementById('varStat').textContent = typeof variance === 'number' ? variance.toFixed(2) : '∞';
+            document.getElementById('stdStat').textContent = typeof std === 'number' ? std.toFixed(2) : '∞';
+            document.getElementById('dfDisplay').textContent = df;
+        }}
+
+        // 事件监听
+        document.getElementById('df').addEventListener('input', updatePlot);
+
+        // 初始化图表
+        updatePlot();
+
+        // 添加窗口大小改变时的重绘
+        window.addEventListener('resize', function() {{
+            Plotly.Plots.resize('plot');
+        }});
+    </script>
+</body>
+</html>
+        """
+
     async def find_related_templates(self, template: Optional[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """查找相关模板推荐"""
         if not template:
@@ -1258,6 +2385,75 @@ async def get_registry():
         "types": ["plot", "chart", "graph", "simulation"],
         "complexities": ["初级", "中级", "高级"],
         "totalTemplates": len([t for t in templates_cache.values() if isinstance(t, dict) and 'id' in t])
+    }
+
+@app.get("/debug/templates")
+async def debug_templates():
+    """调试模板缓存"""
+    valid_templates = [t for t in templates_cache.values() if isinstance(t, dict) and 'id' in t]
+    return {
+        "totalCacheEntries": len(templates_cache),
+        "validTemplates": len(valid_templates),
+        "templateIds": [t.get('id') for t in valid_templates],
+        "templateNames": [t.get('name') for t in valid_templates],
+        "keywords": {t.get('id'): t.get('keywords', []) for t in valid_templates if t.get('keywords')}
+    }
+
+@app.post("/debug/match")
+async def debug_match(request: dict):
+    """调试模板匹配"""
+    prompt = request.get('prompt', '')
+
+    # 解析需求
+    requirement = {
+        "original": prompt,
+        "type": "auto",
+        "parameters": {},
+        "keywords": []
+    }
+
+    prompt_lower = prompt.lower()
+
+    # 提取关键词
+    keywords = []
+    for key, template in templates_cache.items():
+        if isinstance(template, dict) and 'keywords' in template:
+            for keyword in template.get('keywords', []):
+                if keyword.lower() in prompt_lower:
+                    keywords.append(keyword)
+
+    requirement["keywords"] = keywords
+
+    # 匹配模板
+    best_template = None
+    best_score = 0
+
+    for key, template in templates_cache.items():
+        if isinstance(template, dict) and 'keywords' in template:
+            score = 0
+            for keyword in requirement["keywords"]:
+                if keyword in [k.lower() for k in template.get('keywords', [])]:
+                    score += 1
+
+            if score > best_score:
+                best_score = score
+                best_template = template
+
+    return {
+        "prompt": prompt,
+        "extractedKeywords": keywords,
+        "bestMatch": best_template.get('id') if best_template else None,
+        "bestMatchName": best_template.get('name') if best_template else None,
+        "bestScore": best_score,
+        "allMatches": [
+            {
+                "id": t.get('id'),
+                "name": t.get('name'),
+                "score": sum(1 for kw in keywords if kw in [k.lower() for k in t.get('keywords', [])])
+            }
+            for t in templates_cache.values()
+            if isinstance(t, dict) and 'keywords' in t
+        ]
     }
 
 # 启动时加载模板

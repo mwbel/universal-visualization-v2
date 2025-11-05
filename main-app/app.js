@@ -1848,15 +1848,16 @@ ${fallbackError.stack}
       this.components.apiClient = {
         resolveOrGenerate: async (prompt, options = {}) => {
           // 最简单的API调用实现
-          const response = await fetch('/api/resolve_or_generate', {
+          const response = await fetch('http://localhost:8000/resolve_or_generate', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               prompt: prompt,
-              viz_type: options.vizType || '自动',
-              complexity: options.complexity || '中等'
+              vizType: options.vizType || 'auto',
+              complexity: options.complexity || '中等',
+              params: options.params || {}
             })
           });
 

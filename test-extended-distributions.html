@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扩展分布类型测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .distribution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .distribution-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .distribution-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .card-normal {
+            border-left-color: #667eea;
+        }
+
+        .card-binomial {
+            border-left-color: #f093fb;
+        }
+
+        .card-poisson {
+            border-left-color: #4facfe;
+        }
+
+        .card-uniform {
+            border-left-color: #FF6B6B;
+        }
+
+        .card-exponential {
+            border-left-color: #FF8C42;
+        }
+
+        .card-chisquare {
+            border-left-color: #9B59B6;
+        }
+
+        .card-t {
+            border-left-color: #2ECC71;
+        }
+
+        .distribution-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .distribution-desc {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .test-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .test-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .params-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .params-info strong {
+            color: #333;
+        }
+
+        .new-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status {
+            background: #e8f5e8;
+            color: #2d5a2d;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .iframe-container {
+            margin-top: 20px;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+            display: none;
+        }
+
+        .iframe-container h4 {
+            margin-top: 0;
+            color: #666;
+        }
+
+        .preview-frame {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎲 扩展分布类型测试</h1>
+            <p>测试新增的4种概率分布可视化：均匀分布、指数分布、卡方分布、t分布</p>
+        </div>
+
+        <div class="status">
+            <strong>🔧 后端服务状态：</strong>
+            <span id="backendStatus">检查中...</span>
+        </div>
+
+        <div class="distribution-grid">
+            <!-- 原有分布 -->
+            <div class="distribution-card card-normal">
+                <div class="distribution-title">正态分布</div>
+                <div class="distribution-desc">高斯分布，对称的钟形曲线</div>
+                <div class="test-buttons">
+                    <button class="test-btn" onclick="testDistribution('正态分布 均值0 标准差1')">标准正态 N(0,1)</button>
+                    <button class="test-btn" onclick="testDistribution('正态分布 均值3 标准差2')">N(3,2²)</button>
+                </div>
+                <div class="params-info">
+                    <strong>参数：</strong> 均值 μ ∈ [-10,10]，标准差 σ ∈ [0.1,5]
+                </div>
+            </div>
+
+            <div class="distribution-card card-binomial">
+                <div class="distribution-title">二项分布</div>
+                <div class="distribution-desc">n次伯努利试验中成功次数的分布</div>
+                <div class="test-buttons">
+                    <button class="test-btn" onclick="testDistribution('二项分布 n=20 p=0.5')">B(20,0.5)</button>
+                    <button class="test-btn" onclick="testDistribution('二项分布 n=30 p=0.7')">B(30,0.7)</button>
+                </div>
+                <div class="params-info">
+                    <strong>参数：</strong> 试验次数 n ∈ [1,100]，成功概率 p ∈ [0,1]
+                </div>
+            </div>
+
+            <div class="distribution-card card-poisson">
+                <div class="distribution-title">泊松分布</div>
+                <div class="distribution-desc">单位时间内事件发生次数的分布</div>
+                <div class="test-buttons">
+                    <button class="test-btn" onclick="testDistribution('泊松分布 λ=3')">P(3)</button>
+                    <button class="test-btn" onclick="testDistribution('泊松分布 λ=10')">P(10)</button>
+                </div>
+                <div class="params-info">
+                    <strong>参数：</strong> 强度参数 λ ∈ [0.1,20]
+                </div>
+            </div>
+
+            <!-- 新增分布 -->
+            <div class="distribution-card card-uniform">
+                <div class="distribution-title">
+                    均匀分布
+                    <span class="new-badge">新增</span>
+                </div>
+                <div class="distribution-desc">区间内等概率的连续分布，矩形分布</div>
+                <div class="test-buttons">
+                    <button class="test-btn" onclick="testDistribution('均匀分布 0到1')">U(0,1)</button>
+                    <button class="test-btn" onclick="testDistribution('均匀分布 -2到3')">U(-2,3)</button>
+                </div>
+                <div class="params-info">
+                    <strong>参数：</strong> 下界 a ∈ [-10,0]，上界 b ∈ [0,10]
+                </div>
+            </div>
+
+            <div class="distribution-card card-exponential">
+                <div class="distribution-title">
+                    指数分布
+                    <span class="new-badge">新增</span>
+                </div>
+                <div class="distribution-desc">描述等待时间或寿命的无记忆性分布</div>
+                <div class="test-buttons">
+                    <button class="test-btn" onclick="testDistribution('指数分布 λ=0.5')">Exp(0.5)</button>
+                    <button class="test-btn" onclick="testDistribution('指数分布 λ=2')">Exp(2)</button>
+                </div>
+                <div class="params-info">
+                    <strong>参数：</strong> 率参数 λ ∈ [0.1,5]
+                </div>
+            </div>
+
+            <div class="distribution-card card-chisquare">
+                <div class="distribution-title">
+                    卡方分布
+                    <span class="new-badge">新增</span>
+                </div>
+                <div class="distribution-desc">用于拟合优度检验和独立性检验</div>
+                <div class="test-buttons">
+                    <button class="test-btn" onclick="testDistribution('卡方分布 自由度5')">χ²(5)</button>
+                    <button class="test-btn" onclick="testDistribution('卡方分布 k=10')">χ²(10)</button>
+                </div>
+                <div class="params-info">
+                    <strong>参数：</strong> 自由度 k ∈ [1,20]
+                </div>
+            </div>
+
+            <div class="distribution-card card-t">
+                <div class="distribution-title">
+                    t分布
+                    <span class="new-badge">新增</span>
+                </div>
+                <div class="distribution-desc">小样本均值估计，包含正态分布对比</div>
+                <div class="test-buttons">
+                    <button class="test-btn" onclick="testDistribution('t分布 自由度5')">t(5)</button>
+                    <button class="test-btn" onclick="testDistribution('t分布 df=15')">t(15)</button>
+                </div>
+                <div class="params-info">
+                    <strong>参数：</strong> 自由度 df ∈ [1,30]，与正态分布对比
+                </div>
+            </div>
+        </div>
+
+        <div id="resultContainer" class="iframe-container">
+            <h4>👁️ 可视化预览</h4>
+            <iframe id="previewFrame" class="preview-frame"></iframe>
+        </div>
+    </div>
+
+    <script>
+        async function testDistribution(prompt) {
+            console.log('测试分布:', prompt);
+
+            try {
+                const response = await fetch('http://localhost:8000/resolve_or_generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        vizType: 'auto',
+                        complexity: '中等',
+                        params: {}
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('生成结果:', result);
+
+                if (result.success && result.htmlContent) {
+                    // 在iframe中显示
+                    const iframe = document.getElementById('previewFrame');
+                    iframe.srcdoc = result.htmlContent;
+                    document.getElementById('resultContainer').style.display = 'block';
+
+                    // 滚动到结果区域
+                    document.getElementById('resultContainer').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                } else {
+                    alert('生成失败: ' + (result.message || '未知错误'));
+                }
+            } catch (error) {
+                console.error('测试失败:', error);
+                alert('测试失败: ' + error.message);
+            }
+        }
+
+        // 检查后端连接
+        async function checkBackend() {
+            const statusElement = document.getElementById('backendStatus');
+
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+
+                if (data.status === 'healthy') {
+                    statusElement.textContent = '✅ 连接正常';
+                    statusElement.style.color = '#27ae60';
+                } else {
+                    statusElement.textContent = '⚠️ 状态异常';
+                    statusElement.style.color = '#f39c12';
+                }
+            } catch (error) {
+                console.error('后端连接失败:', error);
+                statusElement.textContent = '❌ 连接失败，请确保后端运行在 http://localhost:8000';
+                statusElement.style.color = '#e74c3c';
+            }
+        }
+
+        // 页面加载时检查后端连接
+        document.addEventListener('DOMContentLoaded', checkBackend);
+
+        // 定期检查后端状态
+        setInterval(checkBackend, 30000); // 每30秒检查一次
+    </script>
+</body>
+</html>
