@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>布局测试 - 简化版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: block;
+        }
+
+        /* 测试头部 */
+        .test-header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 测试内容 */
+        .test-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 400px;
+        }
+
+        .test-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* 测试底部 */
+        .test-footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 布局指示器 */
+        .layout-debug {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 255, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 9999;
+        }
+
+        .section-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 255, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-debug">📏 调试模式</div>
+    <div class="section-indicator">📐 正常布局</div>
+
+    <!-- 测试头部 -->
+    <header class="test-header">
+        <h1>🌌 万物可视化 - 布局测试</h1>
+        <p>如果看到正常的上下布局，说明修复成功</p>
+    </header>
+
+    <!-- 测试内容 -->
+    <main class="test-content">
+        <div class="test-box">
+            <h2>📊 主要内容区域</h2>
+            <p>这个内容应该在页面中央，没有被异常拉伸或排列。</p>
+        </div>
+
+        <div class="test-box">
+            <h2>🎯 布局检查项</h2>
+            <ul>
+                <li>✅ 头部在页面顶部</li>
+                <li>✅ 内容在页面中央</li>
+                <li>✅ 底部在页面底部</li>
+                <li>✅ 没有左中右三栏布局</li>
+                <li>✅ 响应式设计正常</li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- 测试底部 -->
+    <footer class="test-footer">
+        <p>© 2025 万物可视化项目 - 布局测试页面</p>
+        <p>如果页面显示正常，请访问主页面: <a href="index.html" style="color: #667eea;">主页</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('布局测试页面加载完成');
+
+            // 检查实际布局
+            const header = document.querySelector('.test-header');
+            const content = document.querySelector('.test-content');
+            const footer = document.querySelector('.test-footer');
+
+            if (header && content && footer) {
+                const headerRect = header.getBoundingClientRect();
+                const contentRect = content.getBoundingClientRect();
+                const footerRect = footer.getBoundingClientRect();
+
+                console.log('头部位置:', headerRect.top, headerRect.height);
+                console.log('内容位置:', contentRect.top, contentRect.height);
+                console.log('底部位置:', footerRect.top, footerRect.height);
+
+                // 验证是否是正常的上下布局
+                if (headerRect.top < 50 && contentRect.top > headerRect.bottom && footerRect.top > contentRect.bottom) {
+                    document.querySelector('.section-indicator').textContent = '✅ 上下布局正常';
+                    document.querySelector('.section-indicator').style.background = 'rgba(0, 255, 0, 0.8)';
+                } else {
+                    document.querySelector('.section-indicator').textContent = '❌ 布局异常';
+                    document.querySelector('.section-indicator').style.background = 'rgba(255, 0, 0, 0.8)';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

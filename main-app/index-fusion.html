@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 一图胜千言</title>
+    <meta name="description" content="AI驱动的交互式可视化平台，支持数学、天文、物理等多学科可视化">
+
+    <!-- 预连接优化 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="styles/fusion-design.css">
+</head>
+<body>
+    <!-- 视口容器 - 新水平布局系统 -->
+    <div class="viewport-container">
+        <!-- 应用头部 -->
+        <header class="app-header">
+            <div class="content-wrapper">
+                <div class="header-content">
+                    <h1 class="app-title">
+                        <span class="title-icon">🌌</span>
+                        万物可视化
+                        <span class="title-subtitle">一图胜千言</span>
+                        <span class="title-version">v3.0</span>
+                    </h1>
+
+                    <!-- 用户认证区域 -->
+                    <div class="user-auth-area">
+                        <!-- 访客模式信息显示 -->
+                        <div class="user-info guest-mode">
+                            <div class="guest-avatar">👤</div>
+                            <div class="guest-details">
+                                <span class="guest-name">访客用户</span>
+                                <span class="guest-status">演示模式</span>
+                            </div>
+                        </div>
+
+                        <!-- 导航按钮 -->
+                        <button class="nav-btn demo-btn" id="demoFeatures" title="演示功能">
+                            <span>🎯</span>
+                        </button>
+                        <button class="nav-btn" id="themeToggle" title="切换主题">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <button class="nav-btn" id="helpBtn" title="帮助">
+                            <span>❓</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 快速导航 -->
+                <nav class="quick-nav">
+                    <div class="quick-nav-container">
+                        <a href="#mathematics-section" class="quick-nav-item">
+                            <span class="nav-icon">📐</span>
+                            <span class="nav-label">数学可视化</span>
+                        </a>
+                        <a href="#astronomy-section" class="quick-nav-item">
+                            <span class="nav-icon">🔭</span>
+                            <span class="nav-label">天文可视化</span>
+                        </a>
+                        <a href="#physics-section" class="quick-nav-item">
+                            <span class="nav-icon">⚛️</span>
+                            <span class="nav-label">物理可视化</span>
+                        </a>
+                        <a href="#chemistry-section" class="quick-nav-item">
+                            <span class="nav-icon">🧪</span>
+                            <span class="nav-label">化学可视化</span>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="app-main">
+            <div class="content-wrapper">
+                <!-- 欢迎区域 -->
+                <section class="welcome-section">
+                    <div class="welcome-content">
+                        <h2 class="welcome-title">AI驱动的可视化平台</h2>
+                        <p class="welcome-subtitle">探索数学、天文、物理等多学科的可视化世界，让复杂概念变得直观易懂</p>
+
+                        <!-- 快速开始卡片 -->
+                        <div class="quick-start-cards">
+                            <div class="quick-start-card" data-action="text">
+                                <div class="card-icon">💬</div>
+                                <h3 class="card-title">文本描述</h3>
+                                <p class="card-desc">用自然语言描述您想要的可视化</p>
+                            </div>
+                            <div class="quick-start-card" data-action="template">
+                                <div class="card-icon">📋</div>
+                                <h3 class="card-title">选择模板</h3>
+                                <p class="card-desc">从丰富的模板库中快速选择</p>
+                            </div>
+                            <div class="quick-start-card" data-action="upload">
+                                <div class="card-icon">📁</div>
+                                <h3 class="card-title">上传数据</h3>
+                                <p class="card-desc">上传您的数据进行可视化</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 输入区域 -->
+                <section class="input-section">
+                    <div class="input-container">
+                        <h3 class="section-title">开始创建您的可视化</h3>
+
+                        <!-- 全局搜索 -->
+                        <div class="global-search">
+                            <div class="search-container">
+                                <input
+                                    type="text"
+                                    id="globalSearchInput"
+                                    class="global-search-input"
+                                    placeholder="搜索可视化概念..."
+                                    autocomplete="off"
+                                >
+                                <button class="search-btn" id="globalSearchBtn" title="搜索">
+                                    <span>🔍</span>
+                                </button>
+                            </div>
+                            <div class="search-suggestions" id="searchSuggestions" style="display: none;">
+                                <div class="suggestions-header">
+                                    <span class="suggestions-title">💡 搜索建议</span>
+                                    <button class="close-suggestions" id="closeSearchSuggestions">×</button>
+                                </div>
+                                <div class="suggestions-list" id="searchSuggestionsList">
+                                    <!-- 动态生成搜索建议 -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 输入模式切换 -->
+                        <div class="input-mode-toggle">
+                            <button class="mode-btn active" data-mode="text">文本输入</button>
+                            <button class="mode-btn" data-mode="template">模板选择</button>
+                            <button class="mode-btn" data-mode="concept">概念搜索</button>
+                        </div>
+
+                        <!-- 文本输入模式 -->
+                        <div class="input-mode-panel active" id="textInputPanel">
+                            <div class="smart-input-container">
+                                <textarea
+                                    id="mainInput"
+                                    class="smart-input"
+                                    placeholder="请描述您想要创建的可视化，例如：&#10;• 正态分布 均值0 标准差1&#10;• 行星运动轨迹 地球 火星&#10;• 简谐振动 振幅2 频率1Hz&#10;• 二次函数 y = x² + 2x + 1"
+                                    rows="4"
+                                    maxlength="5000"
+                                ></textarea>
+                                <div class="input-footer">
+                                    <div class="input-info">
+                                        <span class="char-count">0 / 5000</span>
+                                        <span class="input-tips">支持自然语言描述，Ctrl+Enter 快速提交</span>
+                                    </div>
+                                    <button class="generate-btn" id="generateBtn" disabled>
+                                        <span class="btn-icon">✨</span>
+                                        开始生成
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 智能提示区域 -->
+                            <div class="suggestions-container" id="suggestionsContainer" style="display: none;">
+                                <div class="suggestions-header">
+                                    <span class="suggestions-title">💡 智能建议</span>
+                                    <button class="close-suggestions" id="closeSuggestions">×</button>
+                                </div>
+                                <div class="suggestions-list" id="suggestionsList">
+                                    <!-- 动态生成建议内容 -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 模板选择模式 -->
+                        <div class="input-mode-panel" id="templateInputPanel">
+                            <div class="template-search">
+                                <input
+                                    type="text"
+                                    id="templateSearch"
+                                    class="template-search-input"
+                                    placeholder="搜索模板..."
+                                >
+                            </div>
+
+                            <!-- 模板分类 -->
+                            <div class="template-categories">
+                                <div class="template-category" data-category="mathematics">
+                                    <h4 class="category-title">数学可视化模板</h4>
+                                    <div class="template-list">
+                                        <div class="template-item">
+                                            <span class="template-icon">📈</span>
+                                            <div class="template-info">
+                                                <div class="template-name">函数图像</div>
+                                                <div class="template-desc">绘制各种数学函数图像</div>
+                                            </div>
+                                        </div>
+                                        <div class="template-item">
+                                            <span class="template-icon">🔄</span>
+                                            <div class="template-info">
+                                                <div class="template-name">几何变换</div>
+                                                <div class="template-desc">展示几何图形的变换过程</div>
+                                            </div>
+                                        </div>
+                                        <div class="template-item">
+                                            <span class="template-icon">📊</span>
+                                            <div class="template-info">
+                                                <div class="template-name">统计分析</div>
+                                                <div class="template-desc">可视化数据和统计结果</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="template-category" data-category="astronomy">
+                                    <h4 class="category-title">天文可视化模板</h4>
+                                    <div class="template-list">
+                                        <div class="template-item">
+                                            <span class="template-icon">☀️</span>
+                                            <div class="template-info">
+                                                <div class="template-name">太阳系</div>
+                                                <div class="template-desc">展示太阳系行星运动</div>
+                                            </div>
+                                        </div>
+                                        <div class="template-item">
+                                            <span class="template-icon">🌟</span>
+                                            <div class="template-info">
+                                                <div class="template-name">星系演化</div>
+                                                <div class="template-desc">模拟星系的形成和演化</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 概念搜索模式 -->
+                        <div class="input-mode-panel" id="conceptInputPanel">
+                            <div class="concept-browser">
+                                <div class="concept-categories">
+                                    <div class="concept-category" data-category="math">
+                                        <h4 class="concept-category-title">数学概念</h4>
+                                        <div class="concept-list">
+                                            <div class="concept-item" data-concept="normal-distribution">
+                                                <span class="concept-icon">📊</span>
+                                                <span class="concept-name">正态分布</span>
+                                            </div>
+                                            <div class="concept-item" data-concept="linear-algebra">
+                                                <span class="concept-icon">🔢</span>
+                                                <span class="concept-name">线性代数</span>
+                                            </div>
+                                            <div class="concept-item" data-concept="calculus">
+                                                <span class="concept-icon">📈</span>
+                                                <span class="concept-name">微积分</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 学科模块区域 -->
+                <section class="modules-section">
+                    <div class="modules-container">
+                        <h3 class="section-title">探索学科可视化</h3>
+
+                        <!-- 模块网格 -->
+                        <div class="modules-grid">
+                            <!-- 数学可视化模块 -->
+                            <div class="module-card" data-module="mathematics" id="mathematics-section">
+                                <div class="module-header">
+                                    <span class="module-icon">📐</span>
+                                    <h4 class="module-title">数学可视化</h4>
+                                    <div class="module-badge">核心</div>
+                                </div>
+                                <p class="module-description">
+                                    将抽象的数学概念转化为直观的视觉图形，深入理解函数、几何、统计等数学核心原理
+                                </p>
+                                <div class="module-features">
+                                    <span class="feature-tag">函数图像</span>
+                                    <span class="feature-tag">几何变换</span>
+                                    <span class="feature-tag">统计分析</span>
+                                    <span class="feature-tag">概率分布</span>
+                                </div>
+                                <div class="module-subcategories">
+                                    <div class="subcategory" data-category="probability">
+                                        <span class="subcategory-icon">📊</span>
+                                        <span class="subcategory-name">概率统计</span>
+                                        <span class="subcategory-count">6个模块</span>
+                                    </div>
+                                    <div class="subcategory" data-category="linear">
+                                        <span class="subcategory-icon">🔢</span>
+                                        <span class="subcategory-name">线性代数</span>
+                                        <span class="subcategory-count">8个模块</span>
+                                    </div>
+                                    <div class="subcategory" data-category="calculus">
+                                        <span class="subcategory-icon">📈</span>
+                                        <span class="subcategory-name">微积分</span>
+                                        <span class="subcategory-count">7个模块</span>
+                                    </div>
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn explore-btn" data-module="mathematics">
+                                        🚀 探索完整模块
+                                    </button>
+                                    <button class="module-btn examples-btn" data-module="mathematics">
+                                        📋 查看数学概念
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 天文可视化模块 -->
+                            <div class="module-card" data-module="astronomy" id="astronomy-section">
+                                <div class="module-header">
+                                    <span class="module-icon">🔭</span>
+                                    <h4 class="module-title">天文可视化</h4>
+                                    <div class="module-badge">精选</div>
+                                </div>
+                                <p class="module-description">
+                                    探索宇宙奥秘，可视化天体运动、星系结构、黑洞物理等天文现象
+                                </p>
+                                <div class="module-features">
+                                    <span class="feature-tag">天体运动</span>
+                                    <span class="feature-tag">星系结构</span>
+                                    <span class="feature-tag">黑洞模拟</span>
+                                    <span class="feature-tag">航天轨道</span>
+                                </div>
+                                <div class="module-subcategories">
+                                    <div class="subcategory" data-category="solar-system">
+                                        <span class="subcategory-icon">☀️</span>
+                                        <span class="subcategory-name">太阳系</span>
+                                        <span class="subcategory-count">9个模块</span>
+                                    </div>
+                                    <div class="subcategory" data-category="stellar">
+                                        <span class="subcategory-icon">⭐</span>
+                                        <span class="subcategory-name">恒星演化</span>
+                                        <span class="subcategory-count">5个模块</span>
+                                    </div>
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn explore-btn" data-module="astronomy">
+                                        🚀 探索完整模块
+                                    </button>
+                                    <button class="module-btn examples-btn" data-module="astronomy">
+                                        📋 查看天文概念
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 物理可视化模块 -->
+                            <div class="module-card" data-module="physics" id="physics-section">
+                                <div class="module-header">
+                                    <span class="module-icon">⚛️</span>
+                                    <h4 class="module-title">物理可视化</h4>
+                                    <div class="module-badge">热门</div>
+                                </div>
+                                <p class="module-description">
+                                    通过交互式可视化深入理解力学、电磁学、波动光学等物理学核心原理
+                                </p>
+                                <div class="module-features">
+                                    <span class="feature-tag">Python计算</span>
+                                    <span class="feature-tag">交互模拟</span>
+                                    <span class="feature-tag">实时渲染</span>
+                                    <span class="feature-tag">物理实验</span>
+                                </div>
+                                <div class="module-subcategories">
+                                    <div class="subcategory" data-category="mechanics">
+                                        <span class="subcategory-icon">⚙️</span>
+                                        <span class="subcategory-name">力学模拟</span>
+                                        <span class="subcategory-count">6个模块</span>
+                                    </div>
+                                    <div class="subcategory" data-category="electromagnetism">
+                                        <span class="subcategory-icon">⚡</span>
+                                        <span class="subcategory-name">电磁学</span>
+                                        <span class="subcategory-count">5个模块</span>
+                                    </div>
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn explore-btn" data-module="physics">
+                                        🚀 探索完整模块
+                                    </button>
+                                    <button class="module-btn examples-btn" data-module="physics">
+                                        📋 查看物理概念
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 平台统计 -->
+                <section class="stats-section">
+                    <div class="stats-container">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number">50+</div>
+                                <div class="stat-label">可视化模块</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">1000+</div>
+                                <div class="stat-label">生成案例</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">99.9%</div>
+                                <div class="stat-label">可用性</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">24/7</div>
+                                <div class="stat-label">在线服务</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="app-footer">
+            <div class="content-wrapper">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h5 class="footer-title">万物可视化</h5>
+                        <p class="footer-desc">AI驱动的交互式可视化平台</p>
+                    </div>
+                    <div class="footer-section">
+                        <h5 class="footer-title">功能</h5>
+                        <ul class="footer-links">
+                            <li><a href="#mathematics">数学可视化</a></li>
+                            <li><a href="#astronomy">天文可视化</a></li>
+                            <li><a href="#physics">物理可视化</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h5 class="footer-title">支持</h5>
+                        <ul class="footer-links">
+                            <li><a href="#help">帮助中心</a></li>
+                            <li><a href="#feedback">意见反馈</a></li>
+                            <li><a href="#about">关于我们</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 万物可视化. 保留所有权利.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 提示消息 -->
+    <div class="message-container" id="messageContainer"></div>
+
+    <!-- 加载动画 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>正在生成可视化...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="app-fusion.js"></script>
+</body>
+</html>

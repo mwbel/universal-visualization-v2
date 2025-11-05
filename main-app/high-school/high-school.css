@@ -1,0 +1,667 @@
+/**
+ * high-school.css - 高中学科导航页面样式
+ * 继承主应用样式，添加高中学科特有的设计元素
+ */
+
+/* 导入变量 */
+:root {
+  --primary-color: #6366f1;
+  --secondary-color: #8b5cf6;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+
+  --subject-math-color: #6366f1;
+  --subject-physics-color: #f59e0b;
+  --subject-chemistry-color: #10b981;
+  --subject-biology-color: #ef4444;
+
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* 页面布局 */
+.app-main {
+  min-height: calc(100vh - 80px);
+  padding-top: 80px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Hero 区域 */
+.hero-section {
+  text-align: center;
+  padding: 60px 0;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border-radius: 20px;
+  margin-bottom: 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.title-icon {
+  font-size: 3rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.hero-description {
+  font-size: 1.2rem;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 5px;
+}
+
+/* 章节标题 */
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 50px;
+  color: #1f2937;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 2px;
+}
+
+/* 学科网格 */
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
+.subject-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.subject-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--subject-math-color), var(--secondary-color));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.subject-card[data-subject="math"]::before {
+  background: linear-gradient(90deg, var(--subject-math-color), #8b5cf6);
+}
+
+.subject-card[data-subject="physics"]::before {
+  background: linear-gradient(90deg, var(--subject-physics-color), #fbbf24);
+}
+
+.subject-card[data-subject="chemistry"]::before {
+  background: linear-gradient(90deg, var(--subject-chemistry-color), #34d399);
+}
+
+.subject-card[data-subject="biology"]::before {
+  background: linear-gradient(90deg, var(--subject-biology-color), #f87171);
+}
+
+.subject-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-hover-shadow);
+}
+
+.subject-card:hover::before {
+  opacity: 1;
+}
+
+.subject-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.subject-icon {
+  font-size: 2.5rem;
+  margin-right: 15px;
+}
+
+.subject-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  flex: 1;
+}
+
+.subject-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.subject-status.available {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+}
+
+.subject-status.coming-soon {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning-color);
+}
+
+.subject-content {
+  margin-bottom: 25px;
+}
+
+.subject-description {
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.subject-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.feature-tag {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary-color);
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.subject-progress {
+  margin-top: 20px;
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.subject-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.subject-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.3);
+}
+
+.secondary-btn {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary-color);
+  border: 2px solid rgba(99, 102, 241, 0.2);
+}
+
+.secondary-btn:hover {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.disabled-btn {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 平台特色 */
+.features-section {
+  margin-bottom: 60px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.feature-item {
+  text-align: center;
+  padding: 30px 20px;
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+  transform: translateY(-3px);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.feature-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 10px;
+}
+
+.feature-description {
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* 学习统计 */
+.stats-section {
+  margin-bottom: 60px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+}
+
+.stat-card {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--card-hover-shadow);
+}
+
+.stat-card .stat-icon {
+  font-size: 2rem;
+  opacity: 0.7;
+}
+
+.stat-card .stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  display: block;
+}
+
+.stat-card .stat-label {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* 页脚 */
+.app-footer {
+  background: #1f2937;
+  color: white;
+  padding: 40px 0 20px;
+  margin-top: 80px;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+.footer-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.footer-description {
+  color: #9ca3af;
+  line-height: 1.5;
+}
+
+.footer-links {
+  list-style: none;
+}
+
+.footer-links li {
+  margin-bottom: 8px;
+}
+
+.footer-links a {
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
+.footer-bottom {
+  border-top: 1px solid #374151;
+  padding-top: 20px;
+  text-align: center;
+  color: #9ca3af;
+}
+
+/* 加载覆盖层 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  text-align: center;
+  color: white;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Toast 消息 */
+.toast-container {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 10000;
+}
+
+.toast {
+  background: white;
+  border-radius: 10px;
+  padding: 15px 20px;
+  margin-bottom: 10px;
+  box-shadow: var(--card-shadow);
+  border-left: 4px solid var(--primary-color);
+  animation: slideIn 0.3s ease;
+  max-width: 300px;
+}
+
+.toast.success {
+  border-left-color: var(--success-color);
+}
+
+.toast.error {
+  border-left-color: var(--error-color);
+}
+
+.toast.warning {
+  border-left-color: var(--warning-color);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero-stats {
+    gap: 20px;
+  }
+
+  .subjects-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .subject-card {
+    padding: 20px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .subject-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  .hero-section {
+    padding: 40px 0;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 深色模式 */
+.night-sky-theme .subject-card,
+.night-sky-theme .stat-card {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.night-sky-theme .hero-section {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+}
+
+.night-sky-theme .section-title,
+.night-sky-theme .subject-title,
+.night-sky-theme .feature-title {
+  color: #f9fafb;
+}
+
+.night-sky-theme .subject-description,
+.night-sky-theme .feature-description,
+.night-sky-theme .progress-label,
+.night-sky-theme .progress-text {
+  color: #d1d5db;
+}
+
+.night-sky-theme .feature-item {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+/* 动画效果 */
+.subject-card,
+.feature-item,
+.stat-card {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+.subject-card:nth-child(1) { animation-delay: 0.1s; }
+.subject-card:nth-child(2) { animation-delay: 0.2s; }
+.subject-card:nth-child(3) { animation-delay: 0.3s; }
+.subject-card:nth-child(4) { animation-delay: 0.4s; }
+
+.feature-item:nth-child(1) { animation-delay: 0.5s; }
+.feature-item:nth-child(2) { animation-delay: 0.6s; }
+.feature-item:nth-child(3) { animation-delay: 0.7s; }
+.feature-item:nth-child(4) { animation-delay: 0.8s; }
+
+.stat-card:nth-child(1) { animation-delay: 0.9s; }
+.stat-card:nth-child(2) { animation-delay: 1.0s; }
+.stat-card:nth-child(3) { animation-delay: 1.1s; }
+.stat-card:nth-child(4) { animation-delay: 1.2s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

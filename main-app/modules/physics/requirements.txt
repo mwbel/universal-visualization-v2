@@ -1,0 +1,10 @@
+numpy>=1.24  # 数值计算:模拟与计算（运动方程、波动）
+scipy   # 科学计算/物理公式:模拟与计算（运动方程、波动)
+matplotlib # 可视化：2D/3D 绘制
+plotly # 交互式可视化
+jupyter #交互式展示,Notebook 调试
+
+可选
+pybullet       # 物理仿真
+manim          # 数学/物理演示型动画
+

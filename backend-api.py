@@ -452,11 +452,12 @@ class VisualizationGenerator:
                    Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
         }}
 
-        // 生成正态分布数据
+        // 生成正态分布数据（固定范围）
         function generateNormalData(mu, sigma) {{
             const x = [];
             const y = [];
-            for (let xVal = mu - 4 * sigma; xVal <= mu + 4 * sigma; xVal += 0.01) {{
+            // 固定 x 轴范围为 [-15, 15]，确保覆盖所有可能的参数组合
+            for (let xVal = -15; xVal <= 15; xVal += 0.01) {{
                 x.push(xVal);
                 y.push(normalPDF(xVal, mu, sigma));
             }}
@@ -495,12 +496,16 @@ class VisualizationGenerator:
                 xaxis: {{
                     title: '值 (x)',
                     showgrid: true,
-                    gridcolor: '#e9ecef'
+                    gridcolor: '#e9ecef',
+                    range: [-15, 15],  // 固定 x 轴范围
+                    autorange: false   // 禁用自动缩放
                 }},
                 yaxis: {{
                     title: '概率密度 f(x)',
                     showgrid: true,
-                    gridcolor: '#e9ecef'
+                    gridcolor: '#e9ecef',
+                    range: [0, 0.45],  // 固定 y 轴范围
+                    autorange: false   // 禁用自动缩放
                 }},
                 plot_bgcolor: '#ffffff',
                 paper_bgcolor: '#ffffff',
@@ -708,14 +713,19 @@ class VisualizationGenerator:
             return combination(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
         }}
 
-        // 生成二项分布数据
+        // 生成二项分布数据（固定范围）
         function generateBinomialData(n, p) {{
             const x = [];
             const y = [];
+            const maxN = 50; // 固定最大 n 值
 
-            for (let k = 0; k <= n; k++) {{
+            for (let k = 0; k <= maxN; k++) {{
                 x.push(k);
-                y.push(binomialPMF(k, n, p));
+                if (k <= n) {{
+                    y.push(binomialPMF(k, n, p));
+                }} else {{
+                    y.push(0); // 超出当前 n 的部分设为 0
+                }}
             }}
 
             return {{ x, y }};
@@ -754,14 +764,18 @@ class VisualizationGenerator:
                 }},
                 xaxis: {{
                     title: '成功次数 k',
-                    dtick: 1,
+                    dtick: 5,
                     showgrid: true,
-                    gridcolor: '#e9ecef'
+                    gridcolor: '#e9ecef',
+                    range: [0, 50],      // 固定 x 轴范围
+                    autorange: false      // 禁用自动缩放
                 }},
                 yaxis: {{
                     title: '概率 P(X=k)',
                     showgrid: true,
-                    gridcolor: '#e9ecef'
+                    gridcolor: '#e9ecef',
+                    range: [0, 0.25],     // 固定 y 轴范围
+                    autorange: false      // 禁用自动缩放
                 }},
                 plot_bgcolor: '#ffffff',
                 paper_bgcolor: '#ffffff',
@@ -969,13 +983,11 @@ class VisualizationGenerator:
             return expNegLambda * lambdaPowK / factorialK;
         }}
 
-        // 生成泊松分布数据
+        // 生成泊松分布数据（固定范围）
         function generatePoissonData(lambda) {{
             const x = [];
             const y = [];
-
-            // 计算显示范围 (通常到期望值的3倍标准差)
-            const maxK = Math.min(Math.ceil(lambda + 4 * Math.sqrt(lambda)), 50);
+            const maxK = 50; // 固定最大 k 值
 
             for (let k = 0; k <= maxK; k++) {{
                 x.push(k);
@@ -1017,14 +1029,18 @@ class VisualizationGenerator:
                 }},
                 xaxis: {{
                     title: '事件发生次数 k',
-                    dtick: 1,
+                    dtick: 5,
                     showgrid: true,
-                    gridcolor: '#e9ecef'
+                    gridcolor: '#e9ecef',
+                    range: [0, 50],      // 固定 x 轴范围
+                    autorange: false      // 禁用自动缩放
                 }},
                 yaxis: {{
                     title: '概率 P(X=k)',
                     showgrid: true,
-                    gridcolor: '#e9ecef'
+                    gridcolor: '#e9ecef',
+                    range: [0, 0.25],     // 固定 y 轴范围
+                    autorange: false      // 禁用自动缩放
                 }},
                 plot_bgcolor: '#ffffff',
                 paper_bgcolor: '#ffffff',

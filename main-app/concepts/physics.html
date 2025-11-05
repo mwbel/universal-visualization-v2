@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物理学可视化概念列表</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <link rel="stylesheet" href="../styles/components.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #2c5f2d 0%, #4CAF50 100%);
+            min-height: 100vh;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .back-button {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .concept-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .concept-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .concept-description {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .prompt-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .prompt-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .prompt-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            color: #4CAF50;
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 5px;
+            line-height: 1.4;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(76, 175, 80, 0.8);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: rgba(76, 175, 80, 1);
+        }
+
+        .copy-button.copied {
+            background: rgba(255, 193, 7, 0.8);
+        }
+
+        .copy-button.copied::after {
+            content: '已复制!';
+        }
+
+        .copy-button:not(.copied)::after {
+            content: '复制';
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="back-button">← 返回主页</a>
+            <h1>⚛️ 物理学可视化概念列表</h1>
+            <p>深入理解物理定律，通过交互式模拟掌握物理学核心内容</p>
+        </div>
+
+        <div class="concepts-grid">
+            <div class="concept-card">
+                <div class="category-tag">振动与波</div>
+                <h3 class="concept-title">简谐振动</h3>
+                <p class="concept-description">演示简谐振动的周期性运动，包括振幅、频率、相位等关键参数对振动特性的影响。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-1">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-1')"></button>
+                        简谐振动 振幅2 频率1Hz 弹簧 质点平衡位置 周期运动
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">力学</div>
+                <h3 class="concept-title">自由落体运动</h3>
+                <p class="concept-description">模拟物体从100米高度自由落下的运动过程，展示重力加速度对运动速度和位移的影响。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-2">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-2')"></button>
+                        自由落体 高度100米 重力加速度9.8 速度变化 位移计算
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">抛体运动</div>
+                <h3 class="concept-title">抛物运动轨迹</h3>
+                <p class="concept-description">演示45度角抛出物体的运动轨迹，包括水平速度、垂直速度和飞行距离的计算。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-3">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-3')"></button>
+                        抛体运动 45度角 初速度30m/s 水平速度 垂直速度 轨迹方程
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">热力学</div>
+                <h3 class="concept-title">热扩散过程</h3>
+                <p class="concept-description">可视化展示热量在物体中的传导过程，包括温度梯度和热传导系数的影响。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-4">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-4')"></button>
+                        热扩散 温度梯度 热传导 热力学 温度分布 传热过程
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">电磁学</div>
+                <h3 class="concept-title">电磁场分布</h3>
+                <p class="concept-description">展示电荷周围的电场分布和磁场线，帮助理解电磁相互作用的基本原理。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-5">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-5')"></button>
+                        电磁场分布 电荷 电场线 磁场线 电磁相互作用 磁感应
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">波动光学</div>
+                <h3 class="concept-title">波的干涉现象</h3>
+                <p class="concept-description">演示波的干涉、衍射和叠加原理，包括相长干涉和相消干涉的视觉效果。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                        <div class="prompt-text" id="prompt-6">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-6')"></button>
+                        波的干涉 衍射 叠加原理 相长干涉 相消干涉 波动光学
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">刚体运动</div>
+                <h3 class="concept-title">刚体转动</h3>
+                <p class="concept-description">展示刚体的转动惯量和角动量守恒，包括定轴转动和进动现象的模拟。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-7">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-7')"></button>
+                        刚体转动 转动惯量 角动量守恒 定轴转动 进动现象
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">流体力学</div>
+                <h3 class="concept-title">流体流动</h3>
+                <p class="concept-description">模拟理想流体的流动特性，包括层流、湍流和伯努利方程的应用。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-8">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-8')"></button>
+                        流体流动 层流 湍流 伯努利方程 理想流体 流体力学
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const textToCopy = element.textContent.trim();
+            const button = element.querySelector('.copy-button');
+
+            // 创建临时文本区域来复制
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = textToCopy;
+            tempTextarea.style.position = 'fixed';
+            tempTextarea.style.left = '-9999px';
+            document.body.appendChild(tempTextarea);
+
+            tempTextarea.select();
+            tempTextarea.setSelectionRange(0, 99999); // 移动设备兼容
+
+            try {
+                document.execCommand('copy');
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动复制文本');
+            }
+
+            document.body.removeChild(tempTextarea);
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.concept-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150 + 300);
+            });
+        });
+    </script>
+</body>
+</html>

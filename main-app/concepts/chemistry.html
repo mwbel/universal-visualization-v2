@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>化学可视化概念列表</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <link rel="stylesheet" href="../styles/components.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .concept-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .concept-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .concept-icon {
+            font-size: 1.8rem;
+        }
+
+        .concept-description {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .concept-prompt {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .copy-button.copied {
+            background: #4CAF50;
+        }
+
+        .coming-soon {
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-style: italic;
+        }
+
+        .coming-soon-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .concepts-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .concept-card {
+                padding: 20px;
+            }
+        }
+
+        /* 页面加载动画 */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="back-button">← 返回主页</a>
+            <h1>🧪 化学可视化概念</h1>
+            <p>探索化学世界的核心概念，从原子结构到化学反应机理</p>
+        </div>
+
+        <div class="concepts-grid">
+            <div class="concept-card fade-in">
+                <h3 class="concept-title">
+                    <span class="concept-icon">🔬</span>
+                    分子结构
+                </h3>
+                <p class="concept-description">
+                    通过3D可视化理解分子的几何构型、化学键类型和分子间作用力，包括VSEPR理论、杂化轨道理论等。
+                </p>
+                <div class="concept-prompt" id="prompt-molecular">
+                    生成一个水分子的3D分子结构模型，显示氧原子和两个氢原子的空间排列，标注键角和键长信息
+                    <button class="copy-button" onclick="copyPrompt('prompt-molecular')">📋 复制</button>
+                </div>
+                <div class="concept-prompt" id="prompt-bonding">
+                    创建一个甲烷分子的可视化展示，说明sp³杂化轨道和四面体构型
+                    <button class="copy-button" onclick="copyPrompt('prompt-bonding')">📋 复制</button>
+                </div>
+            </div>
+
+            <div class="concept-card fade-in">
+                <h3 class="concept-title">
+                    <span class="concept-icon">⚗️</span>
+                    化学反应
+                </h3>
+                <p class="concept-description">
+                    动态展示化学反应过程，包括反应机理、能量变化、过渡态和反应动力学，帮助理解反应的本质。
+                </p>
+                <div class="concept-prompt" id="prompt-reaction">
+                    模拟酯化反应过程，显示反应物、过渡态和产物的结构变化，标注反应坐标
+                    <button class="copy-button" onclick="copyPrompt('prompt-reaction')">📋 复制</button>
+                </div>
+                <div class="concept-prompt" id="prompt-kinetics">
+                    创建化学反应动力学图表，展示浓度随时间的变化和反应速率常数
+                    <button class="copy-button" onclick="copyPrompt('prompt-kinetics')">📋 复制</button>
+                </div>
+            </div>
+
+            <div class="concept-card fade-in">
+                <h3 class="concept-title">
+                    <span class="concept-icon">📊</span>
+                    元素周期表
+                </h3>
+                <p class="concept-description">
+                    交互式元素周期表，展示元素性质周期性变化规律，包括原子半径、电负性、电离能等趋势分析。
+                </p>
+                <div class="concept-prompt" id="prompt-periodic">
+                    生成交互式元素周期表，用颜色标注不同类型的元素，点击显示详细信息
+                    <button class="copy-button" onclick="copyPrompt('prompt-periodic')">📋 复制</button>
+                </div>
+                <div class="concept-prompt" id="prompt-trends">
+                    创建元素性质趋势图，展示原子半径和电负性随周期和族的变化
+                    <button class="copy-button" onclick="copyPrompt('prompt-trends')">📋 复制</button>
+                </div>
+            </div>
+
+            <div class="concept-card fade-in">
+                <h3 class="concept-title">
+                    <span class="concept-icon">⚛️</span>
+                    量子化学
+                </h3>
+                <p class="concept-description">
+                    可视化原子轨道、分子轨道和电子云分布，深入理解量子力学原理和化学键的本质。
+                </p>
+                <div class="concept-prompt" id="prompt-orbital">
+                    3D展示氢原子的电子云分布，显示s、p、d轨道的形状和节面
+                    <button class="copy-button" onclick="copyPrompt('prompt-orbital')">📋 复制</button>
+                </div>
+                <div class="concept-prompt" id="prompt-mo">
+                    创建分子轨道能级图，以苯分子为例展示π轨道体系
+                    <button class="copy-button" onclick="copyPrompt('prompt-mo')">📋 复制</button>
+                </div>
+            </div>
+
+            <div class="concept-card fade-in">
+                <h3 class="concept-title">
+                    <span class="concept-icon">🧪</span>
+                    化学平衡
+                </h3>
+                <p class="concept-description">
+                    动态展示化学平衡过程，包括勒夏特列原理、平衡常数计算和浓度对平衡的影响。
+                </p>
+                <div class="concept-prompt" id="prompt-equilibrium">
+                    模拟化学平衡的建立过程，展示正逆反应速率变化和浓度时间曲线
+                    <button class="copy-button" onclick="copyPrompt('prompt-equilibrium')">📋 复制</button>
+                </div>
+                <div class="concept-prompt" id="prompt-lechatelier">
+                    可视化勒夏特列原理，展示温度、压力、浓度变化对平衡的影响
+                    <button class="copy-button" onclick="copyPrompt('prompt-lechatelier')">📋 复制</button>
+                </div>
+            </div>
+
+            <div class="concept-card fade-in">
+                <h3 class="concept-title">
+                    <span class="concept-icon">🔥</span>
+                    热化学
+                </h3>
+                <p class="concept-description">
+                    展示化学反应的热效应，包括焓变、熵变、吉布斯自由能和反应自发性的热力学分析。
+                </p>
+                <div class="concept-prompt" id="prompt-thermo">
+                    创建化学反应能量图，显示反应焓变、活化能和过渡态能量
+                    <button class="copy-button" onclick="copyPrompt('prompt-thermo')">📋 复制</button>
+                </div>
+                <div class="concept-prompt" id="prompt-spontaneity">
+                    可视化吉布斯自由能与温度的关系，判断反应自发性
+                    <button class="copy-button" onclick="copyPrompt('prompt-spontaneity')">📋 复制</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="coming-soon fade-in">
+            <div class="coming-soon-icon">🚧</div>
+            <h3>更多化学概念正在开发中</h3>
+            <p>包括：有机化学机理、配位化学、电化学、高分子化学等领域的可视化内容</p>
+        </div>
+    </div>
+
+    <script>
+        function copyPrompt(promptId) {
+            const promptElement = document.getElementById(promptId);
+            const text = promptElement.textContent.replace('📋 复制', '').trim();
+
+            navigator.clipboard.writeText(text).then(() => {
+                const button = promptElement.querySelector('.copy-button');
+                const originalText = button.textContent;
+                button.textContent = '✅ 已复制';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                // 降级方案：使用传统的复制方法
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                const button = promptElement.querySelector('.copy-button');
+                button.textContent = '✅ 已复制';
+                setTimeout(() => {
+                    button.textContent = '📋 复制';
+                }, 2000);
+            });
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.concept-card, .coming-soon');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150 + 300);
+            });
+        });
+
+        // 添加键盘导航支持
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                window.location.href = '../index.html';
+            }
+        });
+    </script>
+</body>
+</html>

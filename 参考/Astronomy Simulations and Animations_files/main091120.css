@@ -1,0 +1,405 @@
+
+/* 20 nov 09 */
+
+html {
+	height: 100%;
+	/* overflow-y: scroll; */
+}
+
+body {
+	margin: 0px auto;
+	padding: 0px;
+	background-color: #cccccc;
+	font-family: Arial, Helvetica, sans-serif;
+	color: #585858;
+	font-size: 90%;
+	text-align: left;
+	height: 100%;
+	background-image: url('background.png');
+	background-repeat: repeat-y;
+	background-position: center;
+}
+
+#headerSide {
+	z-index: 1;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 65px;
+	width: 100%;
+	background-image: url('header-side.png');
+	background-repeat: repeat-x;
+}
+
+#header {
+	z-index: 2;
+	position: absolute;
+	top: 0px;
+	left: 50%;
+	margin-left: -493px;
+	height: 65px;
+	width: 986px;
+	background-image: url('header.jpg');
+}
+
+#headerShade {
+	z-index: 15;
+	position: absolute;
+	top: 65px;
+	left: 0px;
+	height: 9px;
+	width: 100%;
+	background-image: url('header-shade.png');
+	background-repeat: repeat-x;
+}
+
+#mainBlock {
+	position: absolute;
+	z-index: 10;
+	top: 72px;
+	left: 50%;
+	padding: 0 0 35px 0;
+	margin: 0 0 0 -493px;
+	width: 986px;
+}
+
+#locationLine {
+	line-height: 1.5em;
+	height: 1.6em;
+	padding: 0;
+	margin: 0 0 0.2em 1em;
+	color: #807090;
+}
+
+#locationLine a {
+	color: #807090;
+	text-decoration: none;
+}
+
+#locationLine a:hover {
+	color: #807090;
+	text-decoration: underline;
+}
+
+#locationLine a:visited {
+	color: #807090;
+}
+
+#locationLineHR {
+	line-height: 1px;
+	height: 1px;
+	text-align: center;
+	margin: 0 auto;
+	padding: 0;
+	width: 966px;
+	color: #d8d8d8;
+	background-color: #d8d8d8;
+	border: none;
+}
+
+.contentBlock {
+	width: 840px;
+	margin: 0 auto;
+	padding: 0;
+	clear: both;
+	background-color: #fafafa;
+}
+
+a:link {
+	color: #4040e0;
+	text-decoration: none;
+}
+a:visited {
+	color: #9090c0;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+a img {
+	border-width: 0;
+}
+
+table {
+	margin: 1em auto 1em auto;
+	border-collapse: collapse;
+}
+
+td {
+	padding: 0.4em 1em;
+	border-width: 1px;
+	border-style: none none solid none;
+	border-color: #e0e0e0;
+	text-align: left;
+}
+
+th {
+	padding: 0.3em 1em;
+	border-width: 1px;
+	border-style: none none solid none;
+	border-color: #b0b0b0;
+	text-align: center;
+}
+
+h1 {
+	margin-top: 0.8em;
+	font-size: 1.5em;
+	margin-left: 0;
+	position: relative;
+	left: -30px;
+}
+
+h2 {
+	margin-top: 0.8em;
+	font-size: 1.1em;
+}
+
+em {
+	color: #404040;
+	font-weight: bold;
+}
+
+li {
+	padding: 0.25em 0;
+}
+
+.navbar {
+	z-index: 20;
+	position: absolute;
+	top: 35px;
+	left: 50%;
+	margin: 0 0 0 -480px;
+	padding: 0;
+	width: 960px;
+	list-style-type: none;
+	font-weight: bold;
+	font-size: 95%;
+	color: #ffffff;
+	cursor: default;
+	text-align: left;
+}
+
+.navbar li {
+	position: relative;
+	padding: 0 1.1em 0 1.1em;
+	margin: 0;
+	float: left;
+	width: auto;
+	border: none;
+	clear: none;
+}
+
+.navbar li:hover {
+	background-color: #ffffff;
+}
+
+.navbar li:hover a {
+	color: #606060;
+}
+
+.navbar-title {
+	height: 30px;
+	float: left;
+	line-height: 30px;
+}
+
+.navbar-title a {
+	color: #ffffff;
+	text-align: center;
+}
+
+.navbar-title a:hover {
+	color: #ffffff;
+	text-decoration: underline;
+}
+
+.navbar-title a:visited {
+	color: #ffffff;
+}
+
+.navbar-pane {
+	display: none;
+	position: absolute;
+	top: 100%;
+	left: -1px;
+	width: 250px;
+	margin: 0;
+	padding: 0.5em 12.5px 0.8em 12.5px;
+	border-left: 1px solid #e0e0e0;
+	border-bottom: 1px solid #e0e0e0;
+	border-right: 1px solid #e0e0e0;
+	border-top: none;
+	background-color: #ffffff;
+}
+
+.navbar li:hover .navbar-pane {
+	display: block;
+}
+
+.navbar-pane-inner {
+	font-weight: normal;
+	font-size: 95%;
+	padding: 0;
+	margin: 0;
+}
+
+.navbar-nonlink {
+	color: #606060;
+	padding: 0;
+	margin: 0.2em 0 0.2em 0;
+	text-decoration: line-through;
+}
+
+.navbar-pane a {
+	text-decoration: none;
+	padding: 0;
+	margin: 0.2em 0 0.2em 1em;
+	text-indent: -1em;
+	display: block;
+}
+
+.navbar-pane a {
+	color: #606060;
+}
+
+.navbar-pane a:visited {
+	color: #606060;
+}
+
+.navbar-pane a:hover {
+	color: #606060;
+	text-decoration: underline;
+}
+
+.navbar-sub {
+	padding: 0;
+	margin: 0.4em 0 0.6em 1.2em;
+}
+
+.navbar-sub-title {
+	color: #606060;
+	padding: 0;
+	margin: 0.6em 0 0 0;
+}
+
+.navbar hr {
+	width: 85%;
+	margin: 0.6em auto 0.4em auto;
+	padding: 0;
+	height: 1px;
+	color: #a0a0a0;
+	background-color: #a0a0a0;
+	border: none;
+}
+
+li.navbar-nodrop:hover  {
+	background-color: transparent;
+}
+
+li.navbar-nodrop:hover a {
+	color: #ffffff;
+}
+
+.navbar-pane-ls {
+	position: absolute;
+	top: -17px;
+	left: -17px;
+	width: 17px;
+	height: 100%;
+	background-image: url(shl.png);
+	background-repeat: repeat-y;
+}
+
+.navbar-pane-bls {
+	position: absolute;
+	top: -17px;
+	left: -17px;
+	width: 34px;
+	height: 34px;
+	background-image: url(shbl.png);
+	background-repeat: no-repeat;
+}
+
+.navbar-pane-rs {
+	position: absolute;
+	top: -17px;
+	left: 100%;
+	width: 17px;
+	height: 100%;
+	background-image: url(shr.png);
+	background-repeat: repeat-y;
+}
+
+.navbar-pane-brs {
+	position: absolute;
+	top: -17px;
+	left: 258px;
+	width: 34px;
+	height: 34px;
+	background-image: url(shbr.png);
+	background-repeat: no-repeat;
+}
+
+.navbar-pane-bs {
+	position: absolute;
+	top: 0px;
+	left: 17px;
+	width: 241px;
+	height: 17px;
+	background-image: url(shb.png);
+	background-repeat: repeat-x;
+}
+
+.navbar-pane-bs-group {
+	position: absolute;
+	left: 0px;
+	top: 100%;
+}
+
+.navbar fieldset {
+	padding: 0px;
+	margin: 0px;
+	border: none;
+}
+
+#navbar-search {
+	float: right;
+	padding: 0px;
+}
+
+#navbar-search:hover {
+	background-color: transparent;
+}
+
+#navbar-search-form {
+	height: 30px;
+	position: relative;
+	top: -0.1em;
+	left: 0.8em;
+}
+
+#navbar-search-submit {
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	margin: 0px;
+	padding: 0px;
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 95%;
+	font-size: 100%;
+	font-family: Arial, Helvetica, sans-serif; 
+	height: 30px;
+	float: left;
+	line-height: 30px;
+}
+
+#navbar-search-submit:hover {
+	text-decoration: underline;	
+}
+
+#navbar-search-input {
+	font-size: 90%;
+	position: relative;
+	top: 0.25em;
+}

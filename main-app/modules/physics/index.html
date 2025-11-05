@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物理学可视化模块</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <link rel="stylesheet" href="../styles/components.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 50%, #5e35b1 100%);
+            min-height: 100vh;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .module-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #7986cb, #5c6bc0, #3f51b5);
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .module-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .module-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .module-description {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .module-features {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 4px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .module-button {
+            background: linear-gradient(135deg, #7986cb 0%, #3f51b5 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .module-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(63, 81, 181, 0.4);
+        }
+
+        .new-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .module-card {
+                padding: 20px;
+            }
+        }
+
+        /* 页面加载动画 */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../../index.html" class="back-button">← 返回主页</a>
+            <h1>⚛️ 物理学可视化模块</h1>
+            <p>探索物理世界的奥秘，理解力学、电磁学、波动光学等核心原理</p>
+        </div>
+
+        <div class="modules-grid">
+            <div class="module-card fade-in" onclick="navigateToModule('basics')">
+                <div class="module-icon">📊</div>
+                <h2 class="module-title">基础物理模拟</h2>
+                <p class="module-description">
+                    基于Python Matplotlib的经典物理现象可视化，包含抛体运动、单摆振动、电磁场分布等基础物理实验
+                </p>
+                <div class="module-features">
+                    <span class="feature-tag">Python计算</span>
+                    <span class="feature-tag">Matplotlib绘图</span>
+                    <span class="feature-tag">数值模拟</span>
+                </div>
+                <a class="module-button" href="physics-visualization/web/index.html#basics">进入基础模拟</a>
+            </div>
+
+            <div class="module-card fade-in" onclick="navigateToModule('interactive')">
+                <div class="new-badge">交互式</div>
+                <div class="module-icon">🎮</div>
+                <h2 class="module-title">交互式物理</h2>
+                <p class="module-description">
+                    基于p5.js和Three.js的交互式物理模拟，支持实时参数调节和3D可视化，提供沉浸式物理实验体验
+                </p>
+                <div class="module-features">
+                    <span class="feature-tag">实时交互</span>
+                    <span class="feature-tag">3D渲染</span>
+                    <span class="feature-tag">参数控制</span>
+                </div>
+                <a class="module-button" href="physics-visualization/web/index.html#interactive">进入交互模拟</a>
+            </div>
+        </div>
+
+        <div class="header">
+            <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                💡 提示：基础模拟适合学习和理解经典物理现象，交互式物理提供更深入的实验体验
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function navigateToModule(module) {
+            // 卡片点击时的额外处理逻辑
+            if (module === 'basics') {
+                console.log('导航到基础物理模拟');
+            } else if (module === 'interactive') {
+                console.log('导航到交互式物理');
+            }
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.module-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200 + 300);
+            });
+        });
+
+        // 添加键盘导航支持
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                window.location.href = '../../index.html';
+            }
+        });
+    </script>
+</body>
+</html>

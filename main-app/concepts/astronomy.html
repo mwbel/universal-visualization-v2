@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天文学可视化概念列表</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <link rel="stylesheet" href="../styles/components.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .back-button {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .concept-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .concept-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .concept-description {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .prompt-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .prompt-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .prompt-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            color: #4CAF50;
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 5px;
+            line-height: 1.4;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(76, 175, 80, 0.8);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: rgba(76, 175, 80, 1);
+        }
+
+        .copy-button.copied {
+            background: rgba(255, 193, 7, 0.8);
+        }
+
+        .copy-button.copied::after {
+            content: '已复制!';
+        }
+
+        .copy-button:not(.copied)::after {
+            content: '复制';
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="back-button">← 返回主页</a>
+            <h1>🌟 天文学可视化概念列表</h1>
+            <p>探索宇宙的奥秘，通过交互式可视化理解天文学核心概念</p>
+        </div>
+
+        <div class="concepts-grid">
+            <div class="concept-card">
+                <div class="category-tag">行星运动</div>
+                <h3 class="concept-title">地球绕太阳运动轨迹</h3>
+                <p class="concept-description">展示地球围绕太阳的椭圆轨道运动，包括开普勒定律的视觉效果，可以调节轨道参数观察运动变化。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-1">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-1')"></button>
+                        地球绕太阳运动轨迹 椭圆轨道 开普勒定律 周期一年 近日点 远日点
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">月球运动</div>
+                <h3 class="concept-title">月相变化周期</h3>
+                <p class="concept-description">演示月球在30天周期内的相位变化，包括新月、上弦月、满月、下弦月等各个阶段的视觉效果。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-2">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-2')"></button>
+                        月相变化 30天周期 新月 上弦月 满月 下弦月 月球轨道
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">天球坐标系</div>
+                <h3 class="concept-title">天球坐标系转换</h3>
+                <p class="concept-description">展示赤道坐标系和地平坐标系的转换关系，帮助理解天体位置的不同表示方法。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-3">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-3')"></button>
+                        天球坐标系 赤道坐标系 地平坐标系 坐标转换 天体位置
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">恒星演化</div>
+                <h3 class="concept-title">恒星生命周期</h3>
+                <p class="concept-description">可视化展示恒星从诞生到死亡的完整生命周期，包括主序星、红巨星、白矮星等演化阶段。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-4">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-4')"></button>
+                        恒星生命周期 主序星 红巨星 白矮星 超新星 恒星演化
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">星系结构</div>
+                <h3 class="concept-title">银河系结构</h3>
+                <p class="concept-description">展示银河系的螺旋结构，包括银心、旋臂、球状星团等组成部分的空间分布。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-5">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-5')"></button>
+                        银河系结构 螺旋结构 银心 旋臂 球状星团 星系
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <div class="category-tag">行星系统</div>
+                <h3 class="concept-title">太阳系行星轨道</h3>
+                <p class="concept-description">展示太阳系八大行星的轨道分布和运动特征，包括内行星和外行星的运动规律。</p>
+                <div class="prompt-box">
+                    <div class="prompt-label">📝 提示词（点击复制）</div>
+                    <div class="prompt-text" id="prompt-6">
+                        <button class="copy-button" onclick="copyToClipboard('prompt-6')"></button>
+                        太阳系 行星轨道 内行星 外行星 公转周期 轨道半径
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const textToCopy = element.textContent.trim();
+            const button = element.querySelector('.copy-button');
+
+            // 创建临时文本区域来复制
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = textToCopy;
+            tempTextarea.style.position = 'fixed';
+            tempTextarea.style.left = '-9999px';
+            document.body.appendChild(tempTextarea);
+
+            tempTextarea.select();
+            tempTextarea.setSelectionRange(0, 99999); // 移动设备兼容
+
+            try {
+                document.execCommand('copy');
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动复制文本');
+            }
+
+            document.body.removeChild(tempTextarea);
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.concept-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150 + 300);
+            });
+        });
+    </script>
+</body>
+</html>

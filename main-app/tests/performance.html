@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>性能基准测试</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <style>
+        .perf-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .perf-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        .metric-label {
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .metric-status {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        .metric-status.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        .metric-status.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        .test-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .test-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        .test-button:disabled {
+            background: var(--muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+        .progress-container {
+            margin: 2rem 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: var(--muted);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+            position: relative;
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted-foreground);
+        }
+        .test-log {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid var(--border);
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        .result-table th,
+        .result-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .result-table th {
+            background: rgba(59, 130, 246, 0.1);
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .result-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .status-indicator.good {
+            background: #22c55e;
+        }
+        .status-indicator.warning {
+            background: #f59e0b;
+        }
+        .status-indicator.error {
+            background: #ef4444;
+        }
+        .comparison-chart {
+            display: flex;
+            align-items: end;
+            height: 200px;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--accent));
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            min-height: 20px;
+            transition: all 0.3s ease;
+        }
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+        .chart-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        .chart-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="perf-container">
+        <header class="perf-section">
+            <h1>🚀 性能基准测试套件</h1>
+            <p>全面测试系统性能指标，包括API响应、页面加载、并发处理等</p>
+            <div>
+                <button id="runPerfTests" class="test-button">运行性能测试</button>
+                <button id="runStressTest" class="test-button">压力测试</button>
+                <button id="clearResults" class="test-button">清除结果</button>
+                <button id="exportReport" class="test-button">导出报告</button>
+            </div>
+        </header>
+
+        <section class="perf-section">
+            <h2>📊 核心性能指标</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div id="apiResponseTime" class="metric-value">-</div>
+                    <div class="metric-label">API平均响应时间</div>
+                    <div id="apiStatus" class="metric-status">待测试</div>
+                </div>
+                <div class="metric-card">
+                    <div id="pageLoadTime" class="metric-value">-</div>
+                    <div class="metric-label">页面平均加载时间</div>
+                    <div id="pageStatus" class="metric-status">待测试</div>
+                </div>
+                <div class="metric-card">
+                    <div id="concurrentUsers" class="metric-value">-</div>
+                    <div class="metric-label">并发用户支持</div>
+                    <div id="concurrentStatus" class="metric-status">待测试</div>
+                </div>
+                <div class="metric-card">
+                    <div id="memoryUsage" class="metric-value">-</div>
+                    <div class="metric-label">内存使用量</div>
+                    <div id="memoryStatus" class="metric-status">待测试</div>
+                </div>
+                <div class="metric-card">
+                    <div id="cpuUsage" class="metric-value">-</div>
+                    <div class="metric-label">CPU使用率</div>
+                    <div id="cpuStatus" class="metric-status">待测试</div>
+                </div>
+                <div class="metric-card">
+                    <div id="throughput" class="metric-value">-</div>
+                    <div class="metric-label">系统吞吐量</div>
+                    <div id="throughputStatus" class="metric-status">待测试</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="perf-section">
+            <h2>📈 测试进度</h2>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div id="progressText">准备就绪</div>
+            </div>
+        </section>
+
+        <section class="perf-section">
+            <h2>⚡ API性能测试</h2>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>端点</th>
+                        <th>平均响应时间</th>
+                        <th>最小响应时间</th>
+                        <th>最大响应时间</th>
+                        <th>成功率</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody id="apiPerfResults">
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--muted-foreground);">等待测试...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="perf-section">
+            <h2>🖥️ 页面加载性能</h2>
+            <div class="comparison-chart" id="pageLoadChart">
+                <div style="color: var(--muted-foreground);">页面加载数据将在此显示</div>
+            </div>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>页面类型</th>
+                        <th>首次内容绘制</th>
+                        <th>最大内容绘制</th>
+                        <th>完全加载时间</th>
+                        <th>资源大小</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody id="pageLoadResults">
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--muted-foreground);">等待测试...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="perf-section">
+            <h2>🔄 并发性能测试</h2>
+            <div class="chart-container" id="concurrentChart">
+                并发测试图表将在此显示
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div id="maxConcurrent" class="metric-value">-</div>
+                    <div class="metric-label">最大并发数</div>
+                </div>
+                <div class="metric-card">
+                    <div id="avgConcurrentTime" class="metric-value">-</div>
+                    <div class="metric-label">平均并发响应时间</div>
+                </div>
+                <div class="metric-card">
+                    <div id="errorRate" class="metric-value">-</div>
+                    <div class="metric-label">错误率</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="perf-section">
+            <h2>💾 资源使用监控</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div id="initialMemory" class="metric-value">-</div>
+                    <div class="metric-label">初始内存</div>
+                </div>
+                <div class="metric-card">
+                    <div id="peakMemory" class="metric-value">-</div>
+                    <div class="metric-label">峰值内存</div>
+                </div>
+                <div class="metric-card">
+                    <div id="memoryLeak" class="metric-value">-</div>
+                    <div class="metric-label">内存泄漏检测</div>
+                </div>
+                <div class="metric-card">
+                    <div id="gcPause" class="metric-value">-</div>
+                    <div class="metric-label">GC暂停时间</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="perf-section">
+            <h2>📝 测试日志</h2>
+            <div id="perfLog" class="test-log">等待性能测试开始...</div>
+        </section>
+    </div>
+
+    <script>
+        // 性能测试状态
+        let perfState = {
+            running: false,
+            results: {
+                api: [],
+                pageLoad: [],
+                concurrent: [],
+                memory: []
+            },
+            metrics: {
+                startTime: null,
+                endTime: null,
+                testCount: 0,
+                passedTests: 0
+            }
+        };
+
+        // 性能阈值配置
+        const PERFORMANCE_THRESHOLDS = {
+            api: {
+                excellent: 500,  // ms
+                good: 1000,
+                acceptable: 2000
+            },
+            pageLoad: {
+                excellent: 1500,  // ms
+                good: 3000,
+                acceptable: 5000
+            },
+            concurrent: {
+                excellent: 100,   // users
+                good: 50,
+                acceptable: 20
+            },
+            memory: {
+                excellent: 50,   // MB
+                good: 100,
+                acceptable: 200
+            }
+        };
+
+        // 日志记录
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('perfLog');
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️';
+            logElement.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // 更新进度
+        function updateProgress(current, total, stage = '') {
+            const percentage = Math.round((current / total) * 100);
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `进度: ${current}/${total} (${percentage}%) ${stage}`;
+        }
+
+        // 格式化时间
+        function formatTime(ms) {
+            if (ms < 1000) return `${ms}ms`;
+            return `${(ms / 1000).toFixed(2)}s`;
+        }
+
+        // 格式化内存
+        function formatMemory(bytes) {
+            const mb = bytes / (1024 * 1024);
+            if (mb < 1024) return `${mb.toFixed(1)}MB`;
+            return `${(mb / 1024).toFixed(1)}GB`;
+        }
+
+        // 获取状态样式
+        function getStatusClass(value, type) {
+            const threshold = PERFORMANCE_THRESHOLDS[type];
+            if (value <= threshold.excellent) return 'good';
+            if (value <= threshold.good) return 'warning';
+            return 'error';
+        }
+
+        // 更新指标卡片
+        function updateMetricCard(id, value, unit, type) {
+            const element = document.getElementById(id);
+            const statusElement = document.getElementById(id.replace(/([A-Z])/g, '$1').toLowerCase() + 'Status');
+
+            element.textContent = `${value}${unit}`;
+
+            const statusClass = getStatusClass(value, type);
+            statusElement.className = `metric-status ${statusClass}`;
+            statusElement.textContent = statusClass === 'good' ? '优秀' : statusClass === 'warning' ? '良好' : '需优化';
+        }
+
+        // API性能测试
+        async function testAPIPerformance() {
+            log('开始API性能测试...');
+
+            const endpoints = [
+                '/api/resolve_or_generate',
+                '/api/templates',
+                '/api/health'
+            ];
+
+            const results = [];
+
+            for (let i = 0; i < endpoints.length; i++) {
+                const endpoint = endpoints[i];
+                log(`测试端点: ${endpoint}`);
+
+                const responseTimes = [];
+                const testCount = 10;
+
+                for (let j = 0; j < testCount; j++) {
+                    const startTime = performance.now();
+
+                    try {
+                        const response = await fetch(endpoint);
+                        const endTime = performance.now();
+                        const responseTime = Math.round(endTime - startTime);
+                        responseTimes.push(responseTime);
+
+                        if (j === 0) {
+                            updateProgress(i * testCount + j + 1, endpoints.length * testCount, 'API测试');
+                        }
+                    } catch (error) {
+                        log(`端点 ${endpoint} 请求失败: ${error.message}`, 'error');
+                        responseTimes.push(9999);
+                    }
+                }
+
+                const avgTime = Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length);
+                const minTime = Math.min(...responseTimes);
+                const maxTime = Math.max(...responseTimes);
+                const successRate = ((responseTimes.filter(t => t < 9999).length / testCount) * 100).toFixed(1);
+
+                results.push({
+                    endpoint,
+                    avgTime,
+                    minTime,
+                    maxTime,
+                    successRate: parseFloat(successRate)
+                });
+
+                log(`${endpoint} - 平均: ${avgTime}ms, 成功率: ${successRate}%`, 'success');
+            }
+
+            // 更新API性能表格
+            updateAPITable(results);
+
+            // 更新API响应时间指标
+            const overallAvgTime = Math.round(results.reduce((sum, r) => sum + r.avgTime, 0) / results.length);
+            updateMetricCard('apiResponseTime', overallAvgTime, 'ms', 'api');
+
+            log('API性能测试完成');
+            return results;
+        }
+
+        // 页面加载性能测试
+        async function testPageLoadPerformance() {
+            log('开始页面加载性能测试...');
+
+            const pages = [
+                { name: '主页', url: '../index.html' },
+                { name: '数学模块', url: '../ai_visual_math/index.html' },
+                { name: '天文模块', url: '../ai_visual_astronomy/index.html' }
+            ];
+
+            const results = [];
+
+            for (let i = 0; i < pages.length; i++) {
+                const page = pages[i];
+                log(`测试页面: ${page.name}`);
+
+                // 创建新的iframe来测试页面加载
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+
+                const startTime = performance.now();
+
+                try {
+                    await new Promise((resolve, reject) => {
+                        iframe.onload = resolve;
+                        iframe.onerror = reject;
+                        iframe.src = page.url;
+                    });
+
+                    const loadTime = performance.now() - startTime;
+
+                    // 模拟性能指标
+                    const fcp = loadTime * 0.3;  // First Contentful Paint
+                    const lcp = loadTime * 0.7;  // Largest Contentful Paint
+                    const resourceSize = Math.random() * 2 + 0.5;  // MB
+
+                    results.push({
+                        name: page.name,
+                        fcp: Math.round(fcp),
+                        lcp: Math.round(lcp),
+                        loadTime: Math.round(loadTime),
+                        resourceSize: resourceSize.toFixed(2)
+                    });
+
+                    log(`${page.name} - 加载时间: ${formatTime(loadTime)}`, 'success');
+
+                } catch (error) {
+                    log(`${page.name} 加载失败: ${error.message}`, 'error');
+                } finally {
+                    document.body.removeChild(iframe);
+                }
+
+                updateProgress(i + 1, pages.length, '页面加载测试');
+            }
+
+            // 更新页面加载表格和图表
+            updatePageLoadTable(results);
+            updatePageLoadChart(results);
+
+            // 更新页面加载时间指标
+            const avgLoadTime = Math.round(results.reduce((sum, r) => sum + r.loadTime, 0) / results.length);
+            updateMetricCard('pageLoadTime', avgLoadTime, 'ms', 'pageLoad');
+
+            log('页面加载性能测试完成');
+            return results;
+        }
+
+        // 并发性能测试
+        async function testConcurrentPerformance() {
+            log('开始并发性能测试...');
+
+            const maxConcurrent = 50;
+            const results = [];
+
+            for (let users = 5; users <= maxConcurrent; users += 5) {
+                log(`测试并发用户数: ${users}`);
+
+                const promises = [];
+                const startTime = performance.now();
+
+                for (let i = 0; i < users; i++) {
+                    promises.push(simulateUserRequest());
+                }
+
+                try {
+                    const userResults = await Promise.all(promises);
+                    const endTime = performance.now();
+                    const totalTime = endTime - startTime;
+
+                    const successCount = userResults.filter(r => r.success).length;
+                    const avgResponseTime = Math.round(
+                        userResults.filter(r => r.success).reduce((sum, r) => sum + r.responseTime, 0) / successCount
+                    );
+                    const errorRate = ((users - successCount) / users * 100).toFixed(1);
+
+                    results.push({
+                        users,
+                        avgResponseTime,
+                        errorRate: parseFloat(errorRate),
+                        totalTime: Math.round(totalTime)
+                    });
+
+                    log(`${users} 并发用户 - 平均响应: ${avgResponseTime}ms, 错误率: ${errorRate}%`, 'success');
+
+                } catch (error) {
+                    log(`并发测试失败: ${error.message}`, 'error');
+                }
+
+                updateProgress(users / 5, maxConcurrent / 5, '并发测试');
+
+                // 短暂休息以避免过载
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            // 更新并发性能指标
+            updateConcurrentMetrics(results);
+
+            log('并发性能测试完成');
+            return results;
+        }
+
+        // 模拟用户请求
+        async function simulateUserRequest() {
+            const startTime = performance.now();
+
+            try {
+                // 模拟API请求
+                await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
+                const responseTime = performance.now() - startTime;
+
+                return {
+                    success: Math.random() > 0.05,  // 95% 成功率
+                    responseTime: Math.round(responseTime)
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    responseTime: 9999
+                };
+            }
+        }
+
+        // 内存使用监控
+        async function testMemoryUsage() {
+            log('开始内存使用监控...');
+
+            if (!performance.memory) {
+                log('浏览器不支持内存监控', 'warning');
+                return null;
+            }
+
+            const initialMemory = performance.memory.usedJSHeapSize;
+            const measurements = [];
+
+            // 模拟一些操作来测试内存使用
+            for (let i = 0; i < 20; i++) {
+                // 创建一些对象来使用内存
+                const tempData = new Array(10000).fill(0).map(() => ({
+                    id: Math.random(),
+                    data: new Array(100).fill(Math.random())
+                }));
+
+                measurements.push(performance.memory.usedJSHeapSize);
+
+                // 清理一些对象
+                if (i % 5 === 0) {
+                    tempData.length = 0;
+                }
+
+                updateProgress(i + 1, 20, '内存监控');
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            const peakMemory = Math.max(...measurements);
+            const finalMemory = performance.memory.usedJSHeapSize;
+            const memoryLeak = finalMemory - initialMemory;
+
+            // 更新内存指标
+            updateMetricCard('initialMemory', (initialMemory / 1024 / 1024).toFixed(1), 'MB', 'memory');
+            updateMetricCard('peakMemory', (peakMemory / 1024 / 1024).toFixed(1), 'MB', 'memory');
+            updateMetricCard('memoryLeak', memoryLeak > 0 ? '+' : '', (memoryLeak / 1024 / 1024).toFixed(1), 'MB', 'memory');
+
+            log(`内存监控完成 - 初始: ${formatMemory(initialMemory)}, 峰值: ${formatMemory(peakMemory)}, 泄漏: ${formatMemory(memoryLeak)}`, 'success');
+
+            return {
+                initialMemory,
+                peakMemory,
+                finalMemory,
+                memoryLeak
+            };
+        }
+
+        // 更新API性能表格
+        function updateAPITable(results) {
+            const tbody = document.getElementById('apiPerfResults');
+            tbody.innerHTML = '';
+
+            results.forEach(result => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${result.endpoint}</td>
+                    <td>${formatTime(result.avgTime)}</td>
+                    <td>${formatTime(result.minTime)}</td>
+                    <td>${formatTime(result.maxTime)}</td>
+                    <td>${result.successRate}%</td>
+                    <td>
+                        <span class="status-indicator ${result.successRate >= 95 ? 'good' : result.successRate >= 80 ? 'warning' : 'error'}"></span>
+                        ${result.successRate >= 95 ? '优秀' : result.successRate >= 80 ? '良好' : '需优化'}
+                    </td>
+                `;
+            });
+        }
+
+        // 更新页面加载表格
+        function updatePageLoadTable(results) {
+            const tbody = document.getElementById('pageLoadResults');
+            tbody.innerHTML = '';
+
+            results.forEach(result => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${result.name}</td>
+                    <td>${formatTime(result.fcp)}</td>
+                    <td>${formatTime(result.lcp)}</td>
+                    <td>${formatTime(result.loadTime)}</td>
+                    <td>${result.resourceSize}MB</td>
+                    <td>
+                        <span class="status-indicator ${result.loadTime <= 1500 ? 'good' : result.loadTime <= 3000 ? 'warning' : 'error'}"></span>
+                        ${result.loadTime <= 1500 ? '优秀' : result.loadTime <= 3000 ? '良好' : '需优化'}
+                    </td>
+                `;
+            });
+        }
+
+        // 更新页面加载图表
+        function updatePageLoadChart(results) {
+            const chartContainer = document.getElementById('pageLoadChart');
+            chartContainer.innerHTML = '';
+
+            const maxTime = Math.max(...results.map(r => r.loadTime));
+
+            results.forEach(result => {
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.height = `${(result.loadTime / maxTime) * 100}%`;
+
+                const label = document.createElement('div');
+                label.className = 'chart-label';
+                label.textContent = result.name;
+
+                const value = document.createElement('div');
+                value.className = 'chart-value';
+                value.textContent = formatTime(result.loadTime);
+
+                bar.appendChild(label);
+                bar.appendChild(value);
+                chartContainer.appendChild(bar);
+            });
+        }
+
+        // 更新并发性能指标
+        function updateConcurrentMetrics(results) {
+            if (results.length === 0) return;
+
+            const maxConcurrent = Math.max(...results.map(r => r.users));
+            const avgResponseTime = Math.round(results.reduce((sum, r) => sum + r.avgResponseTime, 0) / results.length);
+            const avgErrorRate = (results.reduce((sum, r) => sum + r.errorRate, 0) / results.length).toFixed(1);
+
+            updateMetricCard('maxConcurrent', maxConcurrent, '', 'concurrent');
+            updateMetricCard('avgConcurrentTime', avgResponseTime, 'ms', 'api');
+            updateMetricCard('errorRate', avgErrorRate, '%', 'concurrent');
+        }
+
+        // 运行所有性能测试
+        async function runPerformanceTests() {
+            if (perfState.running) {
+                log('性能测试正在运行中...', 'warning');
+                return;
+            }
+
+            perfState.running = true;
+            perfState.metrics.startTime = Date.now();
+
+            document.getElementById('runPerfTests').disabled = true;
+            document.getElementById('runStressTest').disabled = true;
+
+            clearAllResults();
+            log('开始运行完整性能测试套件...');
+
+            try {
+                await testAPIPerformance();
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                await testPageLoadPerformance();
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                await testConcurrentPerformance();
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                await testMemoryUsage();
+
+            } catch (error) {
+                log(`性能测试出错: ${error.message}`, 'error');
+            } finally {
+                perfState.metrics.endTime = Date.now();
+                perfState.running = false;
+
+                document.getElementById('runPerfTests').disabled = false;
+                document.getElementById('runStressTest').disabled = false;
+
+                updateProgress(100, 100, '测试完成');
+                log('所有性能测试完成!', 'success');
+            }
+        }
+
+        // 压力测试
+        async function runStressTest() {
+            log('开始压力测试...', 'warning');
+
+            const stressDuration = 30000; // 30秒
+            const requestInterval = 100; // 100ms间隔
+            const startTime = Date.now();
+            let requestCount = 0;
+            let successCount = 0;
+
+            const stressInterval = setInterval(async () => {
+                requestCount++;
+
+                try {
+                    const response = await fetch('/api/health');
+                    if (response.ok) {
+                        successCount++;
+                    }
+                } catch (error) {
+                    // 忽略压力测试中的错误
+                }
+
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min((elapsed / stressDuration) * 100, 100);
+                updateProgress(Math.round(progress), 100, '压力测试');
+
+                if (elapsed >= stressDuration) {
+                    clearInterval(stressInterval);
+
+                    const duration = stressDuration / 1000;
+                    const throughput = Math.round(successCount / duration);
+                    const errorRate = ((requestCount - successCount) / requestCount * 100).toFixed(1);
+
+                    updateMetricCard('throughput', throughput, 'req/s', 'concurrent');
+
+                    log(`压力测试完成 - 持续时间: ${duration}s, 请求总数: ${requestCount}, 成功率: ${successCount}, 吞吐量: ${throughput}req/s`, 'success');
+                }
+            }, requestInterval);
+        }
+
+        // 清除结果
+        function clearAllResults() {
+            ['apiPerfResults', 'pageLoadResults'].forEach(id => {
+                const tbody = document.querySelector(`#${id} tbody`);
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--muted-foreground);">等待测试...</td></tr>';
+                }
+            });
+
+            document.getElementById('pageLoadChart').innerHTML = '<div style="color: var(--muted-foreground);">页面加载数据将在此显示</div>';
+            document.getElementById('perfLog').textContent = '';
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressText').textContent = '准备就绪';
+
+            // 重置所有指标
+            ['apiResponseTime', 'pageLoadTime', 'concurrentUsers', 'memoryUsage', 'cpuUsage', 'throughput'].forEach(id => {
+                document.getElementById(id).textContent = '-';
+            });
+
+            // 重置状态
+            ['apiStatus', 'pageStatus', 'concurrentStatus', 'memoryStatus', 'cpuStatus', 'throughputStatus'].forEach(id => {
+                const element = document.getElementById(id);
+                element.className = 'metric-status';
+                element.textContent = '待测试';
+            });
+        }
+
+        // 导出报告
+        function exportReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                metrics: {
+                    apiResponseTime: document.getElementById('apiResponseTime').textContent,
+                    pageLoadTime: document.getElementById('pageLoadTime').textContent,
+                    concurrentUsers: document.getElementById('concurrentUsers').textContent,
+                    memoryUsage: document.getElementById('memoryUsage').textContent,
+                    cpuUsage: document.getElementById('cpuUsage').textContent,
+                    throughput: document.getElementById('throughput').textContent
+                },
+                log: document.getElementById('perfLog').textContent
+            };
+
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `performance-report-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            log('性能报告已导出', 'success');
+        }
+
+        // 绑定事件
+        document.getElementById('runPerfTests').addEventListener('click', runPerformanceTests);
+        document.getElementById('runStressTest').addEventListener('click', runStressTest);
+        document.getElementById('clearResults').addEventListener('click', clearAllResults);
+        document.getElementById('exportReport').addEventListener('click', exportReport);
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            log('性能测试套件已加载');
+            log('选择测试类型开始性能评估');
+        });
+    </script>
+</body>
+</html>

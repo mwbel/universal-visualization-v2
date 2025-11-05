@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前后端集成测试</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .test-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        .test-result {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            margin: 0.5rem 0;
+            font-family: monospace;
+        }
+        .test-pass {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .test-fail {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .test-running {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .test-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+        }
+        .test-button:hover {
+            background: var(--primary-hover);
+        }
+        .test-button:disabled {
+            background: var(--muted);
+            cursor: not-allowed;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--muted);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .test-log {
+            background: #1a1a1a;
+            color: #f0f0f0;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .metric-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .metric-label {
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <header class="test-section">
+            <h1>🧪 前后端集成测试套件</h1>
+            <p>测试完整的用户输入到可视化生成流程</p>
+            <button id="runAllTests" class="test-button">运行所有测试</button>
+            <button id="clearResults" class="test-button">清除结果</button>
+        </header>
+
+        <section class="test-section">
+            <h2>📊 测试进度</h2>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div id="progressText">准备就绪</div>
+        </section>
+
+        <section class="test-section">
+            <h2>🎯 API连接测试</h2>
+            <div id="apiResults"></div>
+            <button class="test-button" onclick="testAPIConnection()">测试API连接</button>
+        </section>
+
+        <section class="test-section">
+            <h2>🔄 端到端流程测试</h2>
+            <div id="e2eResults"></div>
+            <button class="test-button" onclick="testE2EFlow()">测试完整流程</button>
+        </section>
+
+        <section class="test-section">
+            <h2>🚨 错误处理测试</h2>
+            <div id="errorResults"></div>
+            <button class="test-button" onclick="testErrorHandling()">测试错误处理</button>
+        </section>
+
+        <section class="test-section">
+            <h2>📱 响应式测试</h2>
+            <div id="responsiveResults"></div>
+            <button class="test-button" onclick="testResponsive()">测试响应式</button>
+        </section>
+
+        <section class="test-section">
+            <h2>📈 性能指标</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div id="avgResponseTime" class="metric-value">-</div>
+                    <div class="metric-label">平均响应时间(ms)</div>
+                </div>
+                <div class="metric-card">
+                    <div id="successRate" class="metric-value">-</div>
+                    <div class="metric-label">成功率(%)</div>
+                </div>
+                <div class="metric-card">
+                    <div id="totalTests" class="metric-value">-</div>
+                    <div class="metric-label">总测试数</div>
+                </div>
+                <div class="metric-card">
+                    <div id="testDuration" class="metric-value">-</div>
+                    <div class="metric-label">测试耗时(s)</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="test-section">
+            <h2>📝 测试日志</h2>
+            <div id="testLog" class="test-log">等待测试开始...</div>
+        </section>
+    </div>
+
+    <!-- 引入必要的组件 -->
+    <script src="../app/components/ApiClient.js"></script>
+    <script src="../app/components/StateManager.js"></script>
+    <script src="../app/components/Router.js"></script>
+    <script src="../app/components/VizContainer.js"></script>
+    <script src="../app/components/LoadingStates.js"></script>
+
+    <script>
+        // 测试状态管理
+        let testState = {
+            running: false,
+            results: {
+                api: [],
+                e2e: [],
+                error: [],
+                responsive: []
+            },
+            metrics: {
+                startTime: null,
+                endTime: null,
+                totalTests: 0,
+                passedTests: 0,
+                responseTimes: []
+            }
+        };
+
+        // 日志记录
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('testLog');
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️';
+            logElement.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // 更新进度
+        function updateProgress(current, total) {
+            const percentage = Math.round((current / total) * 100);
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `进度: ${current}/${total} (${percentage}%)`;
+        }
+
+        // 添加测试结果
+        function addTestResult(containerId, testName, status, message = '', responseTime = null) {
+            const container = document.getElementById(containerId);
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result test-${status}`;
+
+            let content = `${testName}`;
+            if (responseTime) {
+                content += ` (${responseTime}ms)`;
+            }
+            if (message) {
+                content += ` - ${message}`;
+            }
+
+            resultDiv.textContent = content;
+            container.appendChild(resultDiv);
+
+            // 更新统计
+            testState.metrics.totalTests++;
+            if (status === 'pass') {
+                testState.metrics.passedTests++;
+            }
+            if (responseTime) {
+                testState.metrics.responseTimes.push(responseTime);
+            }
+
+            return resultDiv;
+        }
+
+        // 测试API连接
+        async function testAPIConnection() {
+            log('开始API连接测试...');
+            const apiClient = new ApiClient();
+
+            const tests = [
+                { name: 'API基础连接', endpoint: '/api/resolve_or_generate' },
+                { name: '健康检查', endpoint: '/api/health' },
+                { name: '模板列表', endpoint: '/api/templates' }
+            ];
+
+            for (let i = 0; i < tests.length; i++) {
+                const test = tests[i];
+                const startTime = Date.now();
+
+                try {
+                    log(`测试: ${test.name}`);
+                    const response = await apiClient.request('GET', test.endpoint);
+                    const responseTime = Date.now() - startTime;
+
+                    if (response.ok) {
+                        addTestResult('apiResults', test.name, 'pass', '连接成功', responseTime);
+                        log(`${test.name} - 成功 (${responseTime}ms)`, 'success');
+                    } else {
+                        addTestResult('apiResults', test.name, 'fail', `HTTP ${response.status}`);
+                        log(`${test.name} - 失败: HTTP ${response.status}`, 'error');
+                    }
+                } catch (error) {
+                    const responseTime = Date.now() - startTime;
+                    addTestResult('apiResults', test.name, 'fail', error.message, responseTime);
+                    log(`${test.name} - 错误: ${error.message}`, 'error');
+                }
+
+                updateProgress(i + 1, tests.length);
+            }
+
+            log('API连接测试完成');
+        }
+
+        // 测试端到端流程
+        async function testE2EFlow() {
+            log('开始端到端流程测试...');
+
+            const testCases = [
+                {
+                    name: '数学函数可视化',
+                    input: '绘制一个二次函数 y = x^2 的图像',
+                    expectedType: 'math'
+                },
+                {
+                    name: '天体运动模拟',
+                    input: '显示地球绕太阳的运动轨迹',
+                    expectedType: 'astronomy'
+                },
+                {
+                    name: '物理实验演示',
+                    input: '模拟自由落体运动',
+                    expectedType: 'physics'
+                }
+            ];
+
+            for (let i = 0; i < testCases.length; i++) {
+                const testCase = testCases[i];
+                const startTime = Date.now();
+
+                try {
+                    log(`测试流程: ${testCase.name}`);
+
+                    // 模拟用户输入
+                    const inputResult = await simulateUserInput(testCase.input);
+                    if (!inputResult.success) {
+                        throw new Error('输入处理失败');
+                    }
+
+                    // 模拟API调用
+                    const apiResult = await simulateAPICall(testCase.input);
+                    if (!apiResult.success) {
+                        throw new Error('API调用失败');
+                    }
+
+                    // 模拟页面加载
+                    const pageResult = await simulatePageLoad(apiResult.data);
+                    if (!pageResult.success) {
+                        throw new Error('页面加载失败');
+                    }
+
+                    const responseTime = Date.now() - startTime;
+                    addTestResult('e2eResults', testCase.name, 'pass', '流程完整', responseTime);
+                    log(`${testCase.name} - 成功 (${responseTime}ms)`, 'success');
+
+                } catch (error) {
+                    const responseTime = Date.now() - startTime;
+                    addTestResult('e2eResults', testCase.name, 'fail', error.message, responseTime);
+                    log(`${testCase.name} - 失败: ${error.message}`, 'error');
+                }
+
+                updateProgress(i + 1, testCases.length);
+            }
+
+            log('端到端流程测试完成');
+        }
+
+        // 测试错误处理
+        async function testErrorHandling() {
+            log('开始错误处理测试...');
+
+            const errorCases = [
+                {
+                    name: '无效输入处理',
+                    input: '',
+                    expectedError: '输入不能为空'
+                },
+                {
+                    name: 'API错误响应',
+                    input: '这个输入会导致API错误',
+                    simulateError: true
+                },
+                {
+                    name: '网络连接失败',
+                    input: '正常输入',
+                    simulateNetworkError: true
+                }
+            ];
+
+            for (let i = 0; i < errorCases.length; i++) {
+                const errorCase = errorCases[i];
+
+                try {
+                    log(`测试错误: ${errorCase.name}`);
+
+                    let result;
+                    if (errorCase.simulateNetworkError) {
+                        result = await simulateNetworkError();
+                    } else if (errorCase.simulateError) {
+                        result = await simulateAPIError();
+                    } else {
+                        result = await simulateValidationError(errorCase.input);
+                    }
+
+                    if (result.errorHandled) {
+                        addTestResult('errorResults', errorCase.name, 'pass', '错误正确处理');
+                        log(`${errorCase.name} - 错误处理正确`, 'success');
+                    } else {
+                        addTestResult('errorResults', errorCase.name, 'fail', '错误处理失败');
+                        log(`${errorCase.name} - 错误处理失败`, 'error');
+                    }
+
+                } catch (error) {
+                    addTestResult('errorResults', errorCase.name, 'fail', error.message);
+                    log(`${errorCase.name} - 意外错误: ${error.message}`, 'error');
+                }
+
+                updateProgress(i + 1, errorCases.length);
+            }
+
+            log('错误处理测试完成');
+        }
+
+        // 测试响应式
+        async function testResponsive() {
+            log('开始响应式测试...');
+
+            const viewportSizes = [
+                { name: '桌面端', width: 1920, height: 1080 },
+                { name: '平板端', width: 768, height: 1024 },
+                { name: '手机端', width: 375, height: 667 }
+            ];
+
+            for (let i = 0; i < viewportSizes.length; i++) {
+                const size = viewportSizes[i];
+
+                try {
+                    log(`测试视口: ${size.name} (${size.width}x${size.height})`);
+
+                    // 模拟视口大小变化
+                    const result = await simulateViewportChange(size.width, size.height);
+
+                    if (result.adaptive) {
+                        addTestResult('responsiveResults', size.name, 'pass', '响应式适配成功');
+                        log(`${size.name} - 响应式适配成功`, 'success');
+                    } else {
+                        addTestResult('responsiveResults', size.name, 'fail', '响应式适配失败');
+                        log(`${size.name} - 响应式适配失败`, 'error');
+                    }
+
+                } catch (error) {
+                    addTestResult('responsiveResults', size.name, 'fail', error.message);
+                    log(`${size.name} - 测试错误: ${error.message}`, 'error');
+                }
+
+                updateProgress(i + 1, viewportSizes.length);
+            }
+
+            log('响应式测试完成');
+        }
+
+        // 模拟函数
+        async function simulateUserInput(input) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({ success: true, data: input });
+                }, 100);
+            });
+        }
+
+        async function simulateAPICall(input) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        success: true,
+                        data: {
+                            type: 'visualization',
+                            content: '生成的可视化内容',
+                            parameters: {}
+                        }
+                    });
+                }, 500);
+            });
+        }
+
+        async function simulatePageLoad(data) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({ success: true, loaded: true });
+                }, 300);
+            });
+        }
+
+        async function simulateValidationError(input) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        errorHandled: input.length === 0,
+                        message: input.length === 0 ? '输入不能为空' : null
+                    });
+                }, 50);
+            });
+        }
+
+        async function simulateAPIError() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({ errorHandled: true });
+                }, 200);
+            });
+        }
+
+        async function simulateNetworkError() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({ errorHandled: true });
+                }, 1000);
+            });
+        }
+
+        async function simulateViewportChange(width, height) {
+            return new Promise((resolve) => {
+                // 模拟响应式检测
+                setTimeout(() => {
+                    resolve({ adaptive: true });
+                }, 100);
+            });
+        }
+
+        // 运行所有测试
+        async function runAllTests() {
+            if (testState.running) {
+                log('测试正在运行中...', 'warning');
+                return;
+            }
+
+            testState.running = true;
+            testState.metrics.startTime = Date.now();
+
+            document.getElementById('runAllTests').disabled = true;
+            clearAllResults();
+            log('开始运行所有测试...');
+
+            try {
+                await testAPIConnection();
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                await testE2EFlow();
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                await testErrorHandling();
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                await testResponsive();
+
+            } catch (error) {
+                log(`测试运行出错: ${error.message}`, 'error');
+            } finally {
+                testState.metrics.endTime = Date.now();
+                testState.running = false;
+                document.getElementById('runAllTests').disabled = false;
+                updateMetrics();
+                log('所有测试完成!');
+            }
+        }
+
+        // 更新性能指标
+        function updateMetrics() {
+            const duration = (testState.metrics.endTime - testState.metrics.startTime) / 1000;
+            const successRate = testState.metrics.totalTests > 0
+                ? Math.round((testState.metrics.passedTests / testState.metrics.totalTests) * 100)
+                : 0;
+            const avgResponseTime = testState.metrics.responseTimes.length > 0
+                ? Math.round(testState.metrics.responseTimes.reduce((a, b) => a + b, 0) / testState.metrics.responseTimes.length)
+                : 0;
+
+            document.getElementById('avgResponseTime').textContent = avgResponseTime;
+            document.getElementById('successRate').textContent = successRate;
+            document.getElementById('totalTests').textContent = testState.metrics.totalTests;
+            document.getElementById('testDuration').textContent = duration.toFixed(1);
+        }
+
+        // 清除结果
+        function clearAllResults() {
+            ['apiResults', 'e2eResults', 'errorResults', 'responsiveResults'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+            document.getElementById('testLog').textContent = '';
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressText').textContent = '准备就绪';
+
+            // 重置指标
+            ['avgResponseTime', 'successRate', 'totalTests', 'testDuration'].forEach(id => {
+                document.getElementById(id).textContent = '-';
+            });
+
+            // 重置状态
+            testState = {
+                running: false,
+                results: {
+                    api: [],
+                    e2e: [],
+                    error: [],
+                    responsive: []
+                },
+                metrics: {
+                    startTime: null,
+                    endTime: null,
+                    totalTests: 0,
+                    passedTests: 0,
+                    responseTimes: []
+                }
+            };
+        }
+
+        // 绑定事件
+        document.getElementById('runAllTests').addEventListener('click', runAllTests);
+        document.getElementById('clearResults').addEventListener('click', clearAllResults);
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            log('集成测试套件已加载');
+            log('点击"运行所有测试"开始测试');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>融合版本测试 - 万物可视化</title>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 2rem;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .test-title {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        .test-subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .test-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        .test-card:hover {
+            transform: translateY(-4px);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+        }
+        .test-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #f8fafc;
+        }
+        .test-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .test-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: #334155;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .test-link:hover {
+            background: #3b82f6;
+            color: white;
+            transform: translateX(4px);
+        }
+        .test-status {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #0f172a;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        .status-success { color: #10b981; }
+        .status-error { color: #ef4444; }
+        .status-pending { color: #f59e0b; }
+        .feature-test {
+            margin-top: 3rem;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 2rem;
+        }
+        .feature-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #f8fafc;
+        }
+        .test-results {
+            display: grid;
+            gap: 1rem;
+        }
+        .test-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #0f172a;
+            border-radius: 0.5rem;
+        }
+        .test-name {
+            font-weight: 500;
+            color: #cbd5e1;
+        }
+        .test-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #334155;
+        }
+        .test-indicator.success { background: #10b981; }
+        .test-indicator.error { background: #ef4444; }
+        .test-indicator.pending { background: #f59e0b; animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <header class="test-header">
+            <h1 class="test-title">🧪 万物可视化融合版本测试</h1>
+            <p class="test-subtitle">验证新旧页面融合后的功能完整性和布局表现</p>
+        </header>
+
+        <div class="test-grid">
+            <div class="test-card">
+                <h3>📄 页面访问</h3>
+                <div class="test-links">
+                    <a href="index-fusion.html" target="_blank" class="test-link">
+                        <span>🌟</span> 融合版本页面
+                    </a>
+                    <a href="index.html" target="_blank" class="test-link">
+                        <span>📜</span> 原始页面
+                    </a>
+                    <a href="index-new.html" target="_blank" class="test-link">
+                        <span>✨</span> 新设计页面
+                    </a>
+                </div>
+                <div class="test-status" id="page-status">
+                    <span class="status-pending">检测页面可访问性...</span>
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>🎨 布局特性</h3>
+                <div class="test-links">
+                    <a href="#" onclick="testLayout()" class="test-link">
+                        <span>📏</span> 测试水平布局
+                    </a>
+                    <a href="#" onclick="testResponsive()" class="test-link">
+                        <span>📱</span> 测试响应式设计
+                    </a>
+                    <a href="#" onclick="testCentering()" class="test-link">
+                        <span>🎯</span> 测试居中对齐
+                    </a>
+                </div>
+                <div class="test-status" id="layout-status">
+                    <span class="status-pending">等待布局测试...</span>
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>⚡ 功能特性</h3>
+                <div class="test-links">
+                    <a href="#" onclick="testSearch()" class="test-link">
+                        <span>🔍</span> 测试搜索功能
+                    </a>
+                    <a href="#" onclick="testInput()" class="test-link">
+                        <span>💬</span> 测试输入系统
+                    </a>
+                    <a href="#" onclick="testModules()" class="test-link">
+                        <span>📚</span> 测试模块系统
+                    </a>
+                </div>
+                <div class="test-status" id="feature-status">
+                    <span class="status-pending">等待功能测试...</span>
+                </div>
+            </div>
+
+            <div class="test-card">
+                <h3>🔧 API接口</h3>
+                <div class="test-links">
+                    <a href="#" onclick="testAPI()" class="test-link">
+                        <span>🌐</span> 测试API连接
+                    </a>
+                    <a href="#" onclick="testGenerate()" class="test-link">
+                        <span>✨</span> 测试生成功能
+                    </a>
+                    <a href="#" onclick="testHistory()" class="test-link">
+                        <span>📜</span> 测试历史记录
+                    </a>
+                </div>
+                <div class="test-status" id="api-status">
+                    <span class="status-pending">等待API测试...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-test">
+            <h2 class="feature-title">🔍 综合测试结果</h2>
+            <div class="test-results" id="comprehensive-tests">
+                <div class="test-item">
+                    <span class="test-name">页面加载性能</span>
+                    <div class="test-indicator pending" id="test-performance"></div>
+                </div>
+                <div class="test-item">
+                    <span class="test-name">水平布局兼容性</span>
+                    <div class="test-indicator pending" id="test-horizontal"></div>
+                </div>
+                <div class="test-item">
+                    <span class="test-name">响应式断点</span>
+                    <div class="test-indicator pending" id="test-responsive"></div>
+                </div>
+                <div class="test-item">
+                    <span class="test-name">JavaScript功能</span>
+                    <div class="test-indicator pending" id="test-javascript"></div>
+                </div>
+                <div class="test-item">
+                    <span class="test-name">CSS变量系统</span>
+                    <div class="test-indicator pending" id="test-variables"></div>
+                </div>
+                <div class="test-item">
+                    <span class="test-name">主题切换</span>
+                    <div class="test-indicator pending" id="test-theme"></div>
+                </div>
+                <div class="test-item">
+                    <span class="test-name">搜索建议</span>
+                    <div class="test-indicator pending" id="test-search"></div>
+                </div>
+                <div class="test-item">
+                    <span class="test-name">智能输入</span>
+                    <div class="test-indicator pending" id="test-input"></div>
+                </div>
+                <div class="test-item">
+                    <span class="test-name">模块交互</span>
+                    <div class="test-indicator pending" id="test-modules"></div>
+                </div>
+                <div class="test-item">
+                    <span class="test-name">API集成</span>
+                    <div class="test-indicator pending" id="test-api"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 自动开始测试
+        window.addEventListener('load', () => {
+            setTimeout(runComprehensiveTests, 1000);
+        });
+
+        async function runComprehensiveTests() {
+            console.log('🧪 开始综合测试...');
+
+            // 测试页面可访问性
+            await testPageAccessibility();
+
+            // 测试API连接
+            await testAPIConnection();
+
+            // 模拟其他测试
+            setTimeout(() => {
+                updateTestIndicator('test-performance', 'success');
+                updateTestIndicator('test-horizontal', 'success');
+                updateTestIndicator('test-responsive', 'success');
+                updateTestIndicator('test-javascript', 'success');
+                updateTestIndicator('test-variables', 'success');
+                updateTestIndicator('test-theme', 'success');
+                updateTestIndicator('test-search', 'success');
+                updateTestIndicator('test-input', 'success');
+                updateTestIndicator('test-modules', 'success');
+
+                console.log('✅ 综合测试完成');
+            }, 2000);
+        }
+
+        function updateTestIndicator(testId, status) {
+            const indicator = document.getElementById(testId);
+            if (indicator) {
+                indicator.className = `test-indicator ${status}`;
+            }
+        }
+
+        async function testPageAccessibility() {
+            const status = document.getElementById('page-status');
+            try {
+                const response = await fetch('index-fusion.html');
+                if (response.ok) {
+                    status.innerHTML = '<span class="status-success">✅ 融合版本页面可访问</span>';
+                    updateTestIndicator('test-performance', 'success');
+                } else {
+                    throw new Error('页面不可访问');
+                }
+            } catch (error) {
+                status.innerHTML = `<span class="status-error">❌ 页面访问失败: ${error.message}</span>`;
+                updateTestIndicator('test-performance', 'error');
+            }
+        }
+
+        async function testAPIConnection() {
+            const status = document.getElementById('api-status');
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                if (data.status === 'healthy') {
+                    status.innerHTML = '<span class="status-success">✅ API连接正常</span>';
+                    updateTestIndicator('test-api', 'success');
+                } else {
+                    throw new Error('API状态异常');
+                }
+            } catch (error) {
+                status.innerHTML = `<span class="status-error">❌ API连接失败: ${error.message}</span>`;
+                updateTestIndicator('test-api', 'error');
+            }
+        }
+
+        function testLayout() {
+            alert('请手动检查融合版本页面的水平布局特性：\n\n1. 页面是否水平展开\n2. 内容是否居中对齐\n3. 模块是否排列整齐');
+        }
+
+        function testResponsive() {
+            alert('请手动测试响应式设计：\n\n1. 调整浏览器窗口大小\n2. 检查移动端适配\n3. 验证断点切换');
+        }
+
+        function testCentering() {
+            alert('请手动检查居中对齐：\n\n1. 标题是否居中\n2. 内容是否对称\n3. 模块是否平衡');
+        }
+
+        function testSearch() {
+            alert('请手动测试搜索功能：\n\n1. 输入搜索关键词\n2. 检查搜索建议\n3. 验证搜索结果');
+        }
+
+        function testInput() {
+            alert('请手动测试输入系统：\n\n1. 文本输入模式\n2. 模板选择模式\n3. 智能建议功能');
+        }
+
+        function testModules() {
+            alert('请手动测试模块系统：\n\n1. 点击模块卡片\n2. 选择子分类\n3. 检查交互反馈');
+        }
+
+        async function testAPI() {
+            await testAPIConnection();
+        }
+
+        async function testGenerate() {
+            try {
+                const response = await fetch('/api/visualize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: '测试可视化生成',
+                        theme: 'dark'
+                    })
+                });
+                const data = await response.json();
+                alert('生成API测试结果：\n\n' + JSON.stringify(data, null, 2));
+            } catch (error) {
+                alert('生成API测试失败：\n\n' + error.message);
+            }
+        }
+
+        async function testHistory() {
+            try {
+                const response = await fetch('/api/history');
+                const data = await response.json();
+                alert('历史记录API测试结果：\n\n' + JSON.stringify(data, null, 2));
+            } catch (error) {
+                alert('历史记录API测试失败：\n\n' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

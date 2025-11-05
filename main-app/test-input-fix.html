@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 输入修复测试</title>
+    <link rel="stylesheet" href="styles/design-system.css">
+    <style>
+        .test-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .status-panel {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        .status-success { color: #059669; }
+        .status-warning { color: #d97706; }
+        .status-error { color: #dc2626; }
+        .status-pending { color: #6b7280; }
+        .test-input-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .diagnostic-info {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .loading-indicator {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="test-header">
+        <h1>🔧 万物可视化 - 输入修复测试</h1>
+        <p>测试SmartInput组件初始化修复效果</p>
+    </header>
+
+    <div class="test-container">
+        <div class="status-panel">
+            <h3>📊 组件状态监控</h3>
+            <div id="statusContainer">
+                <div class="status-item">
+                    <span>页面加载状态</span>
+                    <span class="status-pending" id="pageStatus">等待中...</span>
+                </div>
+                <div class="status-item">
+                    <span>SmartInput组件</span>
+                    <span class="status-pending" id="smartInputStatus">等待中...</span>
+                </div>
+                <div class="status-item">
+                    <span>DOM元素状态</span>
+                    <span class="status-pending" id="domStatus">等待中...</span>
+                </div>
+                <div class="status-item">
+                    <span>事件绑定状态</span>
+                    <span class="status-pending" id="eventStatus">等待中...</span>
+                </div>
+                <div class="status-item">
+                    <span>降级模式状态</span>
+                    <span class="status-pending" id="fallbackStatus">未激活</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-input-section">
+            <h3>✍️ 输入功能测试</h3>
+            <div class="smart-input-container">
+                <textarea
+                    id="mainInput"
+                    class="smart-input"
+                    placeholder="请输入可视化需求，例如：正态分布 均值0 标准差1"
+                    rows="3"
+                ></textarea>
+                <div class="input-footer">
+                    <span class="char-count">0 / 500</span>
+                    <button class="generate-btn" id="generateBtn">
+                        <span class="btn-icon">✨</span>
+                        生成可视化
+                    </button>
+                </div>
+            </div>
+
+            <!-- 建议容器 -->
+            <div class="suggestions-container" id="suggestionsContainer" style="display: none;">
+                <div class="suggestions-header">
+                    <span class="suggestions-title">💡 智能建议</span>
+                    <button class="close-suggestions" id="closeSuggestions">×</button>
+                </div>
+                <div class="suggestions-list" id="suggestionsList">
+                    <!-- 动态生成建议内容 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="diagnostic-info" id="diagnosticInfo">
+            <strong>诊断信息：</strong><br>
+            等待应用加载...
+        </div>
+    </div>
+
+    <!-- 必需的容器元素 -->
+    <div id="vizContainer" style="display: none;"></div>
+    <div class="router-container" data-router-container></div>
+
+    <!-- 加载遮罩 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在处理...</div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 模块 -->
+    <script>
+        // 测试脚本
+        let testResults = [];
+        let diagnosticData = {};
+
+        function updateStatus(id, status, message) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.className = `status-${status}`;
+                element.textContent = message;
+            }
+        }
+
+        function addDiagnosticInfo(info) {
+            diagnosticData[info.key] = info.value;
+            updateDiagnosticDisplay();
+        }
+
+        function updateDiagnosticDisplay() {
+            const diagnosticDiv = document.getElementById('diagnosticInfo');
+            const diagnosticText = Object.keys(diagnosticData)
+                .map(key => `${key}: ${diagnosticData[key]}`)
+                .join('\n');
+            diagnosticDiv.innerHTML = `<strong>诊断信息：</strong><br>${diagnosticText}`;
+        }
+
+        function addTestResult(name, status, details) {
+            const result = { name, status, details, timestamp: new Date().toISOString() };
+            testResults.push(result);
+            console.log(`[TEST ${status.toUpperCase()}] ${name}: ${details}`);
+        }
+
+        // 监听应用初始化事件
+        document.addEventListener('app:ready', () => {
+            updateStatus('pageStatus', 'success', '✅ 应用就绪');
+            addTestResult('应用初始化', 'success', '应用成功初始化');
+        });
+
+        document.addEventListener('app:fallback-ready', () => {
+            updateStatus('pageStatus', 'warning', '⚠️ 应用降级模式');
+            addTestResult('应用初始化', 'warning', '应用以降级模式启动');
+        });
+
+        // 监听SmartInput事件
+        document.addEventListener('smart-input:initialization-success', (event) => {
+            const details = event.detail;
+            updateStatus('smartInputStatus', 'success', `✅ 成功 (${details.totalTime}ms)`);
+            addTestResult('SmartInput初始化', 'success', `初始化成功，耗时 ${details.totalTime}ms`);
+            addDiagnosticInfo({
+                key: 'SmartInput状态',
+                value: `成功 (尝试次数: ${details.attempts})`
+            });
+        });
+
+        document.addEventListener('smart-input:initialization-error', (event) => {
+            const error = event.detail;
+            updateStatus('smartInputStatus', 'error', `❌ ${error.type}`);
+            addTestResult('SmartInput初始化', 'error', `初始化错误: ${error.type}`);
+            addDiagnosticInfo({
+                key: 'SmartInput错误',
+                value: `${error.type}: ${error.details}`
+            });
+        });
+
+        document.addEventListener('smart-input:initialization-failed', (event) => {
+            const failure = event.detail;
+            updateStatus('smartInputStatus', 'error', `❌ 失败 (${failure.reason})`);
+            addTestResult('SmartInput初始化', 'error', `初始化失败: ${failure.reason}`);
+            addDiagnosticInfo({
+                key: 'SmartInput失败',
+                value: `${failure.reason} (尝试次数: ${failure.attempts})`
+            });
+        });
+
+        // 监听降级输入事件
+        document.addEventListener('component:fallback-input:ready', () => {
+            updateStatus('fallbackStatus', 'success', '✅ 降级模式已激活');
+            addTestResult('降级输入', 'success', '降级输入模式成功激活');
+        });
+
+        document.addEventListener('component:smart-input:ready', () => {
+            updateStatus('smartInputStatus', 'success', '✅ 组件就绪');
+            addTestResult('SmartInput组件', 'success', 'SmartInput组件已就绪');
+        });
+
+        document.addEventListener('component:smart-input:error', (event) => {
+            const error = event.detail;
+            updateStatus('smartInputStatus', 'warning', `⚠️ 错误处理: ${error.type}`);
+            addTestResult('SmartInput错误处理', 'warning', `错误已处理: ${error.type}`);
+        });
+
+        document.addEventListener('component:smart-input:failed', (event) => {
+            const failure = event.detail;
+            updateStatus('smartInputStatus', 'error', `❌ 组件失败: ${failure.reason}`);
+            addTestResult('SmartInput组件', 'error', `SmartInput组件失败: ${failure.reason}`);
+        });
+
+        // 页面加载检查
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStatus('pageStatus', 'success', '✅ DOM已加载');
+            addDiagnosticInfo({
+                key: 'DOM状态',
+                value: document.readyState
+            });
+
+            // 检查必需的DOM元素
+            setTimeout(() => {
+                const input = document.getElementById('mainInput');
+                const generateBtn = document.getElementById('generateBtn');
+                const suggestionsContainer = document.getElementById('suggestionsContainer');
+
+                let domStatus = '✅ 所有元素存在';
+                let missingElements = [];
+
+                if (!input) missingElements.push('mainInput');
+                if (!generateBtn) missingElements.push('generateBtn');
+                if (!suggestionsContainer) missingElements.push('suggestionsContainer');
+
+                if (missingElements.length > 0) {
+                    domStatus = `❌ 缺少元素: ${missingElements.join(', ')}`;
+                    updateStatus('domStatus', 'error', domStatus);
+                } else {
+                    updateStatus('domStatus', 'success', domStatus);
+                }
+
+                addDiagnosticInfo({
+                    key: 'DOM元素检查',
+                    value: domStatus
+                });
+            }, 100);
+        });
+
+        // 错误监听
+        window.addEventListener('error', (event) => {
+            addTestResult('JavaScript错误', 'error', `${event.error.message} at ${event.filename}:${event.lineno}`);
+            addDiagnosticInfo({
+                key: 'JS错误',
+                value: `${event.error.message}`
+            });
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            addTestResult('Promise错误', 'error', `未处理的Promise rejection: ${event.reason}`);
+            addDiagnosticInfo({
+                key: 'Promise错误',
+                value: `${event.reason}`
+            });
+        });
+
+        // 定期检查应用状态
+        setInterval(() => {
+            if (window.app) {
+                const smartInput = window.app.components?.smartInput;
+                if (smartInput) {
+                    const status = smartInput.getInitializationStatus();
+                    addDiagnosticInfo({
+                        key: 'SmartInput状态',
+                        value: `${status.status} (尝试: ${status.attempts})`
+                    });
+
+                    // 检查事件绑定
+                    if (status.eventsAttached) {
+                        updateStatus('eventStatus', 'success', '✅ 事件已绑定');
+                    } else {
+                        updateStatus('eventStatus', 'warning', '⚠️ 事件未绑定');
+                    }
+                }
+            }
+        }, 2000);
+    </script>
+
+    <!-- 应用组件 -->
+    <script src="components/StateManager.js"></script>
+    <script src="components/ThemeManager.js"></script>
+    <script src="components/MobileEnhancer.js"></script>
+    <script src="components/ApiClient.js"></script>
+    <script src="components/SmartInput.js"></script>
+    <script src="components/TemplateSelector.js"></script>
+    <script src="components/LoadingStates.js"></script>
+    <script src="components/ParamSync.js"></script>
+    <script src="components/Router.js"></script>
+    <script src="components/VizContainer.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

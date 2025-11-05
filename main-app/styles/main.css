@@ -646,21 +646,54 @@ body {
 
 .modules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: var(--space-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+  /* 确保网格项目高度完全一致 */
+  align-items: stretch;
+  /* 启用网格的自动高度调整 - 使所有卡片高度相同 */
+  grid-auto-rows: 1fr;
+  /* 确保网格容器有明确的高度 */
+  min-height: 600px;
 }
 
 .module-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-xl);
-  padding: var(--spacing-xl);
+  padding: var(--space-2xl);
   transition: all var(--transition-normal);
+  box-shadow: var(--shadow-theme-lg);
+  position: relative;
+  overflow: hidden;
+  /* 添加flex布局确保统一高度 */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* 确保卡片内容有最小高度 */
+  min-height: 550px;
+}
+
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  transform: translateX(-100%);
+  transition: transform var(--transition-slow);
+}
+
+.module-card:hover::before {
+  transform: translateX(0);
 }
 
 .module-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px var(--shadow-light);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-theme-xl);
   border-color: var(--accent-primary);
 }
 
@@ -668,18 +701,25 @@ body {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-  position: relative;
+  margin-bottom: var(--spacing-lg);
+  flex-shrink: 0;
 }
 
 .module-icon {
-  font-size: var(--font-2xl);
+  font-size: var(--text-3xl);
+  line-height: 1;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .module-title {
-  font-size: var(--font-lg);
+  font-size: var(--text-xl);
   font-weight: 600;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .module-badge {
@@ -693,10 +733,14 @@ body {
 }
 
 .module-subcategories {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: var(--spacing-sm);
-  margin: var(--spacing-md) 0;
+  margin-bottom: var(--spacing-lg);
+  /* 固定子分类区域的高度 */
+  min-height: 8rem;
+  max-height: 8rem;
+  overflow-y: auto;
+  flex-shrink: 0;
 }
 
 .subcategory {
@@ -739,13 +783,24 @@ body {
   color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: var(--spacing-lg);
+  font-size: var(--text-base);
+  flex-grow: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  min-height: 4.8rem; /* 确保描述区域有固定最小高度 */
 }
 
 .module-features {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-sm);
   margin-bottom: var(--spacing-lg);
+  flex-shrink: 0;
+  min-height: 2.5rem; /* 固定最小高度 */
+  max-height: 2.5rem; /* 固定最大高度，确保一致性 */
+  overflow: hidden;
 }
 
 .feature-tag {
@@ -760,6 +815,10 @@ body {
 .module-actions {
   display: flex;
   gap: var(--spacing-md);
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-top: var(--spacing-md);
+  min-height: 3rem; /* 确保按钮区域有固定高度 */
 }
 
 .module-btn {
@@ -768,11 +827,15 @@ body {
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   color: var(--text-primary);
-  cursor: pointer;
-  font-size: var(--font-sm);
   font-weight: 500;
-  padding: var(--spacing-md) var(--spacing-lg);
+  cursor: pointer;
   transition: all var(--transition-fast);
+  min-height: 2.5rem; /* 确保按钮高度一致 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-size: var(--font-sm);
 }
 
 .module-btn:hover {
@@ -1023,6 +1086,26 @@ body {
   }
 }
 
+/* 响应式设计 - 平板设备 */
+@media (max-width: 1024px) {
+  .modules-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    max-width: 600px;
+    align-items: stretch;
+    /* 继续保持统一高度 */
+    grid-auto-rows: 1fr;
+    /* 平板端调整最小高度 */
+    min-height: auto;
+  }
+
+  .module-card {
+    padding: var(--space-xl);
+    height: 100%;
+    min-height: 500px;
+  }
+}
+
 /* 响应式设计 - 平板和移动端 */
 @media (max-width: 991px) {
   .container {
@@ -1197,12 +1280,19 @@ body {
   /* 模块展示优化 */
   .modules-grid {
     grid-template-columns: 1fr;
-    gap: var(--spacing-lg);
+    gap: var(--space-lg);
+    align-items: stretch;
+    /* 保持统一高度 */
+    grid-auto-rows: 1fr;
+    /* 移动端调整最小高度 */
+    min-height: auto;
   }
 
   .module-card {
-    padding: var(--spacing-lg);
+    padding: var(--space-lg);
     border-radius: var(--radius-lg);
+    height: 100%;
+    min-height: 480px;
   }
 
   .module-header {
@@ -1400,6 +1490,8 @@ body {
   /* 模块展示超小屏优化 */
   .module-card {
     padding: var(--spacing-md);
+    height: 100%;
+    min-height: 450px;
   }
 
   .module-title {
@@ -1409,6 +1501,18 @@ body {
   .module-description {
     font-size: var(--font-xs);
     line-height: 1.5;
+    min-height: 3.6rem;
+    -webkit-line-clamp: 2;
+  }
+
+  .module-features {
+    min-height: 2rem;
+    max-height: 2rem;
+  }
+
+  .module-subcategories {
+    min-height: 6rem;
+    max-height: 6rem;
   }
 
   .module-actions {
@@ -1550,6 +1654,25 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+}
+
+/* 模块卡片内的滚动条样式 */
+.module-subcategories::-webkit-scrollbar {
+  width: 4px;
+}
+
+.module-subcategories::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+}
+
+.module-subcategories::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 2px;
+}
+
+.module-subcategories::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
 }
 
 /* 选择文本样式 */

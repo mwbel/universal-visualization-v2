@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可视化类型扩展测试</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .test-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .type-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .type-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .type-card.selected {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(59, 130, 246, 0.2));
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+        .type-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        .type-description {
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .type-subtypes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .subtype-tag {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        .test-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--background);
+            color: var(--foreground);
+            font-family: inherit;
+            resize: vertical;
+            margin: 1rem 0;
+        }
+        .test-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .test-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        .test-button:disabled {
+            background: var(--muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result-section {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .detection-result {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        .confidence-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--muted);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+        }
+        .test-cases {
+            display: grid;
+            gap: 1rem;
+        }
+        .test-case {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .test-case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .test-case-input {
+            color: var(--muted-foreground);
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+        .test-case-result {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-badge.pass {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        .status-badge.fail {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        .status-badge.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        .complexity-indicator {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .complexity-low {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        .complexity-medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        .complexity-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        .complexity-very_high {
+            background: rgba(147, 51, 234, 0.2);
+            color: #9333ea;
+        }
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .metric {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--muted-foreground);
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <header class="test-section">
+            <h1>🎨 可视化类型扩展测试</h1>
+            <p>测试新的可视化类型检测、配置生成和扩展功能</p>
+            <div>
+                <button id="runAllTests" class="test-button">运行所有测试</button>
+                <button id="testDetection" class="test-button">测试类型检测</button>
+                <button id="testConfig" class="test-button">测试配置生成</button>
+                <button id="clearResults" class="test-button">清除结果</button>
+            </div>
+        </header>
+
+        <section class="test-section">
+            <h2>🔍 支持的可视化类型</h2>
+            <div id="supportedTypes" class="type-grid">
+                <!-- 动态生成类型卡片 -->
+            </div>
+        </section>
+
+        <section class="test-section">
+            <h2>🧪 类型检测测试</h2>
+            <textarea id="testInput" class="test-input" placeholder="输入可视化需求描述，例如：我想看一个量子纠缠的动画演示，或者绘制一个矩阵变换的3D效果..."></textarea>
+            <div>
+                <button class="test-button" onclick="testTypeDetection()">检测类型</button>
+                <button class="test-button" onclick="loadSampleInputs()">加载示例</button>
+            </div>
+            <div id="detectionResult" class="result-section" style="display: none;">
+                <!-- 检测结果将显示在这里 -->
+            </div>
+        </section>
+
+        <section class="test-section">
+            <h2>⚙️ 配置生成测试</h2>
+            <div id="configResult" class="result-section" style="display: none;">
+                <!-- 配置结果将显示在这里 -->
+            </div>
+        </section>
+
+        <section class="test-section">
+            <h2>📊 测试用例</h2>
+            <div id="testCases" class="test-cases">
+                <!-- 测试用例将显示在这里 -->
+            </div>
+        </section>
+
+        <section class="test-section">
+            <h2>📈 性能指标</h2>
+            <div class="performance-metrics">
+                <div class="metric">
+                    <div id="detectionAccuracy" class="metric-value">-</div>
+                    <div class="metric-label">检测准确率</div>
+                </div>
+                <div class="metric">
+                    <div id="avgDetectionTime" class="metric-value">-</div>
+                    <div class="metric-label">平均检测时间(ms)</div>
+                </div>
+                <div class="metric">
+                    <div id="supportedTypeCount" class="metric-value">-</div>
+                    <div class="metric-label">支持类型数</div>
+                </div>
+                <div class="metric">
+                    <div id="testPassRate" class="metric-value">-</div>
+                    <div class="metric-label">测试通过率</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="../components/VisualizationExtensions.js"></script>
+
+    <script>
+        // 全局变量
+        let vizExtensions;
+        let testResults = {
+            detection: [],
+            config: [],
+            performance: {
+                totalTests: 0,
+                passedTests: 0,
+                detectionTimes: []
+            }
+        };
+
+        // 示例输入
+        const sampleInputs = [
+            "绘制一个二次函数的导数图像，显示切线变化",
+            "创建一个3D矩阵变换动画，展示旋转和缩放效果",
+            "演示量子纠缠现象，显示两个量子态的关联性",
+            "可视化恒星演化过程，从主序星到红巨星",
+            "展示DNA双螺旋结构和蛋白质分子模型",
+            "模拟电磁场分布，显示电场线和磁场线",
+            "绘制宇宙膨胀的时间演化图",
+            "展示化学反应的动力学过程"
+        ];
+
+        // 测试用例
+        const testCases = [
+            {
+                input: "导数和切线的关系",
+                expectedType: "calculus",
+                expectedSubtypes: ["derivative"],
+                difficulty: "简单"
+            },
+            {
+                input: "矩阵的特征值和特征向量可视化",
+                expectedType: "linear_algebra",
+                expectedSubtypes: ["eigenvalue"],
+                difficulty: "中等"
+            },
+            {
+                input: "量子纠缠的贝尔态演示",
+                expectedType: "quantum",
+                expectedSubtypes: ["entanglement"],
+                difficulty: "困难"
+            },
+            {
+                input: "分子结构的3D模型和化学键",
+                expectedType: "molecular",
+                expectedSubtypes: ["structure", "bonds"],
+                difficulty: "中等"
+            },
+            {
+                input: "宇宙从大爆炸到现在的演化",
+                expectedType: "cosmology",
+                expectedSubtypes: ["universe_evolution"],
+                difficulty: "困难"
+            }
+        ];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            vizExtensions = new VisualizationExtensions();
+            loadSupportedTypes();
+            loadTestCases();
+        });
+
+        // 加载支持的可视化类型
+        function loadSupportedTypes() {
+            const container = document.getElementById('supportedTypes');
+            const types = vizExtensions.getSupportedTypes();
+
+            container.innerHTML = '';
+
+            types.forEach(type => {
+                const card = document.createElement('div');
+                card.className = 'type-card';
+                card.onclick = () => selectType(type.id);
+
+                card.innerHTML = `
+                    <div class="type-title">${type.name}</div>
+                    <div class="type-description">${type.description}</div>
+                    <div class="type-subtypes">
+                        ${type.subtypes.map(subtype =>
+                            `<span class="subtype-tag">${subtype}</span>`
+                        ).join('')}
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <span class="complexity-indicator complexity-${type.complexity}">
+                            ${getComplexityText(type.complexity)}
+                        </span>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            // 更新支持类型数量
+            document.getElementById('supportedTypeCount').textContent = types.length;
+        }
+
+        // 获取复杂度文本
+        function getComplexityText(complexity) {
+            const complexityMap = {
+                'low': '低复杂度',
+                'medium': '中等复杂度',
+                'high': '高复杂度',
+                'very_high': '极高复杂度'
+            };
+            return complexityMap[complexity] || complexity;
+        }
+
+        // 选择类型
+        function selectType(typeId) {
+            const cards = document.querySelectorAll('.type-card');
+            cards.forEach(card => card.classList.remove('selected'));
+
+            event.currentTarget.classList.add('selected');
+
+            // 自动填充测试输入
+            const type = vizExtensions.supportedTypes.get(typeId);
+            const sampleText = `我想看一个${type.name}的可视化，包含${type.subtypes.slice(0, 2).join('、')}等内容`;
+            document.getElementById('testInput').value = sampleText;
+        }
+
+        // 测试类型检测
+        function testTypeDetection() {
+            const input = document.getElementById('testInput').value.trim();
+            if (!input) {
+                alert('请输入测试内容');
+                return;
+            }
+
+            const startTime = performance.now();
+            const detection = vizExtensions.detectVisualizationType(input);
+            const endTime = performance.now();
+
+            const detectionTime = Math.round(endTime - startTime);
+            testResults.performance.detectionTimes.push(detectionTime);
+
+            displayDetectionResult(detection, detectionTime);
+            testConfigurationGeneration(detection);
+        }
+
+        // 显示检测结果
+        function displayDetectionResult(detection, detectionTime) {
+            const resultDiv = document.getElementById('detectionResult');
+            resultDiv.style.display = 'block';
+
+            const typeConfig = vizExtensions.supportedTypes.get(detection.primaryType);
+
+            resultDiv.innerHTML = `
+                <h3>检测结果</h3>
+                <div class="detection-result">
+                    <div><strong>主要类型:</strong> ${typeConfig?.name || '未检测到'}</div>
+                    <div><strong>置信度:</strong> ${detection.confidence}</div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: ${Math.min(detection.confidence * 10, 100)}%"></div>
+                    </div>
+                    <div><strong>子类型:</strong> ${detection.subtypes.join(', ') || '无'}</div>
+                    <div><strong>建议引擎:</strong> ${detection.suggestedEngines.join(', ')}</div>
+                    <div><strong>复杂度:</strong> <span class="complexity-indicator complexity-${detection.complexity}">${getComplexityText(detection.complexity)}</span></div>
+                    <div><strong>预估生成时间:</strong> ${detection.estimatedTime}秒</div>
+                    <div><strong>检测耗时:</strong> ${detectionTime}ms</div>
+                </div>
+            `;
+        }
+
+        // 测试配置生成
+        function testConfigurationGeneration(detection) {
+            if (!detection.primaryType) {
+                document.getElementById('configResult').style.display = 'none';
+                return;
+            }
+
+            try {
+                const config = vizExtensions.createVisualizationConfig(
+                    detection.primaryType,
+                    detection.subtypes
+                );
+
+                const validation = vizExtensions.validateConfig(config);
+
+                displayConfigResult(config, validation);
+                testResults.performance.passedTests++;
+            } catch (error) {
+                displayConfigError(error.message);
+            }
+        }
+
+        // 显示配置结果
+        function displayConfigResult(config, validation) {
+            const resultDiv = document.getElementById('configResult');
+            resultDiv.style.display = 'block';
+
+            resultDiv.innerHTML = `
+                <h3>配置生成结果</h3>
+                <div class="detection-result">
+                    <div><strong>类型:</strong> ${config.type}</div>
+                    <div><strong>引擎:</strong> ${config.engine}</div>
+                    <div><strong>复杂度:</strong> ${config.complexity}</div>
+                    <div><strong>参数数量:</strong> ${Object.keys(config.params).length}</div>
+                    <div><strong>交互功能:</strong> ${Object.keys(config.interactions).length}</div>
+                    <div><strong>动画效果:</strong> ${config.animations.enabled ? '启用' : '禁用'}</div>
+                    <div><strong>验证状态:</strong>
+                        <span class="status-badge ${validation.valid ? 'pass' : 'fail'}">
+                            ${validation.valid ? '通过' : '失败'}
+                        </span>
+                    </div>
+                    ${validation.errors.length > 0 ? `
+                        <div><strong>错误:</strong></div>
+                        <ul>${validation.errors.map(e => `<li>${e}</li>`).join('')}</ul>
+                    ` : ''}
+                    ${validation.warnings.length > 0 ? `
+                        <div><strong>警告:</strong></div>
+                        <ul>${validation.warnings.map(w => `<li>${w}</li>`).join('')}</ul>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // 显示配置错误
+        function displayConfigError(error) {
+            const resultDiv = document.getElementById('configResult');
+            resultDiv.style.display = 'block';
+
+            resultDiv.innerHTML = `
+                <h3>配置生成失败</h3>
+                <div class="detection-result">
+                    <div style="color: #ef4444;"><strong>错误:</strong> ${error}</div>
+                </div>
+            `;
+        }
+
+        // 加载示例输入
+        function loadSampleInputs() {
+            const randomInput = sampleInputs[Math.floor(Math.random() * sampleInputs.length)];
+            document.getElementById('testInput').value = randomInput;
+            testTypeDetection();
+        }
+
+        // 加载测试用例
+        function loadTestCases() {
+            const container = document.getElementById('testCases');
+            container.innerHTML = '';
+
+            testCases.forEach((testCase, index) => {
+                const caseDiv = document.createElement('div');
+                caseDiv.className = 'test-case';
+                caseDiv.innerHTML = `
+                    <div class="test-case-header">
+                        <strong>测试用例 ${index + 1}</strong>
+                        <span class="status-badge" id="status-${index}">待测试</span>
+                    </div>
+                    <div class="test-case-input">"${testCase.input}"</div>
+                    <div>
+                        <strong>期望:</strong> ${testCase.expectedType} (${testCase.expectedSubtypes.join(', ')})
+                        <span style="margin-left: 1rem; color: var(--muted-foreground);">难度: ${testCase.difficulty}</span>
+                    </div>
+                    <div class="test-case-result" id="result-${index}">
+                        <button class="test-button" onclick="runTestCase(${index})">运行测试</button>
+                    </div>
+                `;
+                container.appendChild(caseDiv);
+            });
+        }
+
+        // 运行单个测试用例
+        function runTestCase(index) {
+            const testCase = testCases[index];
+            const resultDiv = document.getElementById(`result-${index}`);
+            const statusDiv = document.getElementById(`status-${index}`);
+
+            resultDiv.innerHTML = '<span style="color: var(--primary);">测试中...</span>';
+
+            const startTime = performance.now();
+            const detection = vizExtensions.detectVisualizationType(testCase.input);
+            const endTime = performance.now();
+
+            const detectionTime = Math.round(endTime - startTime);
+            testResults.performance.detectionTimes.push(detectionTime);
+
+            // 评估测试结果
+            const typeMatch = detection.primaryType === testCase.expectedType;
+            const subtypeMatch = testCase.expectedSubtypes.every(st =>
+                detection.subtypes.includes(st)
+            );
+
+            testResults.performance.totalTests++;
+            if (typeMatch && subtypeMatch) {
+                testResults.performance.passedTests++;
+            }
+
+            // 更新状态
+            if (typeMatch && subtypeMatch) {
+                statusDiv.className = 'status-badge pass';
+                statusDiv.textContent = '通过';
+            } else if (typeMatch || subtypeMatch) {
+                statusDiv.className = 'status-badge warning';
+                statusDiv.textContent = '部分通过';
+            } else {
+                statusDiv.className = 'status-badge fail';
+                statusDiv.textContent = '失败';
+            }
+
+            // 显示详细结果
+            resultDiv.innerHTML = `
+                <div>
+                    <div>检测类型: ${detection.primaryType || '未检测到'} ${typeMatch ? '✅' : '❌'}</div>
+                    <div>检测子类型: ${detection.subtypes.join(', ') || '无'} ${subtypeMatch ? '✅' : '❌'}</div>
+                    <div>置信度: ${detection.confidence}</div>
+                    <div>检测时间: ${detectionTime}ms</div>
+                </div>
+            `;
+
+            updatePerformanceMetrics();
+        }
+
+        // 运行所有测试
+        async function runAllTests() {
+            document.getElementById('runAllTests').disabled = true;
+
+            // 重置性能数据
+            testResults.performance = {
+                totalTests: 0,
+                passedTests: 0,
+                detectionTimes: []
+            };
+
+            // 运行所有测试用例
+            for (let i = 0; i < testCases.length; i++) {
+                runTestCase(i);
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            document.getElementById('runAllTests').disabled = false;
+            updatePerformanceMetrics();
+        }
+
+        // 更新性能指标
+        function updatePerformanceMetrics() {
+            const metrics = testResults.performance;
+
+            // 准确率
+            const accuracy = metrics.totalTests > 0
+                ? Math.round((metrics.passedTests / metrics.totalTests) * 100)
+                : 0;
+            document.getElementById('detectionAccuracy').textContent = accuracy + '%';
+
+            // 平均检测时间
+            const avgTime = metrics.detectionTimes.length > 0
+                ? Math.round(metrics.detectionTimes.reduce((a, b) => a + b, 0) / metrics.detectionTimes.length)
+                : 0;
+            document.getElementById('avgDetectionTime').textContent = avgTime;
+
+            // 测试通过率
+            const passRate = metrics.totalTests > 0
+                ? Math.round((metrics.passedTests / metrics.totalTests) * 100)
+                : 0;
+            document.getElementById('testPassRate').textContent = passRate + '%';
+        }
+
+        // 清除结果
+        function clearResults() {
+            document.getElementById('testInput').value = '';
+            document.getElementById('detectionResult').style.display = 'none';
+            document.getElementById('configResult').style.display = 'none';
+
+            // 重置测试用例
+            loadTestCases();
+
+            // 重置性能指标
+            testResults.performance = {
+                totalTests: 0,
+                passedTests: 0,
+                detectionTimes: []
+            };
+            updatePerformanceMetrics();
+        }
+
+        // 绑定事件
+        document.getElementById('runAllTests').addEventListener('click', runAllTests);
+        document.getElementById('testDetection').addEventListener('click', testTypeDetection);
+        document.getElementById('testConfig').addEventListener('click', () => {
+            const input = document.getElementById('testInput').value.trim();
+            if (input) {
+                const detection = vizExtensions.detectVisualizationType(input);
+                testConfigurationGeneration(detection);
+            } else {
+                alert('请先进行类型检测');
+            }
+        });
+        document.getElementById('clearResults').addEventListener('click', clearResults);
+    </script>
+</body>
+</html>

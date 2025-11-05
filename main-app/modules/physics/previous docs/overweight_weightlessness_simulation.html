@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超重与失重模拟</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>超重与失重模拟实验</h1>
+        <p>通过调整电梯的加速度，观察人在电梯中的视重变化。</p>
+        
+        <div class="controls">
+            <label for="acceleration">电梯加速度 (a):</label>
+            <input type="range" id="acceleration" min="-20" max="20" value="0" step="0.1">
+            <span id="accelerationValue">0 m/s²</span>
+            <button id="startStopBtn">开始/停止</button>
+            <button id="resetBtn">重置</button>
+        </div>
+
+        <div class="info">
+            <p>重力加速度 (g): <span id="gravityValue">9.8</span> m/s²</p>
+            <p>人的质量 (m): <span id="massValue">50</span> kg</p>
+            <p>人所受重力 (G): <span id="gravityForce">490</span> N</p>
+            <p>人对电梯的压力 (N): <span id="normalForce">490</span> N</p>
+            <p>状态: <span id="state">静止</span></p>
+        </div>
+
+        <canvas id="elevatorCanvas" width="600" height="600"></canvas>
+    </div>
+
+    <script src="simulation.js"></script>
+</body>
+</html>

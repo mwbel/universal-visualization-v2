@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高中学科可视化 - 万物可视化</title>
+    <link rel="stylesheet" href="../assets/css/reset.css">
+    <link rel="stylesheet" href="../assets/css/common.css">
+    <link rel="stylesheet" href="high-school.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body class="night-sky-theme">
+    <!-- 导航栏 -->
+    <header class="app-header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <a href="../index.html" class="brand-link">
+                        <span class="brand-icon">🌌</span>
+                        <span class="brand-text">万物可视化</span>
+                    </a>
+                </div>
+
+                <div class="nav-menu">
+                    <a href="../index.html" class="nav-item">首页</a>
+                    <a href="#" class="nav-item active">高中学科</a>
+                    <a href="#" class="nav-item">帮助</a>
+                </div>
+
+                <div class="nav-actions">
+                    <button class="theme-toggle-btn" id="themeToggle" title="切换主题">
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="app-main">
+        <div class="container">
+            <!-- 页面标题 -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <span class="title-icon">📚</span>
+                        高中学科可视化
+                    </h1>
+                    <p class="hero-description">
+                        基于上海高中教材的交互式可视化学习平台，让抽象概念变得直观易懂
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">4</span>
+                            <span class="stat-label">学科覆盖</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">100+</span>
+                            <span class="stat-label">核心概念</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">AI</span>
+                            <span class="stat-label">智能驱动</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 学科选择 -->
+            <section class="subjects-section">
+                <h2 class="section-title">选择学科</h2>
+                <div class="subjects-grid">
+                    <!-- 数学学科 -->
+                    <div class="subject-card" data-subject="math">
+                        <div class="subject-header">
+                            <div class="subject-icon">📐</div>
+                            <h3 class="subject-title">高中数学</h3>
+                            <span class="subject-status available">可用</span>
+                        </div>
+                        <div class="subject-content">
+                            <p class="subject-description">
+                                涵盖函数、几何、概率统计、微积分等核心概念的交互式可视化
+                            </p>
+                            <div class="subject-features">
+                                <span class="feature-tag">函数图像</span>
+                                <span class="feature-tag">几何变换</span>
+                                <span class="feature-tag">概率分布</span>
+                            </div>
+                            <div class="subject-progress">
+                                <div class="progress-label">学习进度</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-text">0/50 概念</span>
+                            </div>
+                        </div>
+                        <div class="subject-actions">
+                            <button class="subject-btn primary-btn" onclick="enterSubject('math')">
+                                进入学习
+                            </button>
+                            <button class="subject-btn secondary-btn" onclick="viewCurriculum('math')">
+                                查看教材
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 物理学科 -->
+                    <div class="subject-card" data-subject="physics">
+                        <div class="subject-header">
+                            <div class="subject-icon">⚛️</div>
+                            <h3 class="subject-title">高中物理</h3>
+                            <span class="subject-status coming-soon">即将推出</span>
+                        </div>
+                        <div class="subject-content">
+                            <p class="subject-description">
+                                力学、电磁学、热力学、光学等物理原理的动态演示和实验模拟
+                            </p>
+                            <div class="subject-features">
+                                <span class="feature-tag">力学原理</span>
+                                <span class="feature-tag">电磁现象</span>
+                                <span class="feature-tag">波动光学</span>
+                            </div>
+                            <div class="subject-progress">
+                                <div class="progress-label">开发进度</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 30%"></div>
+                                </div>
+                                <span class="progress-text">开发中</span>
+                            </div>
+                        </div>
+                        <div class="subject-actions">
+                            <button class="subject-btn disabled-btn" disabled>
+                                敬请期待
+                            </button>
+                            <button class="subject-btn secondary-btn" onclick="viewCurriculum('physics')">
+                                预览内容
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 化学学科 -->
+                    <div class="subject-card" data-subject="chemistry">
+                        <div class="subject-header">
+                            <div class="subject-icon">🧪</div>
+                            <h3 class="subject-title">高中化学</h3>
+                            <span class="subject-status coming-soon">即将推出</span>
+                        </div>
+                        <div class="subject-content">
+                            <p class="subject-description">
+                                分子结构、化学反应、元素周期表的3D可视化展示
+                            </p>
+                            <div class="subject-features">
+                                <span class="feature-tag">分子结构</span>
+                                <span class="feature-tag">化学方程式</span>
+                                <span class="feature-tag">元素周期表</span>
+                            </div>
+                            <div class="subject-progress">
+                                <div class="progress-label">开发进度</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 20%"></div>
+                                </div>
+                                <span class="progress-text">规划中</span>
+                            </div>
+                        </div>
+                        <div class="subject-actions">
+                            <button class="subject-btn disabled-btn" disabled>
+                                敬请期待
+                            </button>
+                            <button class="subject-btn secondary-btn" onclick="viewCurriculum('chemistry')">
+                                预览内容
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 生物学科 -->
+                    <div class="subject-card" data-subject="biology">
+                        <div class="subject-header">
+                            <div class="subject-icon">🧬</div>
+                            <h3 class="subject-title">高中生物</h3>
+                            <span class="subject-status coming-soon">即将推出</span>
+                        </div>
+                        <div class="subject-content">
+                            <p class="subject-description">
+                                细胞结构、遗传规律、生态系统的可视化学习
+                            </p>
+                            <div class="subject-features">
+                                <span class="feature-tag">细胞结构</span>
+                                <span class="feature-tag">遗传规律</span>
+                                <span class="feature-tag">生态系统</span>
+                            </div>
+                            <div class="subject-progress">
+                                <div class="progress-label">开发进度</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 10%"></div>
+                                </div>
+                                <span class="progress-text">概念阶段</span>
+                            </div>
+                        </div>
+                        <div class="subject-actions">
+                            <button class="subject-btn disabled-btn" disabled>
+                                敬请期待
+                            </button>
+                            <button class="subject-btn secondary-btn" onclick="viewCurriculum('biology')">
+                                预览内容
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 平台特色 -->
+            <section class="features-section">
+                <h2 class="section-title">平台特色</h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">📖</div>
+                        <h3 class="feature-title">教材同步</h3>
+                        <p class="feature-description">
+                            基于上海高中教材内容，与课堂教学进度保持一致
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🎯</div>
+                        <h3 class="feature-title">考点覆盖</h3>
+                        <p class="feature-description">
+                            重点覆盖考试热点和难点，助力高效备考
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🎮</div>
+                        <h3 class="feature-title">互动学习</h3>
+                        <p class="feature-description">
+                            支持参数调节和实时交互，深度理解概念本质
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🤖</div>
+                        <h3 class="feature-title">AI辅助</h3>
+                        <p class="feature-description">
+                            智能概念解释和个性化学习路径推荐
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 学习统计 -->
+            <section class="stats-section">
+                <h2 class="section-title">学习数据概览</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-content">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">学习时长(分钟)</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-content">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">已学概念</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">完成练习</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-content">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">获得成就</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="app-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4 class="footer-title">万物可视化</h4>
+                    <p class="footer-description">
+                        AI驱动的多学科交互式可视化学习平台
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">快速链接</h4>
+                    <ul class="footer-links">
+                        <li><a href="../index.html">首页</a></li>
+                        <li><a href="#">使用帮助</a></li>
+                        <li><a href="#">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">技术支持</h4>
+                    <p class="footer-description">
+                        基于现代Web技术和AI大语言模型构建
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 万物可视化. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 加载指示器 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>正在加载...</p>
+        </div>
+    </div>
+
+    <!-- 提示消息 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- JavaScript -->
+    <script src="../components/ThemeManager.js"></script>
+    <script src="high-school.js"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 布局测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: block;
+        }
+
+        /* 头部 */
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        /* 主要内容 */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 60vh;
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .content-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* 底部 */
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 布局指示器 */
+        .layout-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 1000;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .content-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-indicator">✅ 正常上下布局</div>
+
+    <!-- 头部 -->
+    <header class="header">
+        <h1>🌌 万物可视化平台 - 布局测试</h1>
+        <p>验证页面布局是否正常</p>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="main-content">
+        <div class="content-section">
+            <h2>📊 主要内容区域</h2>
+            <p>这里应该显示在页面中央，包含所有可视化模块内容。</p>
+            <ul>
+                <li>✅ 头部在顶部</li>
+                <li>✅ 内容在中间</li>
+                <li>✅ 底部在页面底部</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>🚀 快速访问</h2>
+            <p>如果布局正常，您可以访问以下地址：</p>
+            <ul>
+                <li><a href="index.html" style="color: #667eea;">主页面</a></li>
+                <li><a href="http://127.0.0.1:8081/" style="color: #667eea;">传统版本</a></li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <p>© 2025 万物可视化项目 - 布局修复测试页面</p>
+        <p>如果页面显示正常，说明布局问题已解决</p>
+    </footer>
+
+    <script>
+        // 添加一些简单的交互测试
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('布局测试页面加载完成');
+
+            // 测试页面高度
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+
+            console.log('窗口高度:', windowHeight);
+            console.log('文档高度:', documentHeight);
+
+            if (documentHeight > windowHeight) {
+                console.log('页面需要滚动');
+            } else {
+                console.log('页面无需滚动');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天文学可视化工具集 · Trae开发</title>
+  <link rel="stylesheet" href="./assets/styles.css" />
+  <style>
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .card {
+      background: var(--card-bg-dark, rgba(20, 25, 35, 0.9));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+      border-radius: 12px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--muted, rgba(255, 255, 255, 0.7));
+      line-height: 1.4;
+    }
+    .card-tag {
+      display: inline-block;
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .search {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.2));
+      border-radius: 8px;
+      background: var(--card-bg-dark, rgba(20, 25, 35, 0.9));
+      color: #fff;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+    .search::placeholder {
+      color: var(--muted, rgba(255, 255, 255, 0.5));
+    }
+    .toolbar {
+      margin-bottom: 20px;
+    }
+    .category-header {
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 30px 0 15px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .back-link {
+      display: inline-block;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      transition: background 0.3s ease;
+    }
+    .back-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body class="theme-dark">
+  <div class="container">
+    <header class="app-header">
+      <h1>🌟 天文学可视化工具集</h1>
+      <p style="color: var(--muted, rgba(255, 255, 255, 0.7)); margin-bottom: 20px;">
+        基于 Trae 开发的专业天文学计算和可视化工具
+      </p>
+      <a class="back-link" href="../../../index.html">← 返回主页</a>
+    </header>
+
+    <main>
+      <section class="toolbar">
+        <input id="searchInput" class="search" type="text" placeholder="🔍 搜索天文学可视化工具..." />
+      </section>
+
+      <!-- 高优先级工具 -->
+      <h2 class="category-header">🌙 月相与时间计算</h2>
+      <section id="cards" class="card-grid">
+        <a class="card" data-keywords="月亮 月相 实时 照明" href="lunar_phase.html">
+          <div class="card-tag">实时计算</div>
+          <div class="card-title">🌙 实时月相</div>
+          <div class="card-desc">交互式月相计算器，显示照明比例、相位名称与明暗盘，支持时间和地理位置选择</div>
+        </a>
+
+        <a class="card" data-keywords="日晷 时间 几何 刻度" href="sundial.html">
+          <div class="card-tag">时间工具</div>
+          <div class="card-title">🕐 日晷可视化</div>
+          <div class="card-desc">日晷几何与时间刻度展示，交互式日晷模拟和时间计算</div>
+        </a>
+      </section>
+
+      <!-- 观测与地理工具 -->
+      <h2 class="category-header">🌍 天文观测与地理</h2>
+      <section class="card-grid">
+        <a class="card" data-keywords="纬度 星空 可视化 比较" href="latitude_stars.html">
+          <div class="card-tag">星空对比</div>
+          <div class="card-title">✨ 不同纬度的星空可视化</div>
+          <div class="card-desc">交互式展示不同纬度地区的星空差异，包含天空视图、纬度对比和星座分布</div>
+        </a>
+
+        <a class="card" data-keywords="太阳 杆影 影长 方位" href="solar_shadow.html">
+          <div class="card-tag">太阳测量</div>
+          <div class="card-title">☀️ 太阳影子变化</div>
+          <div class="card-desc">随时间变化的影长与方位计算，多种显示模式和测量工具</div>
+        </a>
+
+        <a class="card" data-keywords="晨昏线 terminator 昼夜 分界" href="twilight_line.html">
+          <div class="card-tag">地球现象</div>
+          <div class="card-title">🌅 晨昏线</div>
+          <div class="card-desc">地球昼夜分界线可视化，展示自转效果和晨昏变化</div>
+        </a>
+      </section>
+
+      <!-- 行星运动工具 -->
+      <h2 class="category-header">🪐 行星运动轨迹</h2>
+      <section class="card-grid">
+        <a class="card" data-keywords="行星 周日 视运动 轨迹" href="planetary_daily_motion.html">
+          <div class="card-tag">日常运动</div>
+          <div class="card-title">🌍 行星周日视运动轨迹</div>
+          <div class="card-desc">按地点/日期展示太阳与行星的日周轨迹，实时天体运动模拟</div>
+        </a>
+
+        <a class="card" data-keywords="行星 年视运动 周年 轨迹" href="planetary_annual_motion.html">
+          <div class="card-tag">年度运动</div>
+          <div class="card-title">🌍 行星周年视运动轨迹</div>
+          <div class="card-desc">全年不同日期的视运动展示，行星年度轨迹变化</div>
+        </a>
+
+        <a class="card" data-keywords="行星 运动 轨迹 plotly 交互" href="planetary_annual_motion_plotly.html">
+          <div class="card-tag">3D可视化</div>
+          <div class="card-title">🌌 行星运动3D轨迹</div>
+          <div class="card-desc">基于Plotly的3D行星运动轨迹可视化，交互式天体运动展示</div>
+        </a>
+      </section>
+
+      <!-- 天球与测量工具 -->
+      <h2 class="category-header">📐 天球坐标与测量</h2>
+      <section class="card-grid">
+        <a class="card" data-keywords="天球 球心 可视化 坐标" href="celestial_center.html">
+          <div class="card-tag">坐标系统</div>
+          <div class="card-title">🌐 天球球心可视化</div>
+          <div class="card-desc">地心天球参考框架展示，天球坐标系和参考点</div>
+        </a>
+
+        <a class="card" data-keywords="天球 模型 plotly 3D" href="celestial_sphere_model_plotly.html">
+          <div class="card-tag">3D模型</div>
+          <div class="card-title">🔮 天球模型3D</div>
+          <div class="card-desc">基于Plotly的3D天球模型，交互式天球坐标展示</div>
+        </a>
+
+        <a class="card" data-keywords="太阳 地球 月球 相位 滑块" href="sun_earth_moon_phase_slider_plotly.html">
+          <div class="card-tag">系统模拟</div>
+          <div class="card-title">🌍🌙 日月地相位系统</div>
+          <div class="card-desc">太阳-地球-月球系统的相位变化模拟，交互式控制</div>
+        </a>
+      </section>
+
+      <!-- 影子测量工具 -->
+      <h2 class="category-header">📏 影子测量工具</h2>
+      <section class="card-grid">
+        <a class="card" data-keywords="杆影 日影 年正午 变化" href="rod_shadow_annual_noon.html">
+          <div class="card-tag">年度测量</div>
+          <div class="card-title">📏 年正午影子变化</div>
+          <div class="card-desc">全年正午时刻杆影长度变化规律，季节性变化展示</div>
+        </a>
+
+        <a class="card" data-keywords="杆影 日影 日变化 轨迹" href="rod_shadow_daily.html">
+          <div class="card-tag">日常测量</div>
+          <div class="card-title">📐 日变化影子轨迹</div>
+          <div class="card-desc">单日杆影长度和方向变化，轨迹分析和测量</div>
+        </a>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>© 2025 天文学可视化工具集 · 基于 Trae 开发</p>
+      <p style="font-size: 0.8rem; color: var(--muted, rgba(255, 255, 255, 0.5));">
+        包含14个专业天文学可视化工具 | 支持交互式计算和实时渲染
+      </p>
+    </footer>
+  </div>
+
+  <script src="./assets/SearchBox.js"></script>
+  <script>
+    SearchBox.initSearchBox('#searchInput', '#cards');
+
+    // 页面加载动画
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+
+        setTimeout(() => {
+          card.style.transition = 'all 0.6s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+    });
+  </script>
+</body>
+</html>

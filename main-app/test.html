@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端组件测试</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+</head>
+<body>
+    <div class="container">
+        <h1>前端组件功能测试</h1>
+
+        <!-- 测试智能输入框 -->
+        <section style="margin: 20px 0; padding: 20px; background: var(--bg-secondary); border-radius: 8px;">
+            <h2>SmartInput 组件测试</h2>
+            <textarea id="testInput" class="smart-input" placeholder="输入测试内容..." rows="3"></textarea>
+            <div class="input-footer">
+                <span class="char-count">0 / 100</span>
+                <button class="generate-btn" id="testGenerateBtn" disabled>生成测试</button>
+            </div>
+            <div id="testSuggestions" class="suggestions-container" style="display: none;">
+                <div class="suggestions-header">
+                    <span class="suggestions-title">💡 智能建议</span>
+                    <button class="close-suggestions" onclick="hideTestSuggestions()">×</button>
+                </div>
+                <div class="suggestions-list" id="testSuggestionsList">
+                </div>
+            </div>
+        </section>
+
+        <!-- 测试API客户端 -->
+        <section style="margin: 20px 0; padding: 20px; background: var(--bg-secondary); border-radius: 8px;">
+            <h2>ApiClient 组件测试</h2>
+            <button class="btn" onclick="testAPI()">测试API连接</button>
+            <button class="btn" onclick="testAPIClient()">测试API客户端</button>
+            <div id="apiResults" style="margin-top: 10px; padding: 10px; background: var(--bg-tertiary); border-radius: 4px;">
+                <pre id="apiOutput">等待测试结果...</pre>
+            </div>
+        </section>
+
+        <!-- 测试模板选择器 -->
+        <section style="margin: 20px 0; padding: 20px; background: var(--bg-secondary); border-radius: 8px;">
+            <h2>TemplateSelector 组件测试</h2>
+            <input type="text" id="testTemplateSearch" class="template-search-input" placeholder="搜索模板...">
+            <div id="testTemplateCategories" style="margin-top: 10px;">
+                <!-- 模板将在这里动态加载 -->
+            </div>
+        </section>
+
+        <!-- 测试状态管理 -->
+        <section style="margin: 20px 0; padding: 20px; background: var(--bg-secondary); border-radius: 8px;">
+            <h2>StateManager 组件测试</h2>
+            <button class="btn" onclick="testStateUpdate()">更新状态</button>
+            <button class="btn" onclick="testStateGet()">获取状态</button>
+            <div id="stateResults" style="margin-top: 10px; padding: 10px; background: var(--bg-tertiary); border-radius: 4px;">
+                <pre id="stateOutput">等待测试结果...</pre>
+            </div>
+        </section>
+
+        <!-- 测试加载状态 -->
+        <section style="margin: 20px 0; padding: 20px; background: var(--bg-secondary); border-radius: 8px;">
+            <h2>LoadingStates 组件测试</h2>
+            <button class="btn" onclick="testLoading()">显示加载状态</button>
+            <button class="btn" onclick="testLoadingProgress()">测试进度更新</button>
+            <button class="btn" onclick="hideTestLoading()">隐藏加载状态</button>
+        </section>
+    </div>
+
+    <!-- 加载遮罩 -->
+    <div class="loading-overlay" id="testLoadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">测试加载...</div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="testProgressFill"></div>
+                </div>
+                <span class="progress-text" id="testProgressText">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="components/StateManager.js"></script>
+    <script src="components/ApiClient.js"></script>
+    <script src="components/SmartInput.js"></script>
+    <script src="components/TemplateSelector.js"></script>
+    <script src="components/LoadingStates.js"></script>
+
+    <script>
+        // 全局变量
+        let smartInput, apiClient, templateSelector, stateManager, loadingStates;
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('开始初始化组件...');
+
+            try {
+                // 初始化状态管理器
+                stateManager = new StateManager();
+                console.log('StateManager 初始化成功');
+
+                // 初始化API客户端
+                apiClient = new ApiClient({
+                    baseURL: '/api',
+                    enableLogging: true
+                });
+                console.log('ApiClient 初始化成功');
+
+                // 初始化智能输入框
+                smartInput = new SmartInput({
+                    inputSelector: '#testInput',
+                    suggestionsContainer: '#testSuggestions',
+                    suggestionsList: '#testSuggestionsList',
+                    charCountSelector: '.char-count',
+                    generateBtnSelector: '#testGenerateBtn',
+                    maxChars: 100
+                });
+                console.log('SmartInput 初始化成功');
+
+                // 绑定智能输入框事件
+                smartInput.on('generate', function(event) {
+                    console.log('生成事件触发:', event.detail);
+                    document.getElementById('apiOutput').textContent =
+                        '生成请求: ' + JSON.stringify(event.detail, null, 2);
+                });
+
+                // 初始化模板选择器
+                templateSelector = new TemplateSelector({
+                    templateDataPath: './data/templates.json',
+                    categoriesContainer: '#testTemplateCategories',
+                    searchInput: '#testTemplateSearch'
+                });
+                console.log('TemplateSelector 初始化成功');
+
+                // 绑定模板选择器事件
+                templateSelector.on('templates-loaded', function(event) {
+                    console.log('模板加载完成:', event.detail);
+                });
+
+                templateSelector.on('template-applied', function(event) {
+                    console.log('模板应用:', event.detail);
+                    document.getElementById('testInput').value = event.detail.promptText;
+                });
+
+                // 初始化加载状态组件
+                loadingStates = new LoadingStates({
+                    overlaySelector: '#testLoadingOverlay',
+                    progressFillSelector: '#testProgressFill',
+                    progressTextSelector: '#testProgressText'
+                });
+                console.log('LoadingStates 初始化成功');
+
+                console.log('所有组件初始化完成！');
+
+            } catch (error) {
+                console.error('组件初始化失败:', error);
+                document.getElementById('apiOutput').textContent =
+                    '初始化错误: ' + error.message;
+            }
+        });
+
+        // 测试函数
+        function hideTestSuggestions() {
+            document.getElementById('testSuggestions').style.display = 'none';
+        }
+
+        function testAPI() {
+            fetch('/health')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('apiOutput').textContent =
+                        'API健康检查结果: ' + JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('apiOutput').textContent =
+                        'API连接失败: ' + error.message;
+                });
+        }
+
+        function testAPIClient() {
+            apiClient.healthCheck()
+                .then(result => {
+                    document.getElementById('apiOutput').textContent =
+                        'ApiClient健康检查结果: ' + JSON.stringify(result, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('apiOutput').textContent =
+                        'ApiClient连接失败: ' + error.message;
+                });
+        }
+
+        function testStateUpdate() {
+            stateManager.setState('test.value', 'Hello World');
+            stateManager.setState('ui.theme', 'light');
+            document.getElementById('stateOutput').textContent =
+                '状态更新完成: ' + JSON.stringify(stateManager.getState(), null, 2);
+        }
+
+        function testStateGet() {
+            const state = stateManager.getState();
+            document.getElementById('stateOutput').textContent =
+                '当前状态: ' + JSON.stringify(state, null, 2);
+        }
+
+        function testLoading() {
+            loadingStates.show('测试加载中...', 0, {
+                estimatedDuration: 5000,
+                animation: 'rotate'
+            });
+
+            setTimeout(() => {
+                loadingStates.updateProgress(50, '正在进行中...');
+            }, 2000);
+
+            setTimeout(() => {
+                loadingStates.updateProgress(100, '完成！');
+            }, 4000);
+        }
+
+        function testLoadingProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                loadingStates.updateProgress(progress, `进度: ${progress}%`);
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 500);
+        }
+
+        function hideTestLoading() {
+            loadingStates.hide();
+        }
+
+        // 监听错误
+        window.addEventListener('error', function(event) {
+            console.error('全局错误:', event.error);
+            document.getElementById('apiOutput').textContent =
+                '全局错误: ' + event.error.message;
+        });
+    </script>
+</body>
+</html>

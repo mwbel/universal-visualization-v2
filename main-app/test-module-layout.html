@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模块布局测试 - 万物可视化</title>
+    <link rel="stylesheet" href="styles/force-layout-fix.css">
+    <link rel="stylesheet" href="styles/design-system.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/layout-fix.css">
+    <style>
+        .layout-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 128, 0, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 10000;
+            max-width: 300px;
+        }
+
+        .layout-debug {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 128, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 10000;
+            max-width: 250px;
+        }
+
+        .module-test-section {
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .section-title {
+            text-align: center;
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            margin-bottom: 48px;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-info">
+        <strong>🎨 新布局测试</strong><br>
+        基于设计图的卡片布局
+    </div>
+    <div class="layout-debug" id="layoutDebug">
+        检测布局中...
+    </div>
+
+    <!-- 应用头部 - 保持不变 -->
+    <header class="app-header">
+        <div class="container header-content">
+            <h1 class="app-title">
+                <span class="title-icon">🌌</span>
+                万物可视化
+                <span class="title-subtitle">一图胜千言</span>
+                <span class="title-version">v2.0</span>
+            </h1>
+            <nav class="header-nav">
+                <div class="user-info guest-mode">
+                    <div class="guest-avatar">👤</div>
+                    <div class="guest-details">
+                        <span class="guest-name">访客用户</span>
+                        <span class="guest-status">演示模式</span>
+                    </div>
+                </div>
+                <button class="nav-btn" id="themeToggle" title="切换主题">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 模块测试区域 -->
+    <section class="module-test-section">
+        <div class="container">
+            <h2 class="section-title">探索可视化模块</h2>
+            <p class="section-subtitle">根据设计图优化的卡片布局</p>
+
+            <div class="modules-grid">
+                <!-- 数学可视化模块 -->
+                <div class="module-card" id="math-section">
+                    <div class="module-header">
+                        <span class="module-icon">📐</span>
+                        <div>
+                            <h4 class="module-title">数学可视化</h4>
+                            <div class="module-badge">包含22个可视化概念</div>
+                        </div>
+                    </div>
+                    <p class="module-description">
+                        交互式数学概念可视化，涵盖概率统计、线性代数、微分几何等核心数学领域
+                    </p>
+                    <div class="module-features">
+                        <span class="feature-tag">正态分布</span>
+                        <span class="feature-tag">矩阵运算</span>
+                        <span class="feature-tag">特征值</span>
+                        <span class="feature-tag">测地线</span>
+                        <span class="feature-tag">函数图像</span>
+                    </div>
+                    <div class="module-actions">
+                        <button class="module-btn explore-btn" data-module="math">
+                            🚀 探索完整模块
+                        </button>
+                        <button class="module-btn examples-btn" data-module="math">
+                            📋 查看数学概念
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 天文学可视化模块 -->
+                <div class="module-card" id="astronomy-section">
+                    <div class="module-header">
+                        <span class="module-icon">🔭</span>
+                        <div>
+                            <h4 class="module-title">天文学可视化</h4>
+                            <div class="module-badge">包含39个天文脚本</div>
+                        </div>
+                    </div>
+                    <p class="module-description">
+                        3D太阳系模拟、天体运动演示、星座分布展示，结合Python交互式计算与实时渲染
+                    </p>
+                    <div class="module-features">
+                        <span class="feature-tag">3D太阳系</span>
+                        <span class="feature-tag">天体运动</span>
+                        <span class="feature-tag">星座图</span>
+                        <span class="feature-tag">月相模拟</span>
+                        <span class="feature-tag">行星轨道</span>
+                    </div>
+                    <div class="module-actions">
+                        <button class="module-btn explore-btn" data-module="astronomy">
+                            🚀 探索完整模块
+                        </button>
+                        <button class="module-btn examples-btn" data-module="astronomy">
+                            📋 查看天文概念
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 物理学可视化模块 -->
+                <div class="module-card" id="physics-section">
+                    <div class="module-header">
+                        <span class="module-icon">⚛️</span>
+                        <div>
+                            <h4 class="module-title">物理学可视化</h4>
+                            <div class="module-badge">包含6个物理模拟</div>
+                        </div>
+                    </div>
+                    <p class="module-description">
+                        通过交互式可视化深入理解力学、电磁学、波动光学等物理学核心原理，支持参数调节和实时计算
+                    </p>
+                    <div class="module-features">
+                        <span class="feature-tag">Python计算</span>
+                        <span class="feature-tag">交互模拟</span>
+                        <span class="feature-tag">实时渲染</span>
+                        <span class="feature-tag">物理实验</span>
+                        <span class="feature-tag">数值分析</span>
+                    </div>
+                    <div class="module-actions">
+                        <button class="module-btn explore-btn" data-module="physics">
+                            🚀 探索完整模块
+                        </button>
+                        <button class="module-btn examples-btn" data-module="physics">
+                            📋 查看物理概念
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 化学可视化模块 -->
+                <div class="module-card" id="chemistry-section">
+                    <div class="module-header">
+                        <span class="module-icon">🧪</span>
+                        <div>
+                            <h4 class="module-title">化学可视化</h4>
+                            <div class="module-badge">开发中</div>
+                        </div>
+                    </div>
+                    <p class="module-description">
+                        探索分子世界的奥秘，通过3D可视化深入理解分子结构、化学键、反应机理等化学核心概念
+                    </p>
+                    <div class="module-features">
+                        <span class="feature-tag">3D分子结构</span>
+                        <span class="feature-tag">化学键分析</span>
+                        <span class="feature-tag">反应模拟</span>
+                        <span class="feature-tag">元素周期表</span>
+                        <span class="feature-tag">量子化学</span>
+                    </div>
+                    <div class="module-actions">
+                        <button class="module-btn explore-btn" data-module="chemistry">
+                            🚀 探索完整模块
+                        </button>
+                        <button class="module-btn examples-btn" data-module="chemistry">
+                            📋 查看化学概念
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 应用底部 - 保持不变 -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4 class="footer-title">万物可视化</h4>
+                <p class="footer-text">AI驱动的交互式可视化平台</p>
+                <p class="footer-text">让复杂概念变得直观易懂</p>
+            </div>
+            <div class="footer-section">
+                <h5>快速链接</h5>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link">关于我们</a></li>
+                    <li><a href="#" class="footer-link">使用指南</a></li>
+                    <li><a href="#" class="footer-link">API文档</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 万物可视化项目. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('模块布局测试页面加载完成');
+
+            // 检测布局信息
+            function updateLayoutInfo() {
+                const modulesGrid = document.querySelector('.modules-grid');
+                const moduleCards = document.querySelectorAll('.module-card');
+                const debugElement = document.getElementById('layoutDebug');
+
+                if (modulesGrid && moduleCards.length > 0) {
+                    const gridStyles = window.getComputedStyle(modulesGrid);
+                    const cardStyles = window.getComputedStyle(moduleCards[0]);
+
+                    const info = `
+                        <strong>布局信息</strong><br>
+                        网格列数: ${gridStyles.gridTemplateColumns}<br>
+                        卡片数量: ${moduleCards.length}<br>
+                        卡片宽度: ${cardStyles.width}<br>
+                        卡片高度: ${cardStyles.minHeight}<br>
+                        屏幕宽度: ${window.innerWidth}px
+                    `;
+
+                    debugElement.innerHTML = info;
+                }
+            }
+
+            // 初始检测
+            updateLayoutInfo();
+
+            // 窗口大小改变时重新检测
+            window.addEventListener('resize', updateLayoutInfo);
+
+            // 添加模块点击事件
+            document.querySelectorAll('.module-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const module = this.dataset.module;
+                    console.log(`点击了 ${module} 模块`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

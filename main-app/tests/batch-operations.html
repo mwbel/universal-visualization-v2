@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>批量操作功能测试</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <style>
+        .batch-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .batch-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .control-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .control-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        .batch-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .batch-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        .batch-button:disabled {
+            background: var(--muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+        .batch-button.secondary {
+            background: var(--secondary);
+        }
+        .batch-button.danger {
+            background: #ef4444;
+        }
+        .batch-button.danger:hover {
+            background: #dc2626;
+        }
+        .progress-container {
+            margin: 1rem 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: var(--muted);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .batch-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        .batch-table th,
+        .batch-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .batch-table th {
+            background: rgba(59, 130, 246, 0.1);
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .batch-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .status-indicator.pending { background: #6b7280; }
+        .status-indicator.processing { background: #3b82f6; }
+        .status-indicator.completed { background: #22c55e; }
+        .status-indicator.failed { background: #ef4444; }
+        .status-indicator.cancelled { background: #f59e0b; }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .metric-label {
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .log-container {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid var(--border);
+        }
+        .batch-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--background);
+            color: var(--foreground);
+            font-family: inherit;
+            resize: vertical;
+            margin: 1rem 0;
+        }
+        .export-options {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            background: #22c55e;
+        }
+        .notification.error {
+            background: #ef4444;
+        }
+        .notification.warning {
+            background: #f59e0b;
+        }
+        .notification.info {
+            background: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="batch-container">
+        <header class="batch-section">
+            <h1>🔄 批量操作功能测试</h1>
+            <p>测试批量生成、参数调整、导出等功能</p>
+            <div>
+                <button id="testBatchGeneration" class="batch-button">测试批量生成</button>
+                <button id="testBatchParams" class="batch-button">测试批量参数调整</button>
+                <button id="testBatchExport" class="batch-button">测试批量导出</button>
+                <button id="testStress" class="batch-button secondary">压力测试</button>
+                <button id="clearAll" class="batch-button danger">清除所有</button>
+            </div>
+        </header>
+
+        <section class="batch-section">
+            <h2>📊 当前批量操作状态</h2>
+            <div id="currentBatchStatus">
+                <p style="color: var(--muted-foreground);">暂无运行中的批量操作</p>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%">0%</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="batch-section">
+            <h2>⚙️ 批量操作控制</h2>
+            <div class="controls-grid">
+                <div class="control-card">
+                    <div class="control-title">批量生成</div>
+                    <p style="font-size: 0.9rem; color: var(--muted-foreground);">输入多个可视化需求，每行一个</p>
+                    <textarea id="batchInput" class="batch-input" placeholder="示例：
+绘制一个二次函数图像
+创建一个3D分子结构
+展示量子纠缠动画
+模拟恒星演化过程"></textarea>
+                    <div>
+                        <button class="batch-button" onclick="startBatchGeneration()">开始批量生成</button>
+                        <button class="batch-button secondary" onclick="pauseCurrentBatch()">暂停</button>
+                        <button class="batch-button secondary" onclick="resumeCurrentBatch()">恢复</button>
+                        <button class="batch-button danger" onclick="cancelCurrentBatch()">取消</button>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <div class="control-title">批量参数调整</div>
+                    <p style="font-size: 0.9rem; color: var(--muted-foreground);">选择参数类型和调整方式</p>
+                    <select id="paramType" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0; border-radius: 4px; border: 1px solid var(--border);">
+                        <option value="color">颜色方案</option>
+                        <option value="scale">缩放比例</option>
+                        <option value="animation">动画速度</option>
+                        <option value="resolution">分辨率</option>
+                    </select>
+                    <input type="range" id="paramValue" min="0" max="100" value="50" style="width: 100%; margin: 0.5rem 0;">
+                    <button class="batch-button" onclick="batchAdjustParameters()">批量调整参数</button>
+                </div>
+
+                <div class="control-card">
+                    <div class="control-title">批量导出</div>
+                    <p style="font-size: 0.9rem; color: var(--muted-foreground);">选择导出格式和选项</p>
+                    <div class="export-options">
+                        <select id="exportFormat" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border);">
+                            <option value="png">PNG图片</option>
+                            <option value="svg">SVG矢量图</option>
+                            <option value="pdf">PDF文档</option>
+                            <option value="json">JSON数据</option>
+                        </select>
+                        <label>
+                            <input type="checkbox" id="includeData" checked>
+                            包含数据
+                        </label>
+                    </div>
+                    <button class="batch-button" onclick="batchExport()">批量导出</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="batch-section">
+            <h2>📈 性能指标</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div id="totalBatches" class="metric-value">0</div>
+                    <div class="metric-label">总批量数</div>
+                </div>
+                <div class="metric-card">
+                    <div id="completedBatches" class="metric-value">0</div>
+                    <div class="metric-label">已完成</div>
+                </div>
+                <div class="metric-card">
+                    <div id="successRate" class="metric-value">0%</div>
+                    <div class="metric-label">成功率</div>
+                </div>
+                <div class="metric-card">
+                    <div id="avgDuration" class="metric-value">0s</div>
+                    <div class="metric-label">平均耗时</div>
+                </div>
+                <div class="metric-card">
+                    <div id="concurrentOps" class="metric-value">0</div>
+                    <div class="metric-label">并发操作</div>
+                </div>
+                <div class="metric-card">
+                    <div id="queueLength" class="metric-value">0</div>
+                    <div class="metric-label">队列长度</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="batch-section">
+            <h2>📋 批量操作历史</h2>
+            <table class="batch-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>项目数</th>
+                        <th>状态</th>
+                        <th>进度</th>
+                        <th>耗时</th>
+                        <th>成功率</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="batchHistory">
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: var(--muted-foreground);">暂无历史记录</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="batch-section">
+            <h2>📝 操作日志</h2>
+            <div id="batchLog" class="log-container">等待批量操作开始...</div>
+        </section>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="../components/BatchOperations.js"></script>
+    <script src="../components/ApiClient.js"></script>
+
+    <script>
+        // 全局变量
+        let batchOps;
+        let batchManager;
+        let currentBatch = null;
+        let batchHistory = [];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            batchOps = new BatchOperations();
+            batchManager = new BatchManager();
+
+            // 添加事件监听器
+            batchOps.addEventListener('batchStart', onBatchStart);
+            batchOps.addEventListener('batchProgress', onBatchProgress);
+            batchOps.addEventListener('batchComplete', onBatchComplete);
+            batchOps.addEventListener('batchError', onBatchError);
+            batchOps.addEventListener('itemComplete', onItemComplete);
+            batchOps.addEventListener('itemError', onItemError);
+
+            log('批量操作系统已初始化');
+            updateMetrics();
+        });
+
+        // 日志记录
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('batchLog');
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️';
+            logElement.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // 更新进度条
+        function updateProgress(progress) {
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = progress + '%';
+            progressFill.textContent = progress + '%';
+        }
+
+        // 更新当前批量状态
+        function updateCurrentBatchStatus() {
+            const statusDiv = document.getElementById('currentBatchStatus');
+
+            if (currentBatch) {
+                const stats = batchOps.getBatchStats(currentBatch);
+                statusDiv.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div><strong>批量ID:</strong> ${currentBatch.id}</div>
+                        <div><strong>状态:</strong> ${getStatusText(currentBatch.status)}</div>
+                        <div><strong>项目数:</strong> ${stats.total}</div>
+                        <div><strong>已完成:</strong> ${stats.completed}</div>
+                        <div><strong>失败:</strong> ${stats.failed}</div>
+                        <div><strong>成功率:</strong> ${stats.successRate}%</div>
+                    </div>
+                `;
+            } else {
+                statusDiv.innerHTML = '<p style="color: var(--muted-foreground);">暂无运行中的批量操作</p>';
+            }
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            const statusMap = {
+                'created': '已创建',
+                'running': '运行中',
+                'paused': '已暂停',
+                'completed': '已完成',
+                'failed': '失败',
+                'cancelled': '已取消'
+            };
+            return statusMap[status] || status;
+        }
+
+        // 批量生成可视化
+        async function startBatchGeneration() {
+            const input = document.getElementById('batchInput').value.trim();
+            if (!input) {
+                showNotification('请输入批量生成内容', 'warning');
+                return;
+            }
+
+            const requests = input.split('\n')
+                .filter(line => line.trim())
+                .map(line => ({
+                    input: line.trim(),
+                    type: 'auto',
+                    parameters: {}
+                }));
+
+            if (requests.length === 0) {
+                showNotification('没有有效的生成请求', 'warning');
+                return;
+            }
+
+            log(`开始批量生成，共 ${requests.length} 个项目`);
+            showNotification(`开始批量生成 ${requests.length} 个可视化`, 'info');
+
+            try {
+                currentBatch = batchOps.createBatch(requests, {
+                    priority: 'normal',
+                    maxConcurrent: 2,
+                    timeout: 60000
+                });
+
+                updateCurrentBatchStatus();
+
+                // 模拟处理函数
+                const mockProcessor = async (request, item, batch) => {
+                    // 模拟API调用延迟
+                    const delay = Math.random() * 3000 + 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+
+                    // 模拟成功率 90%
+                    if (Math.random() > 0.1) {
+                        return {
+                            id: `viz-${item.id}`,
+                            type: 'visualization',
+                            content: `生成的可视化内容: ${request.input}`,
+                            url: `#visualization/${item.id}`,
+                            metadata: {
+                                generatedAt: new Date().toISOString(),
+                                processingTime: delay
+                            }
+                        };
+                    } else {
+                        throw new Error('模拟生成失败');
+                    }
+                };
+
+                const result = await batchOps.executeBatch(currentBatch, mockProcessor);
+
+                log(`批量生成完成: ${result.completedItems}/${result.totalItems} 成功`);
+                showNotification(`批量生成完成，成功率 ${Math.round((result.completedItems / result.totalItems) * 100)}%`, 'success');
+
+            } catch (error) {
+                log(`批量生成失败: ${error.message}`, 'error');
+                showNotification(`批量生成失败: ${error.message}`, 'error');
+            }
+
+            updateHistory();
+            updateMetrics();
+        }
+
+        // 批量参数调整
+        async function batchAdjustParameters() {
+            if (!currentBatch || currentBatch.status !== 'completed') {
+                showNotification('请先完成一个批量生成操作', 'warning');
+                return;
+            }
+
+            const paramType = document.getElementById('paramType').value;
+            const paramValue = document.getElementById('paramValue').value;
+
+            log(`开始批量调整参数: ${paramType} = ${paramValue}`);
+
+            const completedItems = currentBatch.items.filter(item => item.status === 'completed');
+            const adjustments = completedItems.map(item => ({
+                visualizationId: item.result.id,
+                parameters: item.result.parameters || {},
+                adjustments: {
+                    [paramType]: paramValue
+                }
+            }));
+
+            try {
+                const result = await batchOps.batchAdjustParameters(adjustments, {
+                    priority: 'high',
+                    maxConcurrent: 5
+                });
+
+                log(`批量参数调整完成: ${result.completedItems}/${result.totalItems} 成功`);
+                showNotification('批量参数调整完成', 'success');
+
+            } catch (error) {
+                log(`批量参数调整失败: ${error.message}`, 'error');
+                showNotification(`批量参数调整失败: ${error.message}`, 'error');
+            }
+
+            updateHistory();
+            updateMetrics();
+        }
+
+        // 批量导出
+        async function batchExport() {
+            if (!currentBatch || currentBatch.status !== 'completed') {
+                showNotification('请先完成一个批量生成操作', 'warning');
+                return;
+            }
+
+            const format = document.getElementById('exportFormat').value;
+            const includeData = document.getElementById('includeData').checked;
+
+            log(`开始批量导出，格式: ${format}`);
+
+            const completedItems = currentBatch.items.filter(item => item.status === 'completed');
+            const exports = completedItems.map(item => ({
+                visualizationId: item.result.id,
+                format,
+                exportOptions: {
+                    includeData,
+                    quality: 'high'
+                }
+            }));
+
+            try {
+                const result = await batchOps.batchExport(exports, format, {
+                    priority: 'normal',
+                    maxConcurrent: 3
+                });
+
+                // 下载导出结果
+                const exportBlob = await batchOps.exportBatchResults(currentBatch, 'json');
+                const url = URL.createObjectURL(exportBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `batch-export-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                log(`批量导出完成: ${result.completedItems}/${result.totalItems} 成功`);
+                showNotification('批量导出完成，文件已下载', 'success');
+
+            } catch (error) {
+                log(`批量导出失败: ${error.message}`, 'error');
+                showNotification(`批量导出失败: ${error.message}`, 'error');
+            }
+
+            updateHistory();
+            updateMetrics();
+        }
+
+        // 暂停当前批量
+        function pauseCurrentBatch() {
+            if (currentBatch && currentBatch.status === 'running') {
+                batchOps.pauseBatch();
+                log('批量操作已暂停');
+                showNotification('批量操作已暂停', 'info');
+                updateCurrentBatchStatus();
+            }
+        }
+
+        // 恢复当前批量
+        function resumeCurrentBatch() {
+            if (currentBatch && currentBatch.status === 'paused') {
+                batchOps.resumeBatch();
+                log('批量操作已恢复');
+                showNotification('批量操作已恢复', 'info');
+                updateCurrentBatchStatus();
+            }
+        }
+
+        // 取消当前批量
+        function cancelCurrentBatch() {
+            if (currentBatch && (currentBatch.status === 'running' || currentBatch.status === 'paused')) {
+                batchOps.cancelBatch();
+                log('批量操作已取消');
+                showNotification('批量操作已取消', 'warning');
+                currentBatch = null;
+                updateCurrentBatchStatus();
+                updateProgress(0);
+            }
+        }
+
+        // 更新历史记录
+        function updateHistory() {
+            const history = batchOps.getBatchHistory();
+            const tbody = document.getElementById('batchHistory');
+
+            if (history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--muted-foreground);">暂无历史记录</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+
+            history.slice(0, 10).forEach(batch => {
+                const row = tbody.insertRow();
+                const stats = batchOps.getBatchStats(batch);
+
+                row.innerHTML = `
+                    <td><code>${batch.id.substr(-8)}</code></td>
+                    <td>批量生成</td>
+                    <td>${batch.totalItems}</td>
+                    <td>
+                        <span class="status-indicator ${batch.status}"></span>
+                        ${getStatusText(batch.status)}
+                    </td>
+                    <td>
+                        <div class="progress-bar" style="height: 8px; width: 100px;">
+                            <div style="width: ${stats.progress}%; height: 100%; background: var(--primary);"></div>
+                        </div>
+                        ${stats.progress}%
+                    </td>
+                    <td>${(stats.totalDuration / 1000).toFixed(1)}s</td>
+                    <td>${stats.successRate}%</td>
+                    <td>
+                        <button class="batch-button" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;"
+                                onclick="exportBatchResult('${batch.id}')">导出</button>
+                        <button class="batch-button danger" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;"
+                                onclick="deleteBatchHistory('${batch.id}')">删除</button>
+                    </td>
+                `;
+            });
+        }
+
+        // 导出批量结果
+        async function exportBatchResult(batchId) {
+            const batch = batchHistory.find(b => b.id === batchId);
+            if (!batch) return;
+
+            try {
+                const exportBlob = await batchOps.exportBatchResults(batch, 'json');
+                const url = URL.createObjectURL(exportBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `batch-result-${batchId.substr(-8)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                showNotification('批量结果已导出', 'success');
+            } catch (error) {
+                showNotification('导出失败: ' + error.message, 'error');
+            }
+        }
+
+        // 删除批量历史
+        function deleteBatchHistory(batchId) {
+            batchHistory = batchHistory.filter(b => b.id !== batchId);
+            updateHistory();
+            updateMetrics();
+            showNotification('历史记录已删除', 'info');
+        }
+
+        // 更新性能指标
+        function updateMetrics() {
+            const history = batchOps.getBatchHistory();
+            const systemStatus = batchOps.getSystemStatus();
+
+            document.getElementById('totalBatches').textContent = history.length;
+            document.getElementById('completedBatches').textContent = history.filter(b => b.status === 'completed').length;
+
+            const successRate = history.length > 0
+                ? Math.round((history.filter(b => b.status === 'completed').length / history.length) * 100)
+                : 0;
+            document.getElementById('successRate').textContent = successRate + '%';
+
+            const avgDuration = history.filter(b => b.endTime).length > 0
+                ? history.filter(b => b.endTime).reduce((sum, b) => sum + (b.endTime - b.startTime), 0) / history.filter(b => b.endTime).length
+                : 0;
+            document.getElementById('avgDuration').textContent = (avgDuration / 1000).toFixed(1) + 's';
+
+            document.getElementById('concurrentOps').textContent = systemStatus.isProcessing ? '1' : '0';
+            document.getElementById('queueLength').textContent = systemStatus.queueLength;
+        }
+
+        // 压力测试
+        async function runStressTest() {
+            log('开始压力测试...');
+            showNotification('压力测试开始', 'info');
+
+            const itemCount = 50;
+            const requests = Array.from({ length: itemCount }, (_, i) => ({
+                input: `压力测试项目 ${i + 1}`,
+                type: 'test',
+                parameters: { index: i + 1 }
+            }));
+
+            try {
+                const batch = batchOps.createBatch(requests, {
+                    priority: 'low',
+                    maxConcurrent: 5,
+                    timeout: 10000
+                });
+
+                const stressProcessor = async (request, item, batch) => {
+                    const delay = Math.random() * 2000 + 500;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return { id: item.id, processed: true, delay };
+                };
+
+                const result = await batchOps.executeBatch(batch, stressProcessor);
+
+                log(`压力测试完成: ${result.completedItems}/${result.totalItems} 成功`);
+                showNotification(`压力测试完成，成功率 ${Math.round((result.completedItems / result.totalItems) * 100)}%`, 'success');
+
+            } catch (error) {
+                log(`压力测试失败: ${error.message}`, 'error');
+                showNotification(`压力测试失败: ${error.message}`, 'error');
+            }
+
+            updateHistory();
+            updateMetrics();
+        }
+
+        // 清除所有数据
+        function clearAll() {
+            if (confirm('确定要清除所有数据吗？此操作不可恢复。')) {
+                currentBatch = null;
+                batchHistory = [];
+                document.getElementById('batchInput').value = '';
+                document.getElementById('batchLog').textContent = '等待批量操作开始...';
+                updateProgress(0);
+                updateCurrentBatchStatus();
+                updateHistory();
+                updateMetrics();
+                showNotification('所有数据已清除', 'info');
+                log('所有数据已清除');
+            }
+        }
+
+        // 事件处理器
+        function onBatchStart(data) {
+            log(`批量操作开始: ${data.id}`);
+            updateCurrentBatchStatus();
+        }
+
+        function onBatchProgress(data) {
+            updateProgress(data.progress);
+            updateCurrentBatchStatus();
+        }
+
+        function onBatchComplete(data) {
+            log(`批量操作完成: ${data.id}`);
+            updateProgress(100);
+            updateCurrentBatchStatus();
+            batchHistory.push(data);
+        }
+
+        function onBatchError(data) {
+            log(`批量操作失败: ${data.error.message}`, 'error');
+            updateCurrentBatchStatus();
+            batchHistory.push(data.batch);
+        }
+
+        function onItemComplete(data) {
+            log(`项目完成: ${data.item.id}`);
+        }
+
+        function onItemError(data) {
+            log(`项目失败: ${data.item.id} - ${data.error.message}`, 'error');
+        }
+
+        // 绑定按钮事件
+        document.getElementById('testBatchGeneration').addEventListener('click', () => {
+            document.getElementById('batchInput').value = `绘制一个二次函数 y = x²
+创建一个3D分子结构模型
+展示量子纠缠动画效果
+模拟恒星演化过程
+绘制正态分布曲线
+创建电磁场可视化
+显示宇宙膨胀时间线
+制作化学反应动力学图`;
+            startBatchGeneration();
+        });
+
+        document.getElementById('testBatchParams').addEventListener('click', () => {
+            document.getElementById('paramType').value = 'color';
+            document.getElementById('paramValue').value = 75;
+            batchAdjustParameters();
+        });
+
+        document.getElementById('testBatchExport').addEventListener('click', () => {
+            document.getElementById('exportFormat').value = 'json';
+            batchExport();
+        });
+
+        document.getElementById('testStress').addEventListener('click', runStressTest);
+        document.getElementById('clearAll').addEventListener('click', clearAll);
+    </script>
+</body>
+</html>

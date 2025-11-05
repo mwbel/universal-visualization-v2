@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 调试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn.success {
+            background: #28a745;
+        }
+        .btn.warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .btn.danger {
+            background: #dc3545;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        #console-output {
+            background: #1e1e1e;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 万物可视化调试工具</h1>
+
+    <div class="debug-container">
+        <h2>应用状态检查</h2>
+        <button class="btn" onclick="checkAppStatus()">检查应用状态</button>
+        <button class="btn success" onclick="testButtons()">测试按钮功能</button>
+        <button class="btn warning" onclick="testNavigation()">测试导航功能</button>
+        <button class="btn danger" onclick="clearConsole()">清空控制台</button>
+        <div id="status-output"></div>
+    </div>
+
+    <div class="debug-container">
+        <h2>控制台输出</h2>
+        <div id="console-output"></div>
+    </div>
+
+    <div class="debug-container">
+        <h2>快速测试</h2>
+
+        <div class="test-section">
+            <h3>模式切换测试</h3>
+            <button class="btn" onclick="testModeSwitch('text')">测试文本模式</button>
+            <button class="btn" onclick="testModeSwitch('template')">测试模板模式</button>
+            <button class="btn" onclick="testModeSwitch('concept')">测试概念模式</button>
+        </div>
+
+        <div class="test-section">
+            <h3>子模块导航测试</h3>
+            <button class="btn" onclick="testSubmoduleNavigation('probability-stats')">测试概率统计</button>
+            <button class="btn" onclick="testSubmoduleNavigation('linear-algebra')">测试线性代数</button>
+            <button class="btn" onclick="testSubmoduleNavigation('differential-geometry')">测试微分几何</button>
+        </div>
+
+        <div class="test-section">
+            <h3>直接访问测试</h3>
+            <button class="btn" onclick="window.open('/', '_blank')">打开主页</button>
+            <button class="btn" onclick="window.open('../GeneralVisualization/app/modules/probability_statistics/index.html', '_blank')">打开概率统计</button>
+            <button class="btn" onclick="window.open('../GeneralVisualization/app/modules/linear_algebra/index.html', '_blank')">打开线性代数</button>
+        </div>
+    </div>
+
+    <script>
+        // 控制台输出重定向
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const consoleOutput = document.getElementById('console-output');
+
+        function addToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : type === 'warn' ? '#ffa726' : '#fff';
+            const entry = document.createElement('div');
+            entry.style.color = color;
+            entry.textContent = `[${timestamp}] ${message}`;
+            consoleOutput.appendChild(entry);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToConsole(args.join(' '), 'warn');
+        };
+
+        function showStatus(message, type = 'info') {
+            const statusOutput = document.getElementById('status-output');
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            statusOutput.appendChild(statusDiv);
+
+            // 3秒后自动移除
+            setTimeout(() => {
+                if (statusDiv.parentNode) {
+                    statusDiv.parentNode.removeChild(statusDiv);
+                }
+            }, 3000);
+        }
+
+        function checkAppStatus() {
+            console.log('=== 开始检查应用状态 ===');
+
+            // 检查全局app对象
+            if (typeof window.app !== 'undefined') {
+                console.log('✅ 全局app对象存在');
+                showStatus('✅ 全局app对象存在', 'success');
+
+                // 检查关键方法
+                const methods = ['switchMode', 'exploreSubmodule', 'openModuleWithFallback'];
+                methods.forEach(method => {
+                    if (typeof window.app[method] === 'function') {
+                        console.log(`✅ ${method} 方法存在`);
+                    } else {
+                        console.log(`❌ ${method} 方法不存在`);
+                        showStatus(`❌ ${method} 方法不存在`, 'error');
+                    }
+                });
+            } else {
+                console.log('❌ 全局app对象不存在');
+                showStatus('❌ 全局app对象不存在，应用可能未正确初始化', 'error');
+            }
+
+            // 检查DOM元素
+            const modeBtns = document.querySelectorAll('.mode-btn');
+            const subcategories = document.querySelectorAll('.subcategory');
+
+            console.log(`📋 模式按钮数量: ${modeBtns.length}`);
+            console.log(`📋 子分类元素数量: ${subcategories.length}`);
+
+            // 检查组件
+            if (window.app && window.app.components) {
+                console.log('📦 组件状态:', Object.keys(window.app.components));
+            }
+        }
+
+        function testButtons() {
+            console.log('=== 开始测试按钮功能 ===');
+
+            const modeBtns = document.querySelectorAll('.mode-btn');
+            console.log(`找到 ${modeBtns.length} 个模式按钮`);
+
+            if (modeBtns.length > 0) {
+                modeBtns.forEach((btn, index) => {
+                    console.log(`按钮 ${index + 1}: ${btn.dataset.mode}`);
+                    // 模拟点击
+                    btn.click();
+                });
+                showStatus(`✅ 测试了 ${modeBtns.length} 个模式按钮`, 'success');
+            } else {
+                showStatus('❌ 未找到模式按钮', 'error');
+            }
+        }
+
+        function testNavigation() {
+            console.log('=== 开始测试导航功能 ===');
+
+            if (window.app && typeof window.app.exploreSubmodule === 'function') {
+                const modules = ['probability-stats', 'linear-algebra', 'differential-geometry'];
+                modules.forEach(module => {
+                    console.log(`测试导航到: ${module}`);
+                    // 这里不实际导航，只测试方法调用
+                    console.log(`✅ ${module} 导航方法可用`);
+                });
+                showStatus('✅ 导航功能测试完成', 'success');
+            } else {
+                showStatus('❌ 导航功能不可用', 'error');
+            }
+        }
+
+        function testModeSwitch(mode) {
+            console.log(`=== 测试模式切换: ${mode} ===`);
+
+            if (window.app && typeof window.app.switchMode === 'function') {
+                try {
+                    window.app.switchMode(mode);
+                    showStatus(`✅ 成功切换到 ${mode} 模式`, 'success');
+                } catch (error) {
+                    console.error('模式切换失败:', error);
+                    showStatus(`❌ 模式切换失败: ${error.message}`, 'error');
+                }
+            } else {
+                showStatus('❌ switchMode 方法不可用', 'error');
+            }
+        }
+
+        function testSubmoduleNavigation(submodule) {
+            console.log(`=== 测试子模块导航: ${submodule} ===`);
+
+            if (window.app && typeof window.app.exploreSubmodule === 'function') {
+                try {
+                    window.app.exploreSubmodule(submodule);
+                    showStatus(`✅ 成功导航到 ${submodule}`, 'success');
+                } catch (error) {
+                    console.error('子模块导航失败:', error);
+                    showStatus(`❌ 子模块导航失败: ${error.message}`, 'error');
+                }
+            } else {
+                showStatus('❌ exploreSubmodule 方法不可用', 'error');
+            }
+        }
+
+        function clearConsole() {
+            consoleOutput.innerHTML = '';
+            console.log('=== 控制台已清空 ===');
+        }
+
+        // 页面加载时自动检查
+        window.addEventListener('load', () => {
+            console.log('🔧 调试页面加载完成');
+            setTimeout(checkAppStatus, 1000); // 延迟1秒检查，等待主应用初始化
+        });
+
+        // 监听来自主页面的消息
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'debug') {
+                console.log('收到调试消息:', event.data.message);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 一图胜千言</title>
+    <meta name="description" content="AI驱动的交互式可视化平台，支持数学、天文、物理等多学科可视化">
+
+    <!-- 预连接优化 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- 强制布局修复样式 - 内联确保最高优先级 -->
+    <style>
+        /* 完全重置所有布局 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 100vh;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: static !important;
+            overflow-x: hidden;
+        }
+
+        /* 强制块级布局 */
+        header, main, footer, section, article, aside, nav, div {
+            display: block !important;
+            width: 100% !important;
+            position: static !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* 完全重置flex和grid */
+        [class*="flex"],
+        [class*="grid"],
+        [class*="container"],
+        .header-content,
+        .app-main,
+        .footer-content {
+            display: block !important;
+            flex: none !important;
+            grid-template-columns: none !important;
+            grid-template-rows: none !important;
+            flex-direction: column !important;
+            flex-wrap: nowrap !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
+            position: static !important;
+        }
+
+        /* 头部样式 */
+        .app-header {
+            display: block !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            width: 100% !important;
+            height: auto !important;
+            background: rgba(31, 40, 51, 0.95) !important;
+            backdrop-filter: blur(12px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            width: 100% !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 16px 20px !important;
+            min-height: 64px !important;
+            position: relative !important;
+        }
+
+        .app-title {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            font-size: 24px !important;
+            font-weight: 700 !important;
+            color: #F2F4F8 !important;
+            text-decoration: none !important;
+            margin: 0 !important;
+        }
+
+        .header-nav {
+            display: flex !important;
+            gap: 12px !important;
+            align-items: center !important;
+        }
+
+        /* 主要内容区域 */
+        .app-main {
+            display: block !important;
+            width: 100% !important;
+            flex: none !important;
+            padding: 40px 0 !important;
+            position: static !important;
+        }
+
+        .container {
+            display: block !important;
+            width: 100% !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 20px !important;
+        }
+
+        /* 底部样式 */
+        .app-footer {
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+            position: relative !important;
+            margin-top: 0 !important;
+            background: #1F2833 !important;
+            border-top: 1px solid #233241 !important;
+        }
+
+        .footer-content {
+            display: block !important;
+            width: 100% !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 48px 20px !important;
+            text-align: center !important;
+        }
+
+        /* 基础样式 */
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0B0C10, #1F2833, #45A29E) !important;
+            color: #F2F4F8 !important;
+            line-height: 1.6;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column !important;
+                gap: 16px !important;
+                text-align: center !important;
+            }
+
+            .app-title {
+                font-size: 20px !important;
+            }
+
+            .container {
+                padding: 0 16px !important;
+            }
+
+            .app-main {
+                padding: 20px 0 !important;
+            }
+
+            .footer-content {
+                padding: 32px 16px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 应用头部 -->
+    <header class="app-header">
+        <div class="container header-content">
+            <h1 class="app-title">
+                <span class="title-icon">🌌</span>
+                万物可视化
+                <span class="title-subtitle">一图胜千言</span>
+                <span class="title-version">v2.0</span>
+            </h1>
+            <nav class="header-nav">
+                <!-- 访客模式信息显示 -->
+                <div class="user-info guest-mode">
+                    <div class="guest-avatar">👤</div>
+                    <div class="guest-details">
+                        <span class="guest-name">访客用户</span>
+                        <span class="guest-status">演示模式</span>
+                    </div>
+                </div>
+
+                <!-- 导航按钮 -->
+                <button class="nav-btn demo-btn" id="demoFeatures" title="演示功能">
+                    <span>🎯</span>
+                </button>
+                <button class="nav-btn" id="themeToggle" title="切换主题">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button class="nav-btn" id="helpBtn" title="帮助">
+                    <span>❓</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main class="app-main">
+        <div class="container">
+            <!-- 欢迎区域 -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h2 class="hero-title">让复杂概念变得直观易懂</h2>
+                    <p class="hero-description">
+                        通过AI驱动的可视化技术，将抽象的数学公式、天文现象、物理原理转化为直观的交互式图表。
+                        只需输入您的需求，即可生成专业的可视化页面。
+                    </p>
+
+                    <!-- 快速开始指南 -->
+                    <div class="getting-started">
+                        <h4 class="getting-started-title">🚀 快速开始</h4>
+                        <div class="getting-started-steps">
+                            <div class="step-item">
+                                <span class="step-number">1</span>
+                                <span class="step-text">选择学科或输入需求</span>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-number">2</span>
+                                <span class="step-text">AI智能生成可视化</span>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-number">3</span>
+                                <span class="step-text">交互式探索和学习</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快速导航 -->
+                    <div class="quick-nav">
+                        <a href="#math-section" class="quick-nav-item">
+                            <span class="nav-icon">📐</span>
+                            <span class="nav-label">数学可视化</span>
+                        </a>
+                        <a href="#astronomy-section" class="quick-nav-item">
+                            <span class="nav-icon">🔭</span>
+                            <span class="nav-label">天文可视化</span>
+                        </a>
+                        <a href="#physics-section" class="quick-nav-item">
+                            <span class="nav-icon">⚛️</span>
+                            <span class="nav-label">物理可视化</span>
+                        </a>
+                        <a href="#chemistry-section" class="quick-nav-item">
+                            <span class="nav-icon">🧪</span>
+                            <span class="nav-label">化学可视化</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 输入区域 -->
+            <section class="input-section">
+                <div class="input-container">
+                    <h3 class="section-title">开始创建您的可视化</h3>
+
+                    <!-- 全局搜索 -->
+                    <div class="global-search">
+                        <div class="search-container">
+                            <input
+                                type="text"
+                                id="globalSearchInput"
+                                class="global-search-input"
+                                placeholder="搜索可视化概念..."
+                                autocomplete="off"
+                            >
+                            <button class="search-btn" id="globalSearchBtn" title="搜索">
+                                <span>🔍</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 输入模式切换 -->
+                    <div class="input-mode-toggle">
+                        <button class="mode-btn active" data-mode="text">文本输入</button>
+                        <button class="mode-btn" data-mode="template">模板选择</button>
+                        <button class="mode-btn" data-mode="concept">概念搜索</button>
+                    </div>
+
+                    <!-- 文本输入模式 -->
+                    <div class="input-mode-panel active" id="textInputPanel">
+                        <div class="smart-input-container">
+                            <textarea
+                                id="mainInput"
+                                class="smart-input"
+                                placeholder="请描述您想要创建的可视化，例如：&#10;• 正态分布 均值0 标准差1&#10;• 行星运动轨迹 地球 火星&#10;• 简谐振动 振幅2 频率1Hz&#10;• 二次函数 y = x² + 2x + 1"
+                                rows="4"
+                                maxlength="500"
+                            ></textarea>
+                            <div class="input-footer">
+                                <div class="input-info">
+                                    <span class="char-count">0 / 500</span>
+                                    <span class="input-tips">支持自然语言描述，Ctrl+Enter 快速提交</span>
+                                </div>
+                                <button class="generate-btn" id="generateBtn" disabled>
+                                    <span class="btn-icon">✨</span>
+                                    生成可视化
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 学科模块展示 -->
+            <section class="modules-section">
+                <h3 class="section-title">探索可视化模块</h3>
+
+                <div class="modules-grid">
+                    <!-- 数学可视化模块 -->
+                    <div class="module-card" id="math-section">
+                        <div class="module-header">
+                            <span class="module-icon">📐</span>
+                            <h4 class="module-title">数学可视化</h4>
+                            <div class="module-badge">包含22个可视化概念</div>
+                        </div>
+                        <p class="module-description">
+                            交互式数学概念可视化，涵盖概率统计、线性代数、微分几何等核心数学领域
+                        </p>
+                        <div class="module-actions">
+                            <button class="module-btn explore-btn" data-module="math">
+                                🚀 探索完整模块
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 天文学可视化模块 -->
+                    <div class="module-card" id="astronomy-section">
+                        <div class="module-header">
+                            <span class="module-icon">🔭</span>
+                            <h4 class="module-title">天文学可视化</h4>
+                            <div class="module-badge">包含13个可视化工具</div>
+                        </div>
+                        <p class="module-description">
+                            探索宇宙的奥秘，通过交互式可视化理解天体运动、星系结构、行星轨道等天文学核心概念
+                        </p>
+                        <div class="module-actions">
+                            <button class="module-btn explore-btn" data-module="astronomy">
+                                🚀 探索完整模块
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 物理学可视化模块 -->
+                    <div class="module-card" id="physics-section">
+                        <div class="module-header">
+                            <span class="module-icon">⚛️</span>
+                            <h4 class="module-title">物理学可视化</h4>
+                            <div class="module-badge">包含6个物理模拟</div>
+                        </div>
+                        <p class="module-description">
+                            通过交互式可视化深入理解力学、电磁学、波动光学等物理学核心原理，支持参数调节和实时计算
+                        </p>
+                        <div class="module-actions">
+                            <button class="module-btn explore-btn" data-module="physics">
+                                🚀 探索完整模块
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 应用底部 -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4 class="footer-title">万物可视化</h4>
+                <p class="footer-desc">AI驱动的交互式可视化平台，让复杂概念变得直观易懂</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 万物可视化项目. 基于现代Web技术构建 | 开源教育项目</p>
+        </div>
+    </footer>
+
+    <script>
+        // 简化的JavaScript，避免可能影响布局的复杂操作
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成，布局已强制修复');
+
+            // 基础的交互功能
+            const generateBtn = document.getElementById('generateBtn');
+            const mainInput = document.getElementById('mainInput');
+
+            if (generateBtn && mainInput) {
+                mainInput.addEventListener('input', function() {
+                    generateBtn.disabled = this.value.trim().length === 0;
+                });
+
+                generateBtn.addEventListener('click', function() {
+                    if (mainInput.value.trim()) {
+                        alert('功能演示模式：\n\n您输入的内容是：\n' + mainInput.value);
+                    }
+                });
+            }
+
+            // 模式切换
+            const modeBtns = document.querySelectorAll('.mode-btn');
+            modeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modeBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+
+    <!-- 基础样式 -->
+    <style>
+        /* 基础组件样式 */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 48px;
+            padding: 48px 0;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(45deg, #66FCF1, #45A29E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 24px;
+            opacity: 0.9;
+        }
+
+        .getting-started {
+            background: rgba(102, 252, 241, 0.1);
+            border: 1px solid rgba(102, 252, 241, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 32px auto;
+            max-width: 500px;
+        }
+
+        .getting-started-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #66FCF1;
+        }
+
+        .getting-started-steps {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: #66FCF1;
+            color: #0B0C10;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .step-text {
+            font-size: 0.9rem;
+        }
+
+        .quick-nav {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .quick-nav-item {
+            background: rgba(102, 252, 241, 0.1);
+            border: 1px solid rgba(102, 252, 241, 0.3);
+            border-radius: 8px;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .quick-nav-item:hover {
+            background: rgba(102, 252, 241, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 0.9rem;
+        }
+
+        .input-section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #F2F4F8;
+        }
+
+        .input-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .global-search {
+            margin-bottom: 24px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .global-search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .global-search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-btn {
+            padding: 12px 16px;
+            background: #66FCF1;
+            border: none;
+            border-radius: 8px;
+            color: #0B0C10;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #45A29E;
+            transform: translateY(-2px);
+        }
+
+        .input-mode-toggle {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .mode-btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: #66FCF1;
+            color: #0B0C10;
+            border-color: #66FCF1;
+        }
+
+        .smart-input-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .smart-input {
+            width: 100%;
+            min-height: 120px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .smart-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .input-info {
+            display: flex;
+            gap: 16px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .generate-btn {
+            background: linear-gradient(45deg, #66FCF1, #45A29E);
+            border: none;
+            border-radius: 8px;
+            color: #0B0C10;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 252, 241, 0.3);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .modules-section {
+            margin-bottom: 48px;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .module-icon {
+            font-size: 2rem;
+        }
+
+        .module-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #F2F4F8;
+            margin: 0;
+        }
+
+        .module-badge {
+            background: rgba(102, 252, 241, 0.2);
+            color: #66FCF1;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .module-description {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .module-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .module-btn {
+            background: linear-gradient(45deg, #66FCF1, #45A29E);
+            border: none;
+            border-radius: 8px;
+            color: #0B0C10;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .module-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 252, 241, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .guest-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(102, 252, 241, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .guest-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .guest-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .guest-status {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .getting-started-steps {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .quick-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-actions {
+                flex-direction: column;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .input-footer {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+    </style>
+</body>
+</html>
