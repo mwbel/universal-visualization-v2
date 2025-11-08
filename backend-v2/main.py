@@ -243,6 +243,20 @@ async def get_subject_templates(subject: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取{subject}模板失败: {str(e)}")
 
+@app.get("/api/v2/templates/search")
+async def search_templates(query: str, subject: Optional[str] = None):
+    """搜索模板"""
+    try:
+        templates = await state.template_engine.search_templates(query, subject)
+        return {
+            "query": query,
+            "subject": subject,
+            "total": len(templates),
+            "templates": templates
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"搜索模板失败: {str(e)}")
+
 @app.get("/api/v2/status/{generation_id}")
 async def get_generation_status(generation_id: str):
     """获取生成状态"""
@@ -427,6 +441,17 @@ async def startup_event():
     print("🚀 万物可视化 v2.0 启动中...")
     print("📋 方案A: 集中式路由架构")
     print("🤖 已加载Agent系统")
+
+    # 加载模板
+    try:
+        loaded_count = await state.template_engine.load_templates_from_files()
+        print(f"📚 已加载 {loaded_count} 个模板")
+    except Exception as e:
+        print(f"⚠️  模板加载警告: {str(e)}")
+
+    # 将模板引擎注入到路由管理器
+    state.router.set_template_engine(state.template_engine)
+
     print("🔧 统一模板引擎已就绪")
     print("✅ API网关已启动")
 

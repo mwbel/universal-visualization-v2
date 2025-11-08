@@ -189,24 +189,39 @@ class AstronomyAgent(BaseVisualizationAgent):
         try:
             concept_type = requirement.get("concept_type")
 
-            # 1. 精确概念类型匹配
+          # 1. 精确概念类型匹配
             if concept_type:
                 template_key = f"astro_{concept_type}"
                 if template_key in self.templates:
                     return self.templates[template_key]
+                # 即使内置模板不存在，也返回一个模板配置对象
+                # 这样配置生成阶段可以正确处理模板ID
+                return {"id": template_key, "name": f"{concept_type} 天文可视化"}
 
             # 2. 对象特定匹配
             if "planets" in requirement.get("objects", []):
-                return self.templates.get("astro_planetary_system", self.templates.get("astro_solar_system"))
+                template = self.templates.get("astro_planetary_system", self.templates.get("astro_solar_system"))
+                if template:
+                    return template
+                return {"id": "astro_solar_system", "name": "太阳系行星运动"}
 
             elif "constellations" in requirement.get("objects", []):
-                return self.templates.get("astro_constellations")
+                template = self.templates.get("astro_constellations")
+                if template:
+                    return template
+                return {"id": "astro_constellations", "name": "星座图"}
 
             elif "eclipses" in requirement.get("phenomena", []):
-                return self.templates.get("astro_eclipses")
+                template = self.templates.get("astro_eclipses")
+                if template:
+                    return template
+                return {"id": "astro_eclipses", "name": "日月食模拟"}
 
             # 3. 默认天文模板
-            return self.templates.get("astro_general", None)
+            template = self.templates.get("astro_general")
+            if template:
+                return template
+            return {"id": "astro_general", "name": "天文可视化"}
 
         except Exception as e:
             raise VisualizationError(f"模板匹配失败: {str(e)}")
@@ -283,7 +298,38 @@ class AstronomyAgent(BaseVisualizationAgent):
             str: HTML内容
         """
         try:
-            # 获取模板HTML
+            # 优先使用模板引擎
+            if hasattr(self, 'template_engine') and self.template_engine:
+                template_id = config.get("template_id", "default")
+
+                # 准备渲染配置
+                render_config = {
+                    "title": config.get("title", "天文可视化"),
+                    "parameters": config.get("parameters", {}),
+                    "data": await self._generate_astronomy_data(config),
+                    "plotly_config": await self._generate_plotly_config(await self._generate_astronomy_data(config), config),
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "subject": "astronomy",
+                    "field": config.get("field", "general"),
+                    "concept_type": config.get("concept_type")
+                }
+
+                # 使用模板引擎渲染，添加错误处理
+                try:
+                    html_content = await self.template_engine.render_template(template_id, render_config)
+
+                    # 检查返回的是否是错误页面
+                    if html_content and html_content.strip():
+                        if "模板渲染错误" not in html_content and "模板不存在" not in html_content:
+                            return html_content
+                        else:
+                            print(f"⚠️ 模板引擎返回错误页面，回退到内置模板")
+                except Exception as template_error:
+                    # 模板渲染失败，记录并继续使用内置模板
+                    print(f"⚠️ 模板引擎渲染失败: {template_error}，回退到内置模板")
+                    pass
+
+            # 完全回退到内置模板
             template_id = config.get("template_id", "astro_general")
             template_content = self.templates.get(template_id, {}).get("html_template")
 
@@ -296,13 +342,11 @@ class AstronomyAgent(BaseVisualizationAgent):
             # 生成Plotly配置
             plotly_config = await self._generate_plotly_config(data, config)
 
-            # 渲染HTML
-            html_content = template_content.format(
-                title=config["title"],
-                plotly_config=json.dumps(plotly_config, ensure_ascii=False),
-                parameters=json.dumps(config["parameters"], ensure_ascii=False),
-                data=json.dumps(data, ensure_ascii=False)
-            )
+            # 使用安全的字符串替换，避免与CSS花括号冲突
+            html_content = template_content.replace("__TITLE__", str(config["title"]))
+            html_content = html_content.replace("__PLOTLY_CONFIG__", json.dumps(plotly_config, ensure_ascii=False))
+            html_content = html_content.replace("__PARAMETERS__", json.dumps(config["parameters"], ensure_ascii=False))
+            html_content = html_content.replace("__DATA__", json.dumps(data, ensure_ascii=False))
 
             return html_content
 
@@ -515,7 +559,7 @@ class AstronomyAgent(BaseVisualizationAgent):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
+    <title>__TITLE__</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {
@@ -558,7 +602,7 @@ class AstronomyAgent(BaseVisualizationAgent):
 </head>
 <body>
     <div class="container">
-        <h1 class="title">{title}</h1>
+        <h1 class="title">__TITLE__</h1>
 
         <div class="controls">
             <div class="control-group">
@@ -585,14 +629,14 @@ class AstronomyAgent(BaseVisualizationAgent):
             <h3>天文可视化信息</h3>
             <p><strong>学科:</strong> 天文学</p>
             <p><strong>显示对象:</strong> <span id="object-info"></span></p>
-            <p><strong>参数:</strong> <span id="param-info">{parameters}</span></p>
+            <p><strong>参数:</strong> <span id="param-info">__PARAMETERS__</span></p>
         </div>
     </div>
 
     <script>
-        const plotlyConfig = {plotly_config};
-        const data = {data};
-        const parameters = {parameters};
+        const plotlyConfig = __PLOTLY_CONFIG__;
+        const data = __DATA__;
+        const parameters = __PARAMETERS__;
 
         let animationId = null;
         let isAnimating = false;

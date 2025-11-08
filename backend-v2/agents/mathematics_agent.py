@@ -6,6 +6,7 @@
 from typing import Dict, List, Optional, Any
 import json
 import math
+import datetime
 import numpy as np
 from .base_agent import BaseVisualizationAgent, VisualizationError, RequirementParseError
 
@@ -154,6 +155,41 @@ class MathematicsAgent(BaseVisualizationAgent):
             Dict: 匹配的模板配置
         """
         try:
+            # 使用模板引擎进行匹配
+            if hasattr(self, 'template_engine') and self.template_engine:
+                # 搜索匹配的模板
+                search_query = requirement.get("original", "")
+                dist_type = requirement.get("distribution_type")
+
+                # 如果识别了分布类型，优先匹配
+                if dist_type:
+                    subject_templates = await self.template_engine.get_subject_templates("mathematics")
+                    for template in subject_templates:
+                        if template.get("id") == f"{dist_type}_distribution":
+                            return template
+
+                # 通用搜索
+                matched_templates = await self.template_engine.search_templates(search_query, "mathematics")
+                if matched_templates:
+                    return matched_templates[0]
+
+            # 回退到内置模板
+            return await self._match_builtin_template(requirement)
+
+        except Exception as e:
+            raise VisualizationError(f"模板匹配失败: {str(e)}")
+
+    async def _match_builtin_template(self, requirement: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        回退到内置模板匹配
+
+        Args:
+            requirement: 解析后的数学需求
+
+        Returns:
+            Dict: 匹配的模板配置
+        """
+        try:
             # 1. 概率分布模板匹配
             if requirement.get("concept_type") == "distribution":
                 dist_type = requirement.get("distribution_type")
@@ -172,7 +208,7 @@ class MathematicsAgent(BaseVisualizationAgent):
                 return self.templates.get("default_math", None)
 
         except Exception as e:
-            raise VisualizationError(f"模板匹配失败: {str(e)}")
+            raise VisualizationError(f"内置模板匹配失败: {str(e)}")
 
     async def generate_config(self, requirement: Dict[str, Any], template: Dict[str, Any], user_preferences: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -233,12 +269,69 @@ class MathematicsAgent(BaseVisualizationAgent):
             str: HTML内容
         """
         try:
-            # 获取模板HTML
-            template_id = config.get("template_id", "default")
-            template_content = self.templates.get(template_id, {}).get("html_template")
+            # 优先使用模板引擎
+            if hasattr(self, 'template_engine') and self.template_engine:
+                template_id = config.get("template_id", "default")
 
-            if not template_content:
-                template_content = self._get_default_math_template()
+                # 准备渲染配置
+                render_config = {
+                    "title": config.get("title", "数学可视化"),
+                    "parameters": config.get("parameters", {}),
+                    "data": await self._generate_math_data(config),
+                    "plotly_config": await self._generate_plotly_config(await self._generate_math_data(config), config),
+                    "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "subject": "mathematics",
+                    "field": config.get("field", "general"),
+                    "concept_type": config.get("concept_type")
+                }
+
+                # 使用模板引擎渲染
+                html_content = await self.template_engine.render_template(template_id, render_config)
+
+                if html_content and html_content.strip():
+                    return html_content
+
+            # 回退到传统方式
+            return await self._generate_legacy_visualization(config)
+
+        except Exception as e:
+            raise VisualizationError(f"可视化生成失败: {str(e)}")
+
+    async def _generate_legacy_visualization(self, config: Dict[str, Any]) -> str:
+        """
+        回退到传统可视化生成方式
+
+        Args:
+            config: 可视化配置
+
+        Returns:
+            str: HTML内容
+        """
+        try:
+            # 优先使用模板引擎
+            if hasattr(self, 'template_engine') and self.template_engine:
+                template_id = config.get("template_id", "default")
+
+                # 准备渲染配置
+                render_config = {
+                    "title": config.get("title", "数学可视化"),
+                    "parameters": config.get("parameters", {}),
+                    "data": await self._generate_math_data(config),
+                    "plotly_config": await self._generate_plotly_config(await self._generate_math_data(config), config),
+                    "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "subject": "mathematics",
+                    "field": config.get("field", "general"),
+                    "concept_type": config.get("concept_type")
+                }
+
+                # 使用模板引擎渲染
+                html_content = await self.template_engine.render_template(template_id, render_config)
+
+                if html_content and html_content.strip():
+                    return html_content
+
+            # 完全回退到内置模板
+            template_content = self._get_default_math_template()
 
             # 生成数据
             data = await self._generate_math_data(config)
@@ -246,18 +339,16 @@ class MathematicsAgent(BaseVisualizationAgent):
             # 生成Plotly配置
             plotly_config = await self._generate_plotly_config(data, config)
 
-            # 渲染HTML
-            html_content = template_content.format(
-                title=config["title"],
-                plotly_config=json.dumps(plotly_config, ensure_ascii=False),
-                parameters=json.dumps(config["parameters"], ensure_ascii=False),
-                data=json.dumps(data, ensure_ascii=False)
-            )
+            # 使用安全的字符串替换
+            html_content = template_content.replace("{title}", str(config["title"]))
+            html_content = html_content.replace("{plotly_config}", json.dumps(plotly_config, ensure_ascii=False))
+            html_content = html_content.replace("{parameters}", json.dumps(config["parameters"], ensure_ascii=False))
+            html_content = html_content.replace("{data}", json.dumps(data, ensure_ascii=False))
 
             return html_content
 
         except Exception as e:
-            raise VisualizationError(f"可视化生成失败: {str(e)}")
+            raise VisualizationError(f"传统可视化生成失败: {str(e)}")
 
     def get_supported_topics(self) -> List[str]:
         """获取支持的数学主题"""

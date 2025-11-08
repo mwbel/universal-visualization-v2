@@ -31,6 +31,7 @@ class UnifiedTemplateEngine:
         }
 
         print("🎨 统一模板引擎初始化完成")
+        # 模板加载将在startup事件中进行
 
     async def register_template(self, template: Dict[str, Any]) -> bool:
         """
@@ -545,6 +546,68 @@ class UnifiedTemplateEngine:
             )[:5],
             "timestamp": datetime.now().isoformat()
         }
+
+    async def load_templates_from_files(self) -> int:
+        """
+        从文件系统加载模板
+
+        Returns:
+            int: 加载的模板数量
+        """
+        try:
+            templates_dir = Path("templates")
+            loaded_count = 0
+
+            if not templates_dir.exists():
+                print(f"⚠️  模板目录不存在: {templates_dir}")
+                return 0
+
+            # 遍历所有学科目录
+            for subject_dir in templates_dir.iterdir():
+                if subject_dir.is_dir():
+                    subject_name = subject_dir.name
+                    print(f"📁 正在加载学科: {subject_name}")
+
+                    # 加载该学科的所有JSON模板文件
+                    for json_file in subject_dir.glob("*.json"):
+                        try:
+                            await self._load_template_from_json(json_file)
+                            loaded_count += 1
+                        except Exception as e:
+                            print(f"❌ 加载模板失败 {json_file}: {str(e)}")
+
+            print(f"✅ 总共加载了 {loaded_count} 个模板")
+            return loaded_count
+
+        except Exception as e:
+            print(f"❌ 加载模板文件失败: {str(e)}")
+            return 0
+
+    async def _load_template_from_json(self, json_file: Path) -> None:
+        """
+        从JSON文件加载单个模板
+
+        Args:
+            json_file: JSON文件路径
+        """
+        try:
+            with open(json_file, 'r', encoding='utf-8') as f:
+                template_data = json.load(f)
+
+            # 验证并注册模板
+            validation = await self.validate_template(template_data)
+            if not validation["valid"]:
+                print(f"⚠️  模板验证失败 {json_file.name}: {', '.join(validation['errors'])}")
+                return
+
+            success = await self.register_template(template_data)
+            if success:
+                print(f"  ✅ 已加载模板: {template_data.get('id', json_file.stem)}")
+
+        except json.JSONDecodeError as e:
+            print(f"❌ JSON格式错误 {json_file}: {str(e)}")
+        except Exception as e:
+            print(f"❌ 加载模板失败 {json_file}: {str(e)}")
 
     async def cleanup_cache(self) -> int:
         """
