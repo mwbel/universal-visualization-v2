@@ -141,3 +141,42 @@ build/
 *.mp4
 *.mov
 *.psd
+
+# 万物可视化 v2.0 specific
+backend-v2/logs/
+backend-v2/static/visualizations/
+backend-v2/.env
+frontend-v2/.env
+
+# Large binary files and data
+*.bsp
+*.dat
+*.bin
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Generated visualizations and data files
+visualization_*.html
+viz_*.html
+*.csv
+*.xlsx
+*.json
+*.xml
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Original backup directories (keeping as archives)
+*_orig/
+*.bak
+*.backup
+*.old
+
+# PDF files (academic papers)
+**/*.pdf
+
+# Cleanup files
+cleanup_paths.txt
