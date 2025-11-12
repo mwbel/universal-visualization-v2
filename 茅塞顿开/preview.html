@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茅塞顿开 - 高中全科可视化学习平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/antd@5.12.8/dist/reset.css" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/antd@5.12.8/dist/antd.min.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6/umd/react-router-dom.development.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        .preview-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .preview-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .preview-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .preview-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .preview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+        .subject-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .subject-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+        .subject-description {
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+        .subject-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .subject-link {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .link-directory {
+            background: #f0f0f0;
+            color: #666;
+        }
+        .link-templates {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        .link-interactive {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+        .subject-link:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        .status-available {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+        .status-developing {
+            background: #fff2e8;
+            color: #fa8c16;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { Card, Typography, Button, Space, Tag, Divider } = antd;
+        const { Title, Text, Link } = Typography;
+
+        // 学科数据
+        const subjects = [
+            {
+                id: 'math',
+                name: 'math',
+                displayName: '数学',
+                description: '函数图像、几何图形、数列可视化，涵盖代数、几何、统计等核心内容',
+                icon: '📐',
+                color: '#1890ff',
+                available: true,
+                templates: 12,
+                categories: 4
+            },
+            {
+                id: 'physics',
+                name: 'physics',
+                displayName: '物理',
+                description: '力学、电学、热学、光学实验模拟，动态展示物理规律和实验过程',
+                icon: '⚡',
+                color: '#52c41a',
+                available: true,
+                templates: 8,
+                categories: 3
+            },
+            {
+                id: 'chemistry',
+                name: 'chemistry',
+                displayName: '化学',
+                description: '化学反应、分子结构、元素周期表可视化，安全观察微观化学世界',
+                icon: '⚗️',
+                color: '#fa8c16',
+                available: false,
+                templates: 0,
+                categories: 0
+            },
+            {
+                id: 'biology',
+                name: 'biology',
+                displayName: '生物',
+                description: '细胞结构、遗传规律、生态系统3D动画，直观理解生命科学',
+                icon: '🧬',
+                color: '#13c2c2',
+                available: false,
+                templates: 0,
+                categories: 0
+            },
+            {
+                id: 'chinese',
+                name: 'chinese',
+                displayName: '语文',
+                description: '古诗词意境、文章结构分析、语言文字知识图谱化展示',
+                icon: '📚',
+                color: '#722ed1',
+                available: false,
+                templates: 0,
+                categories: 0
+            },
+            {
+                id: 'history',
+                name: 'history',
+                displayName: '历史',
+                description: '历史时间线、事件关系图、地理变迁可视化，让历史生动起来',
+                icon: '🏛️',
+                color: '#eb2f96',
+                available: false,
+                templates: 0,
+                categories: 0
+            },
+            {
+                id: 'geography',
+                name: 'geography',
+                displayName: '地理',
+                description: '地形地貌、气候分布、人口迁移地图互动展示，理解地球空间',
+                icon: '🌍',
+                color: '#a0d911',
+                available: false,
+                templates: 0,
+                categories: 0
+            },
+            {
+                id: 'politics',
+                name: 'politics',
+                displayName: '政治',
+                description: '政治体系、经济关系、社会结构概念图和流程图解析',
+                icon: '⚖️',
+                color: '#f5222d',
+                available: false,
+                templates: 0,
+                categories: 0
+            },
+            {
+                id: 'english',
+                name: 'english',
+                displayName: '英语',
+                description: '语法结构、词汇网络、语音图表可视化，提升语言学习效果',
+                icon: '🌐',
+                color: '#2f54eb',
+                available: false,
+                templates: 0,
+                categories: 0
+            }
+        ];
+
+        function SubjectCard({ subject }) {
+            const isAvailable = subject.available;
+
+            return (
+                <Card
+                    className="preview-card"
+                    hoverable
+                    cover={
+                        <div style={{
+                            padding: '20px',
+                            textAlign: 'center',
+                            background: `${subject.color}10`
+                        }}>
+                            <div className="subject-icon">{subject.icon}</div>
+                            <div className="status-badge">
+                                {isAvailable ?
+                                    <span className="status-available">✅ 可用</span> :
+                                    <span className="status-developing">🚧 开发中</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                >
+                    <div className="subject-name">{subject.displayName}</div>
+                    <div className="subject-description">{subject.description}</div>
+
+                    {isAvailable && (
+                        <>
+                            <Space split={<Divider type="vertical" />} style={{ marginBottom: 16 }}>
+                                <Tag color="blue">{subject.templates} 个模板</Tag>
+                                <Tag color="orange">{subject.categories} 个分类</Tag>
+                            </Space>
+                        </>
+                    )}
+
+                    <div className="subject-links">
+                        <Link
+                            href={`/${subject.name}`}
+                            className="subject-link link-directory"
+                        >
+                            📖 查看目录
+                        </Link>
+                        <Link
+                            href={`/subjects/${subject.name}`}
+                            className="subject-link link-templates"
+                        >
+                            🎨 可视化模板
+                        </Link>
+                        <Link
+                            href={`/interactive/${subject.name}`}
+                            className="subject-link link-interactive"
+                        >
+                            🤖 智能问答
+                        </Link>
+                    </div>
+                </Card>
+            );
+        }
+
+        function App() {
+            const [stats, setStats] = useState({
+                total: subjects.length,
+                available: subjects.filter(s => s.available).length,
+                templates: subjects.reduce((sum, s) => sum + s.templates, 0)
+            });
+
+            return (
+                <div className="preview-container">
+                    <div className="preview-header">
+                        <Title level={1}>
+                            💡 茅塞顿开
+                        </Title>
+                        <Title level={4} type="secondary">
+                            高中全科可视化学习平台
+                        </Title>
+                        <Text type="secondary">
+                            通过可视化让知识点一目了然，学习更轻松
+                        </Text>
+
+                        <div style={{ marginTop: 24 }}>
+                            <Space size="large">
+                                <div>
+                                    <Text strong>📚 学科总数</Text>
+                                    <div style={{ fontSize: 24, fontWeight: 'bold', color: '#1890ff' }}>
+                                        {stats.total}
+                                    </div>
+                                </div>
+                                <div>
+                                    <Text strong>✅ 可用学科</Text>
+                                    <div style={{ fontSize: 24, fontWeight: 'bold', color: '#52c41a' }}>
+                                        {stats.available}
+                                    </div>
+                                </div>
+                                <div>
+                                    <Text strong>🎨 模板总数</Text>
+                                    <div style={{ fontSize: 24, fontWeight: 'bold', color: '#fa8c16' }}>
+                                        {stats.templates}
+                                    </div>
+                                </div>
+                            </Space>
+                        </div>
+
+                        <div style={{ marginTop: 16 }}>
+                            <Button
+                                type="primary"
+                                size="large"
+                                href="/subjects"
+                                style={{ background: '#722ed1', borderColor: '#722ed1' }}
+                            >
+                                🚀 查看所有学科
+                            </Button>
+                        </div>
+                    </div>
+
+                    <div className="preview-content">
+                        {subjects.map(subject => (
+                            <SubjectCard key={subject.id} subject={subject} />
+                        ))}
+                    </div>
+
+                    <div style={{ textAlign: 'center', marginTop: 40, color: 'white' }}>
+                        <Text style={{ color: 'rgba(255,255,255,0.8)' }}>
+                            🎯 专注高中教育可视化 - 让每个学生都能体验到"茅塞顿开"的学习快感
+                        </Text>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

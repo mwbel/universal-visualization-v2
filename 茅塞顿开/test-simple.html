@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茅塞顿开 - 简化测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .chat-panel {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        input, button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .visualization-panel {
+            background: #e9ecef;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            min-height: 200px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        .error {
+            color: red;
+            padding: 10px;
+            background: #ffe6e6;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            color: green;
+            padding: 10px;
+            background: #e6ffe6;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 茅塞顿开 - 学科可视化系统</h1>
+        <p>输入您的问题，系统将智能识别学科并生成可视化内容</p>
+
+        <div class="chat-panel">
+            <h3>💬 输入您的问题</h3>
+            <div class="input-group">
+                <input type="text" id="userInput" placeholder="例如：正弦函数、水分子结构、细胞分裂..." style="flex: 1;">
+                <button onclick="askQuestion()">🚀 发送</button>
+            </div>
+            <div id="result"></div>
+        </div>
+
+        <div class="visualization-panel">
+            <h3>📊 可视化展示</h3>
+            <div id="visualization">
+                <p>请在上方输入您的问题，系统将生成对应的可视化内容</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function askQuestion() {
+            const input = document.getElementById('userInput');
+            const result = document.getElementById('result');
+            const visualization = document.getElementById('visualization');
+
+            const question = input.value.trim();
+            if (!question) {
+                result.innerHTML = '<div class="error">请输入问题</div>';
+                return;
+            }
+
+            // 显示加载状态
+            result.innerHTML = '<div class="loading">🤖 正在识别学科并生成可视化...</div>';
+            visualization.innerHTML = '<div class="loading">⏳ 生成中，请稍候...</div>';
+
+            try {
+                // 1. 先分类学科
+                const classifyResponse = await fetch('http://localhost:9999/api/v2/classify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt: question })
+                });
+
+                const classifyData = await classifyResponse.json();
+                const subject = classifyData.subject;
+
+                console.log('识别学科:', subject);
+
+                // 2. 调用对应学科的API
+                const generateResponse = await fetch(`http://localhost:9999/api/v2/highschool/${subject}/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: question,
+                        grade_level: 'high_school'
+                    })
+                });
+
+                const generateData = await generateResponse.json();
+
+                if (generateData.success) {
+                    result.innerHTML = `<div class="success">✅ 成功识别学科: ${subject}</div>`;
+
+                    // 显示可视化内容
+                    if (generateData.visualization && generateData.visualization.html_content) {
+                        // 创建一个容器来插入HTML内容
+                        const vizContainer = document.createElement('div');
+                        vizContainer.innerHTML = `
+                            <h4>${generateData.visualization.title}</h4>
+                            <p><strong>学科:</strong> ${subject}</p>
+                            <p><strong>概念:</strong> ${generateData.visualization.concepts.join(', ') || '无'}</p>
+                            <hr>
+                            <div style="border: 1px solid #ddd; padding: 10px; background: white; border-radius: 4px; min-height: 400px;">
+                                ${generateData.visualization.html_content}
+                            </div>
+                        `;
+
+                        visualization.innerHTML = '';
+                        visualization.appendChild(vizContainer);
+
+                        // 执行脚本
+                        const scripts = vizContainer.querySelectorAll('script');
+                        scripts.forEach(script => {
+                            const newScript = document.createElement('script');
+                            newScript.textContent = script.textContent;
+                            visualization.appendChild(newScript);
+                        });
+
+                        // 额外显示原始HTML代码用于调试
+                        const debugDiv = document.createElement('details');
+                        debugDiv.innerHTML = `
+                            <summary>🔍 查看原始HTML代码 (调试用)</summary>
+                            <pre style="background: #f5f5f5; padding: 10px; font-size: 12px; overflow: auto; max-height: 200px;">
+${generateData.visualization.html_content}
+                            </pre>
+                        `;
+                        visualization.appendChild(debugDiv);
+                    } else {
+                        visualization.innerHTML = '<div class="error">未获取到可视化内容</div>';
+                    }
+                } else {
+                    throw new Error(generateData.error || '生成失败');
+                }
+
+            } catch (error) {
+                console.error('错误:', error);
+                result.innerHTML = `<div class="error">❌ 错误: ${error.message}</div>`;
+                visualization.innerHTML = '<div class="error">无法生成可视化内容</div>';
+            }
+        }
+
+        // 回车键发送
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                askQuestion();
+            }
+        });
+    </script>
+</body>
+</html>

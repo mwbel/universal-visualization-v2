@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茅塞顿开 - 智能交互学习</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            width: 90%;
+            max-width: 1200px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .chat-panel {
+            flex: 1;
+            border-right: 1px solid #e8e8e8;
+            display: flex;
+            flex-direction: column;
+            background: #fafafa;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8e8e8;
+            background: white;
+            font-weight: 600;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: #7C3AED;
+        }
+
+        .message.ai .message-avatar {
+            background: #10B981;
+        }
+
+        .message-content {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 70%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background: #7C3AED;
+            color: white;
+            margin-left: auto;
+        }
+
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #e8e8e8;
+            background: white;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            flex: 1;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #7C3AED;
+        }
+
+        .send-button {
+            background: #7C3AED;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .send-button:hover {
+            background: #6d28d9;
+        }
+
+        .visualization-panel {
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .viz-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8e8e8;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .viz-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viz-placeholder {
+            text-align: center;
+            color: #8c8c8c;
+        }
+
+        .viz-placeholder svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .viz-controls {
+            padding: 15px 20px;
+            border-top: 1px solid #e8e8e8;
+            background: #fafafa;
+        }
+
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .control-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-label {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #7C3AED;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            background: #8c8c8c;
+            border-radius: 50%;
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulse {
+            0%, 80%, 100% {
+                opacity: 0.3;
+            }
+            40% {
+                opacity: 1;
+            }
+        }
+
+        .quick-actions {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .quick-actions h4 {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .action-button {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 16px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-button:hover {
+            background: #7C3AED;
+            color: white;
+            border-color: #7C3AED;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+
+            .chat-panel {
+                border-right: none;
+                border-bottom: 1px solid #e8e8e8;
+            }
+
+            .visualization-panel {
+                width: 100%;
+                height: 300px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .header-stats {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="header">
+            <h1>
+                <span>💡</span>
+                茅塞顿开 - 智能交互学习
+            </h1>
+            <div class="header-stats">
+                <span>💬 对话: <span id="messageCount">1</span></span>
+                <span>📐 学科: 数学</span>
+                <span>⏱️ <span id="sessionTime">00:00</span></span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-panel">
+                <div class="chat-header">💬 对话</div>
+
+                <div class="messages-container" id="messagesContainer">
+                    <div class="message ai">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            你好！我是你的数学学习助手。我可以帮助你解答问题、展示可视化内容。请告诉我你想学习什么？
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <div class="input-container">
+                        <textarea
+                            class="input-field"
+                            placeholder="请输入你的数学问题..."
+                            id="messageInput"
+                            rows="1"
+                        ></textarea>
+                        <button class="send-button" onclick="sendMessage()">发送</button>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h4>快速提问：</h4>
+                    <div class="action-buttons">
+                        <button class="action-button" onclick="quickQuestion('什么是函数？')">什么是函数？</button>
+                        <button class="action-button" onclick="quickQuestion('画一个二次函数')">画一个二次函数</button>
+                        <button class="action-button" onclick="quickQuestion('解释等差数列')">解释等差数列</button>
+                        <button class="action-button" onclick="quickQuestion('什么是三角函数？')">什么是三角函数？</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualization-panel">
+                <div class="viz-header">
+                    📊 可视化
+                    <span id="vizTitle" style="font-size: 12px; color: #8c8c8c;">等待内容...</span>
+                </div>
+
+                <div class="viz-content">
+                    <div class="viz-placeholder" id="vizPlaceholder">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                        <p>可视化内容将在这里显示</p>
+                        <p style="font-size: 12px; margin-top: 8px;">提出问题后查看相关图表</p>
+                    </div>
+                </div>
+
+                <div class="viz-controls">
+                    <div class="control-item">
+                        <span class="control-label">显示网格</span>
+                        <div class="toggle-switch active" id="gridToggle" onclick="toggleControl('grid')"></div>
+                    </div>
+                    <div class="control-item">
+                        <span class="control-label">动画效果</span>
+                        <div class="toggle-switch active" id="animationToggle" onclick="toggleControl('animation')"></div>
+                    </div>
+                    <div class="control-item">
+                        <span class="control-label">交互模式</span>
+                        <div class="toggle-switch active" id="interactiveToggle" onclick="toggleControl('interactive')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let messageCount = 1;
+        let sessionStartTime = Date.now();
+        let isLoading = false;
+
+        // 模拟AI回复
+        const aiResponses = {
+            '函数': {
+                message: '函数是数学中的一个重要概念。让我为你绘制一个函数图像来帮助理解。',
+                visualization: 'function',
+                title: '函数图像演示'
+            },
+            '等差数列': {
+                message: '等差数列是每一项与前一项的差都相等的数列。让我用动画来演示这个概念。',
+                visualization: 'sequence',
+                title: '等差数列动画'
+            },
+            '三角函数': {
+                message: '三角函数是研究三角形边角关系的重要工具。我来为你展示正弦和余弦函数的图像。',
+                visualization: 'trigonometry',
+                title: '三角函数图像'
+            },
+            'default': {
+                message: '这是一个很好的问题！让我为你详细解释：\n\n1. 首先理解基本概念\n2. 掌握相关公式\n3. 通过例题加深理解\n\n你想了解哪个具体方面呢？',
+                visualization: 'general',
+                title: '概念图解'
+            }
+        };
+
+        // 发送消息
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message || isLoading) return;
+
+            addMessage('user', message);
+            input.value = '';
+            showLoading();
+
+            // 模拟AI响应延迟
+            setTimeout(() => {
+                hideLoading();
+                const response = getAIResponse(message);
+                addMessage('ai', response.message);
+                updateVisualization(response.visualization, response.title);
+            }, 1000 + Math.random() * 2000);
+        }
+
+        // 快速提问
+        function quickQuestion(question) {
+            document.getElementById('messageInput').value = question;
+            sendMessage();
+        }
+
+        // 添加消息
+        function addMessage(type, content) {
+            const container = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+
+            const avatar = type === 'user' ? '👤' : '🤖';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">${content}</div>
+            `;
+
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+
+            messageCount++;
+            document.getElementById('messageCount').textContent = messageCount;
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            isLoading = true;
+            const container = document.getElementById('messagesContainer');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message ai loading-message';
+            loadingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(loadingDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 隐藏加载状态
+        function hideLoading() {
+            isLoading = false;
+            const loadingMessage = document.querySelector('.loading-message');
+            if (loadingMessage) {
+                loadingMessage.remove();
+            }
+        }
+
+        // 获取AI响应
+        function getAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+
+            for (const [key, response] of Object.entries(aiResponses)) {
+                if (lowerMessage.includes(key.toLowerCase())) {
+                    return response;
+                }
+            }
+
+            return aiResponses.default;
+        }
+
+        // 更新可视化
+        function updateVisualization(type, title) {
+            const placeholder = document.getElementById('vizPlaceholder');
+            const titleElement = document.getElementById('vizTitle');
+
+            titleElement.textContent = title;
+
+            // 根据不同类型显示不同的可视化内容
+            switch(type) {
+                case 'function':
+                    placeholder.innerHTML = `
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                            <!-- 坐标轴 -->
+                            <line x1="40" y1="260" x2="360" y2="260" stroke="#666" stroke-width="2"/>
+                            <line x1="40" y1="260" x2="40" y2="40" stroke="#666" stroke-width="2"/>
+
+                            <!-- 二次函数 y = x² -->
+                            <path d="M 40 260 Q 200 40, 360 260" stroke="#7C3AED" stroke-width="3" fill="none"/>
+
+                            <!-- 一次函数 y = 2x + 1 -->
+                            <line x1="40" y1="200" x2="360" y2="80" stroke="#DC2626" stroke-width="3"/>
+
+                            <!-- 标签 -->
+                            <text x="370" y="265" font-size="12" fill="#666">x</text>
+                            <text x="25" y="35" font-size="12" fill="#666">y</text>
+                            <text x="300" y="30" font-size="12" fill="#7C3AED">y = x²</text>
+                            <text x="280" y="70" font-size="12" fill="#DC2626">y = 2x + 1</text>
+                        </svg>
+                        <p style="margin-top: 16px; color: #333;">函数图像对比</p>
+                        <p style="font-size: 12px; color: #666;">紫色：二次函数 | 红色：一次函数</p>
+                    `;
+                    break;
+
+                case 'sequence':
+                    placeholder.innerHTML = `
+                        <div style="width: 100%; max-width: 350px;">
+                            <div style="display: flex; align-items: end; height: 150px; gap: 8px;">
+                                <div style="flex: 1; background: #7C3AED; height: 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; border-radius: 4px;">2</div>
+                                <div style="flex: 1; background: #7C3AED; height: 40px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; border-radius: 4px;">5</div>
+                                <div style="flex: 1; background: #7C3AED; height: 60px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; border-radius: 4px;">8</div>
+                                <div style="flex: 1; background: #7C3AED; height: 80px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; border-radius: 4px;">11</div>
+                                <div style="flex: 1; background: #7C3AED; height: 100px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; border-radius: 4px;">14</div>
+                            </div>
+                            <p style="margin-top: 16px; color: #333;">等差数列：2, 5, 8, 11, 14...</p>
+                            <p style="font-size: 12px; color: #666;">首项 a₁ = 2，公差 d = 3</p>
+                        </div>
+                    `;
+                    break;
+
+                case 'trigonometry':
+                    placeholder.innerHTML = `
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                            <!-- 坐标轴 -->
+                            <line x1="40" y1="150" x2="360" y2="150" stroke="#666" stroke-width="2"/>
+                            <line x1="200" y1="40" x2="200" y2="260" stroke="#666" stroke-width="2"/>
+
+                            <!-- 正弦函数 -->
+                            <path d="M 40 150 Q 120 50, 200 150 T 360 150" stroke="#DC2626" stroke-width="3" fill="none"/>
+
+                            <!-- 余弦函数 -->
+                            <path d="M 40 90 Q 200 210, 360 90" stroke="#2563EB" stroke-width="3" fill="none"/>
+
+                            <!-- 标签 -->
+                            <text x="370" y="155" font-size="12" fill="#666">x</text>
+                            <text x="185" y="35" font-size="12" fill="#666">y</text>
+                            <text x="280" y="70" font-size="12" fill="#DC2626">sin(x)</text>
+                            <text x="280" y="120" font-size="12" fill="#2563EB">cos(x)</text>
+                        </svg>
+                        <p style="margin-top: 16px; color: #333;">三角函数图像</p>
+                        <p style="font-size: 12px; color: #666;">红色：sin(x) | 蓝色：cos(x)</p>
+                    `;
+                    break;
+
+                default:
+                    placeholder.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 80px; height: 80px;">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <p style="margin-top: 16px; color: #333;">概念图解</p>
+                        <p style="font-size: 12px; color: #666;">点击上方控制项调整显示</p>
+                    `;
+            }
+        }
+
+        // 控制开关
+        function toggleControl(controlName) {
+            const toggle = document.getElementById(controlName + 'Toggle');
+            toggle.classList.toggle('active');
+
+            // 这里可以添加实际的控制逻辑
+            console.log(`${controlName} toggled:`, toggle.classList.contains('active'));
+        }
+
+        // 更新会话时间
+        function updateSessionTime() {
+            const elapsed = Date.now() - sessionStartTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            document.getElementById('sessionTime').textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // 监听Enter键发送消息
+        document.getElementById('messageInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // 自动调整输入框高度
+        document.getElementById('messageInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // 更新会话时间
+        setInterval(updateSessionTime, 1000);
+
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            document.getElementById('messageInput').focus();
+        });
+    </script>
+</body>
+</html>

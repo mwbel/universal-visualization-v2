@@ -1,0 +1,632 @@
+/* EnhancedVisualizationPanel 样式 */
+
+.enhanced-visualization-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.enhanced-visualization-panel.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  border-radius: 0;
+}
+
+.enhanced-visualization-panel.maximized {
+  flex: 2;
+  min-height: 600px;
+}
+
+/* 工具栏 */
+.viz-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+  min-height: 52px;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.template-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: #f0f0f0;
+  border-radius: 6px;
+}
+
+.template-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #262626;
+}
+
+/* 缩放控制 */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}
+
+.zoom-level {
+  font-size: 12px;
+  color: #666;
+  min-width: 36px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* 内容容器 */
+.viz-content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 参数控制面板 */
+.parameter-controls {
+  border-bottom: 1px solid #e8e8e8;
+  background: #fafafa;
+  padding: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.controls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.controls-header h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+}
+
+/* 可视化内容区域 */
+.viz-content {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.visualization-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+}
+
+/* 加载状态 */
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* 空状态 */
+.empty-visualization {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #8c8c8c;
+  text-align: center;
+}
+
+.empty-visualization .ant-empty-description {
+  color: #8c8c8c;
+}
+
+/* 可视化占位符 */
+.visualization-placeholder {
+  text-align: center;
+  color: #8c8c8c;
+  padding: 20px;
+}
+
+.visualization-placeholder h3 {
+  color: #262626;
+  margin-bottom: 8px;
+}
+
+.visualization-placeholder pre {
+  text-align: left;
+  font-size: 12px;
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  max-height: 200px;
+}
+
+/* 模板选择器 */
+.template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.template-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.template-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.template-card.selected {
+  border: 2px solid #7C3AED;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+}
+
+.template-card .ant-card-meta-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.template-card .ant-card-meta-description {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+/* 高级设置 */
+.advanced-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.setting-group h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #262626;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 8px;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.setting-item span {
+  font-size: 13px;
+  color: #666;
+}
+
+/* 工具按钮样式 */
+.enhanced-visualization-panel .ant-btn {
+  border: none;
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.enhanced-visualization-panel .ant-btn:hover {
+  background: rgba(124, 58, 237, 0.1);
+  color: #7C3AED;
+}
+
+.enhanced-visualization-panel .ant-btn:focus {
+  color: #7C3AED;
+  background: rgba(124, 58, 237, 0.1);
+}
+
+/* 输入控件样式 */
+.enhanced-visualization-panel .ant-input-number,
+.enhanced-visualization-panel .ant-slider {
+  border-radius: 6px;
+}
+
+.enhanced-visualization-panel .ant-input-number {
+  border-color: #e8e8e8;
+}
+
+.enhanced-visualization-panel .ant-input-number:focus {
+  border-color: #7C3AED;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
+}
+
+/* 滑块样式 */
+.enhanced-visualization-panel .ant-slider {
+  margin: 8px 0;
+}
+
+.enhanced-visualization-panel .ant-slider-rail {
+  background: #f0f0f0;
+}
+
+.enhanced-visualization-panel .ant-slider-track {
+  background: #7C3AED;
+}
+
+.enhanced-visualization-panel .ant-slider-handle {
+  border: 2px solid #7C3AED;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.3);
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .viz-toolbar {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .toolbar-center {
+    order: 3;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .controls-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .parameter-controls {
+    max-height: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .enhanced-visualization-panel {
+    border-radius: 0;
+  }
+
+  .viz-toolbar {
+    padding: 8px;
+  }
+
+  .toolbar-left,
+  .toolbar-right {
+    gap: 4px;
+  }
+
+  .template-info {
+    display: none;
+  }
+
+  .zoom-controls .zoom-level {
+    font-size: 11px;
+    min-width: 30px;
+  }
+
+  .parameter-controls {
+    padding: 12px;
+  }
+
+  .controls-grid {
+    gap: 8px;
+  }
+
+  .control-item {
+    gap: 4px;
+  }
+
+  .control-label {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .viz-toolbar {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .toolbar-left,
+  .toolbar-center,
+  .toolbar-right {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .zoom-controls {
+    justify-content: center;
+  }
+
+  .parameter-controls {
+    max-height: 120px;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .enhanced-visualization-panel {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  .viz-toolbar {
+    background: #262626;
+    border-bottom-color: #434343;
+  }
+
+  .template-info {
+    background: #404040;
+  }
+
+  .template-name {
+    color: #ffffff;
+  }
+
+  .zoom-controls {
+    background: #262626;
+    border-color: #434343;
+  }
+
+  .zoom-level {
+    color: #b3b3b3;
+  }
+
+  .parameter-controls {
+    background: #262626;
+    border-bottom-color: #434343;
+  }
+
+  .controls-header h4 {
+    color: #ffffff;
+  }
+
+  .control-label {
+    color: #b3b3b3;
+  }
+
+  .viz-content {
+    background: #1f1f1f;
+  }
+
+  .visualization-wrapper {
+    background: #1f1f1f;
+  }
+
+  .loading-overlay {
+    color: #b3b3b3;
+  }
+
+  .empty-visualization {
+    color: #8c8c8c;
+  }
+
+  .visualization-placeholder {
+    color: #8c8c8c;
+  }
+
+  .visualization-placeholder h3 {
+    color: #ffffff;
+  }
+
+  .visualization-placeholder pre {
+    background: #2a2a2a;
+    color: #e8e8e8;
+  }
+
+  .setting-group h4 {
+    color: #ffffff;
+    border-bottom-color: #404040;
+  }
+
+  .setting-item span {
+    color: #b3b3b3;
+  }
+
+  .enhanced-visualization-panel .ant-input-number {
+    background: #262626;
+    border-color: #434343;
+    color: #ffffff;
+  }
+
+  .enhanced-visualization-panel .ant-input-number:focus {
+    border-color: #7C3AED;
+    background: #262626;
+  }
+
+  .enhanced-visualization-panel .ant-slider-rail {
+    background: #404040;
+  }
+}
+
+/* 动画效果 */
+.enhanced-visualization-panel {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.template-card {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.visualization-wrapper {
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 交互反馈 */
+.enhanced-visualization-panel:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.enhanced-visualization-panel.fullscreen {
+  background: #ffffff;
+}
+
+.enhanced-visualization-panel.maximized {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .enhanced-visualization-panel {
+    border: 2px solid #000000;
+  }
+
+  .viz-toolbar {
+    border-bottom-width: 2px;
+  }
+
+  .template-card {
+    border-width: 2px;
+  }
+
+  .template-card.selected {
+    border-width: 3px;
+  }
+
+  .zoom-controls {
+    border-width: 2px;
+  }
+
+  .enhanced-visualization-panel .ant-btn {
+    border: 1px solid #000000;
+  }
+}
+
+/* 焦点状态 */
+.enhanced-visualization-panel *:focus-visible {
+  outline: 2px solid #7C3AED;
+  outline-offset: 2px;
+}
+
+/* 滚动条样式 */
+.viz-content::-webkit-scrollbar,
+.parameter-controls::-webkit-scrollbar {
+  width: 6px;
+}
+
+.viz-content::-webkit-scrollbar-track,
+.parameter-controls::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.viz-content::-webkit-scrollbar-thumb,
+.parameter-controls::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.viz-content::-webkit-scrollbar-thumb:hover,
+.parameter-controls::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 打印样式 */
+@media print {
+  .viz-toolbar,
+  .parameter-controls {
+    display: none;
+  }
+
+  .enhanced-visualization-panel {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  .visualization-wrapper {
+    padding: 10px;
+  }
+}

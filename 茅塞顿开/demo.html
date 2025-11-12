@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茅塞顿开 - 高中全科可视化学习平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .subject-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        .subject-card.math {
+            border-color: #7C3AED;
+        }
+
+        .subject-card.math:hover {
+            background: linear-gradient(135deg, #7C3AED10 0%, #7C3AED20 100%);
+        }
+
+        .subject-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .subject-icon {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .subject-card.math .subject-icon {
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .available {
+            background: #10B98120;
+            color: #10B981;
+        }
+
+        .coming-soon {
+            background: #6B728020;
+            color: #6B7280;
+        }
+
+        .subject-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 10px;
+        }
+
+        .subject-description {
+            color: #6B7280;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .subject-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .curriculum {
+            font-size: 0.9rem;
+            color: #9CA3AF;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+
+        .action-button:hover {
+            transform: scale(1.05);
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 50px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .demo-title {
+            font-size: 2rem;
+            color: #1F2937;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .visualizations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .viz-card {
+            background: #F9FAFB;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .viz-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .viz-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 10px;
+        }
+
+        .viz-description {
+            color: #6B7280;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .project-info {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .project-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .project-info ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .project-info li {
+            padding: 5px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .project-info li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10B981;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .subjects-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .visualizations {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <span>💡</span>
+                茅塞顿开
+            </h1>
+            <p>高中全科可视化学习平台</p>
+            <p>让知识点一目了然，学习更轻松</p>
+        </div>
+
+        <!-- Project Info -->
+        <div class="project-info">
+            <h3>🎯 项目特色</h3>
+            <ul>
+                <li>基于沪教版高中教材的知识点体系</li>
+                <li>互动式可视化让抽象概念变直观</li>
+                <li>逐步动画演示帮助理解数学原理</li>
+                <li>例题解析巩固学习效果</li>
+                <li>个性化学习进度追踪</li>
+            </ul>
+        </div>
+
+        <!-- Subjects Grid -->
+        <div class="subjects-grid">
+            <!-- Math Subject (Available) -->
+            <div class="subject-card math" onclick="showMathDemo()">
+                <div class="subject-header">
+                    <div class="subject-icon">📐</div>
+                    <span class="status-badge available">可用</span>
+                </div>
+                <h2 class="subject-title">高中数学</h2>
+                <p class="subject-description">
+                    涵盖函数、几何、概率统计、数列等核心知识点，
+                    通过图形化演示让数学概念变得直观易懂。
+                </p>
+                <div class="subject-meta">
+                    <span class="curriculum">📚 沪教版 · 全7册</span>
+                    <span style="color: #7C3AED; font-weight: 600;">开始学习 →</span>
+                </div>
+            </div>
+
+            <!-- Other Subjects (Coming Soon) -->
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">📖</div>
+                    <span class="status-badge coming-soon">开发中</span>
+                </div>
+                <h2 class="subject-title">高中语文</h2>
+                <p class="subject-description">
+                    文学常识、古诗词鉴赏、现代文阅读、写作技巧等知识点的可视化学习。
+                </p>
+                <div class="subject-meta">
+                    <span class="curriculum">📚 沪教版 · 全6册</span>
+                    <span style="color: #6B7280;">即将上线</span>
+                </div>
+            </div>
+
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">🔬</div>
+                    <span class="status-badge coming-soon">开发中</span>
+                </div>
+                <h2 class="subject-title">高中物理</h2>
+                <p class="subject-description">
+                    力学、电磁学、光学、热学等物理现象的动态演示和实验模拟。
+                </p>
+                <div class="subject-meta">
+                    <span class="curriculum">📚 沪教版 · 全6册</span>
+                    <span style="color: #6B7280;">即将上线</span>
+                </div>
+            </div>
+
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">⚗️</div>
+                    <span class="status-badge coming-soon">开发中</span>
+                </div>
+                <h2 class="subject-title">高中化学</h2>
+                <p class="subject-description">
+                    元素周期表、化学反应、分子结构等化学概念的3D可视化展示。
+                </p>
+                <div class="subject-meta">
+                    <span class="curriculum">📚 沪教版 · 全6册</span>
+                    <span style="color: #6B7280;">即将上线</span>
+                </div>
+            </div>
+
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">🌍</div>
+                    <span class="status-badge coming-soon">开发中</span>
+                </div>
+                <h2 class="subject-title">高中地理</h2>
+                <p class="subject-description">
+                    地图交互、地形地貌、气候分布等地理知识的空间可视化学习。
+                </p>
+                <div class="subject-meta">
+                    <span class="curriculum">📚 沪教版 · 全6册</span>
+                    <span style="color: #6B7280;">即将上线</span>
+                </div>
+            </div>
+
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">🧬</div>
+                    <span class="status-badge coming-soon">开发中</span>
+                </div>
+                <h2 class="subject-title">高中生物</h2>
+                <p class="subject-description">
+                    细胞结构、遗传规律、生态系统等生物过程的动画演示。
+                </p>
+                <div class="subject-meta">
+                    <span class="curriculum">📚 沪教版 · 全6册</span>
+                    <span style="color: #6B7280;">即将上线</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo Section -->
+        <div class="demo-section">
+            <h2 class="demo-title">🎨 数学学科可视化演示</h2>
+            <div class="visualizations">
+                <div class="viz-card">
+                    <div class="viz-icon">📈</div>
+                    <h3 class="viz-title">函数图像绘制器</h3>
+                    <p class="viz-description">
+                        实时绘制函数图像，支持多个函数对比，直观展示函数的性质和变化规律。
+                    </p>
+                </div>
+
+                <div class="viz-card">
+                    <div class="viz-icon">📐</div>
+                    <h3 class="viz-title">几何图形画板</h3>
+                    <p class="viz-description">
+                        交互式几何图形绘制，支持角度测量、面积计算，帮助理解几何概念。
+                    </p>
+                </div>
+
+                <div class="viz-card">
+                    <div class="viz-icon">🔢</div>
+                    <h3 class="viz-title">数列动画演示</h3>
+                    <p class="viz-description">
+                        等差、等比数列的动态展示，配合公式推导，让数列规律一目了然。
+                    </p>
+                </div>
+
+                <div class="viz-card">
+                    <div class="viz-icon">📊</div>
+                    <h3 class="viz-title">概率统计可视化</h3>
+                    <p class="viz-description">
+                        概率分布、统计图表的动态展示，让抽象的数据变得直观易懂。
+                    </p>
+                </div>
+
+                <div class="viz-card">
+                    <div class="viz-icon">🎯</div>
+                    <h3 class="viz-title">解题步骤动画</h3>
+                    <p class="viz-description">
+                        逐步展示解题过程，配合图形变化，帮助学生理解解题思路。
+                    </p>
+                </div>
+
+                <div class="viz-card">
+                    <div class="viz-icon">🎮</div>
+                    <h3 class="viz-title">互动练习题</h3>
+                    <p class="viz-description">
+                        即时反馈的练习系统，根据学生水平智能推荐题目，巩固学习效果。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>💡 让每个学生都能体验到"茅塞顿开"的学习快感</p>
+            <p style="font-size: 0.9rem; opacity: 0.6;">© 2024 茅塞顿开 · 专注于高中教育可视化</p>
+        </div>
+    </div>
+
+    <script>
+        function showMathDemo() {
+            alert('数学学科演示页面！\n\n这里将展示：\n• 函数图像绘制器\n• 几何图形画板  \n• 数列动画演示\n• 互动练习题\n\n请查看完整的React版本以获得最佳体验！');
+        }
+
+        // 添加一些简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有卡片添加点击效果
+            const cards = document.querySelectorAll('.subject-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // 添加点击波纹效果
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 200);
+                });
+            });
+
+            // 视差滚动效果
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const parallax = document.querySelector('.header');
+                if (parallax) {
+                    parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

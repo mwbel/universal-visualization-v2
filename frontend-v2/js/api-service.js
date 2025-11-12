@@ -89,6 +89,41 @@ class APIService {
     }
 
     /**
+     * 批量获取所有模板（供模板管理器使用）
+     */
+    async batchGetTemplates() {
+        try {
+            const response = await this.getAllTemplates();
+            return {
+                all: response.templates || [],
+                mathematics: await this.getSubjectTemplates('mathematics'),
+                astronomy: await this.getSubjectTemplates('astronomy'),
+                physics: await this.getSubjectTemplates('physics')
+            };
+        } catch (error) {
+            console.error('批量获取模板失败:', error);
+            return {
+                all: [],
+                mathematics: [],
+                astronomy: [],
+                physics: []
+            };
+        }
+    }
+
+    /**
+     * 搜索模板
+     */
+    async searchTemplates(query, subject = null) {
+        const params = new URLSearchParams({ query });
+        if (subject) {
+            params.append('subject', subject);
+        }
+        const url = `${this.baseUrl}/templates/search?${params}`;
+        return this.getRequest(url);
+    }
+
+    /**
      * 通用 GET 请求
      */
     async getRequest(url, responseType = 'json') {

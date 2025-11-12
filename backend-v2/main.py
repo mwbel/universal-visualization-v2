@@ -21,6 +21,8 @@ from agents.base_agent import BaseVisualizationAgent
 from agents.mathematics_agent import MathematicsAgent
 from agents.astronomy_agent import AstronomyAgent
 from agents.physics_agent import PhysicsAgent
+from agents.chemistry_agent import ChemistryAgent
+from agents.biology_agent import BiologyAgent
 from agents.router_manager import VisualizationRouter
 from agents.template_engine import UnifiedTemplateEngine
 
@@ -216,6 +218,209 @@ async def classify_subject(request: ClassificationRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"分类失败: {str(e)}")
+
+# 茅塞顿开专用API端点
+class HighSchoolRequest(BaseModel):
+    prompt: str = Field(..., description="用户输入的自然语言描述")
+    grade_level: str = Field(default="high_school", description="年级水平: elementary, middle_school, high_school, university")
+    subject: Optional[str] = Field(None, description="指定学科: mathematics, physics, chemistry, biology, astronomy")
+    interaction_mode: str = Field(default="visualization", description="交互模式: chat, visualization, both")
+    user_preferences: Dict[str, Any] = Field(default_factory=dict, description="用户偏好设置")
+
+class HighSchoolResponse(BaseModel):
+    success: bool
+    subject: str
+    generation_id: str
+    message: Optional[str] = None
+    visualization: Optional[Dict[str, Any]] = None
+    metadata: Dict[str, Any] = {}
+    error: Optional[str] = None
+
+@app.post("/api/v2/highschool/generate", response_model=HighSchoolResponse)
+async def highschool_generate(request: HighSchoolRequest):
+    """茅塞顿开专用生成接口 - 高中全科可视化"""
+    try:
+        print(f"🎓 茅塞顿开请求: {request.prompt[:50]}...")
+        print(f"📚 年级水平: {request.grade_level}")
+        print(f"🔬 指定学科: {request.subject or '自动识别'}")
+
+        # 1. 学科识别（如果未指定）
+        if request.subject:
+            subject = request.subject
+            print(f"✅ 使用指定学科: {subject}")
+        else:
+            subject = await state.router.subject_classifier.classify(request.prompt)
+            print(f"🤖 智能识别学科: {subject}")
+
+        # 2. 高中年级适配
+        user_preferences = request.user_preferences.copy()
+        user_preferences["grade_level"] = request.grade_level
+        user_preferences["interaction_mode"] = request.interaction_mode
+
+        # 3. 增强提示词（适配高中教育）
+        enhanced_prompt = f"{request.prompt} [高中{request.grade_level}年级]"
+
+        # 4. 调用路由生成
+        response = await state.router.route_request(enhanced_prompt, user_preferences)
+
+        if not response.get("success"):
+            raise HTTPException(status_code=500, detail="可视化生成失败")
+
+        # 5. 构建茅塞顿开专用响应
+        result = {
+            "success": True,
+            "subject": subject,
+            "generation_id": str(uuid.uuid4()),
+            "message": f"成功生成{subject}学科的可视化内容",
+            "visualization": {
+                "type": response.get("requirement", {}).get("visualization_type", "default"),
+                "title": response.get("template", {}).get("name", "默认可视化"),
+                "html_content": response.get("html_content", ""),
+                "interactive_elements": response.get("config", {}).get("interactive_elements", []),
+                "concepts": response.get("requirement", {}).get("concepts", []),
+                "grade_level": request.grade_level,
+                "subject": subject
+            },
+            "metadata": {
+                "processing_time": response.get("routing_info", {}).get("processing_time", "未知"),
+                "agent_id": response.get("agent_info", {}).get("agent_id", "未知"),
+                "template_id": response.get("template", {}).get("id", "default"),
+                "confidence": response.get("routing_info", {}).get("confidence", 0.85),
+                "request_type": "highschool_visualization"
+            }
+        }
+
+        print(f"🎉 茅塞顿开生成完成: {subject} 学科")
+        return result
+
+    except Exception as e:
+        error_msg = f"茅塞顿开生成失败: {str(e)}"
+        print(f"❌ {error_msg}")
+
+        return {
+            "success": False,
+            "subject": request.subject or "general",
+            "generation_id": str(uuid.uuid4()),
+            "message": "生成过程中发生错误",
+            "error": error_msg,
+            "metadata": {
+                "request_type": "highschool_visualization",
+                "error_details": str(e)
+            }
+        }
+
+@app.post("/api/v2/highschool/{subject}/generate", response_model=HighSchoolResponse)
+async def highschool_subject_generate(subject: str, request: HighSchoolRequest):
+    """茅塞顿开学科专用生成接口"""
+    try:
+        # 验证学科支持
+        supported_subjects = state.router.get_supported_subjects()
+        if subject not in supported_subjects:
+            raise HTTPException(
+                status_code=400,
+                detail=f"不支持的学科: {subject}。支持的学科: {', '.join(supported_subjects)}"
+            )
+
+        # 覆盖请求中的学科
+        request.subject = subject
+
+        # 调用主生成接口
+        return await highschool_generate(request)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"学科专用生成失败: {str(e)}")
+
+@app.post("/api/v2/highschool/generate", response_model=HighSchoolResponse)
+async def highschool_generate(request: HighSchoolRequest):
+    """茅塞顿开专用生成接口 - 高中全科可视化"""
+    try:
+        print(f"🎓 茅塞顿开请求: {request.prompt[:50]}...")
+        print(f"📚 年级水平: {request.grade_level}")
+        print(f"🔬 指定学科: {request.subject or '自动识别'}")
+
+        # 1. 学科识别（如果未指定）
+        if request.subject:
+            subject = request.subject
+            print(f"✅ 使用指定学科: {subject}")
+        else:
+            subject = await state.router.subject_classifier.classify(request.prompt)
+            print(f"🤖 智能识别学科: {subject}")
+
+        # 2. 高中年级适配
+        user_preferences = request.user_preferences.copy()
+        user_preferences["grade_level"] = request.grade_level
+        user_preferences["interaction_mode"] = request.interaction_mode
+
+        # 3. 增强提示词（适配高中教育）
+        enhanced_prompt = f"{request.prompt} [高中{request.grade_level}年级]"
+
+        # 4. 调用路由生成
+        response = await state.router.route_request(enhanced_prompt, user_preferences)
+
+        if not response.get("success"):
+            raise HTTPException(status_code=500, detail="可视化生成失败")
+
+        # 5. 构建茅塞顿开专用响应
+        result = {
+            "success": True,
+            "subject": subject,
+            "generation_id": str(uuid.uuid4()),
+            "message": f"成功生成{subject}学科的可视化内容",
+            "visualization": {
+                "type": response.get("requirement", {}).get("visualization_type", "default"),
+                "title": response.get("template", {}).get("name", "默认可视化"),
+                "html_content": response.get("html_content", ""),
+                "interactive_elements": response.get("config", {}).get("interactive_elements", []),
+                "concepts": response.get("requirement", {}).get("concepts", []),
+                "grade_level": request.grade_level,
+                "subject": subject
+            },
+            "metadata": {
+                "processing_time": response.get("routing_info", {}).get("processing_time", "未知"),
+                "agent_id": response.get("agent_info", {}).get("agent_id", "未知"),
+                "template_id": response.get("template", {}).get("id", "default"),
+                "confidence": response.get("routing_info", {}).get("confidence", 0.85),
+                "request_type": "highschool_visualization"
+            }
+        }
+
+        print(f"✅ 茅塞顿开生成完成: {subject}学科")
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ 茅塞顿开生成失败: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"茅塞顿开生成失败: {str(e)}")
+
+@app.get("/api/v2/highschool/subjects")
+async def get_highschool_subjects():
+    """获取茅塞顿开支持的学科列表"""
+    try:
+        supported_subjects = state.router.get_supported_subjects()
+
+        subject_info = {}
+        for subject in supported_subjects:
+            info = state.router.get_subject_info(subject)
+            subject_info[subject] = {
+                "name": info.get("agent_id", subject),
+                "supported_topics": info.get("supported_topics", []),
+                "template_count": info.get("template_count", 0),
+                "grade_levels": ["middle_school", "high_school", "university"]
+            }
+
+        return {
+            "total_subjects": len(supported_subjects),
+            "subjects": supported_subjects,
+            "subject_info": subject_info,
+            "grade_levels": ["elementary", "middle_school", "high_school", "university"],
+            "features": ["智能学科识别", "多模板支持", "交互式可视化", "年级适配"]
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取学科信息失败: {str(e)}")
 
 @app.get("/api/v2/templates")
 async def get_all_templates():

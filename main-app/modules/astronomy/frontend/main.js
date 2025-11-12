@@ -1,8 +1,16 @@
-// 初始化场景
-const scene = new THREE.Scene();
+// 添加错误处理和调试信息
+console.log('🌟 天文学可视化开始初始化...');
 
-// 初始化场景
-const scene = new THREE.Scene();
+try {
+    // 检查Three.js是否正确加载
+    if (typeof THREE === 'undefined') {
+        throw new Error('Three.js库未正确加载');
+    }
+    console.log('✅ Three.js库加载成功');
+
+    // 初始化场景
+    const scene = new THREE.Scene();
+    console.log('✅ Three.js场景初始化成功');
 
 // 初始化相机
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -13,12 +21,47 @@ const renderer = new THREE.WebGLRenderer({ antialias: true }); // 开启抗锯�
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('app').appendChild(renderer.domElement);
 
-// 添加 OrbitControls
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true; // 启用阻尼（惯性），使动画更平滑
-controls.dampingFactor = 0.25;
-controls.screenSpacePanning = false;
-controls.maxPolarAngle = Math.PI / 2; // 限制垂直旋转角度，防止翻转
+// 添加 OrbitControls (带错误处理)
+let controls;
+try {
+    if (typeof THREE.OrbitControls !== 'undefined') {
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // 启用阻尼（惯性），使动画更平滑
+        controls.dampingFactor = 0.25;
+        controls.screenSpacePanning = false;
+        controls.maxPolarAngle = Math.PI / 2; // 限制垂直旋转角度，防止翻转
+        console.log('✅ OrbitControls初始化成功');
+    } else {
+        console.warn('⚠️ OrbitControls未加载，使用简单的鼠标控制替代');
+        // 简单的鼠标控制替代方案
+        setupSimpleControls();
+    }
+} catch (error) {
+    console.warn('⚠️ OrbitControls初始化失败，使用简单的鼠标控制替代:', error);
+    setupSimpleControls();
+}
+
+// 简单的鼠标控制函数
+function setupSimpleControls() {
+    let mouseX = 0, mouseY = 0;
+    let targetRotationX = 0, targetRotationY = 0;
+
+    document.addEventListener('mousemove', (event) => {
+        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // 在动画循环中更新相机位置
+    window.simpleControlsUpdate = () => {
+        targetRotationX += (mouseY - targetRotationX) * 0.05;
+        targetRotationY += (mouseX - targetRotationY) * 0.05;
+
+        camera.position.x = Math.sin(targetRotationY) * 20;
+        camera.position.z = Math.cos(targetRotationY) * 20;
+        camera.position.y = targetRotationX * 10;
+        camera.lookAt(scene.position);
+    };
+}
 
 // 添加光源
 const ambientLight = new THREE.AmbientLight(0x333333); // 环境光
@@ -68,7 +111,11 @@ const planetOrbitRadius = document.getElementById('planet-orbit-radius');
 function animate() {
     requestAnimationFrame(animate);
 
-    controls.update(); // 更新控制器
+    if (controls) {
+        controls.update(); // 更新控制器
+    } else if (window.simpleControlsUpdate) {
+        window.simpleControlsUpdate(); // 使用简单控制
+    }
 
     // 太阳不旋转，或者可以添加自转
     // sun.rotation.y += 0.001; 
@@ -120,3 +167,38 @@ window.addEventListener('click', (event) => {
         infoPanel.style.display = 'none'; // 隐藏信息面板
     }
 });
+
+} catch (error) {
+    console.error('❌ 天文学可视化初始化失败:', error);
+
+    // 显示用户友好的错误信息
+    const app = document.getElementById('app');
+    if (app) {
+        app.innerHTML = `
+            <div style="
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                color: white;
+                font-family: Arial, sans-serif;
+                text-align: center;
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            ">
+                <h2>🌟 天文学可视化</h2>
+                <p>系统初始化失败</p>
+                <p style="font-size: 14px; color: #ccc;">错误信息: ${error.message}</p>
+                <button onclick="location.reload()" style="
+                    margin-top: 20px;
+                    padding: 10px 20px;
+                    background: #4CAF50;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                ">重新加载</button>
+            </div>
+        `;
+    }
+}

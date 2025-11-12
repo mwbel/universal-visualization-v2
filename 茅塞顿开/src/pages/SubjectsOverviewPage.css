@@ -1,0 +1,405 @@
+/* SubjectsOverviewPage 样式 */
+
+.subjects-overview-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.overview-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 24px 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.overview-content {
+  padding: 32px;
+}
+
+/* 统计卡片部分 */
+.overview-stats {
+  margin-bottom: 40px;
+}
+
+.overview-stats h4 {
+  color: white !important;
+  margin-bottom: 24px !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.stat-description {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin-top: 8px;
+}
+
+/* 学科网格 */
+.subjects-grid {
+  margin-bottom: 40px;
+}
+
+.subjects-grid h4 {
+  color: white !important;
+  margin-bottom: 24px !important;
+}
+
+.subject-overview-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.subject-overview-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.subject-overview-card.available {
+  border-left: 4px solid #52c41a;
+}
+
+.subject-overview-card.unavailable {
+  border-left: 4px solid #d9d9d9;
+  opacity: 0.7;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-description {
+  color: #666;
+  line-height: 1.4;
+}
+
+.card-stats {
+  margin-top: 12px;
+}
+
+.stats-space {
+  font-size: 12px;
+}
+
+.progress-section {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.progress-text {
+  font-size: 12px;
+}
+
+/* 分类概览 */
+.categories-overview {
+  margin-bottom: 40px;
+}
+
+.categories-overview h4 {
+  color: white !important;
+  margin-bottom: 24px !important;
+}
+
+.category-stat {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* 开发进度 */
+.progress-overview {
+  margin-bottom: 40px;
+}
+
+.progress-overview h4 {
+  color: white !important;
+  margin-bottom: 24px !important;
+}
+
+.progress-content {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.progress-item {
+  flex: 1;
+}
+
+.progress-legend {
+  min-width: 200px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-dot.available {
+  background-color: #52c41a;
+}
+
+.legend-dot.in-progress {
+  background-color: #fa8c16;
+}
+
+.legend-dot.planned {
+  background-color: #d9d9d9;
+}
+
+/* 快速操作 */
+.quick-actions {
+  margin-bottom: 32px;
+}
+
+.quick-actions h4 {
+  color: white !important;
+  margin-bottom: 24px !important;
+}
+
+.action-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.action-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px;
+}
+
+.action-icon {
+  font-size: 32px;
+  color: #1890ff;
+}
+
+.action-text {
+  flex: 1;
+}
+
+.action-text h5 {
+  margin: 0 !important;
+  margin-bottom: 4px !important;
+  color: #1a1a1a;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .header-content {
+    align-items: flex-start;
+  }
+
+  .overview-content {
+    padding: 24px;
+  }
+
+  .progress-content {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .progress-legend {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width.768px) {
+  .overview-header {
+    padding: 16px;
+  }
+
+  .overview-content {
+    padding: 16px;
+  }
+
+  .subjects-grid,
+  .categories-overview,
+  .overview-stats,
+  .progress-overview,
+  .quick-actions {
+    margin-bottom: 32px;
+  }
+
+  .action-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .progress-legend {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .overview-header {
+    padding: 12px;
+  }
+
+  .overview-content {
+    padding: 12px;
+  }
+
+  .header-content {
+    gap: 4px;
+  }
+
+  .subjects-grid,
+  .categories-overview,
+  .overview-stats,
+  .progress-overview,
+  .quick-actions {
+    margin-bottom: 24px;
+  }
+}
+
+/* 动画效果 */
+.subject-overview-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.subject-overview-card:nth-child(1) { animation-delay: 0.1s; }
+.subject-overview-card:nth-child(2) { animation-delay: 0.2s; }
+.subject-overview-card:nth-child(3) { animation-delay: 0.3s; }
+.subject-overview-card:nth-child(4) { animation-delay: 0.4s; }
+.subject-overview-card:nth-child(5) { animation-delay: 0.5s; }
+.subject-overview-card:nth-child(6) { animation-delay: 0.6s; }
+.subject-overview-card:nth-child(7) { animation-delay: 0.7s; }
+.subject-overview-card:nth-child(8) { animation-delay: 0.8s; }
+.subject-overview-card:nth-child(9) { animation-delay: 0.9s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-card {
+  animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .subjects-overview-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
+
+  .stat-card,
+  .subject-overview-card,
+  .action-card,
+  .category-stat {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .card-title,
+  .action-text h5,
+  .parameter-label {
+    color: #ffffff;
+  }
+
+  .card-description,
+  .stat-description,
+  .progress-text {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .stat-label {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .subjects-overview-page {
+    background: white;
+  }
+
+  .overview-header {
+    background: white;
+    box-shadow: none;
+  }
+
+  .stat-card,
+  .subject-overview-card,
+  .action-card {
+    background: white;
+    border: 1px solid #d9d9d9;
+    break-inside: avoid;
+  }
+}

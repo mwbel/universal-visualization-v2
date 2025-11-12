@@ -6,6 +6,7 @@
 // 全局应用状态
 const AppState = {
     isGenerating: false,
+    currentGenerationId: null,
     currentVisualization: null,
     selectedTemplate: null,
     history: [],
@@ -316,6 +317,7 @@ class VisualizationApp {
 
             // 更新状态
             AppState.isGenerating = true;
+            AppState.currentGenerationId = null;
             this.updateGenerateButton();
 
             // 调用 API 生成可视化
@@ -325,28 +327,151 @@ class VisualizationApp {
                 user_preferences: AppState.preferences
             });
 
-            if (response?.success) {
-                // 显示结果
-                this.showVisualizationResult(response);
+            if (response?.generation_id) {
+                AppState.currentGenerationId = response.generation_id;
+                this.showMessage('开始生成可视化，请稍候...', 'info');
 
-                // 添加到历史记录
-                this.addToHistory(prompt, response);
-
-                this.showMessage('可视化生成成功！', 'success');
+                // 开始状态轮询
+                await this.pollGenerationStatus(response.generation_id, prompt);
             } else {
-                throw new Error(response?.error || '生成失败');
+                throw new Error(response?.error || '生成请求失败');
             }
 
         } catch (error) {
             console.error('❌ 生成失败:', error);
             this.showMessage(`生成失败: ${error.message}`, 'error');
-        } finally {
-            // 隐藏加载动画
-            this.hideLoading();
 
-            // 更新状态
+            // 清理状态
             AppState.isGenerating = false;
+            AppState.currentGenerationId = null;
             this.updateGenerateButton();
+            this.hideLoading();
+        }
+    }
+
+    async pollGenerationStatus(generationId, originalPrompt) {
+        const maxAttempts = 60; // 最多轮询60次（约5分钟）
+        let attempts = 0;
+
+        const poll = async () => {
+            try {
+                const status = await window.APIService?.getGenerationStatus(generationId);
+
+                if (!status) {
+                    throw new Error('无法获取生成状态');
+                }
+
+                // 更新进度
+                this.updateProgress(status.progress || 0);
+
+                switch (status.status) {
+                    case 'completed':
+                        // 生成完成
+                        const visualizationUrl = status.html_url;
+                        if (visualizationUrl) {
+                            await this.loadVisualizationResult(visualizationUrl);
+                            this.addToHistory(originalPrompt, {
+                                generation_id: generationId,
+                                html_url: visualizationUrl
+                            });
+                            this.showMessage('可视化生成成功！', 'success');
+                        }
+                        this.completeGeneration();
+                        break;
+
+                    case 'failed':
+                        // 生成失败
+                        const errorMsg = status.error || '生成过程中发生错误';
+                        throw new Error(errorMsg);
+
+                    case 'processing':
+                    case 'classifying':
+                    case 'parsing':
+                    case 'matching':
+                    case 'generating':
+                        // 继续轮询
+                        attempts++;
+                        if (attempts < maxAttempts) {
+                            setTimeout(poll, 2000); // 2秒后再次检查
+                        } else {
+                            throw new Error('生成超时，请重试');
+                        }
+                        break;
+
+                    default:
+                        // 未知状态，继续轮询
+                        attempts++;
+                        if (attempts < maxAttempts) {
+                            setTimeout(poll, 2000);
+                        } else {
+                            throw new Error('生成超时，请重试');
+                        }
+                        break;
+                }
+
+            } catch (error) {
+                console.error('❌ 状态轮询错误:', error);
+                this.showMessage(`生成失败: ${error.message}`, 'error');
+                this.completeGeneration();
+            }
+        };
+
+        // 开始轮询
+        await poll();
+    }
+
+    updateProgress(progress) {
+        if (Elements.progressFill) {
+            Elements.progressFill.style.width = `${progress}%`;
+        }
+
+        // 更新状态文本
+        const statusText = this.getStatusText(progress);
+        if (Elements.generateBtn) {
+            const originalText = Elements.generateBtn.textContent;
+            Elements.generateBtn.innerHTML = `<span class="btn-icon">⏳</span> ${statusText} (${progress}%)`;
+        }
+    }
+
+    getStatusText(progress) {
+        if (progress < 20) return '分析需求';
+        if (progress < 40) return '匹配模板';
+        if (progress < 60) return '生成配置';
+        if (progress < 80) return '渲染可视化';
+        if (progress < 100) return '完成处理';
+        return '生成完成';
+    }
+
+    completeGeneration() {
+        AppState.isGenerating = false;
+        AppState.currentGenerationId = null;
+        this.updateGenerateButton();
+        this.hideLoading();
+
+        // 重置进度条
+        if (Elements.progressFill) {
+            setTimeout(() => {
+                Elements.progressFill.style.width = '0%';
+            }, 1000);
+        }
+    }
+
+    async loadVisualizationResult(visualizationUrl) {
+        try {
+            const response = await fetch(`http://localhost:9999${visualizationUrl}`);
+            if (!response.ok) {
+                throw new Error('获取可视化结果失败');
+            }
+
+            const htmlContent = await response.text();
+            this.showVisualizationResult({
+                html_content: htmlContent,
+                html_url: visualizationUrl
+            });
+
+        } catch (error) {
+            console.error('❌ 加载可视化结果失败:', error);
+            throw new Error('加载可视化结果失败');
         }
     }
 

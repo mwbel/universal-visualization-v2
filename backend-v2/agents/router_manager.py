@@ -11,6 +11,8 @@ from datetime import datetime
 from .mathematics_agent import MathematicsAgent
 from .astronomy_agent import AstronomyAgent
 from .physics_agent import PhysicsAgent
+from .chemistry_agent import ChemistryAgent
+from .biology_agent import BiologyAgent
 
 class SubjectClassifier:
     """智能学科分类器"""
@@ -109,6 +111,14 @@ class SubjectClassifier:
             "physics": {
                 "high_priority": ["力学", "电磁", "波动", "量子", "相对论"],
                 "medium_priority": ["运动", "能量", "力", "热学", "光学"]
+            },
+            "chemistry": {
+                "high_priority": ["分子", "原子", "化学反应", "元素", "化学键"],
+                "medium_priority": ["化合物", "有机化学", "酸碱", "氧化还原"]
+            },
+            "biology": {
+                "high_priority": ["细胞", "DNA", "基因", "蛋白质", "光合作用"],
+                "medium_priority": ["生物", "遗传", "生态", "进化", "新陈代谢"]
             }
         }
 
@@ -193,9 +203,8 @@ class VisualizationRouter:
             "mathematics": MathematicsAgent(),
             "astronomy": AstronomyAgent(),
             "physics": PhysicsAgent(),
-            # 未来可扩展
-            # "chemistry": ChemistryAgent(),
-            # "biology": BiologyAgent()
+            "chemistry": ChemistryAgent(),
+            "biology": BiologyAgent()
         }
 
         # 初始化学科分类器
@@ -210,6 +219,12 @@ class VisualizationRouter:
 
         print("🤖 智能路由管理器初始化完成")
         print(f"📋 已加载学科Agent: {list(self.agents.keys())}")
+
+    def set_template_engine(self, template_engine):
+        """为所有Agent设置模板引擎"""
+        for agent in self.agents.values():
+            agent.template_engine = template_engine
+        print("🎨 模板引擎已注入所有学科Agent")
 
     async def route_request(self, prompt: str, user_preferences: Dict = None) -> Dict[str, Any]:
         """

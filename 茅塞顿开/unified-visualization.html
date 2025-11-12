@@ -1,0 +1,2448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茅塞顿开 - 智能可视化路由系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10B981;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .status-indicator.processing {
+            background: #F59E0B;
+            animation: pulse 1s infinite;
+        }
+
+        .current-subject {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 2px solid transparent;
+        }
+
+        .current-subject:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .subject-icon {
+            font-size: 20px;
+        }
+
+        .subject-label {
+            font-weight: 500;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .chat-panel {
+            flex: 1;
+            border-right: 1px solid #e8e8e8;
+            display: flex;
+            flex-direction: column;
+            background: #fafafa;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8e8e8;
+            background: white;
+            font-weight: 600;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            animation: messageSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: #7C3AED;
+        }
+
+        .message.ai .message-avatar {
+            background: #10B981;
+        }
+
+        .message-content {
+            background: white;
+            padding: 14px 18px;
+            border-radius: 16px;
+            max-width: 70%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            line-height: 1.5;
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+
+        .message-content:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+            color: white;
+            margin-left: auto;
+            border: none;
+        }
+
+        .message.user .message-content:hover {
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+
+        .quick-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .suggestion-tag {
+            padding: 6px 14px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(147, 51, 234, 0.12) 100%);
+            color: #7C3AED;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(124, 58, 237, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .suggestion-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .suggestion-tag:hover {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(147, 51, 234, 0.2) 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        .suggestion-tag:hover::before {
+            left: 100%;
+        }
+
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #e8e8e8;
+            background: white;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            flex: 1;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #7C3AED;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .send-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            background: linear-gradient(135deg, #6d28d9 0%, #7C3AED 100%);
+        }
+
+        .send-button:hover::before {
+            left: 100%;
+        }
+
+        .send-button:active {
+            transform: translateY(0);
+        }
+
+        .send-button:disabled {
+            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .send-button:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .send-button:disabled::before {
+            display: none;
+        }
+
+        .visualization-panel {
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .viz-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8e8e8;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .viz-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+        }
+
+        .viz-placeholder {
+            text-align: center;
+            color: #8c8c8c;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-indicator {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #7C3AED;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .viz-controls {
+            padding: 16px 20px;
+            border-top: 1px solid #e8e8e8;
+            background: #fafafa;
+        }
+
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .control-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: #d1d5db;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #7C3AED;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        .slider-control {
+            width: 100px;
+            margin-left: 10px;
+        }
+
+        /* 学科特定颜色 */
+        .math-theme { color: #3B82F6; border-color: #3B82F6; }
+        .physics-theme { color: #10B981; border-color: #10B981; }
+        .chemistry-theme { color: #F59E0B; border-color: #F59E0B; }
+        .biology-theme { color: #8B5CF6; border-color: #8B5CF6; }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .app-container {
+                width: 95%;
+                height: 90vh;
+            }
+
+            .visualization-panel {
+                width: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .header {
+                padding: 15px 20px;
+                background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+            }
+
+            .header h1 {
+                font-size: 18px;
+                gap: 8px;
+            }
+
+            .current-subject {
+                padding: 6px 12px;
+                font-size: 12px;
+                background: rgba(255, 255, 255, 0.15);
+            }
+
+            .subject-icon {
+                font-size: 14px;
+            }
+
+            .main-content {
+                flex-direction: column;
+                height: calc(100vh - 60px);
+            }
+
+            .chat-panel {
+                border-right: none;
+                border-bottom: 1px solid #e8e8e8;
+                flex: 1;
+                min-height: 0;
+            }
+
+            .visualization-panel {
+                width: 100%;
+                height: 40vh;
+                min-height: 300px;
+            }
+
+            .chat-header {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+
+            .messages-container {
+                padding: 15px;
+            }
+
+            .message-content {
+                max-width: 85%;
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+
+            .quick-suggestions {
+                gap: 6px;
+            }
+
+            .suggestion-tag {
+                padding: 5px 10px;
+                font-size: 11px;
+            }
+
+            .input-area {
+                padding: 15px;
+            }
+
+            .input-field {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .send-button {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+
+            .viz-content {
+                padding: 15px;
+            }
+
+            .viz-controls {
+                padding: 12px 15px;
+            }
+
+            .control-item {
+                margin-bottom: 6px;
+            }
+
+            .control-label {
+                font-size: 13px;
+            }
+
+            .toggle-switch {
+                width: 40px;
+                height: 22px;
+            }
+
+            .toggle-switch::after {
+                width: 18px;
+                height: 18px;
+                top: 2px;
+                left: 2px;
+            }
+
+            .toggle-switch.active::after {
+                left: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
+            }
+
+            .header h1 {
+                font-size: 16px;
+            }
+
+            .current-subject {
+                display: none;
+            }
+
+            .status-indicator {
+                width: 6px;
+                height: 6px;
+            }
+
+            .messages-container {
+                padding: 10px;
+            }
+
+            .message {
+                margin-bottom: 12px;
+            }
+
+            .message-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+
+            .message-content {
+                max-width: 80%;
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .quick-suggestions {
+                gap: 4px;
+            }
+
+            .suggestion-tag {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            .input-area {
+                padding: 10px;
+            }
+
+            .input-field {
+                padding: 8px;
+                font-size: 13px;
+            }
+
+            .send-button {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .visualization-panel {
+                height: 35vh;
+                min-height: 250px;
+            }
+
+            .viz-header {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .viz-content {
+                padding: 10px;
+            }
+        }
+
+        /* 触摸设备优化 */
+        .touch-device .suggestion-tag,
+        .touch-device .send-button,
+        .touch-device .toggle-switch {
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .touch-device .suggestion-tag:active {
+            transform: scale(0.95);
+        }
+
+        .touch-device .send-button:active {
+            transform: scale(0.98);
+        }
+
+        .touch-device .toggle-switch:active {
+            transform: scale(0.9);
+        }
+
+        /* iOS Safari 优化 */
+        @supports (-webkit-touch-callout: none) {
+            .app-container {
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .messages-container {
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .input-field {
+                -webkit-appearance: none;
+                border-radius: 0;
+            }
+        }
+
+        /* 横屏模式优化 */
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            .header {
+                padding: 8px 15px;
+            }
+
+            .header h1 {
+                font-size: 16px;
+            }
+
+            .current-subject {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+
+            .main-content {
+                height: calc(100vh - 40px);
+            }
+
+            .visualization-panel {
+                height: 45vh;
+                min-height: 200px;
+            }
+
+            .messages-container {
+                padding: 8px;
+            }
+
+            .message {
+                margin-bottom: 8px;
+            }
+
+            .input-area {
+                padding: 8px 15px;
+            }
+
+            .input-field {
+                font-size: 13px;
+                padding: 6px;
+            }
+
+            .send-button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>
+                <span>💡</span>
+                <span>茅塞顿开</span>
+                <div class="status-indicator" id="statusIndicator"></div>
+            </h1>
+            <div class="current-subject" id="currentSubject">
+                <span class="subject-icon" id="subjectIcon">📐</span>
+                <span class="subject-label" id="subjectLabel">数学</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-panel">
+                <div class="chat-header">
+                    💬 智能对话
+                </div>
+                <div class="messages-container" id="messagesContainer">
+                    <div class="message ai">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            你好！我是"茅塞顿开"AI助教。请输入你想要学习的知识点，我会自动识别学科并为你生成相应的可视化内容。
+                            <div class="quick-suggestions" id="quickSuggestions">
+                                <div class="suggestion-tag">二次函数</div>
+                                <div class="suggestion-tag">受力分析</div>
+                                <div class="suggestion-tag">分子结构</div>
+                                <div class="suggestion-tag">细胞结构</div>
+                                <div class="suggestion-tag">化学反应</div>
+                                <div class="suggestion-tag">食物链</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <div class="input-container">
+                        <textarea
+                            class="input-field"
+                            id="messageInput"
+                            placeholder="输入你想要学习的知识点..."
+                            rows="1"
+                        ></textarea>
+                        <button class="send-button" id="sendButton" onclick="sendMessage()">发送</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualization-panel">
+                <div class="viz-header">
+                    📊 可视化展示
+                    <span id="vizTitle" style="font-size: 12px; color: #8c8c8c;">等待内容...</span>
+                </div>
+                <div class="viz-content">
+                    <div class="viz-placeholder" id="vizPlaceholder">
+                        <div class="loading-indicator">
+                            <div class="loading-dot"></div>
+                            <div class="loading-dot"></div>
+                            <div class="loading-dot"></div>
+                        </div>
+                        <p>输入关键词开始学习</p>
+                    </div>
+                </div>
+                <div class="viz-controls">
+                    <div class="control-item">
+                        <span class="control-label">显示网格</span>
+                        <div class="toggle-switch active" id="gridToggle" onclick="toggleControl('grid')"></div>
+                    </div>
+                    <div class="control-item">
+                        <span class="control-label">动画效果</span>
+                        <div class="toggle-switch active" id="animationToggle" onclick="toggleControl('animation')"></div>
+                    </div>
+                    <div class="control-item">
+                        <span class="control-label">交互模式</span>
+                        <div class="toggle-switch active" id="interactiveToggle" onclick="toggleControl('interactive')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 学科关键词识别配置
+        const subjectKeywords = {
+            math: {
+                name: '数学',
+                icon: '📐',
+                color: '#3B82F6',
+                keywords: [
+                    // 函数相关
+                    '函数', '一次函数', '二次函数', '三次函数', '指数函数', '对数函数', '三角函数', '正弦', '余弦', '正切',
+                    // 几何相关
+                    '几何', '三角形', '圆形', '矩形', '正方形', '多边形', '角度', '面积', '体积', '周长',
+                    // 代数相关
+                    '代数', '方程', '不等式', '因式分解', '多项式', '变量', '系数', '常数',
+                    // 数列相关
+                    '数列', '等差数列', '等比数列', '通项', '求和', '递推',
+                    // 统计相关
+                    '统计', '概率', '平均数', '中位数', '众数', '方差', '标准差',
+                    // 其他
+                    '向量', '矩阵', '导数', '积分', '极限', '集合'
+                ],
+                templates: {
+                    '函数': 'function_graph',
+                    '几何': 'geometry_shapes',
+                    '数列': 'sequence_animation',
+                    '三角': 'trigonometry',
+                    '统计': 'statistics_chart'
+                }
+            },
+            physics: {
+                name: '物理',
+                icon: '⚡',
+                color: '#10B981',
+                keywords: [
+                    // 力学相关
+                    '力学', '力', '重力', '支持力', '摩擦力', '张力', '弹力', '合力', '平衡', '加速度', '速度',
+                    '牛顿', '运动学', '动能', '势能', '机械能', '动量', '冲量', '功', '功率',
+                    // 电磁学相关
+                    '电', '电路', '电流', '电压', '电阻', '电容', '电感', '磁场', '磁感', '电动势',
+                    '欧姆', '法拉第', '库仑', '特斯拉', '伏特', '安培', '瓦特', '焦耳',
+                    // 波动相关
+                    '波', '声波', '光波', '电磁波', '频率', '波长', '振幅', '相位', '反射', '折射', '衍射',
+                    // 热学相关
+                    '热', '温度', '热量', '比热容', '热传导', '对流', '辐射', '气体', '理想气体',
+                    '物态变化', '熔点', '沸点', '压强', '大气压'
+                ],
+                templates: {
+                    '力': 'force_diagram',
+                    '电路': 'circuit_diagram',
+                    '波': 'wave_animation',
+                    '运动': 'motion_trajectory',
+                    '电': 'electromagnetic'
+                }
+            },
+            chemistry: {
+                name: '化学',
+                icon: '⚗️',
+                color: '#F59E0B',
+                keywords: [
+                    // 化学键相关
+                    '化学键', '共价键', '离子键', '氢键', '金属键', '分子', '原子', '电子', '质子', '中子',
+                    '化学式', '分子式', '电子式', '结构式', '化学方程', '反应', '生成物', '反应物',
+                    // 化学元素
+                    '元素', '周期表', '原子序数', '同位素', '离子', '化合价', '氧化还原',
+                    // 有机化学
+                    '有机', '烷', '烯', '炔', '醇', '醛', '酮', '酸', '酯', '胺', '芳香族',
+                    // 化学反应
+                    '酸碱', '中和', '置换', '复分解', '氧化还原', '燃烧', '分解', '化合', '水解',
+                    // 溶液相关
+                    '溶液', '溶剂', '溶质', '溶解度', '浓度', '摩尔', '当量', 'pH值'
+                ],
+                templates: {
+                    '分子': 'molecule_structure',
+                    '反应': 'chemical_reaction',
+                    '元素': 'periodic_table',
+                    '化学键': 'chemical_bonds',
+                    '酸碱': 'acid_base'
+                }
+            },
+            biology: {
+                name: '生物',
+                icon: '🧬',
+                color: '#8B5CF6',
+                keywords: [
+                    // 细胞相关
+                    '细胞', '细胞膜', '细胞核', '细胞质', '细胞壁', '线粒体', '叶绿体', '内质网', '高尔基体',
+                    '核糖体', '溶酶体', '液泡', '中心体',
+                    // 遗传相关
+                    '遗传', 'DNA', 'RNA', '基因', '染色体', '遗传信息', '突变', '变异', '遗传病',
+                    '孟德尔', '显性', '隐性', '等位基因', '基因型', '表现型',
+                    // 生命活动
+                    '光合作用', '呼吸作用', '新陈代谢', '酶', 'ATP', '能量转换',
+                    '消化', '吸收', '循环', '呼吸', '排泄', '神经', '激素', '免疫',
+                    // 生物多样性
+                    '物种', '进化', '自然选择', '适应', '生态系统', '食物链', '食物网',
+                    '生产者', '消费者', '分解者', '能量流动', '物质循环',
+                    // 人体相关
+                    '人体', '器官', '系统', '骨骼', '肌肉', '神经', '循环', '呼吸', '消化', '泌尿', '内分泌'
+                ],
+                templates: {
+                    '细胞': 'cell_structure',
+                    'DNA': 'dna_structure',
+                    '光合': 'photosynthesis',
+                    '遗传': 'genetics',
+                    '食物链': 'food_chain',
+                    '生态': 'ecosystem'
+                }
+            }
+        };
+
+        // 当前状态
+        let currentSubject = 'math';
+        let isLoading = false;
+        let messageCount = 0;
+        let sessionStartTime = Date.now();
+
+        // 智能识别学科
+        function recognizeSubject(message) {
+            const lowerMessage = message.toLowerCase();
+            let bestMatch = null;
+            let maxScore = 0;
+
+            Object.entries(subjectKeywords).forEach(([subject, config]) => {
+                let score = 0;
+                config.keywords.forEach(keyword => {
+                    if (lowerMessage.includes(keyword)) {
+                        score += keyword.length / lowerMessage.length;
+                    }
+                });
+
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestMatch = subject;
+                }
+            });
+
+            return bestMatch || null;
+        }
+
+        // 更新学科显示
+        function updateSubjectDisplay(subject) {
+            const config = subjectKeywords[subject];
+            if (config) {
+                currentSubject = subject;
+                const subjectIcon = document.getElementById('subjectIcon');
+                const subjectLabel = document.getElementById('subjectLabel');
+                const currentSubjectEl = document.getElementById('currentSubject');
+
+                // 添加过渡动画
+                currentSubjectEl.style.transform = 'scale(0.9)';
+                currentSubjectEl.style.opacity = '0.5';
+
+                setTimeout(() => {
+                    subjectIcon.textContent = config.icon;
+                    subjectLabel.textContent = config.name;
+                    currentSubjectEl.className = `current-subject ${subject}-theme`;
+                    currentSubjectEl.style.transform = 'scale(1)';
+                    currentSubjectEl.style.opacity = '1';
+                }, 200);
+            }
+        }
+
+        // 更新快速建议
+        function updateQuickSuggestions(subject) {
+            const container = document.getElementById('quickSuggestions');
+            const config = subjectKeywords[subject];
+            if (config) {
+                const suggestions = Object.keys(config.templates).slice(0, 4);
+                container.innerHTML = suggestions.map(suggestion =>
+                    `<div class="suggestion-tag">${suggestion}</div>`
+                ).join('');
+
+                // 添加点击和触摸事件
+                container.querySelectorAll('.suggestion-tag').forEach(tag => {
+                    // 点击事件
+                    tag.addEventListener('click', function() {
+                        document.getElementById('messageInput').value = this.textContent;
+                        sendMessage();
+                    });
+
+                    // 触摸优化
+                    if ('ontouchstart' in window) {
+                        tag.addEventListener('touchstart', function() {
+                            this.style.transform = 'scale(0.95)';
+                        });
+                        tag.addEventListener('touchend', function() {
+                            this.style.transform = 'scale(1)';
+                        });
+                    }
+                });
+            }
+        }
+
+        // 渲染可视化
+        function renderVisualization(templateType, subject, originalMessage = '') {
+            const placeholder = document.getElementById('vizPlaceholder');
+            const showGrid = document.getElementById('gridToggle').classList.contains('active');
+            const config = subjectKeywords[subject];
+
+            if (!config) return;
+
+            // 直接根据模板类型渲染，不使用config.templates映射
+            switch(templateType) {
+                case 'function_graph':
+                    renderFunctionGraph(placeholder, showGrid, originalMessage);
+                    break;
+                case 'trigonometry':
+                    renderTrigonometry(placeholder, showGrid);
+                    break;
+                case 'geometry_shapes':
+                    renderGeometryShapes(placeholder, showGrid);
+                    break;
+                case 'sequence_animation':
+                    renderSequenceAnimation(placeholder, showGrid);
+                    break;
+                case 'statistics_chart':
+                    renderStatisticsChart(placeholder, showGrid);
+                    break;
+                case 'force_diagram':
+                    renderForceDiagram(placeholder, showGrid);
+                    break;
+                case 'circuit_diagram':
+                    renderCircuitDiagram(placeholder, showGrid);
+                    break;
+                case 'wave_animation':
+                    renderWaveAnimation(placeholder, showGrid);
+                    break;
+                case 'molecule_structure':
+                    renderMoleculeStructure(placeholder, showGrid);
+                    break;
+                case 'chemical_reaction':
+                    renderChemicalReaction(placeholder, showGrid);
+                    break;
+                case 'cell_structure':
+                    renderCellStructure(placeholder, showGrid);
+                    break;
+                case 'dna_structure':
+                    renderDNAStructure(placeholder, showGrid);
+                    break;
+                case 'photosynthesis':
+                    renderPhotosynthesis(placeholder);
+                    break;
+                case 'food_chain':
+                    renderFoodChain(placeholder, showGrid);
+                    break;
+                default:
+                    renderGeneric(placeholder, subject, templateType);
+            }
+        }
+
+        // 具体的可视化渲染函数
+        function renderFunctionGraph(placeholder, showGrid, originalMessage = '') {
+            // 检测是否包含三角函数关键词
+            const hasTrigonometric = ['正弦', '余弦', '正切', '三角函数', 'sin', 'cos', 'tan'].some(keyword =>
+                originalMessage.toLowerCase().includes(keyword)
+            );
+
+            if (hasTrigonometric) {
+                return renderTrigonometry(placeholder, showGrid);
+            }
+
+            // 检测是否包含二次函数关键词
+            const hasQuadratic = ['二次函数', '抛物线', '一元二次'].some(keyword =>
+                originalMessage.toLowerCase().includes(keyword)
+            );
+
+            const container = document.createElement('div');
+            container.style.textAlign = 'center';
+
+            const svg = `
+                <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                    ${showGrid ? '<defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f0f0f0" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)" />' : ''}
+                    <line x1="40" y1="260" x2="360" y2="260" stroke="#666" stroke-width="2"/>
+                    <line x1="40" y1="260" x2="40" y2="40" stroke="#666" stroke-width="2"/>
+                    ${hasQuadratic ? `
+                        <path d="M 40 260 Q 200 40, 360 260" stroke="#3B82F6" stroke-width="3" fill="none"/>
+                        <text x="300" y="30" font-size="12" fill="#3B82F6">y = x²</text>
+                        <text x="200" y="280" font-size="11" fill="#666">顶点：(0,0)</text>
+                        <circle cx="200" cy="260" r="3" fill="#3B82F6"/>
+                    ` : `
+                        <path d="M 40 260 Q 200 40, 360 260" stroke="#3B82F6" stroke-width="3" fill="none"/>
+                        <line x1="40" y1="200" x2="360" y2="80" stroke="#DC2626" stroke-width="3"/>
+                        <text x="300" y="30" font-size="12" fill="#3B82F6">y = x²</text>
+                        <text x="280" y="70" font-size="12" fill="#DC2626">y = 2x + 1</text>
+                    `}
+                    <text x="370" y="265" font-size="12" fill="#666">x</text>
+                    <text x="25" y="35" font-size="12" fill="#666">y</text>
+                </svg>
+            `;
+
+            const svgDiv = document.createElement('div');
+            svgDiv.innerHTML = svg;
+            container.appendChild(svgDiv);
+
+            // 添加功能按钮
+            const controls = document.createElement('div');
+            controls.style.marginTop = '10px';
+            controls.style.display = 'flex';
+            controls.style.gap = '10px';
+            controls.style.justifyContent = 'center';
+
+            const openInNewPageBtn = document.createElement('button');
+            openInNewPageBtn.textContent = '在新页面打开';
+            openInNewPageBtn.style.cssText = `
+                background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 12px;
+                transition: all 0.3s ease;
+            `;
+            openInNewPageBtn.onmouseover = () => openInNewPageBtn.style.transform = 'translateY(-1px)';
+            openInNewPageBtn.onmouseout = () => openInNewPageBtn.style.transform = 'translateY(0)';
+            openInNewPageBtn.onclick = () => openFunctionGraphInNewPage(hasQuadratic, originalMessage);
+
+            const resetBtn = document.createElement('button');
+            resetBtn.textContent = '重置视图';
+            resetBtn.style.cssText = `
+                background: #f3f4f6;
+                color: #374151;
+                border: 1px solid #d1d5db;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 12px;
+                transition: all 0.3s ease;
+            `;
+            resetBtn.onmouseover = () => resetBtn.style.background = '#e5e7eb';
+            resetBtn.onmouseout = () => resetBtn.style.background = '#f3f4f6';
+            resetBtn.onclick = () => {
+                renderFunctionGraph(placeholder, showGrid, originalMessage);
+            };
+
+            controls.appendChild(openInNewPageBtn);
+            controls.appendChild(resetBtn);
+            container.appendChild(controls);
+
+            // 添加说明
+            const description = document.createElement('div');
+            description.style.marginTop = '12px';
+            description.innerHTML = `
+                <p style="margin: 8px 0; color: #333; font-weight: bold;">${hasQuadratic ? '二次函数图像' : '函数图像对比'}</p>
+                <p style="margin: 4px 0; font-size: 12px; color: #666;">${hasQuadratic ? '蓝色：二次函数 y = x²，开口向上，对称轴为y轴' : '蓝色：二次函数 | 红色：一次函数'}</p>
+            `;
+            container.appendChild(description);
+
+            placeholder.innerHTML = '';
+            placeholder.appendChild(container);
+        }
+
+        function renderTrigonometry(placeholder, showGrid) {
+            // 使用Canvas生成正确的三角函数图像
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 300;
+            canvas.style.width = '100%';
+            canvas.style.maxWidth = '350px';
+            canvas.style.border = '1px solid #e0e0e0';
+            canvas.style.borderRadius = '8px';
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const scale = 60; // 缩放因子
+
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+
+            // 绘制网格
+            if (showGrid) {
+                ctx.strokeStyle = '#f0f0f0';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < width; i += 20) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, height);
+                    ctx.stroke();
+                }
+                for (let i = 0; i < height; i += 20) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, i);
+                    ctx.lineTo(width, i);
+                    ctx.stroke();
+                }
+            }
+
+            // 绘制坐标轴
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            // X轴
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            ctx.stroke();
+            // Y轴
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, height);
+            ctx.stroke();
+
+            // 绘制刻度和标签
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+
+            // X轴刻度 (π的倍数)
+            const piSteps = [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI];
+            const piLabels = ['0', 'π/2', 'π', '3π/2', '2π'];
+            piSteps.forEach((pi, i) => {
+                const x = centerX + pi * scale;
+                if (x >= 0 && x <= width) {
+                    ctx.fillText(piLabels[i], x, centerY + 15);
+                }
+            });
+
+            // Y轴刻度
+            ctx.textAlign = 'right';
+            ctx.fillText('1', centerX - 5, centerY - scale + 3);
+            ctx.fillText('-1', centerX - 5, centerY + scale + 3);
+
+            // 生成正弦函数路径
+            ctx.strokeStyle = '#3B82F6';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let x = 0; x < width; x++) {
+                const angle = (x - centerX) / scale;
+                const y = centerY - Math.sin(angle) * scale;
+                if (x === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+
+            // 生成余弦函数路径
+            ctx.strokeStyle = '#DC2626';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let x = 0; x < width; x++) {
+                const angle = (x - centerX) / scale;
+                const y = centerY - Math.cos(angle) * scale;
+                if (x === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+
+            // 添加标签和说明
+            const container = document.createElement('div');
+            container.style.textAlign = 'center';
+            container.appendChild(canvas);
+
+            // 添加功能按钮
+            const controls = document.createElement('div');
+            controls.style.marginTop = '10px';
+            controls.style.display = 'flex';
+            controls.style.gap = '10px';
+            controls.style.justifyContent = 'center';
+
+            const openInNewPageBtn = document.createElement('button');
+            openInNewPageBtn.textContent = '在新页面打开';
+            openInNewPageBtn.style.cssText = `
+                background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 12px;
+                transition: all 0.3s ease;
+            `;
+            openInNewPageBtn.onmouseover = () => openInNewPageBtn.style.transform = 'translateY(-1px)';
+            openInNewPageBtn.onmouseout = () => openInNewPageBtn.style.transform = 'translateY(0)';
+            openInNewPageBtn.onclick = () => openTrigonometryInNewPage();
+
+            const resetBtn = document.createElement('button');
+            resetBtn.textContent = '重置视图';
+            resetBtn.style.cssText = `
+                background: #f3f4f6;
+                color: #374151;
+                border: 1px solid #d1d5db;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 12px;
+                transition: all 0.3s ease;
+            `;
+            resetBtn.onmouseover = () => resetBtn.style.background = '#e5e7eb';
+            resetBtn.onmouseout = () => resetBtn.style.background = '#f3f4f6';
+            resetBtn.onclick = () => {
+                renderTrigonometry(placeholder, showGrid);
+            };
+
+            controls.appendChild(openInNewPageBtn);
+            controls.appendChild(resetBtn);
+
+            // 说明文字
+            const description = document.createElement('div');
+            description.style.marginTop = '12px';
+            description.innerHTML = `
+                <p style="margin: 8px 0; color: #333; font-weight: bold;">三角函数图像</p>
+                <p style="margin: 4px 0; font-size: 12px; color: #666;">
+                    <span style="color: #3B82F6; font-weight: bold;">蓝色</span>: 正弦函数 y = sin(x)
+                </p>
+                <p style="margin: 4px 0; font-size: 12px; color: #666;">
+                    <span style="color: #DC2626; font-weight: bold;">红色</span>: 余弦函数 y = cos(x)
+                </p>
+                <p style="margin: 8px 0 0 0; font-size: 11px; color: #888;">
+                    特点：周期为2π，振幅为1，相位差π/2
+                </p>
+            `;
+
+            container.appendChild(controls);
+            container.appendChild(description);
+            placeholder.innerHTML = '';
+            placeholder.appendChild(container);
+        }
+
+        function openFunctionGraphInNewPage(isQuadratic, originalMessage) {
+            const newWindow = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
+            const title = isQuadratic ? '二次函数交互式可视化' : '函数图像交互式可视化';
+            const focusFunction = isQuadratic ? 'quadratic' : 'linear';
+
+            newWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="zh-CN">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>${title}</title>
+                    <style>
+                        body {
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                            margin: 0;
+                            padding: 20px;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            min-height: 100vh;
+                        }
+                        .container {
+                            max-width: 1200px;
+                            margin: 0 auto;
+                            background: white;
+                            border-radius: 12px;
+                            padding: 30px;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                        }
+                        h1 {
+                            text-align: center;
+                            color: #333;
+                            margin-bottom: 30px;
+                        }
+                        .canvas-container {
+                            text-align: center;
+                            margin: 20px 0;
+                        }
+                        canvas {
+                            border: 1px solid #e0e0e0;
+                            border-radius: 8px;
+                            max-width: 100%;
+                        }
+                        .controls {
+                            text-align: center;
+                            margin: 20px 0;
+                            display: flex;
+                            gap: 15px;
+                            justify-content: center;
+                            flex-wrap: wrap;
+                        }
+                        .control-group {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                        }
+                        .control-group label {
+                            font-weight: 500;
+                            color: #555;
+                        }
+                        input[type="range"] {
+                            width: 150px;
+                        }
+                        button {
+                            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                        }
+                        button:hover {
+                            transform: translateY(-1px);
+                            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                        }
+                        .info {
+                            background: #f8f9fa;
+                            padding: 20px;
+                            border-radius: 8px;
+                            margin-top: 20px;
+                        }
+                        .info h3 {
+                            color: #333;
+                            margin-top: 0;
+                        }
+                        .formula {
+                            background: #f1f5f9;
+                            padding: 10px;
+                            border-radius: 4px;
+                            font-family: 'Courier New', monospace;
+                            margin: 10px 0;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h1>📈 ${title}</h1>
+
+                        <div class="canvas-container">
+                            <canvas id="functionCanvas" width="800" height="400"></canvas>
+                        </div>
+
+                        <div class="controls">
+                            ${isQuadratic ? `
+                                <div class="control-group">
+                                    <label>系数 a:</label>
+                                    <input type="range" id="coeffA" min="-3" max="3" step="0.1" value="1">
+                                    <span id="coeffAValue">1.0</span>
+                                </div>
+                                <div class="control-group">
+                                    <label>系数 b:</label>
+                                    <input type="range" id="coeffB" min="-5" max="5" step="0.1" value="0">
+                                    <span id="coeffBValue">0.0</span>
+                                </div>
+                                <div class="control-group">
+                                    <label>系数 c:</label>
+                                    <input type="range" id="coeffC" min="-5" max="5" step="0.1" value="0">
+                                    <span id="coeffCValue">0.0</span>
+                                </div>
+                            ` : `
+                                <div class="control-group">
+                                    <label>斜率 k:</label>
+                                    <input type="range" id="slope" min="-5" max="5" step="0.1" value="2">
+                                    <span id="slopeValue">2.0</span>
+                                </div>
+                                <div class="control-group">
+                                    <label>截距 b:</label>
+                                    <input type="range" id="intercept" min="-5" max="5" step="0.1" value="1">
+                                    <span id="interceptValue">1.0</span>
+                                </div>
+                            `}
+                            <button onclick="toggleGrid()">切换网格</button>
+                            <button onclick="toggleDerivative()">显示导数</button>
+                            <button onclick="resetView()">重置视图</button>
+                        </div>
+
+                        <div class="info">
+                            <h3>数学公式</h3>
+                            <div class="formula" id="formulaDisplay">
+                                ${isQuadratic ? 'y = ax² + bx + c' : 'y = kx + b'}
+                            </div>
+                            <p><strong>当前参数：</strong></p>
+                            <p id="currentFormula">${isQuadratic ? 'y = 1.0x² + 0.0x + 0.0' : 'y = 2.0x + 1.0'}</p>
+                            ${isQuadratic ? `
+                                <p><strong>关键特征：</strong></p>
+                                <p>顶点: <span id="vertex">(0.0, 0.0)</span></p>
+                                <p>对称轴: <span id="symmetry">x = 0.0</span></p>
+                                <p>开口方向: <span id="direction">向上</span></p>
+                            ` : `
+                                <p><strong>关键特征：</strong></p>
+                                <p>斜率: <span id="slopeInfo">2.0</span></p>
+                                <p>y轴截距: <span id="interceptInfo">1.0</span></p>
+                                <p>x轴截距: <span id="xIntercept">-0.5</span></p>
+                            `}
+                        </div>
+                    </div>
+
+                    <script>
+                        let canvas, ctx, showGrid = true, showDerivative = false;
+
+                        function init() {
+                            canvas = document.getElementById('functionCanvas');
+                            ctx = canvas.getContext('2d');
+
+                            ${isQuadratic ? `
+                                document.getElementById('coeffA').addEventListener('input', updateGraph);
+                                document.getElementById('coeffB').addEventListener('input', updateGraph);
+                                document.getElementById('coeffC').addEventListener('input', updateGraph);
+                            ` : `
+                                document.getElementById('slope').addEventListener('input', updateGraph);
+                                document.getElementById('intercept').addEventListener('input', updateGraph);
+                            `}
+
+                            updateGraph();
+                        }
+
+                        function updateGraph() {
+                            ${isQuadratic ? `
+                                const a = parseFloat(document.getElementById('coeffA').value);
+                                const b = parseFloat(document.getElementById('coeffB').value);
+                                const c = parseFloat(document.getElementById('coeffC').value);
+
+                                document.getElementById('coeffAValue').textContent = a.toFixed(1);
+                                document.getElementById('coeffBValue').textContent = b.toFixed(1);
+                                document.getElementById('coeffCValue').textContent = c.toFixed(1);
+                                document.getElementById('currentFormula').textContent =
+                                    \`y = \${a.toFixed(1)}x² + \${b.toFixed(1)}x + \${c.toFixed(1)}\`;
+
+                                // 计算顶点
+                                const vertexX = -b / (2 * a);
+                                const vertexY = a * vertexX * vertexX + b * vertexX + c;
+                                document.getElementById('vertex').textContent = \`(\${vertexX.toFixed(2)}, \${vertexY.toFixed(2)})\`;
+                                document.getElementById('symmetry').textContent = \`x = \${vertexX.toFixed(2)}\`;
+                                document.getElementById('direction').textContent = a > 0 ? '向上' : '向下';
+
+                                drawQuadratic(a, b, c);
+                            ` : `
+                                const k = parseFloat(document.getElementById('slope').value);
+                                const b = parseFloat(document.getElementById('intercept').value);
+
+                                document.getElementById('slopeValue').textContent = k.toFixed(1);
+                                document.getElementById('interceptValue').textContent = b.toFixed(1);
+                                document.getElementById('currentFormula').textContent = \`y = \${k.toFixed(1)}x + \${b.toFixed(1)}\`;
+
+                                document.getElementById('slopeInfo').textContent = k.toFixed(1);
+                                document.getElementById('interceptInfo').textContent = b.toFixed(1);
+                                const xIntercept = k !== 0 ? (-b / k).toFixed(2) : '无';
+                                document.getElementById('xIntercept').textContent = xIntercept;
+
+                                drawLinear(k, b);
+                            `}
+                        }
+
+                        function drawQuadratic(a, b, c) {
+                            const width = canvas.width;
+                            const height = canvas.height;
+                            const centerX = width / 2;
+                            const centerY = height / 2;
+                            const scale = 30;
+
+                            ctx.clearRect(0, 0, width, height);
+
+                            // 绘制网格
+                            if (showGrid) {
+                                ctx.strokeStyle = '#f0f0f0';
+                                ctx.lineWidth = 1;
+                                for (let i = 0; i < width; i += 20) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(i, 0);
+                                    ctx.lineTo(i, height);
+                                    ctx.stroke();
+                                }
+                                for (let i = 0; i < height; i += 20) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(0, i);
+                                    ctx.lineTo(width, i);
+                                    ctx.stroke();
+                                }
+                            }
+
+                            // 绘制坐标轴
+                            ctx.strokeStyle = '#666';
+                            ctx.lineWidth = 2;
+                            ctx.beginPath();
+                            ctx.moveTo(0, centerY);
+                            ctx.lineTo(width, centerY);
+                            ctx.moveTo(centerX, 0);
+                            ctx.lineTo(centerX, height);
+                            ctx.stroke();
+
+                            // 绘制二次函数
+                            ctx.strokeStyle = '#3B82F6';
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            for (let x = 0; x < width; x++) {
+                                const xVal = (x - centerX) / scale;
+                                const yVal = a * xVal * xVal + b * xVal + c;
+                                const y = centerY - yVal * scale;
+                                if (x === 0) ctx.moveTo(x, y);
+                                else ctx.lineTo(x, y);
+                            }
+                            ctx.stroke();
+
+                            // 绘制导数
+                            if (showDerivative) {
+                                ctx.strokeStyle = '#DC2626';
+                                ctx.lineWidth = 2;
+                                ctx.beginPath();
+                                for (let x = 0; x < width; x++) {
+                                    const xVal = (x - centerX) / scale;
+                                    const yVal = 2 * a * xVal + b;
+                                    const y = centerY - yVal * scale;
+                                    if (x === 0) ctx.moveTo(x, y);
+                                    else ctx.lineTo(x, y);
+                                }
+                                ctx.stroke();
+                            }
+                        }
+
+                        function drawLinear(k, b) {
+                            const width = canvas.width;
+                            const height = canvas.height;
+                            const centerX = width / 2;
+                            const centerY = height / 2;
+                            const scale = 30;
+
+                            ctx.clearRect(0, 0, width, height);
+
+                            // 绘制网格
+                            if (showGrid) {
+                                ctx.strokeStyle = '#f0f0f0';
+                                ctx.lineWidth = 1;
+                                for (let i = 0; i < width; i += 20) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(i, 0);
+                                            ctx.lineTo(i, height);
+                                    ctx.stroke();
+                                }
+                                for (let i = 0; i < height; i += 20) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(0, i);
+                                    ctx.lineTo(width, i);
+                                    ctx.stroke();
+                                }
+                            }
+
+                            // 绘制坐标轴
+                            ctx.strokeStyle = '#666';
+                            ctx.lineWidth = 2;
+                            ctx.beginPath();
+                            ctx.moveTo(0, centerY);
+                            ctx.lineTo(width, centerY);
+                            ctx.moveTo(centerX, 0);
+                            ctx.lineTo(centerX, height);
+                            ctx.stroke();
+
+                            // 绘制线性函数
+                            ctx.strokeStyle = '#3B82F6';
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            for (let x = 0; x < width; x++) {
+                                const xVal = (x - centerX) / scale;
+                                const yVal = k * xVal + b;
+                                const y = centerY - yVal * scale;
+                                if (x === 0) ctx.moveTo(x, y);
+                                else ctx.lineTo(x, y);
+                            }
+                            ctx.stroke();
+                        }
+
+                        function toggleGrid() {
+                            showGrid = !showGrid;
+                            updateGraph();
+                        }
+
+                        function toggleDerivative() {
+                            showDerivative = !showDerivative;
+                            updateGraph();
+                        }
+
+                        function resetView() {
+                            ${isQuadratic ? `
+                                document.getElementById('coeffA').value = 1;
+                                document.getElementById('coeffB').value = 0;
+                                document.getElementById('coeffC').value = 0;
+                            ` : `
+                                document.getElementById('slope').value = 2;
+                                document.getElementById('intercept').value = 1;
+                            `}
+                            showDerivative = false;
+                            updateGraph();
+                        }
+
+                        window.onload = init;
+                    </script>
+                </body>
+                </html>
+            `);
+            newWindow.document.close();
+        }
+
+        function openTrigonometryInNewPage() {
+            const newWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+            newWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="zh-CN">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>三角函数可视化 - 交互式图表</title>
+                    <style>
+                        body {
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                            margin: 0;
+                            padding: 20px;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            min-height: 100vh;
+                        }
+                        .container {
+                            max-width: 1200px;
+                            margin: 0 auto;
+                            background: white;
+                            border-radius: 12px;
+                            padding: 30px;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                        }
+                        h1 {
+                            text-align: center;
+                            color: #333;
+                            margin-bottom: 30px;
+                        }
+                        .canvas-container {
+                            text-align: center;
+                            margin: 20px 0;
+                        }
+                        canvas {
+                            border: 1px solid #e0e0e0;
+                            border-radius: 8px;
+                            max-width: 100%;
+                        }
+                        .controls {
+                            text-align: center;
+                            margin: 20px 0;
+                            display: flex;
+                            gap: 15px;
+                            justify-content: center;
+                            flex-wrap: wrap;
+                        }
+                        .control-group {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                        }
+                        .control-group label {
+                            font-weight: 500;
+                            color: #555;
+                        }
+                        input[type="range"] {
+                            width: 150px;
+                        }
+                        button {
+                            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                        }
+                        button:hover {
+                            transform: translateY(-1px);
+                            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                        }
+                        .info {
+                            background: #f8f9fa;
+                            padding: 20px;
+                            border-radius: 8px;
+                            margin-top: 20px;
+                        }
+                        .info h3 {
+                            color: #333;
+                            margin-top: 0;
+                        }
+                        .formula {
+                            background: #f1f5f9;
+                            padding: 10px;
+                            border-radius: 4px;
+                            font-family: 'Courier New', monospace;
+                            margin: 10px 0;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h1>🔺 三角函数交互式可视化</h1>
+
+                        <div class="canvas-container">
+                            <canvas id="trigCanvas" width="800" height="400"></canvas>
+                        </div>
+
+                        <div class="controls">
+                            <div class="control-group">
+                                <label>振幅 (A):</label>
+                                <input type="range" id="amplitude" min="0.1" max="2" step="0.1" value="1">
+                                <span id="ampValue">1.0</span>
+                            </div>
+                            <div class="control-group">
+                                <label>频率 (ω):</label>
+                                <input type="range" id="frequency" min="0.5" max="3" step="0.1" value="1">
+                                <span id="freqValue">1.0</span>
+                            </div>
+                            <div class="control-group">
+                                <label>相位 (φ):</label>
+                                <input type="range" id="phase" min="0" max="6.28" step="0.1" value="0">
+                                <span id="phaseValue">0.0</span>
+                            </div>
+                            <button onclick="toggleGrid()">切换网格</button>
+                            <button onclick="toggleAnimation()">动画演示</button>
+                        </div>
+
+                        <div class="info">
+                            <h3>数学公式</h3>
+                            <div class="formula">
+                                y = A·sin(ωx + φ)  <br>
+                                y = A·cos(ωx + φ)
+                            </div>
+                            <p><strong>当前参数：</strong></p>
+                            <p id="currentFormula">y = 1·sin(1·x + 0)</p>
+                            <p><strong>特征值：</strong></p>
+                            <p>周期: T = 2π/ω = <span id="period">6.28</span></p>
+                            <p>频率: f = ω/2π = <span id="freq">0.16</span></p>
+                        </div>
+                    </div>
+
+                    <script>
+                        let canvas, ctx, showGrid = true, animationId = null, time = 0;
+
+                        function init() {
+                            canvas = document.getElementById('trigCanvas');
+                            ctx = canvas.getContext('2d');
+
+                            // 绑定控制器
+                            document.getElementById('amplitude').addEventListener('input', updateGraph);
+                            document.getElementById('frequency').addEventListener('input', updateGraph);
+                            document.getElementById('phase').addEventListener('input', updateGraph);
+
+                            updateGraph();
+                        }
+
+                        function updateGraph() {
+                            const A = parseFloat(document.getElementById('amplitude').value);
+                            const omega = parseFloat(document.getElementById('frequency').value);
+                            const phi = parseFloat(document.getElementById('phase').value);
+
+                            document.getElementById('ampValue').textContent = A.toFixed(1);
+                            document.getElementById('freqValue').textContent = omega.toFixed(1);
+                            document.getElementById('phaseValue').textContent = phi.toFixed(1);
+                            document.getElementById('currentFormula').textContent =
+                                \`y = \${A.toFixed(1)}·sin(\${omega.toFixed(1)}·x + \${phi.toFixed(1)})\`;
+                            document.getElementById('period').textContent = (2 * Math.PI / omega).toFixed(2);
+                            document.getElementById('freq').textContent = (omega / (2 * Math.PI)).toFixed(2);
+
+                            drawGraph(A, omega, phi);
+                        }
+
+                        function drawGraph(A, omega, phi, t = 0) {
+                            const width = canvas.width;
+                            const height = canvas.height;
+                            const centerX = width / 2;
+                            const centerY = height / 2;
+                            const scale = 50;
+
+                            ctx.clearRect(0, 0, width, height);
+
+                            // 绘制网格
+                            if (showGrid) {
+                                ctx.strokeStyle = '#f0f0f0';
+                                ctx.lineWidth = 1;
+                                for (let i = 0; i < width; i += 20) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(i, 0);
+                                    ctx.lineTo(i, height);
+                                    ctx.stroke();
+                                }
+                                for (let i = 0; i < height; i += 20) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(0, i);
+                                    ctx.lineTo(width, i);
+                                    ctx.stroke();
+                                }
+                            }
+
+                            // 绘制坐标轴
+                            ctx.strokeStyle = '#666';
+                            ctx.lineWidth = 2;
+                            ctx.beginPath();
+                            ctx.moveTo(0, centerY);
+                            ctx.lineTo(width, centerY);
+                            ctx.moveTo(centerX, 0);
+                            ctx.lineTo(centerX, height);
+                            ctx.stroke();
+
+                            // 绘制函数
+                            ctx.lineWidth = 3;
+
+                            // 正弦函数
+                            ctx.strokeStyle = '#3B82F6';
+                            ctx.beginPath();
+                            for (let x = 0; x < width; x++) {
+                                const angle = (x - centerX) / scale;
+                                const y = centerY - A * Math.sin(omega * angle + phi + t) * scale;
+                                if (x === 0) ctx.moveTo(x, y);
+                                else ctx.lineTo(x, y);
+                            }
+                            ctx.stroke();
+
+                            // 余弦函数
+                            ctx.strokeStyle = '#DC2626';
+                            ctx.beginPath();
+                            for (let x = 0; x < width; x++) {
+                                const angle = (x - centerX) / scale;
+                                const y = centerY - A * Math.cos(omega * angle + phi + t) * scale;
+                                if (x === 0) ctx.moveTo(x, y);
+                                else ctx.lineTo(x, y);
+                            }
+                            ctx.stroke();
+                        }
+
+                        function toggleGrid() {
+                            showGrid = !showGrid;
+                            updateGraph();
+                        }
+
+                        function toggleAnimation() {
+                            if (animationId) {
+                                cancelAnimationFrame(animationId);
+                                animationId = null;
+                            } else {
+                                function animate() {
+                                    time += 0.05;
+                                    const A = parseFloat(document.getElementById('amplitude').value);
+                                    const omega = parseFloat(document.getElementById('frequency').value);
+                                    const phi = parseFloat(document.getElementById('phase').value);
+                                    drawGraph(A, omega, phi, time);
+                                    animationId = requestAnimationFrame(animate);
+                                }
+                                animate();
+                            }
+                        }
+
+                        window.onload = init;
+                    </script>
+                </body>
+                </html>
+            `);
+            newWindow.document.close();
+        }
+
+        function renderForceDiagram(placeholder, showGrid) {
+            const svg = `
+                <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                    <rect x="180" y="140" width="40" height="40" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+                    <line x1="200" y1="180" x2="200" y2="230" stroke="#DC2626" stroke-width="3" marker-end="url(#arrow-red)"/>
+                    <line x1="200" y1="140" x2="200" y2="90" stroke="#10B981" stroke-width="3" marker-end="url(#arrow-green)"/>
+                    <line x1="180" y1="160" x2="130" y2="160" stroke="#3B82F6" stroke-width="3" marker-end="url(#arrow-blue)"/>
+                    <line x1="40" y1="230" x2="360" y2="230" stroke="#666" stroke-width="2"/>
+                    <defs>
+                        <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#DC2626"/></marker>
+                        <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#10B981"/></marker>
+                        <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#3B82F6"/></marker>
+                    </defs>
+                </svg>
+                <p style="margin-top: 16px; color: #333;">物体受力分析图</p>
+                <p style="font-size: 12px; color: #666">红色：重力 | 绿色：支持力 | 蓝色：摩擦力</p>
+            `;
+            placeholder.innerHTML = svg;
+        }
+
+        function renderMoleculeStructure(placeholder, showGrid) {
+            const html = `
+                <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                    <g transform="translate(200, 150)">
+                        <circle cx="0" cy="0" r="30" fill="#EF4444" stroke="#DC2626" stroke-width="2"/>
+                        <text x="0" y="5" text-anchor="middle" font-size="16" fill="white" font-weight="bold">O</text>
+                        <circle cx="-40" cy="-30" r="20" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+                        <text x="-40" y="-25" text-anchor="middle" font-size="14" fill="white" font-weight="bold">H</text>
+                        <circle cx="40" cy="-30" r="20" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+                        <text x="40" y="-25" text-anchor="middle" font-size="14" fill="white" font-weight="bold">H</text>
+                        <line x1="-20" y1="-15" x2="-25" y2="-10" stroke="#666" stroke-width="3"/>
+                        <line x1="20" y1="-15" x2="25" y2="-10" stroke="#666" stroke-width="3"/>
+                        <text x="0" y="60" text-anchor="middle" font-size="14" fill="#666">H₂O (水分子)</text>
+                    </g>
+                </svg>
+                <p style="margin-top: 16px; color: #333;">水分子结构</p>
+                <p style="font-size: 12px; color: #666">红色：氧原子 | 橙色：氢原子 | 灰色：共价键</p>
+            `;
+            placeholder.innerHTML = html;
+        }
+
+        function renderCellStructure(placeholder, showGrid) {
+            const svg = `
+                <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                    <ellipse cx="200" cy="150" rx="160" ry="120" fill="#EDE9FE" stroke="#8B5CF6" stroke-width="3"/>
+                    <ellipse cx="200" cy="150" rx="60" ry="50" fill="#DDD6FE" stroke="#8B5CF6" stroke-width="2"/>
+                    <text x="200" y="155" text-anchor="middle" font-size="12" fill="#8B5CF6">细胞核</text>
+                    <ellipse cx="120" cy="100" rx="30" ry="15" fill="#FCA5A5" stroke="#EF4444" stroke-width="2" transform="rotate(-30 120 100)"/>
+                    <ellipse cx="280" cy="100" rx="30" ry="15" fill="#FCA5A5" stroke="#EF4444" stroke-width="2" transform="rotate(30 280 100)"/>
+                    <text x="120" y="85" font-size="10" fill="#EF4444">线粒体</text>
+                    <path d="M 140 180 Q 200 170, 260 180" stroke="#10B981" stroke-width="2" fill="none"/>
+                    <path d="M 130 190 Q 200 180, 270 190" stroke="#10B981" stroke-width="2" fill="none"/>
+                    <text x="200" y="195" text-anchor="middle" font-size="10" fill="#10B981">内质网</text>
+                    <circle cx="150" cy="130" r="4" fill="#3B82F6"/>
+                    <circle cx="160" cy="125" r="4" fill="#3B82F6"/>
+                    <circle cx="250" cy="130" r="4" fill="#3B82F6"/>
+                    <circle cx="240" cy="125" r="4" fill="#3B82F6"/>
+                    <text x="200" y="145" text-anchor="middle" font-size="10" fill="#3B82F6">核糖体</text>
+                </svg>
+                <p style="margin-top: 16px; color: #333;">动物细胞结构</p>
+                <p style="font-size: 12px; color: #666">紫色：细胞核和细胞膜 | 红色：线粒体 | 绿色：内质网 | 蓝色：核糖体</p>
+            `;
+            placeholder.innerHTML = svg;
+        }
+
+        // 添加缺失的可视化函数
+        function renderGeometryShapes(placeholder, showGrid) {
+            const svg = `
+                <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                    ${showGrid ? '<defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f0f0f0" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)" />' : ''}
+                    <!-- 三角形 -->
+                    <path d="M 100 80 L 60 140 L 140 140 Z" fill="#3B82F6" stroke="#1E40AF" stroke-width="2"/>
+                    <text x="100" y="160" text-anchor="middle" font-size="12" fill="#666">三角形</text>
+
+                    <!-- 圆形 -->
+                    <circle cx="250" cy="110" r="40" fill="#10B981" stroke="#047857" stroke-width="2"/>
+                    <text x="250" y="160" text-anchor="middle" font-size="12" fill="#666">圆形</text>
+
+                    <!-- 矩形 -->
+                    <rect x="60" y="200" width="80" height="50" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+                    <text x="100" y="270" text-anchor="middle" font-size="12" fill="#666">矩形</text>
+
+                    <!-- 正方形 -->
+                    <rect x="200" y="200" width="50" height="50" fill="#8B5CF6" stroke="#6D28D9" stroke-width="2"/>
+                    <text x="225" y="270" text-anchor="middle" font-size="12" fill="#666">正方形</text>
+                </svg>
+                <p style="margin-top: 16px; color: #333; font-weight: bold;">几何图形展示</p>
+                <p style="font-size: 12px; color: #666;">常见几何图形：三角形、圆形、矩形、正方形</p>
+            `;
+            placeholder.innerHTML = svg;
+        }
+
+        function renderSequenceAnimation(placeholder, showGrid) {
+            const svg = `
+                <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                    ${showGrid ? '<defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f0f0f0" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)" />' : ''}
+                    <!-- 等差数列 -->
+                    <text x="40" y="80" font-size="12" fill="#666">等差数列: 2, 4, 6, 8, 10...</text>
+                    <circle cx="60" cy="120" r="8" fill="#3B82F6"/>
+                    <text x="60" y="125" text-anchor="middle" font-size="10" fill="white">2</text>
+                    <circle cx="100" cy="120" r="8" fill="#3B82F6"/>
+                    <text x="100" y="125" text-anchor="middle" font-size="10" fill="white">4</text>
+                    <circle cx="140" cy="120" r="8" fill="#3B82F6"/>
+                    <text x="140" y="125" text-anchor="middle" font-size="10" fill="white">6</text>
+                    <circle cx="180" cy="120" r="8" fill="#3B82F6"/>
+                    <text x="180" y="125" text-anchor="middle" font-size="10" fill="white">8</text>
+                    <circle cx="220" cy="120" r="8" fill="#3B82F6"/>
+                    <text x="220" y="125" text-anchor="middle" font-size="10" fill="white">10</text>
+
+                    <!-- 等比数列 -->
+                    <text x="40" y="180" font-size="12" fill="#666">等比数列: 2, 4, 8, 16, 32...</text>
+                    <rect x="60" y="200" width="16" height="16" fill="#10B981"/>
+                    <text x="68" y="211" text-anchor="middle" font-size="8" fill="white">2</text>
+                    <rect x="90" y="196" width="24" height="24" fill="#10B981"/>
+                    <text x="102" y="211" text-anchor="middle" font-size="8" fill="white">4</text>
+                    <rect x="125" y="192" width="32" height="32" fill="#10B981"/>
+                    <text x="141" y="211" text-anchor="middle" font-size="8" fill="white">8</text>
+                    <rect x="168" y="188" width="40" height="40" fill="#10B981"/>
+                    <text x="188" y="211" text-anchor="middle" font-size="8" fill="white">16</text>
+                    <rect x="215" y="184" width="48" height="48" fill="#10B981"/>
+                    <text x="239" y="211" text-anchor="middle" font-size="8" fill="white">32</text>
+                </svg>
+                <p style="margin-top: 16px; color: #333; font-weight: bold;">数列可视化</p>
+                <p style="font-size: 12px; color: #666;">蓝色：等差数列(公差+2) | 绿色：等比数列(公比×2)</p>
+            `;
+            placeholder.innerHTML = svg;
+        }
+
+        function renderStatisticsChart(placeholder, showGrid) {
+            const svg = `
+                <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                    ${showGrid ? '<defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f0f0f0" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)" />' : ''}
+                    <!-- 坐标轴 -->
+                    <line x1="60" y1="240" x2="360" y2="240" stroke="#666" stroke-width="2"/>
+                    <line x1="60" y1="240" x2="60" y2="40" stroke="#666" stroke-width="2"/>
+
+                    <!-- 柱状图 -->
+                    <rect x="80" y="180" width="40" height="60" fill="#3B82F6"/>
+                    <text x="100" y="175" text-anchor="middle" font-size="10" fill="#3B82F6">75</text>
+                    <text x="100" y="255" text-anchor="middle" font-size="10" fill="#666">A</text>
+
+                    <rect x="140" y="140" width="40" height="100" fill="#10B981"/>
+                    <text x="160" y="135" text-anchor="middle" font-size="10" fill="#10B981">85</text>
+                    <text x="160" y="255" text-anchor="middle" font-size="10" fill="#666">B</text>
+
+                    <rect x="200" y="120" width="40" height="120" fill="#F59E0B"/>
+                    <text x="220" y="115" text-anchor="middle" font-size="10" fill="#F59E0B">90</text>
+                    <text x="220" y="255" text-anchor="middle" font-size="10" fill="#666">C</text>
+
+                    <rect x="260" y="160" width="40" height="80" fill="#8B5CF6"/>
+                    <text x="280" y="155" text-anchor="middle" font-size="10" fill="#8B5CF6">80</text>
+                    <text x="280" y="255" text-anchor="middle" font-size="10" fill="#666">D</text>
+
+                    <!-- 平均线 -->
+                    <line x1="60" y1="150" x2="320" y2="150" stroke="#DC2626" stroke-width="2" stroke-dasharray="5,5"/>
+                    <text x="325" y="153" font-size="10" fill="#DC2626">平均: 82.5</text>
+                </svg>
+                <p style="margin-top: 16px; color: #333; font-weight: bold;">统计图表</p>
+                <p style="font-size: 12px; color: #666;">各科目成绩分布，红色虚线表示平均分</p>
+            `;
+            placeholder.innerHTML = svg;
+        }
+
+        // 通用渲染函数（其他可视化可以类似实现）
+        function renderGeneric(placeholder, subject, templateType) {
+            placeholder.innerHTML = `
+                <div style="text-align: center; color: #666; padding: 40px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">
+                        ${subjectKeywords[subject].icon}
+                    </div>
+                    <h3 style="color: #333; margin-bottom: 10px;">${subjectKeywords[subject].name}可视化</h3>
+                    <p>模板类型: ${templateType}</p>
+                    <p style="font-size: 14px; margin-top: 20px;">该模板的具体可视化正在开发中...</p>
+                </div>
+            `;
+        }
+
+        // 发送消息
+        function sendMessage() {
+            if (isLoading) return;
+
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // 清空输入框
+            input.value = '';
+            input.style.height = 'auto';
+
+            // 添加用户消息
+            addMessage(message, 'user');
+
+            // 显示加载状态
+            showLoading();
+
+            // 模拟AI响应
+            setTimeout(() => {
+                hideLoading();
+
+                // 智能识别学科
+                const recognizedSubject = recognizeSubject(message);
+
+                if (recognizedSubject && recognizedSubject !== currentSubject) {
+                    // 学科改变，更新显示
+                    updateSubjectDisplay(recognizedSubject);
+                    updateQuickSuggestions(recognizedSubject);
+
+                    // 发送学科切换通知
+                    addMessage(`我已经识别到你在询问${subjectKeywords[recognizedSubject].name}相关的内容，现在为你切换到${subjectKeywords[recognizedSubject].name}学科模式。`, 'ai');
+                }
+
+                // 生成AI回复
+                const response = generateAIResponse(message, currentSubject);
+                addMessage(response.message, 'ai');
+
+                // 渲染可视化
+                renderVisualization(response.templateType, currentSubject, response.originalMessage);
+                document.getElementById('vizTitle').textContent = response.title;
+
+                messageCount++;
+            }, 1000);
+        }
+
+        // 生成AI回复
+        function generateAIResponse(message, subject) {
+            const config = subjectKeywords[subject];
+            const lowerMessage = message.toLowerCase();
+
+            // 智能匹配模板类型
+            let templateType = 'function_graph'; // 默认为函数图像
+            let specificTopic = '';
+
+            // 针对数学学科的详细匹配
+            if (subject === 'math') {
+                if (['正弦', '余弦', '正切', '三角函数', 'sin', 'cos', 'tan'].some(keyword => lowerMessage.includes(keyword))) {
+                    templateType = 'trigonometry';
+                    specificTopic = '三角函数';
+                } else if (['二次函数', '抛物线', '一元二次'].some(keyword => lowerMessage.includes(keyword))) {
+                    templateType = 'function_graph';
+                    specificTopic = '二次函数';
+                } else if (['一次函数', '线性函数', '直线'].some(keyword => lowerMessage.includes(keyword))) {
+                    templateType = 'function_graph';
+                    specificTopic = '一次函数';
+                } else if (['几何', '三角形', '圆', '矩形', '面积', '体积'].some(keyword => lowerMessage.includes(keyword))) {
+                    templateType = 'geometry_shapes';
+                    specificTopic = '几何图形';
+                } else if (['数列', '等差', '等比', '递推', '通项'].some(keyword => lowerMessage.includes(keyword))) {
+                    templateType = 'sequence_animation';
+                    specificTopic = '数列';
+                } else if (['统计', '概率', '平均数', '方差', '标准差'].some(keyword => lowerMessage.includes(keyword))) {
+                    templateType = 'statistics_chart';
+                    specificTopic = '统计概率';
+                }
+            }
+
+            // 生成更有针对性的回复
+            let aiMessage = '';
+            if (specificTopic) {
+                aiMessage = `我理解了你想了解${specificTopic}相关的知识。${specificTopic}是${config.name}学科中的重要概念。让我为你生成相应的可视化内容来帮助你更好地理解。`;
+            } else {
+                aiMessage = `我理解了你的问题。在${config.name}学科中，这是一个重要的概念。让我为你生成相应的可视化内容。`;
+            }
+
+            return {
+                message: aiMessage,
+                templateType: templateType,
+                title: `${config.name} - ${specificTopic || '函数'}可视化`,
+                originalMessage: message // 保留原始消息用于模板匹配
+            };
+        }
+
+        // 添加消息
+        function addMessage(content, sender) {
+            const container = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const avatar = sender === 'user' ? '👤' : '🤖';
+
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">${content}</div>
+            `;
+
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            isLoading = true;
+
+            // 更新状态指示器
+            const statusIndicator = document.getElementById('statusIndicator');
+            statusIndicator.classList.add('processing');
+
+            const container = document.getElementById('messagesContainer');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message ai loading-message';
+            loadingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div style="margin-bottom: 8px;">正在分析内容并生成可视化...</div>
+                    <div class="loading-indicator">
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(loadingDiv);
+            container.scrollTop = container.scrollHeight;
+
+            // 添加视觉反馈
+            document.getElementById('vizPlaceholder').innerHTML = `
+                <div style="text-align: center; color: #666;">
+                    <div class="loading-indicator" style="margin-bottom: 16px;">
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                    </div>
+                    <p>正在生成可视化内容...</p>
+                </div>
+            `;
+        }
+
+        // 隐藏加载状态
+        function hideLoading() {
+            isLoading = false;
+
+            // 更新状态指示器
+            const statusIndicator = document.getElementById('statusIndicator');
+            statusIndicator.classList.remove('processing');
+
+            const loadingMessage = document.querySelector('.loading-message');
+            if (loadingMessage) {
+                // 添加淡出效果
+                loadingMessage.style.opacity = '0';
+                loadingMessage.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    if (loadingMessage.parentNode) {
+                        loadingMessage.remove();
+                    }
+                }, 300);
+            }
+        }
+
+        // 控制开关
+        function toggleControl(controlName) {
+            const toggle = document.getElementById(controlName + 'Toggle');
+            toggle.classList.toggle('active');
+
+            // 添加触觉反馈效果
+            toggle.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                toggle.style.transform = 'scale(1)';
+            }, 100);
+
+            // 重新渲染当前可视化
+            if (document.getElementById('vizTitle').textContent !== '等待内容...') {
+                const currentTitle = document.getElementById('vizTitle').textContent;
+                // 这里可以根据需要重新渲染当前的可视化
+                showNotification(`${controlName} ${toggle.classList.contains('active') ? '已开启' : '已关闭'}`);
+            }
+        }
+
+        // 显示通知
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: rgba(16, 185, 129, 0.9);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 1000;
+                font-size: 14px;
+                animation: slideInUp 0.3s ease-out;
+                backdrop-filter: blur(10px);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // 添加动画样式
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(100%);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                    if (style.parentNode) {
+                        style.remove();
+                    }
+                }, 300);
+            }, 2000);
+        }
+
+        // 移动端优化
+        function addMobileOptimizations() {
+            const messageInput = document.getElementById('messageInput');
+            const messagesContainer = document.getElementById('messagesContainer');
+
+            // 触摸优化：增加可点击区域
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+
+                // 为快速建议标签增加触摸反馈
+                document.querySelectorAll('.suggestion-tag').forEach(tag => {
+                    tag.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.95)';
+                    });
+                    tag.addEventListener('touchend', function() {
+                        this.style.transform = 'scale(1)';
+                    });
+                });
+
+                // 防止双击缩放
+                let lastTouchEnd = 0;
+                document.addEventListener('touchend', function(e) {
+                    const now = Date.now();
+                    if (now - lastTouchEnd <= 300) {
+                        e.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                }, false);
+            }
+
+            // 自动聚焦输入框
+            messageInput.addEventListener('focus', function() {
+                // 移动端延迟滚动以确保键盘不遮挡输入框
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            });
+
+            // 键盘高度适配
+            const initialViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            window.addEventListener('resize', function() {
+                const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                const keyboardHeight = initialViewportHeight - currentHeight;
+
+                if (keyboardHeight > 150) {
+                    // 键盘弹起时的调整
+                    document.querySelector('.chat-panel').style.height = `calc(100vh - ${keyboardHeight}px - 120px)`;
+                } else {
+                    // 键盘收起时恢复
+                    document.querySelector('.chat-panel').style.height = '';
+                }
+            });
+        }
+
+        // 事件监听器
+        document.getElementById('messageInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        document.getElementById('messageInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            document.getElementById('messageInput').focus();
+            updateQuickSuggestions('math');
+            addMobileOptimizations();
+        });
+    </script>
+</body>
+</html>

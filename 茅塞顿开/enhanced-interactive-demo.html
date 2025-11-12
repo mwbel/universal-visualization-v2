@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茅塞顿开 - 增强交互学习</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            width: 95%;
+            max-width: 1400px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .chat-panel {
+            flex: 1;
+            border-right: 1px solid #e8e8e8;
+            display: flex;
+            flex-direction: column;
+            background: #fafafa;
+            min-width: 350px;
+        }
+
+        .chat-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e8e8e8;
+            background: white;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subject-selector {
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+        .message.user .message-avatar {
+            background: #7C3AED;
+        }
+
+        .message.ai .message-avatar {
+            background: #10B981;
+        }
+
+        .message-content {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 70%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: #7C3AED;
+            color: white;
+            margin-left: auto;
+        }
+
+        .input-area {
+            padding: 16px;
+            border-top: 1px solid #e8e8e8;
+            background: white;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            flex: 1;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            resize: none;
+            min-height: 40px;
+            max-height: 100px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #7C3AED;
+        }
+
+        .send-button {
+            background: #7C3AED;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .send-button:hover {
+            background: #6d28d9;
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* 增强的可视化面板 */
+        .enhanced-viz-panel {
+            width: 600px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            position: relative;
+            min-width: 400px;
+        }
+
+        .viz-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #fafafa;
+            border-bottom: 1px solid #e8e8e8;
+            min-height: 48px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .toolbar-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-button {
+            padding: 6px 10px;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .toolbar-button:hover {
+            background: #7C3AED;
+            color: white;
+            border-color: #7C3AED;
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+        }
+
+        .zoom-level {
+            font-size: 12px;
+            color: #666;
+            min-width: 32px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .template-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            background: rgba(124, 58, 237, 0.1);
+            border-radius: 6px;
+        }
+
+        .template-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: #7C3AED;
+        }
+
+        .parameter-controls {
+            border-bottom: 1px solid #e8e8e8;
+            background: #fafafa;
+            padding: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .parameter-controls.collapsed {
+            max-height: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .parameter-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .parameter-header h4 {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .parameter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .parameter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .parameter-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .parameter-input {
+            padding: 6px 8px;
+            border: 1px solid #e8e8e8;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: border-color 0.3s;
+        }
+
+        .parameter-input:focus {
+            outline: none;
+            border-color: #7C3AED;
+        }
+
+        .viz-content {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .visualization-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .viz-placeholder {
+            text-align: center;
+            color: #8c8c8c;
+        }
+
+        .viz-placeholder svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        /* 模板选择器 */
+        .template-selector {
+            position: absolute;
+            top: 60px;
+            right: 16px;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .template-selector.show {
+            display: block;
+        }
+
+        .template-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 12px;
+        }
+
+        .template-option:hover {
+            background: #f0f0f0;
+        }
+
+        .template-option.selected {
+            background: rgba(124, 58, 237, 0.1);
+            color: #7C3AED;
+            font-weight: 500;
+        }
+
+        /* 动画 */
+        .visualization-wrapper {
+            transition: transform 0.3s ease;
+        }
+
+        .loading-overlay {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: #666;
+            font-size: 13px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #7C3AED;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .enhanced-viz-panel {
+                width: 500px;
+                min-width: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+
+            .chat-panel {
+                border-right: none;
+                border-bottom: 1px solid #e8e8e8;
+                min-width: unset;
+                height: 40vh;
+            }
+
+            .enhanced-viz-panel {
+                width: 100%;
+                height: 60vh;
+                min-width: unset;
+            }
+
+            .parameter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 16px;
+            }
+
+            .header-stats {
+                display: none;
+            }
+
+            .viz-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .toolbar-section {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="header">
+            <h1>
+                <span>💡</span>
+                茅塞顿开 - 增强交互学习
+            </h1>
+            <div class="header-stats">
+                <span>💬 对话: <span id="messageCount">1</span></span>
+                <span>📐 学科: <span id="currentSubject">数学</span></span>
+                <span>📊 模板: <span id="currentTemplate">函数图像</span></span>
+                <span>⏱️ <span id="sessionTime">00:00</span></span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-panel">
+                <div class="chat-header">
+                    💬 智能对话
+                    <div class="subject-selector">数学</div>
+                </div>
+
+                <div class="messages-container" id="messagesContainer">
+                    <div class="message ai">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            你好！我是你的数学学习助手。现在你可以体验增强版的可视化功能：<br><br>
+                            🎯 <strong>学科模板选择</strong>：根据学科选择专用模板<br>
+                            🔧 <strong>参数实时调节</strong>：动态调整可视化参数<br>
+                            🔍 <strong>缩放控制</strong>：自由缩放查看细节<br>
+                            💾 <strong>配置保存</strong>：导出和重用可视化配置<br><br>
+                            请告诉我你想学习什么内容？
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <div class="input-container">
+                        <textarea
+                            class="input-field"
+                            placeholder="请输入你的数学问题..."
+                            id="messageInput"
+                            rows="1"
+                        ></textarea>
+                        <button class="send-button" onclick="sendMessage()">发送</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 增强版可视化面板 -->
+            <div class="enhanced-viz-panel">
+                <!-- 工具栏 -->
+                <div class="viz-toolbar">
+                    <div class="toolbar-section">
+                        <button class="toolbar-button" onclick="toggleTemplateSelector()">
+                            🎯 模板
+                        </button>
+                        <div class="template-info">
+                            <span class="template-name" id="templateName">函数图像</span>
+                        </div>
+                    </div>
+
+                    <div class="toolbar-section">
+                        <div class="zoom-controls">
+                            <button class="toolbar-button" onclick="zoomOut()" id="zoomOutBtn">➖</button>
+                            <span class="zoom-level" id="zoomLevel">100%</span>
+                            <button class="toolbar-button" onclick="zoomIn()" id="zoomInBtn">➕</button>
+                            <button class="toolbar-button" onclick="resetZoom()">100%</button>
+                        </div>
+                    </div>
+
+                    <div class="toolbar-section">
+                        <button class="toolbar-button" onclick="toggleParameters()">
+                            🔧 参数
+                        </button>
+                        <button class="toolbar-button" onclick="resetAll()">
+                            🔄 重置
+                        </button>
+                        <button class="toolbar-button" onclick="reloadVisualization()">
+                            🔄 刷新
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 参数控制面板 -->
+                <div class="parameter-controls" id="parameterControls">
+                    <div class="parameter-header">
+                        <h4>📊 参数控制</h4>
+                        <button class="toolbar-button" onclick="toggleParameters()">收起</button>
+                    </div>
+                    <div class="parameter-grid" id="parameterGrid">
+                        <!-- 动态生成参数控件 -->
+                    </div>
+                </div>
+
+                <!-- 可视化内容区域 -->
+                <div class="viz-content">
+                    <div class="loading-overlay" id="loadingOverlay">
+                        <div class="loading-spinner"></div>
+                        <p>正在生成可视化...</p>
+                    </div>
+                    <div class="visualization-wrapper" id="visualizationWrapper">
+                        <div class="viz-placeholder">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                            </svg>
+                            <p>等待可视化内容</p>
+                            <p style="font-size: 11px; margin-top: 8px;">选择模板并调整参数</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模板选择器 -->
+                <div class="template-selector" id="templateSelector">
+                    <div class="template-option selected" data-template="function">
+                        📈 函数图像
+                    </div>
+                    <div class="template-option" data-template="geometry">
+                        📐 几何图形
+                    </div>
+                    <div class="template-option" data-template="sequence">
+                        🔢 数列动画
+                    </div>
+                    <div class="template-option" data-template="physics">
+                        ⚛️ 物理运动
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局状态
+        let messageCount = 1;
+        let sessionStartTime = Date.now();
+        let isLoading = false;
+        let currentTemplate = 'function';
+        let currentConfig = {
+            zoom: 100,
+            showGrid: true,
+            showAxes: true,
+            animation: true
+        };
+
+        // 学科模板配置
+        const templates = {
+            function: {
+                name: '函数图像',
+                description: '数学函数的可视化展示',
+                parameters: [
+                    { id: 'xMin', label: 'X最小值', type: 'number', min: -50, max: -1, default: -10 },
+                    { id: 'xMax', label: 'X最大值', type: 'number', min: 1, max: 50, default: 10 },
+                    { id: 'yMin', label: 'Y最小值', type: 'number', min: -50, max: -1, default: -10 },
+                    { id: 'yMax', label: 'Y最大值', type: 'number', min: 1, max: 50, default: 10 },
+                    { id: 'lineWidth', label: '线条宽度', type: 'number', min: 1, max: 5, default: 2 }
+                ],
+                render: function(config) {
+                    const { xMin, xMax, yMin, yMax, lineWidth } = config;
+                    return `
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                            <!-- 坐标轴 -->
+                            ${currentConfig.showGrid ? `
+                                <!-- 网格线 -->
+                                ${Array.from({length: 11}, (_, i) => {
+                                    const y = 20 + (i * 260 / 10);
+                                    const x = 40 + (i * 320 / 10);
+                                    return `<line x1="40" y1="${y}" x2="360" y2="${y}" stroke="#f0f0f0" stroke-width="1"/>
+                                           <line x1="${x}" y1="20" x2="${x}" y2="280" stroke="#f0f0f0" stroke-width="1"/>`;
+                                }).join('')}
+                            ` : ''}
+                            <line x1="40" y1="${yMin < 0 ? 260 : 280}" x2="360" y2="${yMin < 0 ? 260 : 280}" stroke="#666" stroke-width="2"/>
+                            <line x1="${xMin < 0 ? 200 : 40}" y1="20" x2="${xMin < 0 ? 200 : 40}" y2="280" stroke="#666" stroke-width="2"/>
+
+                            <!-- 二次函数 y = x² -->
+                            <path d="M 40 260 Q 200 40, 360 260" stroke="#7C3AED" stroke-width="${lineWidth}" fill="none"/>
+
+                            <!-- 一次函数 y = 2x + 1 -->
+                            <line x1="40" y1="200" x2="360" y2="80" stroke="#DC2626" stroke-width="${lineWidth}"/>
+
+                            <!-- 标签 -->
+                            <text x="370" y="265" font-size="12" fill="#666">x</text>
+                            <text x="185" y="35" font-size="12" fill="#666">y</text>
+                            <text x="300" y="30" font-size="12" fill="#7C3AED">y = x²</text>
+                            <text x="280" y="70" font-size="12" fill="#DC2626">y = 2x + 1</text>
+                        </svg>
+                    `;
+                }
+            },
+            geometry: {
+                name: '几何图形',
+                description: '交互式几何图形绘制',
+                parameters: [
+                    { id: 'gridSize', label: '网格大小', type: 'number', min: 10, max: 50, default: 20 },
+                    { id: 'lineWidth', label: '线条宽度', type: 'number', min: 1, max: 5, default: 2 },
+                    { id: 'showAngles', label: '显示角度', type: 'checkbox', default: true },
+                    { id: 'fillShapes', label: '填充图形', type: 'checkbox', default: true }
+                ],
+                render: function(config) {
+                    const { gridSize, lineWidth, showAngles, fillShapes } = config;
+                    return `
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                            <!-- 网格 -->
+                            ${Array.from({length: 20}, (_, i) => {
+                                const pos = 20 + (i * gridSize / 2);
+                                return `<line x1="${pos}" y1="20" x2="${pos}" y2="280" stroke="#f0f0f0" stroke-width="1"/>
+                                       <line x1="20" y1="${pos}" x2="380" y2="${pos}" stroke="#f0f0f0" stroke-width="1"/>`;
+                            }).join('')}
+
+                            <!-- 坐标轴 -->
+                            <line x1="200" y1="20" x2="200" y2="280" stroke="#666" stroke-width="2"/>
+                            <line x1="20" y1="150" x2="380" y2="150" stroke="#666" stroke-width="2"/>
+
+                            <!-- 三角形 -->
+                            <polygon points="100,200 300,200 200,80"
+                                     fill="${fillShapes ? 'rgba(124, 58, 237, 0.2)' : 'none'}"
+                                     stroke="#7C3AED" stroke-width="${lineWidth}"/>
+
+                            <!-- 圆形 -->
+                            <circle cx="200" cy="150" r="60"
+                                    fill="${fillShapes ? 'rgba(16, 185, 129, 0.1)' : 'none'}"
+                                    stroke="#10B981" stroke-width="${lineWidth}"/>
+
+                            ${showAngles ? `
+                                <!-- 角度标记 -->
+                                <path d="M 120 190 A 20 20 0 0 1 130 180" fill="none" stroke="#DC2626" stroke-width="2"/>
+                                <text x="125" y="195" font-size="10" fill="#DC2626">45°</text>
+                            ` : ''}
+
+                            <!-- 标签 -->
+                            <text x="370" y="155" font-size="12" fill="#666">x</text>
+                            <text x="185" y="35" font-size="12" fill="#666">y</text>
+                        </svg>
+                    `;
+                }
+            },
+            sequence: {
+                name: '数列动画',
+                description: '等差等比数列的动态演示',
+                parameters: [
+                    { id: 'firstTerm', label: '首项 a₁', type: 'number', min: -20, max: 20, default: 2 },
+                    { id: 'difference', label: '公差 d', type: 'number', min: -10, max: 10, default: 3 },
+                    { id: 'numTerms', label: '项数 n', type: 'number', min: 3, max: 15, default: 8 },
+                    { id: 'animationSpeed', label: '动画速度', type: 'number', min: 500, max: 3000, default: 1000 }
+                ],
+                render: function(config) {
+                    const { firstTerm, difference, numTerms } = config;
+                    let terms = [];
+                    for (let i = 0; i < numTerms; i++) {
+                        terms.push(firstTerm + i * difference);
+                    }
+                    const maxValue = Math.max(...terms);
+                    const scale = 120 / Math.max(Math.abs(maxValue), Math.abs(Math.min(...terms)));
+
+                    return `
+                        <div style="width: 100%; max-width: 350px; text-align: center;">
+                            <div style="display: flex; align-items: end; height: 150px; gap: 8px; justify-content: center;">
+                                ${terms.map((term, index) => `
+                                    <div style="flex: 0 0 auto; background: #7C3AED; height: ${Math.abs(term) * scale}px;
+                                                min-height: 20px; display: flex; align-items: center; justify-content: center;
+                                                color: white; font-size: 11px; border-radius: 4px; margin: 0 2px;
+                                                ${term < 0 ? 'transform: translateY(' + (Math.abs(term) * scale) + 'px)' : ''}">
+                                        ${term}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <p style="margin-top: 16px; color: #333; font-weight: 500;">等差数列: ${terms.join(', ')}</p>
+                            <p style="font-size: 12px; color: #666;">首项 a₁ = ${firstTerm}, 公差 d = ${difference}</p>
+                        </div>
+                    `;
+                }
+            },
+            physics: {
+                name: '物理运动',
+                description: '运动学和动力学的可视化',
+                parameters: [
+                    { id: 'gravity', label: '重力加速度', type: 'number', min: 1, max: 20, default: 9.8 },
+                    { id: 'initialVelocity', label: '初速度', type: 'number', min: 0, max: 50, default: 10 },
+                    { id: 'time', label: '时间', type: 'number', min: 0, max: 10, default: 2 }
+                ],
+                render: function(config) {
+                    const { gravity, initialVelocity, time } = config;
+                    const displacement = initialVelocity * time - 0.5 * gravity * time * time;
+                    const maxHeight = (initialVelocity * initialVelocity) / (2 * gravity);
+
+                    return `
+                        <svg viewBox="0 0 400 300" style="width: 100%; max-width: 350px;">
+                            <!-- 地面 -->
+                            <line x1="20" y1="250" x2="380" y2="250" stroke="#666" stroke-width="2"/>
+
+                            <!-- 轨迹线 -->
+                            <path d="M 50 250 Q 200 ${250 - maxHeight * 5}, 350 250"
+                                  stroke="#DC2626" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
+
+                            <!-- 物体 -->
+                            <circle cx="${50 + time * 150}" cy="${250 - displacement * 5}" r="8" fill="#7C3AED"/>
+
+                            <!-- 速度向量 -->
+                            <line x1="${50 + time * 150}" y1="${250 - displacement * 5}"
+                                  x2="${50 + time * 150 + 20}" y1="${250 - displacement * 5 - (initialVelocity - gravity * time) * 3}"
+                                  stroke="#10B981" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                            <!-- 箭头标记 -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7"
+                                        refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#10B981"/>
+                                </marker>
+                            </defs>
+
+                            <!-- 标签 -->
+                            <text x="25" y="270" font-size="12" fill="#666">t = ${time}s</text>
+                            <text x="25" y="30" font-size="12" fill="#666">h = ${Math.abs(displacement).toFixed(1)}m</text>
+                            <text x="25" y="50" font-size="12" fill="#666">v = ${(initialVelocity - gravity * time).toFixed(1)}m/s</text>
+                        </svg>
+                    `;
+                }
+            }
+        };
+
+        // AI响应数据
+        const aiResponses = {
+            '函数': {
+                message: '我为你准备了增强版的函数图像可视化！你可以：\n\n🎯 **选择不同模板**：函数、几何、数列、物理\n🔧 **实时调整参数**：坐标范围、线条宽度等\n🔍 **自由缩放查看**：放大查看细节或缩小看全貌\n💾 **保存配置**：导出当前可视化设置\n\n试试调整右边的参数看看效果！',
+                template: 'function',
+                config: { xMin: -10, xMax: 10, yMin: -10, yMax: 10, lineWidth: 2 }
+            },
+            '几何': {
+                message: '几何图形可视化已准备就绪！增强功能包括：\n\n📐 **交互式几何画板**：绘制点、线、圆、三角形\n🔧 **参数控制**：网格大小、线条宽度、显示设置\n📏 **测量工具**：角度、长度、面积计算\n🎨 **视觉自定义**：颜色、填充、透明度调节\n\n你可以在右侧面板调整各种参数！',
+                template: 'geometry',
+                config: { gridSize: 20, lineWidth: 2, showAngles: true, fillShapes: true }
+            },
+            '数列': {
+                message: '数列动画演示已加载！增强特性：\n\n📊 **动态数列展示**：等差、等比数列的条形图\n🔧 **参数调节**：首项、公差/公比、项数控制\n⏱️ **动画速度**：调整演示节奏\n📈 **统计信息**：和值、平均值、趋势分析\n\n试试改变首项和公差看看变化！',
+                template: 'sequence',
+                config: { firstTerm: 2, difference: 3, numTerms: 8, animationSpeed: 1000 }
+            }
+        };
+
+        // 主要功能函数
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message || isLoading) return;
+
+            addMessage('user', message);
+            input.value = '';
+            showLoading();
+
+            setTimeout(() => {
+                hideLoading();
+                const response = getAIResponse(message);
+                addMessage('ai', response.message);
+
+                if (response.template) {
+                    switchTemplate(response.template);
+                    updateConfig(response.config || {});
+                }
+            }, 1000 + Math.random() * 2000);
+        }
+
+        function getAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+
+            if (lowerMessage.includes('函数') || lowerMessage.includes('图像')) {
+                return aiResponses['函数'];
+            } else if (lowerMessage.includes('几何') || lowerMessage.includes('三角形') || lowerMessage.includes('圆')) {
+                return aiResponses['几何'];
+            } else if (lowerMessage.includes('数列') || lowerMessage.includes('等差') || lowerMessage.includes('等比')) {
+                return aiResponses['数列'];
+            } else {
+                return {
+                    message: `我为你准备了多个可视化模板！\n\n🎯 **函数图像**：数学函数的可视化展示\n📐 **几何图形**：交互式几何绘制工具\n🔢 **数列动画**：等差等比数列动态演示\n⚛️ **物理运动**：运动学和动力学可视化\n\n点击右上角的"模板"按钮选择，或直接告诉我你想看什么类型！`,
+                    template: 'function',
+                    config: { xMin: -10, xMax: 10, yMin: -10, yMax: 10, lineWidth: 2 }
+                };
+            }
+        }
+
+        function addMessage(type, content) {
+            const container = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+
+            const avatar = type === 'user' ? '👤' : '🤖';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">${content}</div>
+            `;
+
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+
+            messageCount++;
+            document.getElementById('messageCount').textContent = messageCount;
+        }
+
+        function showLoading() {
+            isLoading = true;
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        function hideLoading() {
+            isLoading = false;
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        // 模板选择
+        function toggleTemplateSelector() {
+            const selector = document.getElementById('templateSelector');
+            selector.classList.toggle('show');
+        }
+
+        function switchTemplate(templateId) {
+            currentTemplate = templateId;
+            const template = templates[templateId];
+
+            // 更新UI
+            document.getElementById('currentTemplate').textContent = template.name;
+            document.getElementById('templateName').textContent = template.name;
+
+            // 更新选中状态
+            document.querySelectorAll('.template-option').forEach(option => {
+                option.classList.remove('selected');
+                if (option.dataset.template === templateId) {
+                    option.classList.add('selected');
+                }
+            });
+
+            // 生成参数控件
+            generateParameterControls(template);
+
+            // 更新可视化
+            updateVisualization();
+
+            // 关闭选择器
+            document.getElementById('templateSelector').classList.remove('show');
+
+            addMessage('ai', `已切换到 **${template.name}** 模板！\n\n${template.description}\n\n你可以使用右侧的参数控制面板来调整可视化效果。`);
+        }
+
+        function generateParameterControls(template) {
+            const grid = document.getElementById('parameterGrid');
+            grid.innerHTML = '';
+
+            template.parameters.forEach(param => {
+                const item = document.createElement('div');
+                item.className = 'parameter-item';
+
+                let input;
+                if (param.type === 'number') {
+                    input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'parameter-input';
+                    input.value = currentConfig[param.id] || param.default;
+                    input.min = param.min;
+                    input.max = param.max;
+                    input.addEventListener('input', (e) => updateParameter(param.id, parseFloat(e.target.value)));
+                } else if (param.type === 'checkbox') {
+                    input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.className = 'parameter-input';
+                    input.checked = currentConfig[param.id] !== undefined ? currentConfig[param.id] : param.default;
+                    input.addEventListener('change', (e) => updateParameter(param.id, e.target.checked));
+                }
+
+                item.innerHTML = `
+                    <label class="parameter-label">${param.label}</label>
+                `;
+                item.appendChild(input);
+
+                grid.appendChild(item);
+            });
+        }
+
+        function updateParameter(paramId, value) {
+            currentConfig[paramId] = value;
+            updateVisualization();
+        }
+
+        function updateVisualization() {
+            const wrapper = document.getElementById('visualizationWrapper');
+            const template = templates[currentTemplate];
+
+            if (template) {
+                wrapper.innerHTML = template.render(currentConfig);
+
+                // 应用缩放
+                const zoom = currentConfig.zoom || 100;
+                wrapper.style.transform = `scale(${zoom / 100})`;
+            }
+        }
+
+        // 参数控制
+        function toggleParameters() {
+            const controls = document.getElementById('parameterControls');
+            controls.classList.toggle('collapsed');
+        }
+
+        function resetAll() {
+            const template = templates[currentTemplate];
+            if (template) {
+                // 重置到默认配置
+                template.parameters.forEach(param => {
+                    currentConfig[param.id] = param.default;
+                });
+                currentConfig.zoom = 100;
+
+                // 更新UI
+                document.getElementById('zoomLevel').textContent = '100%';
+                generateParameterControls(template);
+                updateVisualization();
+            }
+        }
+
+        // 缩放控制
+        function zoomIn() {
+            currentConfig.zoom = Math.min(200, currentConfig.zoom + 10);
+            document.getElementById('zoomLevel').textContent = currentConfig.zoom + '%';
+            updateVisualization();
+        }
+
+        function zoomOut() {
+            currentConfig.zoom = Math.max(50, currentConfig.zoom - 10);
+            document.getElementById('zoomLevel').textContent = currentConfig.zoom + '%';
+            updateVisualization();
+        }
+
+        function resetZoom() {
+            currentConfig.zoom = 100;
+            document.getElementById('zoomLevel').textContent = '100%';
+            updateVisualization();
+        }
+
+        // 其他功能
+        function reloadVisualization() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                updateVisualization();
+            }, 500);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化第一个模板
+            switchTemplate('function');
+
+            // 绑定模板选择事件
+            document.querySelectorAll('.template-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    switchTemplate(option.dataset.template);
+                });
+            });
+
+            // 更新会话时间
+            setInterval(() => {
+                const elapsed = Date.now() - sessionStartTime;
+                const minutes = Math.floor(elapsed / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                document.getElementById('sessionTime').textContent =
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+
+            // 键盘快捷键
+            document.getElementById('messageInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // 自动调整输入框高度
+            document.getElementById('messageInput').addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+            });
+
+            // 初始聚焦
+            document.getElementById('messageInput').focus();
+        });
+
+        // 快捷问题按钮（在HTML中添加）
+        function quickQuestion(question) {
+            document.getElementById('messageInput').value = question;
+            sendMessage();
+        }
+    </script>
+</body>
+</html>
