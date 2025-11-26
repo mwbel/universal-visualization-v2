@@ -180,3 +180,15 @@ viz_*.html
 
 # Cleanup files
 cleanup_paths.txt
+
+# Large HTML files (generated visualizations)
+**/fast.html
+**/triangle.html
+*.html
+
+# 大型虚拟环境和编译产物
+**/.venv/
+**/build/
+**/dist/
+**/__pycache__/
+**/*.pyc
