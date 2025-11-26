@@ -1331,3 +1331,179 @@ body {
     max-height: 5rem;
   }
 }
+
+/* ==============================
+   提示词样例样式
+   ============================== */
+.prompt-examples-container {
+  margin-top: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.examples-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.examples-header:hover {
+  background: var(--bg-hover);
+}
+
+.examples-title {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: 0.95rem;
+}
+
+.toggle-examples {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.toggle-examples:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.examples-content {
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.example-category {
+  margin-bottom: 1.5rem;
+}
+
+.example-category:last-child {
+  margin-bottom: 0;
+}
+
+.example-category-title {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.example-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+.example-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.example-item:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.example-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.example-text {
+  flex: 1;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+.example-use-btn {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.example-use-btn:hover {
+  background: var(--color-primary-dark);
+  transform: scale(1.05);
+}
+
+.example-use-btn:active {
+  transform: scale(0.95);
+}
+
+/* 响应式设计 - 提示词样例 */
+@media (max-width: 768px) {
+  .example-items {
+    grid-template-columns: 1fr;
+  }
+
+  .example-item {
+    padding: 0.6rem;
+  }
+
+  .example-text {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .examples-header {
+    padding: 0.75rem;
+  }
+
+  .examples-content {
+    padding: 0.75rem;
+    max-height: 300px;
+  }
+
+  .example-category-title {
+    font-size: 0.9rem;
+  }
+
+  .example-item {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .example-icon {
+    font-size: 1rem;
+  }
+
+  .example-text {
+    font-size: 0.8rem;
+  }
+
+  .example-use-btn {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+  }
+}

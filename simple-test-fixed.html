@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物可视化 - 简化测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .input-area {
+            margin-bottom: 20px;
+        }
+        .prompt-input {
+            width: 100%;
+            height: 100px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+        .prompt-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        .examples {
+            margin: 20px 0;
+        }
+        .example-btn {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 15px;
+            background: #f3f4f6;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .example-btn:hover {
+            background: #e5e7eb;
+        }
+        .generate-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        .generate-btn:hover:not(:disabled) {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+        .generate-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result-area {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f9fafb;
+            min-height: 100px;
+        }
+        .loading {
+            text-align: center;
+            color: #3b82f6;
+        }
+        .success {
+            color: #10b981;
+            border: 1px solid #86efac;
+            background: #f0fdf4;
+        }
+        .error {
+            color: #ef4444;
+            border: 1px solid #fca5a5;
+            background: #fef2f2;
+        }
+        .open-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .open-btn:hover {
+            background: #059669;
+        }
+        h1 {
+            color: #1f2937;
+            text-align: center;
+        }
+        h2 {
+            color: #374151;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 万物可视化 - 简化测试</h1>
+        <p>输入可视化需求，系统将自动生成并在新窗口中展示</p>
+
+        <div class="input-area">
+            <h2>📝 输入可视化需求</h2>
+            <textarea
+                id="promptInput"
+                class="prompt-input"
+                placeholder="请输入您想要生成的可视化内容，例如：&#10;正态分布 均值0 标准差1&#10;太阳系行星运动 地球 火星&#10;函数图像 y = x^2 + 2x + 1">正态分布 均值0 标准差1</textarea>
+
+            <h3>🚀 快速选择示例</h3>
+            <div class="examples">
+                <button class="example-btn" onclick="setPrompt('正态分布 均值0 标准差1')">📊 正态分布</button>
+                <button class="example-btn" onclick="setPrompt('二项分布 n=20 p=0.3')">📈 二项分布</button>
+                <button class="example-btn" onclick="setPrompt('向量投影 三维空间')">🔢 向量投影</button>
+                <button class="example-btn" onclick="setPrompt('函数图像 y = x^2 + 2x + 1')">📐 函数图像</button>
+                <button class="example-btn" onclick="setPrompt('太阳系行星运动 地球 火星')">🪐 行星运动</button>
+                <button class="example-btn" onclick="setPrompt('简谐振动 振幅2 频率1Hz')">🌊 简谐振动</button>
+            </div>
+
+            <button id="generateBtn" class="generate-btn" onclick="generateVisualization()">
+                🚀 开始生成可视化
+            </button>
+        </div>
+
+        <div class="result-area" id="resultArea" style="display: none;">
+            <h2>📊 生成结果</h2>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:9999/api/v2';
+        let currentGenerationId = null;
+
+        // 页面加载时初始化
+        window.onload = function() {
+            initializeButton();
+            updateButtonState();
+        };
+
+        // 初始化按钮
+        function initializeButton() {
+            const input = document.getElementById('promptInput');
+            const btn = document.getElementById('generateBtn');
+
+            // 添加输入事件监听
+            input.addEventListener('input', updateButtonState);
+            input.addEventListener('keyup', updateButtonState);
+            input.addEventListener('paste', function() {
+                setTimeout(updateButtonState, 10);
+            });
+
+            // 立即检查状态
+            updateButtonState();
+
+            console.log('✅ 按钮初始化完成');
+        }
+
+        // 更新按钮状态
+        function updateButtonState() {
+            const input = document.getElementById('promptInput');
+            const btn = document.getElementById('generateBtn');
+
+            const hasContent = input.value.trim().length > 0;
+            btn.disabled = !hasContent;
+
+            if (hasContent) {
+                btn.innerHTML = '🚀 开始生成可视化';
+                btn.style.background = '#3b82f6';
+            } else {
+                btn.innerHTML = '⚠️ 请输入内容';
+                btn.style.background = '#9ca3af';
+            }
+
+            console.log('🔄 按钮状态:', {
+                hasContent: hasContent,
+                disabled: btn.disabled,
+                inputLength: input.value.trim().length
+            });
+        }
+
+        // 设置提示词
+        function setPrompt(prompt) {
+            const input = document.getElementById('promptInput');
+            input.value = prompt;
+            updateButtonState();
+
+            // 简单的视觉反馈
+            input.style.borderColor = '#10b981';
+            setTimeout(() => {
+                input.style.borderColor = '#ddd';
+            }, 1000);
+        }
+
+        // 生成可视化
+        async function generateVisualization() {
+            const btn = document.getElementById('generateBtn');
+            const input = document.getElementById('promptInput');
+            const resultArea = document.getElementById('resultArea');
+            const resultContent = document.getElementById('resultContent');
+
+            const prompt = input.value.trim();
+            if (!prompt) {
+                alert('请输入可视化需求！');
+                return;
+            }
+
+            // 禁用按钮
+            btn.disabled = true;
+            btn.innerHTML = '⏳ 正在生成...';
+
+            // 显示结果区域
+            resultArea.style.display = 'block';
+            resultContent.innerHTML = '<div class="loading">🔄 正在生成可视化，请稍候...</div>';
+            resultContent.className = 'result-area';
+
+            try {
+                const response = await fetch(`${API_BASE}/highschool/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        grade_level: 'high_school',
+                        interaction_mode: 'visualization',
+                        user_preferences: {
+                            interactive: true,
+                            export_enabled: true
+                        }
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentGenerationId = data.generation_id;
+
+                    resultContent.innerHTML = `
+                        <div class="success">
+                            <h3>✅ 生成成功！</h3>
+                            <p><strong>生成ID:</strong> ${data.generation_id}</p>
+                            <p><strong>学科:</strong> ${data.subject}</p>
+                            <p><strong>标题:</strong> ${data.visualization?.title || 'N/A'}</p>
+                            <p><strong>年级:</strong> ${data.visualization?.grade_level || 'N/A'}</p>
+                            <p><strong>置信度:</strong> ${data.metadata?.confidence || 'N/A'}</p>
+
+                            <h3>🚀 查看可视化</h3>
+                            <button class="open-btn" onclick="openVisualization()">
+                                🪟 在新窗口中打开
+                            </button>
+
+                            <h3>📋 信息详情</h3>
+                            <p><strong>消息:</strong> ${data.message}</p>
+                            <p><strong>概念:</strong> ${data.visualization?.concepts?.join(', ') || '无'}</p>
+                            <p><strong>处理时间:</strong> ${data.metadata?.processing_time || 'N/A'}</p>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(data.error || data.message || '生成失败');
+                }
+            } catch (error) {
+                console.error('生成失败:', error);
+                resultContent.innerHTML = `
+                    <div class="error">
+                        <h3>❌ 生成失败</h3>
+                        <p><strong>错误信息:</strong> ${error.message}</p>
+                        <p>请检查后端服务是否正常运行，或稍后重试。</p>
+                        <button class="open-btn" onclick="testBackend()">🔧 测试后端连接</button>
+                    </div>
+                `;
+            } finally {
+                // 恢复按钮状态
+                btn.disabled = false;
+                btn.innerHTML = '🚀 开始生成可视化';
+                updateButtonState();
+            }
+        }
+
+        // 打开可视化
+        function openVisualization() {
+            if (!currentGenerationId) {
+                alert('没有可用的可视化ID');
+                return;
+            }
+
+            try {
+                const url = `${API_BASE}/visualizations/viz_${currentGenerationId.replace('viz_', '')}`;
+                const newWindow = window.open(url, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+
+                if (newWindow) {
+                    newWindow.focus();
+                    console.log('✅ 新窗口已打开:', url);
+                } else {
+                    alert('无法打开新窗口，请允许浏览器的弹窗功能');
+                }
+            } catch (error) {
+                alert(`打开新窗口失败: ${error.message}`);
+            }
+        }
+
+        // 测试后端连接
+        async function testBackend() {
+            try {
+                const response = await fetch('http://localhost:9999/');
+                const data = await response.json();
+                alert(`✅ 后端连接正常！\n服务名称: ${data.name}\n版本: ${data.version}`);
+            } catch (error) {
+                alert(`❌ 后端连接失败！\n错误: ${error.message}\n请确保后端服务在 http://localhost:9999 运行`);
+            }
+        }
+
+        // 支持快捷键
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                const btn = document.getElementById('generateBtn');
+                if (!btn.disabled) {
+                    generateVisualization();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

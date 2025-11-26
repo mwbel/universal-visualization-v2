@@ -129,6 +129,11 @@ function cacheElements() {
   // 快速开始
   Elements.quickStartCards = document.querySelectorAll('.quick-start-card');
 
+  // 提示词样例
+  Elements.toggleExamples = document.getElementById('toggleExamples');
+  Elements.examplesContent = document.getElementById('examplesContent');
+  Elements.examplesContainer = document.querySelector('.prompt-examples-container');
+
   // 消息和加载
   Elements.messageContainer = document.getElementById('messageContainer');
   Elements.loadingOverlay = document.getElementById('loadingOverlay');
@@ -288,6 +293,22 @@ function bindEventListeners() {
     card.addEventListener('click', () => handleQuickStart(card));
   });
 
+  // 提示词样例展开/收起
+  if (Elements.toggleExamples) {
+    Elements.toggleExamples.addEventListener('click', toggleExamplesVisibility);
+  }
+
+  // 提示词样例头部点击
+  if (Elements.examplesContainer) {
+    const examplesHeader = Elements.examplesContainer.querySelector('.examples-header');
+    if (examplesHeader) {
+      examplesHeader.addEventListener('click', toggleExamplesVisibility);
+    }
+  }
+
+  // 提示词样例使用按钮
+  bindExampleUseButtons();
+
   // 演示按钮
   if (Elements.demoBtn) {
     Elements.demoBtn.addEventListener('click', handleDemoFeatures);
@@ -379,6 +400,8 @@ function handleInputChange() {
   // 获取智能建议
   if (Elements.mainInput.value.length > 3) {
     debouncedGetSuggestions();
+    // 显示动态建议
+    showDynamicSuggestions();
   } else {
     hideSuggestions();
   }
@@ -605,47 +628,55 @@ async function handleGenerate() {
 }
 
 /**
- * 调用生成API
+ * 调用生成API - 使用新的后端API
  */
 async function callGenerateAPI(prompt) {
   try {
-    console.log('🔄 开始调用API:', prompt);
+    console.log('🔄 开始调用新API:', prompt);
 
-    // 直接调用后端API
-    const response = await fetch('http://localhost:8000/resolve_or_generate', {
+    // 调用新的茅塞顿开后端API
+    const response = await fetch('http://localhost:9999/api/v2/highschool/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         prompt: prompt,
-        vizType: 'auto',
-        complexity: '中等',
-        params: {}
+        grade_level: 'high_school',
+        interaction_mode: 'visualization',
+        user_preferences: {
+          interactive: true,
+          export_enabled: true
+        }
       })
     });
 
-    console.log('📡 API响应状态:', response.status);
+    console.log('📡 新API响应状态:', response.status);
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const result = await response.json();
-    console.log('📊 API响应结果:', result);
+    console.log('📊 新API响应结果:', result);
 
     if (result.success) {
+      const vizInfo = result.visualization || {};
       return {
-        id: 'viz_' + Date.now(),
-        type: determineVisualizationType(prompt),
-        title: extractTitle(prompt),
+        id: result.generation_id,
+        type: vizInfo.type || 'default',
+        title: vizInfo.title || extractTitle(prompt),
         description: prompt,
-        htmlContent: result.htmlContent,
-        config: result.config || {},
+        htmlContent: vizInfo.html_content || '',
+        config: vizInfo.config || {},
+        subject: result.subject,
+        gradeLevel: vizInfo.grade_level,
+        concepts: vizInfo.concepts || [],
+        metadata: result.metadata || {},
         createdAt: new Date().toISOString()
       };
     } else {
-      throw new Error(result.message || '生成失败');
+      throw new Error(result.error || result.message || '生成失败');
     }
   } catch (error) {
     console.error('❌ API调用失败:', error);
@@ -769,24 +800,43 @@ function showResults(result) {
  */
 function showVisualizationInNewWindow(result) {
   try {
-    // 创建新窗口
-    const newWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+    let visualizationUrl = '';
 
-    if (newWindow) {
-      // 写入HTML内容
-      newWindow.document.write(result.htmlContent);
-      newWindow.document.close();
+    // 如果有HTML内容，直接使用
+    if (result.htmlContent) {
+      // 创建新窗口并写入HTML内容
+      const newWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
 
-      // 设置窗口标题
-      newWindow.document.title = result.title || '可视化结果';
+      if (newWindow) {
+        newWindow.document.write(result.htmlContent);
+        newWindow.document.close();
+        newWindow.document.title = result.title || '可视化结果';
+        newWindow.focus();
 
-      // 聚焦到新窗口
-      newWindow.focus();
+        console.log('✨ 可视化已在新窗口中打开 (直接HTML)');
+        return;
+      }
+    }
 
-      console.log('✨ 可视化已在新窗口中打开');
+    // 如果没有HTML内容但有ID，尝试通过URL访问
+    if (result.id) {
+      visualizationUrl = `http://localhost:9999/api/v2/visualizations/viz_${result.id.replace('viz_', '')}`;
+    }
+
+    // 如果有URL，直接打开
+    if (visualizationUrl) {
+      const newWindow = window.open(visualizationUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+
+      if (newWindow) {
+        newWindow.focus();
+        console.log('✨ 可视化已在新窗口中打开 (URL访问)');
+      } else {
+        console.warn('弹窗被阻止，尝试在当前页面显示');
+        showVisualizationInCurrentPage(result);
+      }
     } else {
-      // 如果弹窗被阻止，在当前页面显示
-      console.warn('弹窗被阻止，在当前页面显示可视化');
+      // 回退方案
+      console.warn('没有可用的可视化内容，在当前页面显示');
       showVisualizationInCurrentPage(result);
     }
   } catch (error) {
@@ -1148,6 +1198,143 @@ function debounce(func, wait) {
 }
 
 /**
+ * 绑定提示词样例使用按钮事件
+ */
+function bindExampleUseButtons() {
+  const useButtons = document.querySelectorAll('.example-use-btn');
+  useButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const exampleItem = button.closest('.example-item');
+      const prompt = exampleItem.dataset.prompt;
+      if (prompt && Elements.mainInput) {
+        Elements.mainInput.value = prompt;
+        Elements.mainInput.dispatchEvent(new Event('input'));
+        showMessage(`已填入提示词: ${prompt}`, 'success');
+        Elements.mainInput.focus();
+      }
+    });
+  });
+}
+
+/**
+ * 切换提示词样例可见性
+ */
+function toggleExamplesVisibility() {
+  if (!Elements.examplesContent || !Elements.toggleExamples) return;
+
+  const isVisible = Elements.examplesContent.style.display !== 'none';
+
+  if (isVisible) {
+    Elements.examplesContent.style.display = 'none';
+    Elements.toggleExamples.textContent = '展开';
+  } else {
+    Elements.examplesContent.style.display = 'block';
+    Elements.toggleExamples.textContent = '收起';
+  }
+}
+
+/**
+ * 使用提示词样例
+ */
+function useExamplePrompt(prompt) {
+  if (!Elements.mainInput) return;
+
+  Elements.mainInput.value = prompt;
+  Elements.mainInput.dispatchEvent(new Event('input'));
+  showMessage(`已填入提示词: ${prompt}`, 'success');
+
+  // 可选：自动开始生成
+  // if (Elements.generateBtn && !Elements.generateBtn.disabled) {
+  //   setTimeout(() => {
+  //     handleGenerate();
+  //   }, 500);
+  // }
+}
+
+/**
+ * 根据输入内容动态提示
+ */
+function showDynamicSuggestions() {
+  if (!Elements.suggestionsList || !Elements.suggestionsContainer) return;
+
+  const input = Elements.mainInput.value.toLowerCase().trim();
+  if (input.length < 2) {
+    hideSuggestions();
+    return;
+  }
+
+  // 简单的关键词匹配建议
+  const suggestions = [];
+
+  if (input.includes('分布') || input.includes('概率')) {
+    suggestions.push('正态分布 均值0 标准差1', '二项分布 n=20 p=0.3', '泊松分布 λ=3');
+  }
+
+  if (input.includes('向量') || input.includes('矩阵')) {
+    suggestions.push('向量投影 三维空间', '矩阵特征值分解 3x3矩阵', '线性变换 旋转矩阵');
+  }
+
+  if (input.includes('函数') || input.includes('图像')) {
+    suggestions.push('函数图像 y = x^2 + 2x + 1', '三角函数 sin(x) cos(x)', '指数函数 e^x');
+  }
+
+  if (input.includes('行星') || input.includes('轨道')) {
+    suggestions.push('太阳系行星运动 地球 火星', '月球轨道 地球系统', '哈雷彗星轨迹');
+  }
+
+  if (input.includes('波动') || input.includes('振动')) {
+    suggestions.push('简谐振动 振幅2 频率1Hz', '电磁波传播 2D动画', '机械波 共振现象');
+  }
+
+  if (suggestions.length > 0) {
+    displaySuggestions(suggestions);
+  } else {
+    hideSuggestions();
+  }
+}
+
+/**
+ * 显示建议列表
+ */
+function displaySuggestions(suggestions) {
+  if (!Elements.suggestionsList) return;
+
+  Elements.suggestionsList.innerHTML = suggestions
+    .map(suggestion => `
+      <div class="suggestion-item" data-suggestion="${suggestion}">
+        <span class="suggestion-icon">💡</span>
+        <span class="suggestion-text">${suggestion}</span>
+        <button class="suggestion-use-btn">使用</button>
+      </div>
+    `)
+    .join('');
+
+  // 绑定使用按钮事件
+  const useButtons = Elements.suggestionsList.querySelectorAll('.suggestion-use-btn');
+  useButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const suggestion = button.closest('.suggestion-item').dataset.suggestion;
+      useExamplePrompt(suggestion);
+      hideSuggestions();
+    });
+  });
+
+  // 显示建议容器
+  Elements.suggestionsContainer.style.display = 'block';
+}
+
+/**
+ * 隐藏建议列表
+ */
+function hideSuggestions() {
+  if (Elements.suggestionsContainer) {
+    Elements.suggestionsContainer.style.display = 'none';
+  }
+}
+
+/**
  * 节流函数
  */
 function throttle(func, limit) {
@@ -1176,5 +1363,8 @@ window.UniversalVisFusion = {
   handleSubcategoryClick,
   handleQuickStart,
   handleDemoFeatures,
-  handleHelp
+  handleHelp,
+  useExamplePrompt,
+  toggleExamplesVisibility,
+  hideSuggestions
 };
