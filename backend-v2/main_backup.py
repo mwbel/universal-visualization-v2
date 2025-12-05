@@ -522,12 +522,7 @@ async def get_visualization(viz_id: str):
         with open(viz_path, 'r', encoding='utf-8') as f:
             html_content = f.read()
 
-        return {
-            "visualization_id": viz_id,
-            "html_content": html_content,
-            "title": f"可视化 - {viz_id}",
-            "created_at": datetime.datetime.now().isoformat()
-        }
+        return HTMLResponse(content=html_content)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取可视化失败: {str(e)}")
@@ -657,26 +652,6 @@ async def health_check():
         "agents": len(state.router.agents),
         "active_generations": len(state.active_generations),
         "timestamp": datetime.datetime.now()
-    }
-
-@app.get("/api/v2/health")
-async def api_v2_health_check():
-    """API v2 健康检查 - 匹配前端调用"""
-    return {
-        "status": "healthy",
-        "version": "2.0.0",
-        "api_version": "v2",
-        "agents": len(state.router.agents),
-        "active_generations": len(state.active_generations),
-        "timestamp": datetime.datetime.now(),
-        "endpoints": {
-            "health": "/api/v2/health",
-            "generate": "/api/v2/generate",
-            "classify": "/api/v2/classify",
-            "templates": "/api/v2/templates",
-            "status": "/api/v2/status/{generation_id}",
-            "visualizations": "/api/v2/visualizations/{viz_id}"
-        }
     }
 
 @app.get("/api/v2/registry")

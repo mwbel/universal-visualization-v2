@@ -242,9 +242,34 @@ function bindEventListeners() {
     btn.addEventListener('click', () => switchInputMode(btn.dataset.mode));
   });
 
-  // 生成按钮
+  // 生成按钮 - 强制显示并启用
   if (Elements.generateBtn) {
+    console.log('✅ 找到生成按钮，强制设置样式');
+    Elements.generateBtn.style.cssText = `
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      position: relative !important;
+      z-index: 9999 !important;
+      padding: 12px 48px !important;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
+      border: none !important;
+      border-radius: 16px !important;
+      color: white !important;
+      font-weight: 600 !important;
+      font-size: 16px !important;
+      cursor: pointer !important;
+      align-items: center !important;
+      gap: 8px !important;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+      margin: 0 !important;
+      disabled: false !important;
+    `;
+    Elements.generateBtn.disabled = false;
     Elements.generateBtn.addEventListener('click', handleGenerate);
+    console.log('✅ 生成按钮样式已强制设置');
+  } else {
+    console.error('❌ 未找到生成按钮元素');
   }
 
   // 主输入框
@@ -391,10 +416,11 @@ function switchInputMode(mode) {
 function handleInputChange() {
   updateCharCount();
 
-  // 检查输入内容，自动调整生成按钮状态
-  const hasContent = Elements.mainInput.value.trim().length > 0;
+  // 强制保持按钮启用状态 - 不再根据输入内容禁用
   if (Elements.generateBtn) {
-    Elements.generateBtn.disabled = !hasContent;
+    Elements.generateBtn.disabled = false;
+    Elements.generateBtn.style.opacity = '1';
+    Elements.generateBtn.style.visibility = 'visible';
   }
 
   // 获取智能建议
@@ -634,14 +660,15 @@ async function callGenerateAPI(prompt) {
   try {
     console.log('🔄 开始调用新API:', prompt);
 
-    // 调用新的茅塞顿开后端API
-    const response = await fetch('http://localhost:9999/api/v2/highschool/generate', {
+    // 调用新的万物可视化后端API
+    const response = await fetch('http://localhost:9999/api/v2/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         prompt: prompt,
+        subject: 'general',
         grade_level: 'high_school',
         interaction_mode: 'visualization',
         user_preferences: {
@@ -660,21 +687,12 @@ async function callGenerateAPI(prompt) {
     const result = await response.json();
     console.log('📊 新API响应结果:', result);
 
-    if (result.success) {
-      const vizInfo = result.visualization || {};
-      return {
-        id: result.generation_id,
-        type: vizInfo.type || 'default',
-        title: vizInfo.title || extractTitle(prompt),
-        description: prompt,
-        htmlContent: vizInfo.html_content || '',
-        config: vizInfo.config || {},
-        subject: result.subject,
-        gradeLevel: vizInfo.grade_level,
-        concepts: vizInfo.concepts || [],
-        metadata: result.metadata || {},
-        createdAt: new Date().toISOString()
-      };
+    if (result.status === 'processing') {
+      // 如果正在处理，等待完成
+      return await waitForCompletion(result.generation_id, prompt);
+    } else if (result.status === 'completed') {
+      // 如果已完成，获取结果
+      return await getVisualizationResult(result.html_url || result.generation_id, prompt);
     } else {
       throw new Error(result.error || result.message || '生成失败');
     }
@@ -736,6 +754,77 @@ function extractTitle(prompt) {
   }
 
   return prompt.substring(0, 20) + '...';
+}
+
+/**
+ * 等待可视化生成完成
+ */
+async function waitForCompletion(generationId, prompt) {
+  console.log('⏳ 等待可视化生成完成:', generationId);
+
+  const maxAttempts = 20; // 最多等待20次
+  const delay = 1000; // 每次等待1秒
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      const response = await fetch(`http://localhost:9999/api/v2/status/${generationId}`);
+      const status = await response.json();
+
+      console.log(`📊 第${attempt + 1}次检查状态:`, status.status);
+
+      if (status.status === 'completed') {
+        return await getVisualizationResult(status.html_url || `/api/v2/visualizations/viz_${generationId.replace('viz_', '')}`, prompt);
+      } else if (status.status === 'error') {
+        throw new Error(status.error || '生成过程中出现错误');
+      }
+
+      // 等待一段时间后再次检查
+      await new Promise(resolve => setTimeout(resolve, delay));
+    } catch (error) {
+      console.error(`❌ 第${attempt + 1}次检查失败:`, error);
+      if (attempt === maxAttempts - 1) {
+        throw error;
+      }
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+
+  throw new Error('生成超时，请重试');
+}
+
+/**
+ * 获取可视化结果
+ */
+async function getVisualizationResult(url, prompt) {
+  console.log('🔍 获取可视化结果:', url);
+
+  try {
+    const response = await fetch(`http://localhost:9999${url}`);
+    const result = await response.json();
+
+    console.log('📈 可视化结果:', result);
+
+    return {
+      id: result.visualization_id || 'viz_' + Date.now(),
+      type: 'html',
+      title: result.title || extractTitle(prompt),
+      description: prompt,
+      htmlContent: result.html_content || '',
+      config: {
+        theme: AppState.theme,
+        animated: true,
+        interactive: true
+      },
+      subject: 'general',
+      gradeLevel: 'high_school',
+      concepts: [],
+      metadata: result.metadata || {},
+      createdAt: result.created_at || new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('❌ 获取可视化结果失败:', error);
+    throw error;
+  }
 }
 
 /**

@@ -87,6 +87,14 @@ class VisualizationApp {
             // 显示欢迎信息
             this.showWelcomeMessage();
 
+            // 初始化时检查输入框的初始值，更新按钮状态
+            if (Elements.visualizationInput) {
+                const initialValue = Elements.visualizationInput.value;
+                if (initialValue.trim().length > 0) {
+                    this.handleInputChange(initialValue);
+                }
+            }
+
             console.log('✅ 应用初始化完成');
 
         } catch (error) {
@@ -244,7 +252,13 @@ class VisualizationApp {
 
         // 更新生成按钮状态
         if (Elements.generateBtn) {
-            Elements.generateBtn.disabled = value.trim().length === 0 || AppState.isGenerating;
+            const hasContent = value.trim().length > 0;
+            Elements.generateBtn.disabled = !hasContent || AppState.isGenerating;
+            
+            // 确保按钮可见性
+            if (!Elements.generateBtn.style.display) {
+                Elements.generateBtn.style.display = 'inline-flex';
+            }
         }
 
         // 自动保存输入内容
@@ -458,15 +472,41 @@ class VisualizationApp {
 
     async loadVisualizationResult(visualizationUrl) {
         try {
-            const response = await fetch(`http://localhost:9999${visualizationUrl}`);
+            // 如果 URL 是相对路径，使用配置的 baseUrl
+            const baseUrl = AppState.config.apiBaseUrl.replace('/api/v2', '');
+            const fullUrl = visualizationUrl.startsWith('http') 
+                ? visualizationUrl 
+                : `${baseUrl}${visualizationUrl}`;
+            const response = await fetch(fullUrl);
             if (!response.ok) {
                 throw new Error('获取可视化结果失败');
             }
 
-            const htmlContent = await response.text();
+            // API返回的是JSON格式，包含visualization_id和html_content
+            const contentType = response.headers.get('content-type');
+            let htmlContent;
+            let visualizationId = null;
+            
+            if (contentType && contentType.includes('application/json')) {
+                // 解析JSON响应
+                const jsonData = await response.json();
+                htmlContent = jsonData.html_content || jsonData.htmlContent || jsonData.content;
+                visualizationId = jsonData.visualization_id || jsonData.id || null;
+                
+                if (!htmlContent) {
+                    console.warn('⚠️ JSON响应中没有找到html_content字段:', jsonData);
+                    // 如果JSON中没有html_content，尝试使用整个响应
+                    htmlContent = JSON.stringify(jsonData, null, 2);
+                }
+            } else {
+                // 如果不是JSON，直接获取文本
+                htmlContent = await response.text();
+            }
+            
             this.showVisualizationResult({
                 html_content: htmlContent,
-                html_url: visualizationUrl
+                html_url: visualizationUrl,
+                visualization_id: visualizationId
             });
 
         } catch (error) {
@@ -558,7 +598,13 @@ class VisualizationApp {
 
     updateGenerateButton() {
         if (Elements.generateBtn) {
-            Elements.generateBtn.disabled = AppState.isGenerating;
+            // 检查输入框是否有内容
+            const hasInput = Elements.visualizationInput?.value.trim().length > 0;
+            
+            // 按钮应该在以下情况禁用：
+            // 1. 正在生成中
+            // 2. 输入框为空
+            Elements.generateBtn.disabled = AppState.isGenerating || !hasInput;
 
             if (AppState.isGenerating) {
                 Elements.generateBtn.innerHTML = '<span class="btn-icon">⏳</span>生成中...';

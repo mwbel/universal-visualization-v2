@@ -3,183 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>简单可视化测试</title>
+    <title>简单高斯曲率测试</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
+            margin: 20px;
+            background: #f5f5f5;
         }
         .container {
-            border: 2px solid #ddd;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="range"] {
+            width: 150px;
+        }
+        select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
         }
         button {
+            padding: 8px 16px;
             background: #007bff;
             color: white;
             border: none;
-            padding: 10px 20px;
-            margin: 10px;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+            margin: 5px;
         }
         button:hover {
             background: #0056b3;
         }
-        #result {
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            padding: 20px;
-            min-height: 400px;
-            background: #f9f9f9;
+        .visualization {
+            height: 500px;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
         .status {
+            background: #e8f5e8;
+            border: 1px solid #c3e6cb;
             padding: 10px;
+            border-radius: 4px;
             margin: 10px 0;
-            border-radius: 5px;
         }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
-        .loading { background: #d1ecf1; color: #0c5460; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🧪 简单可视化测试页面</h1>
-        <p>用于测试基本的可视化生成功能</p>
+        <h1>简单高斯曲率可视化测试</h1>
 
-        <div class="status" id="status">
-            准备就绪
+        <div class="status" id="status">正在初始化...</div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="surface-type">曲面类型:</label>
+                <select id="surface-type">
+                    <option value="paraboloid">椭圆抛物面: z = x² + y²</option>
+                    <option value="hyperbolic">双曲抛物面: z = x² - y²</option>
+                    <option value="saddle">经典鞍面: z = xy</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="param-a">参数 a:</label>
+                <input type="range" id="param-a" min="0.1" max="3" value="1" step="0.1">
+                <span id="param-a-display">1.0</span>
+            </div>
+
+            <div class="control-group">
+                <label for="param-b">参数 b:</label>
+                <input type="range" id="param-b" min="0.1" max="3" value="1" step="0.1">
+                <span id="param-b-display">1.0</span>
+            </div>
+
+            <div class="control-group">
+                <label>操作:</label>
+                <button onclick="drawSurface()">绘制曲面</button>
+                <button onclick="testSimpleSurface()">测试简单曲面</button>
+            </div>
         </div>
 
-        <h3>测试按钮</h3>
-        <button onclick="testAPI()">测试API连接</button>
-        <button onclick="generateNormal()">生成正态分布</button>
-        <button onclick="generateUniform()">生成均匀分布</button>
-        <button onclick="generateExponential()">生成指数分布</button>
+        <div class="visualization" id="plot-div"></div>
 
-        <h3>自定义输入</h3>
-        <input type="text" id="customInput" style="width: 300px; padding: 5px;"
-               placeholder="输入描述，如: 正态分布 均值0 标准差1" />
-        <button onclick="generateCustom()">生成</button>
-
-        <h3>结果区域</h3>
-        <div id="result">
-            点击上方按钮开始测试...
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <h3>测试说明</h3>
+            <p>这个页面用于测试Plotly曲面绘制功能。如果椭圆抛物面（z = x² + y²）能够正常显示，说明基本功能正常。</p>
+            <p>检查浏览器控制台是否有错误信息。</p>
         </div>
     </div>
 
     <script>
-        function updateStatus(message, type = 'success') {
-            const statusEl = document.getElementById('status');
-            statusEl.textContent = message;
-            statusEl.className = `status ${type}`;
-        }
+        console.log('=== 页面开始加载 ===');
+        console.log('Plotly版本:', typeof Plotly !== 'undefined' ? Plotly.version : '未加载');
 
-        function updateResult(content) {
-            document.getElementById('result').innerHTML = content;
-        }
-
-        async function testAPI() {
-            updateStatus('🔄 测试API连接...', 'loading');
-            updateResult('正在测试API连接...');
-
-            try {
-                const response = await fetch('http://localhost:8000/health');
-                const data = await response.json();
-
-                if (data.status === 'healthy') {
-                    updateStatus('✅ API连接正常', 'success');
-                    updateResult('<h3>✅ API服务正常</h3><p>后端服务运行在: http://localhost:8000</p>');
-                } else {
-                    updateStatus('⚠️ API状态异常', 'error');
-                    updateResult(`<h3>⚠️ API状态异常</h3><pre>${JSON.stringify(data, null, 2)}</pre>`);
-                }
-            } catch (error) {
-                updateStatus('❌ API连接失败', 'error');
-                updateResult(`<h3>❌ 连接失败</h3><p>错误: ${error.message}</p>`);
-            }
-        }
-
-        async function generateNormal() {
-            generateVisualization('正态分布 均值0 标准差1');
-        }
-
-        async function generateUniform() {
-            generateVisualization('均匀分布 0到1');
-        }
-
-        async function generateExponential() {
-            generateVisualization('指数分布 λ=0.5');
-        }
-
-        async function generateCustom() {
-            const input = document.getElementById('customInput').value.trim();
-            if (!input) {
-                updateStatus('❌ 请输入描述', 'error');
+        // 等待Plotly加载
+        function waitForPlotly() {
+            if (typeof Plotly === 'undefined') {
+                console.log('等待Plotly加载...');
+                setTimeout(waitForPlotly, 100);
                 return;
             }
-            generateVisualization(input);
+            console.log('Plotly已加载，版本:', Plotly.version);
+            initializePage();
         }
 
-        async function generateVisualization(prompt) {
-            updateStatus(`🔄 生成: ${prompt}`, 'loading');
-            updateResult('<p>正在生成可视化...</p>');
+        // 生成简单曲面的数据
+        function generateSimpleParaboloid() {
+            console.log('生成简单椭圆抛物面...');
+
+            const resolution = 25;
+            const x = [];
+            const y = [];
+            const z = [];
+            const colors = [];
+
+            for (let i = 0; i <= resolution; i++) {
+                const u = (i - resolution/2) * 2 / resolution;
+                const xRow = [];
+                const yRow = [];
+                const zRow = [];
+                const colorRow = [];
+
+                for (let j = 0; j <= resolution; j++) {
+                    const v = (j - resolution/2) * 2 / resolution;
+
+                    xRow.push(u);
+                    yRow.push(v);
+                    const z_val = u*u + v*v;
+                    zRow.push(z_val);
+                    colorRow.push(z_val);
+                }
+
+                x.push(xRow);
+                y.push(yRow);
+                z.push(zRow);
+                colors.push(colorRow);
+            }
+
+            console.log('椭圆抛物面数据生成完成，网格大小:', x.length, 'x', x[0].length);
+            return {x, y, z, colors};
+        }
+
+        // 生成参数化曲面
+        function generateSurface(type, a, b) {
+            console.log('生成曲面:', type, a, b);
+
+            const resolution = 25;
+            const x = [];
+            const y = [];
+            const z = [];
+            const colors = [];
+
+            for (let i = 0; i <= resolution; i++) {
+                for (let j = 0; j <= resolution; j++) {
+                    const u = (i - resolution/2) * 2 / resolution;
+                    const v = (j - resolution/2) * 2 / resolution;
+
+                    x.push(u);
+                    y.push(v);
+
+                    let z_val;
+                    switch(type) {
+                        case 'paraboloid':
+                            z_val = a * (u*u + v*v);
+                            break;
+                        case 'hyperbolic':
+                            z_val = a * u*u - b * v*v;
+                            break;
+                        case 'saddle':
+                            z_val = a * u * v;
+                            break;
+                        default:
+                            z_val = 0;
+                    }
+
+                    z.push(z_val);
+                    colors.push(z_val); // 使用高度作为颜色
+                }
+            }
+
+            console.log('曲面生成完成，点数:', x.length);
+            return {x, y, z, colors};
+        }
+
+        // 绘制曲面
+        function plotSurface(surfaceData, title) {
+            console.log('开始绘制曲面:', title);
+
+            const data = [{
+                type: 'surface',
+                x: surfaceData.x,
+                y: surfaceData.y,
+                z: surfaceData.z,
+                colorscale: 'Viridis',
+                surfacecolor: surfaceData.colors,
+                colorbar: {
+                    title: 'Z值',
+                    titleside: 'right'
+                }
+            }];
+
+            const layout = {
+                title: title,
+                scene: {
+                    xaxis: {title: 'X', range: [-2, 2]},
+                    yaxis: {title: 'Y', range: [-2, 2]},
+                    zaxis: {title: 'Z', range: [-2, 4]},
+                    camera: {
+                        eye: {x: 1.5, y: 1.5, z: 1.5}
+                    }
+                },
+                height: 500,
+                margin: {l: 0, r: 0, t: 50, b: 0}
+            };
+
+            const config = {
+                responsive: true
+            };
+
+            Plotly.newPlot('plot-div', data, layout, config)
+                .then(() => {
+                    console.log('曲面绘制成功:', title);
+                    updateStatus('曲面绘制成功: ' + title);
+                })
+                .catch(error => {
+                    console.error('曲面绘制失败:', error);
+                    console.error('错误详情:', error.stack);
+                    updateStatus('绘制失败: ' + error.message);
+                });
+        }
+
+        // 测试简单曲面
+        function testSimpleSurface() {
+            console.log('=== 测试简单曲面 ===');
+            updateStatus('正在绘制简单椭圆抛物面...');
 
             try {
-                console.log('发送请求:', prompt);
-
-                const response = await fetch('http://localhost:8000/resolve_or_generate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        prompt: prompt,
-                        vizType: 'auto',
-                        complexity: '中等',
-                        params: {}
-                    })
-                });
-
-                console.log('响应状态:', response.status);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                const result = await response.json();
-                console.log('响应结果:', result);
-
-                if (result.success && result.htmlContent) {
-                    updateStatus(`✅ 生成成功: ${prompt}`, 'success');
-                    updateResult(result.htmlContent);
-
-                    // 强制重新执行脚本
-                    setTimeout(() => {
-                        const scripts = document.querySelectorAll('#result script');
-                        scripts.forEach(script => {
-                            const newScript = document.createElement('script');
-                            newScript.textContent = script.textContent;
-                            script.parentNode.replaceChild(newScript, script);
-                        });
-                    }, 100);
-                } else {
-                    updateStatus('❌ 生成失败', 'error');
-                    updateResult(`<h3>❌ 生成失败</h3><p>错误: ${result.message || '未知错误'}</p>`);
-                }
+                const surfaceData = generateSimpleParaboloid();
+                plotSurface(surfaceData, '简单椭圆抛物面: z = x² + y²');
             } catch (error) {
-                console.error('请求失败:', error);
-                updateStatus('❌ 请求失败', 'error');
-                updateResult(`<h3>❌ 请求失败</h3><p>错误: ${error.message}</p>`);
+                console.error('测试失败:', error);
+                updateStatus('测试失败: ' + error.message);
             }
         }
 
-        // 页面加载时自动测试API
-        window.addEventListener('load', function() {
-            testAPI();
+        // 绘制参数化曲面
+        function drawSurface() {
+            console.log('=== 绘制参数化曲面 ===');
+            updateStatus('正在绘制参数化曲面...');
+
+            try {
+                const type = document.getElementById('surface-type').value;
+                const a = parseFloat(document.getElementById('param-a').value);
+                const b = parseFloat(document.getElementById('param-b').value);
+
+                const surfaceData = generateSurface(type, a, b);
+                plotSurface(surfaceData, `${getSurfaceName(type)}: a=${a}, b=${b}`);
+            } catch (error) {
+                console.error('绘制失败:', error);
+                updateStatus('绘制失败: ' + error.message);
+            }
+        }
+
+        // 获取曲面名称
+        function getSurfaceName(type) {
+            const names = {
+                'paraboloid': '椭圆抛物面',
+                'hyperbolic': '双曲抛物面',
+                'saddle': '经典鞍面'
+            };
+            return names[type] || '未知曲面';
+        }
+
+        // 更新状态
+        function updateStatus(message) {
+            const statusDiv = document.getElementById('status');
+            if (statusDiv) {
+                statusDiv.textContent = message;
+            }
+        }
+
+        // 更新参数显示
+        function updateParamDisplays() {
+            const a = document.getElementById('param-a').value;
+            const b = document.getElementById('param-b').value;
+            document.getElementById('param-a-display').textContent = parseFloat(a).toFixed(1);
+            document.getElementById('param-b-display').textContent = parseFloat(b).toFixed(1);
+        }
+
+        // 初始化页面
+        function initializePage() {
+            console.log('=== 初始化页面 ===');
+            updateStatus('页面初始化完成，准备绘制曲面...');
+
+            // 绑定事件监听器
+            document.getElementById('param-a').addEventListener('input', updateParamDisplays);
+            document.getElementById('param-b').addEventListener('input', updateParamDisplays);
+            document.getElementById('surface-type').addEventListener('change', drawSurface);
+
+            // 初始化参数显示
+            updateParamDisplays();
+
+            // 自动绘制简单曲面测试
+            setTimeout(() => {
+                console.log('自动绘制简单曲面...');
+                testSimpleSurface();
+            }, 500);
+        }
+
+        // 页面加载完成后开始
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM加载完成');
+            waitForPlotly();
+        });
+
+        // 窗口大小改变时重新绘制
+        window.addEventListener('resize', function() {
+            if (typeof Plotly !== 'undefined') {
+                Plotly.Plots.resize('plot-div');
+            }
         });
     </script>
 </body>

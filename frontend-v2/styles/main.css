@@ -318,6 +318,13 @@ body {
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
+    opacity: 0.6;
+}
+
+/* 确保按钮始终可见，即使disabled */
+.btn-primary {
+    display: inline-flex !important;
+    visibility: visible !important;
 }
 
 .btn-secondary {

@@ -1,0 +1,173 @@
+ 基于我的深入分析，现在我可以为您制定一个具体的前后端打通
+  实施计划：
+                                                         
+⏺ User approved Claude's plan:
+  ⎿  茅塞顿开前后端打通实施计划
+
+     📊 当前状况分析
+
+     已有资源：
+     - ✅ 后端: backend-v2 FastAPI架构（端口9999）- 
+     已支持数学、物理、天文三学科
+     - ✅ 前端: subject-templates.html - 
+     完整的UI界面，但使用模拟数据
+     - ✅ API端点: /api/v2/generate, 
+     /api/v2/{subject}/generate, /api/v2/templates等
+
+     核心问题：
+     - 
+     前端使用硬编码的subjectTemplates对象，没有调用真实API
+     - 后端缺少化学、生物学科Agent
+     - 学科分类器需要扩展以支持高中全科
+
+     🎯 实施计划（采用集成式开发）
+
+     Phase 1: 后端扩展（优先级：高）
+
+     1.1 化学和生物Agent开发
+
+     - 创建 backend-v2/agents/chemistry_agent.py
+     - 创建 backend-v2/agents/biology_agent.py  
+     - 扩展 router_manager.py 支持化学、生物路由
+     - 创建对应的模板目录和JSON模板文件
+
+     1.2 茅塞顿开专用API端点
+
+     - 在main.py中添加 /api/v2/highschool/generate
+     - 实现专门的学科分类器，支持高中全科关键词
+     - 设计统一的响应格式，包含HTML可视化代码
+
+     Phase 2: 前端API集成（优先级：高）
+
+     2.1 创建API客户端
+
+     - 新建 api-client.js 模块
+     - 实现对backend-v2 API的调用封装
+     - 添加错误处理和加载状态管理
+
+     2.2 改造subject-templates.html
+
+     - 关键修改: 移除subjectTemplates硬编码数据
+     - 集成API: 
+     调用/api/v2/highschool/generate获取真实可视化
+     - 保持界面: 维持现有的聊天+可视化布局
+     - 增强功能: 添加实时生成进度显示
+
+     Phase 3: 系统优化（优先级：中）
+
+     3.1 性能和体验优化
+
+     - 实现可视化结果缓存
+     - 添加生成进度条和加载动画
+     - 优化移动端响应式体验
+
+     3.2 错误处理和容错
+
+     - API调用失败时的降级方案
+     - 网络超时重试机制
+     - 用户友好的错误提示
+
+     🛠️ 技术实现要点
+
+     关键API集成点
+
+     // 替换现有的getAIResponse函数
+     async function generateVisualization(prompt, subject)
+      {
+         const response = await apiClient.generate({
+             prompt: prompt,
+             subject: subject,
+             grade_level: "high_school"
+         });
+         return response.visualization.html_content;
+     }
+
+     后端响应格式
+
+     {
+         "success": true,
+         "visualization": {
+             "title": "水分子结构",
+             "html_content": 
+     "完整的HTML/CSS/JS可视化代码",
+             "interactive_elements": ["rotate", "zoom", 
+     "info_points"]
+         }
+     }
+
+     📅 具体时间安排
+
+     第1周: 化学和生物Agent开发 + API端点实现
+     第2周: 前端API集成 + subject-templates.html改造
+     第3周: 测试优化 + 错误处理完善
+
+     🎯 成功指标
+
+     - subject-templates.html能成功调用backend-v2 API
+     - 支持4个高中学科（数理化生）
+     - API平均响应时间 < 3秒
+     - 可视化生成成功率 > 95%
+
+     这个计划基于现有的架构，最小化开发成本，快速实现前后
+     端打通。
+
+     · 扩展路由管理器… (esc to interrupt · ctrl+t to hide todos)
+  ⎿  ☒ 开发化学学科Agent - 创建chemistry_agent.py
+     ☒ 开发生物学科Agent - 创建biology_agent.py
+     ☐ 扩展路由管理器 - 支持化学、生物学科
+     ☐ 创建化学学科模板 - 分子结构、化学反应等
+     ☐ 创建生物学科模板 - 细胞结构、DNA等
+     ☐ 添加茅塞顿开专用API端点 - /api/v2/highschool/generate
+     ☐ 扩展学科分类器 - 支持高中全科关键词
+     ☐ 创建前端API客户端 - api-client.js
+     ☐ 改造subject-templates.html - 集成真实API调用
+     ☐ 测试前后端集成 - 验证API调用和可视化生成
+
+
+
+
+
+
+🎯 用户交互流程
+
+  1.
+  用户在左侧聊天框输入问题（如"水分子结构"、"正弦函数"）
+  2. 系统自动识别学科（或手动选择）
+  3. 前端调用真实API，显示加载进度
+  4. 后端智能路由到对应学科Agent
+  5. 生成可视化内容并在右侧面板显示
+  6. 用户可点击"🔗 在新页面打开"查看完整可视化
+
+  💡 技术亮点
+
+  1. 智能学科识别 - 基于关键词的高精度分类
+  2. 模块化Agent架构 - 易于扩展新学科
+  3. 统一API接口 - RESTful设计，标准化响应
+  4. 渐进式加载 - 优秀的用户体验
+  5. 完整错误处理 - 友好的错误提示和降级
+
+  📊 支持的学科和功能
+
+  | 学科  | 支持的可视化类型        | 示例           |
+  |-----|-----------------|--------------|
+  | 数学  | 函数图像、几何图形、概率统计  |
+  正弦函数、抛物线、圆   |
+  | 物理  | 力学、电磁学、光学、量子物理  |
+  自由落体、电路、透镜   |
+  | 化学  | 分子结构、化学反应、元素周期表 |
+  H₂O、CO₂、中和反应 |
+  | 生物  | 细胞结构、DNA、光合作用   |
+  动物细胞、DNA双螺旋  |
+  | 天文  | 行星轨道、天体运动       | 地球公转、月相变化
+     |
+
+  🚀 下一步建议
+
+  1. 完善模板系统 - 添加更多具体的可视化模板
+  2. 优化性能 - 添加缓存机制，提升响应速度
+  3. 增加交互性 - 实现更多用户交互功能
+  4. 扩展学科 - 考虑增加更多高中学科支持
+
+  茅塞顿开现在已成功实现"前端输入关键词后，通过学科路由选
+  择对应的页面模板，以生成统一布局的可视化页面"的核心需求
+  ！🎊

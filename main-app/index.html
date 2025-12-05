@@ -13,6 +13,47 @@
 
     <!-- 样式文件 -->
     <link rel="stylesheet" href="styles/fusion-design.css">
+
+    <!-- 强制显示生成按钮的内联样式 -->
+    <style>
+        .generate-btn {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 1000 !important;
+            padding: 12px 48px !important;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
+            border: none !important;
+            border-radius: 16px !important;
+            color: white !important;
+            font-weight: 600 !important;
+            font-size: 16px !important;
+            cursor: pointer !important;
+            align-items: center !important;
+            gap: 8px !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+            margin-left: 20px !important;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4) !important;
+        }
+
+        .input-footer {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-top: 20px !important;
+            flex-wrap: nowrap !important;
+        }
+
+        #generateBtn {
+            /* 强制显示按钮 */
+            display: inline-flex !important;
+        }
+    </style>
 </head>
 <body>
     <!-- 视口容器 - 新水平布局系统 -->
@@ -162,7 +203,7 @@
                                         <span class="char-count">0 / 5000</span>
                                         <span class="input-tips">支持自然语言描述，Ctrl+Enter 快速提交</span>
                                     </div>
-                                    <button class="generate-btn" id="generateBtn" disabled>
+                                    <button class="generate-btn" id="generateBtn">
                                         <span class="btn-icon">✨</span>
                                         开始生成
                                     </button>
@@ -646,5 +687,8 @@
 
     <!-- 修复生成按钮脚本 -->
     <script src="fix-generate-button.js"></script>
+
+    <!-- 终极按钮修复脚本 -->
+    <script src="fix-button-final.js"></script>
 </body>
 </html>
