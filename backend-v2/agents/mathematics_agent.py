@@ -301,346 +301,15 @@ class MathematicsAgent(BaseVisualizationAgent):
             str: HTML内容
         """
         try:
-            # 生成简单的可视化HTML，绕过复杂的模板系统
-            requirement = config.get("requirement", {})
-            title = config.get("title", "数学可视化")
-            viz_type = requirement.get("visualization_type", "function_graph")
-            concepts = requirement.get("concepts", [])
-
-            return f"""
-            <!DOCTYPE html>
-            <html lang="zh-CN">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>{title}</title>
-                <style>
-                    body {{
-                        font-family: Arial, sans-serif;
-                        margin: 20px;
-                        background: #f5f5f5;
-                    }}
-                    .container {{
-                        max-width: 800px;
-                        margin: 0 auto;
-                        background: white;
-                        padding: 20px;
-                        border-radius: 8px;
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                    }}
-                    .header {{
-                        text-align: center;
-                        margin-bottom: 30px;
-                    }}
-                    .visualization {{
-                        background: #e8f4fd;
-                        padding: 20px;
-                        border-radius: 5px;
-                        margin: 20px 0;
-                        text-align: center;
-                    }}
-                    .concept {{
-                        background: #f0f8ff;
-                        padding: 10px;
-                        margin: 5px;
-                        border-radius: 3px;
-                        display: inline-block;
-                    }}
-                    canvas {{
-                        border: 1px solid #ddd;
-                        background: white;
-                        margin: 10px 0;
-                    }}
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h1>{title}</h1>
-                        <p>类型: {viz_type}</p>
-                        <p>概念: {', '.join(concepts) if concepts else '无'}</p>
-                    </div>
-
-                    <div class="visualization">
-                        <h3>📊 数学可视化</h3>
-                        <canvas id="mathCanvas" width="700" height="400"></canvas>
-                        <p>这是一个基础的数学可视化界面，展示了数学函数的关系</p>
-                    </div>
-
-                    <div class="info">
-                        <h3>ℹ️ 相关信息</h3>
-                        <p><strong>学科:</strong> 数学</p>
-                        <p><strong>年级:</strong> {config.get('grade_level', 'high_school')}</p>
-                        <p><strong>生成时间:</strong> <script>document.write(new Date().toLocaleString());</script></p>
-                    </div>
-                </div>
-
-                <script>
-                    // 简单的坐标系绘制
-                    const canvas = document.getElementById('mathCanvas');
-                    const ctx = canvas.getContext('2d');
-
-                    // 清空画布
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                    // 绘制坐标轴
-                    ctx.strokeStyle = '#333';
-                    ctx.lineWidth = 2;
-
-                    // X轴
-                    ctx.beginPath();
-                    ctx.moveTo(50, 200);
-                    ctx.lineTo(650, 200);
-                    ctx.stroke();
-
-                    // Y轴
-                    ctx.beginPath();
-                    ctx.moveTo(350, 50);
-                    ctx.lineTo(350, 350);
-                    ctx.stroke();
-
-                    // 绘制网格
-                    ctx.strokeStyle = '#e0e0e0';
-                    ctx.lineWidth = 1;
-                    for (let i = 100; i < 650; i += 50) {{
-                        ctx.beginPath();
-                        ctx.moveTo(i, 50);
-                        ctx.lineTo(i, 350);
-                        ctx.stroke();
-                    }}
-                    for (let i = 100; i < 350; i += 50) {{
-                        ctx.beginPath();
-                        ctx.moveTo(50, i);
-                        ctx.lineTo(650, i);
-                        ctx.stroke();
-                    }}
-
-                    // 绘制示例函数曲线
-                    ctx.strokeStyle = '#1f77b4';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-
-                    for (let x = 50; x < 650; x++) {{
-                        const normalizedX = (x - 350) / 100;
-                        const y = 200 - Math.sin(normalizedX) * 50 * Math.cos(normalizedX);
-                        if (x === 50) {{
-                            ctx.moveTo(x, y);
-                        }} else {{
-                            ctx.lineTo(x, y);
-                        }}
-                    }}
-                    ctx.stroke();
-
-                    // 添加标签
-                    ctx.fillStyle = '#333';
-                    ctx.font = '14px Arial';
-                    ctx.fillText('X轴', 660, 205);
-                    ctx.fillText('Y轴', 355, 40);
-                    ctx.fillText('sin(x) * cos(x)', 10, 30);
-                </script>
-            </body>
-            </html>
-            """
-
-        except Exception as e:
-            print(f"数学HTML生成失败: {str(e)}")
-            return self._get_error_html("数学可视化", str(e))
-
-    async def _generate_legacy_visualization(self, config: Dict[str, Any]) -> str:
-        """
-        回退到传统可视化生成方式
-
-        Args:
-            config: 可视化配置
-
-        Returns:
-            str: HTML内容
-        """
-        try:
-            # 优先使用模板引擎
+            # 使用统一模板引擎
             if hasattr(self, 'template_engine') and self.template_engine:
-                template_id = config.get("template_id", "default")
-
-                # 准备渲染配置
-                render_config = {
-                    "title": config.get("title", "数学可视化"),
-                    "parameters": config.get("parameters", {}),
-                    "data": await self._generate_math_data(config),
-                    "plotly_config": await self._generate_plotly_config(await self._generate_math_data(config), config),
-                    "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "subject": "mathematics",
-                    "field": config.get("field", "general"),
-                    "concept_type": config.get("concept_type")
-                }
-
-                # 使用模板引擎渲染
-                html_content = await self.template_engine.render_template(template_id, render_config)
-
-                if html_content and html_content.strip():
-                    return html_content
-
-            # 完全回退到内置模板
-            template_content = self._get_default_math_template()
-
-            # 生成数据
-            data = await self._generate_math_data(config)
-
-            # 生成Plotly配置
-            plotly_config = await self._generate_plotly_config(data, config)
-
-            # 使用安全的字符串替换
-            html_content = template_content.replace("{title}", str(config["title"]))
-            html_content = html_content.replace("{plotly_config}", json.dumps(plotly_config, ensure_ascii=False))
-            html_content = html_content.replace("{parameters}", json.dumps(config["parameters"], ensure_ascii=False))
-            html_content = html_content.replace("{data}", json.dumps(data, ensure_ascii=False))
-
-            return html_content
-
-        except Exception as e:
-            raise VisualizationError(f"传统可视化生成失败: {str(e)}")
-
-    def get_supported_topics(self) -> List[str]:
-        """获取支持的数学主题"""
-        topics = []
-
-        # 概率统计主题
-        dist_topics = [
-            "正态分布", "二项分布", "泊松分布", "均匀分布",
-            "指数分布", "卡方分布", "t分布"
-        ]
-        topics.extend([f"概率统计 - {topic}" for topic in dist_topics])
-
-        # 线性代数主题
-        la_topics = self.config["supported_concepts"]["linear_algebra"]
-        topics.extend([f"线性代数 - {topic}" for topic in la_topics])
-
-        # 其他数学领域
-        other_topics = [
-            "微积分 - 函数图像", "微积分 - 导数可视化",
-            "几何学 - 图形变换", "代数学 - 方程求解"
-        ]
-        topics.extend(other_topics)
-
-        return topics
-
-    async def _generate_math_data(self, config: Dict[str, Any]) -> Dict[str, Any]:
-        """生成数学数据"""
-        data = {"x": [], "y": [], "metadata": {}}
-
-        if config.get("distribution_type"):
-            # 生成概率分布数据
-            dist_type = config["distribution_type"]
-            params = config["parameters"]
-
-            if dist_type == "normal":
-                mu = params.get("mu", 0)
-                sigma = params.get("sigma", 1)
-                x = np.linspace(mu - 4*sigma, mu + 4*sigma, 1000)
-                y = (1/(sigma * np.sqrt(2*np.pi))) * np.exp(-0.5 * ((x - mu)/sigma)**2)
-
-            elif dist_type == "binomial":
-                n = params.get("n", 10)
-                p = params.get("p", 0.5)
-                x = list(range(n + 1))
-                from scipy.stats import binom
-                y = [binom.pmf(k, n, p) for k in x]
-
+                template_id = self.get_template_id(config)
+                return await self.template_engine.render_template(template_id, config)
             else:
-                # 其他分布的默认实现
-                x = np.linspace(-5, 5, 100)
-                y = np.exp(-x**2)  # 高斯形状
-
-            data["x"] = x.tolist() if hasattr(x, 'tolist') else x
-            data["y"] = y.tolist() if hasattr(y, 'tolist') else y
-            data["metadata"]["type"] = dist_type
-
-        return data
-
-    async def _generate_plotly_config(self, data: Dict[str, Any], config: Dict[str, Any]) -> Dict[str, Any]:
-        """生成Plotly配置"""
-        plotly_config = {
-            "data": [{
-                "x": data["x"],
-                "y": data["y"],
-                "type": "scatter",
-                "mode": "lines",
-                "name": config.get("title", "数学可视化"),
-                "line": {
-                    "color": "#1f77b4",
-                    "width": 2
-                }
-            }],
-            "layout": {
-                "title": config.get("title", "数学可视化"),
-                "xaxis": {"title": "X"},
-                "yaxis": {"title": "Y"},
-                "responsive": True,
-                "displayModeBar": True,
-                "modeBarButtonsToRemove": ["pan2d", "select2d", "lasso2d"]
-            }
-        }
-
-        # 根据概念类型调整配置
-        if config.get("distribution_type"):
-            plotly_config["layout"]["xaxis"]["title"] = "值"
-            plotly_config["layout"]["yaxis"]["title"] = "概率密度"
-
-        return plotly_config
-
-    def _get_default_math_template(self) -> str:
-        """获取默认数学模板"""
-        return """
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .controls { margin-bottom: 20px; }
-        .plot-container { height: 600px; border: 1px solid #ddd; border-radius: 8px; }
-        .info-panel { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>{title}</h1>
-
-        <div class="controls">
-            <label>参数调整:</label>
-            <div id="parameter-controls"></div>
-        </div>
-
-        <div id="plot" class="plot-container"></div>
-
-        <div class="info-panel">
-            <h3>可视化信息</h3>
-            <p><strong>学科:</strong> 数学</p>
-            <p><strong>参数:</strong> <span id="param-info">{parameters}</span></p>
-        </div>
-    </div>
-
-    <script>
-        const plotlyConfig = {plotly_config};
-        const data = {data};
-        const parameters = {parameters};
-
-        // 初始化图表
-        Plotly.newPlot('plot', plotlyConfig.data, plotlyConfig.layout, {
-            responsive: true,
-            displayModeBar: true
-        });
-
-        // 显示参数信息
-        document.getElementById('param-info').textContent = JSON.stringify(parameters, null, 2);
-    </script>
-</body>
-</html>
-        """
-
+                # 降级到简单HTML
+                return self._generate_fallback_html(config)
+        except Exception as e:
+            raise VisualizationError(f"可视化生成失败: {str(e)}")
     def _load_templates(self) -> Dict[str, Any]:
         """加载数学模板"""
         return {
@@ -649,20 +318,104 @@ class MathematicsAgent(BaseVisualizationAgent):
                 "name": "正态分布可视化",
                 "description": "交互式正态分布概率密度函数",
                 "parameters": ["mu", "sigma"],
-                "html_template": self._get_default_math_template()
+                "html_template": "default_math_template"
             },
             "binomial": {
                 "id": "binomial",
                 "name": "二项分布可视化",
                 "description": "二项分布概率质量函数",
                 "parameters": ["n", "p"],
-                "html_template": self._get_default_math_template()
+                "html_template": "default_math_template"
             },
             "la_向量投影": {
                 "id": "la_vector_projection",
                 "name": "向量投影可视化",
                 "description": "展示向量在其他向量上的投影",
                 "parameters": ["vector1", "vector2"],
-                "html_template": self._get_default_math_template()
+                "html_template": "default_math_template"
             }
         }
+
+    def get_supported_topics(self) -> List[str]:
+        """
+        获取支持的数学主题
+
+        Returns:
+            List[str]: 支持的主题列表
+        """
+        return [
+            "概率统计",
+            "微积分",
+            "线性代数",
+            "离散数学",
+            "数值分析",
+            "复变函数",
+            "实变函数",
+            "常微分方程",
+            "偏微分方程",
+            "最优化理论",
+            "图论",
+            "组合数学",
+            "数论",
+            "抽象代数",
+            "拓扑学",
+            "几何学"
+        ]
+
+    def get_template_id(self, config: Dict[str, Any]) -> str:
+        """
+        根据配置获取模板ID
+
+        Args:
+            config: 可视化配置
+
+        Returns:
+            str: 模板ID
+        """
+        viz_type = config.get("viz_type", "")
+        requirement = config.get("requirement", {})
+
+        if viz_type == "distribution" or "distribution" in str(viz_type):
+            return "normal_distribution"
+        elif "poisson" in str(viz_type) or "poisson" in str(requirement):
+            return "poisson_distribution"
+        elif "vector" in str(viz_type) or "向量" in str(requirement):
+            return "vector_projection"
+        else:
+            return "probability_statistics_default"
+
+    def _generate_fallback_html(self, config: Dict[str, Any]) -> str:
+        """
+        生成降级HTML内容
+
+        Args:
+            config: 可视化配置
+
+        Returns:
+            str: HTML内容
+        """
+        title = config.get("title", "数学可视化")
+        viz_type = config.get("viz_type", "unknown")
+
+        return f"""
+        <div class="visualization-container" style="padding: 20px; text-align: center;">
+            <h3>📊 {title}</h3>
+            <div class="visualization-content" style="background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+                        color: white; padding: 40px; border-radius: 10px; margin: 20px 0;">
+                <h4>类型: {viz_type}</h4>
+                <p>这是一个数学学科的可视化</p>
+                <div style="font-size: 48px; margin: 20px 0;">
+                    📐
+                </div>
+                <p>系统正在为你的请求生成详细的可视化内容...</p>
+            </div>
+            <div class="visualization-info" style="text-align: left; margin-top: 20px;">
+                <h4>相关信息：</h4>
+                <ul>
+                    <li>学科领域：数学</li>
+                    <li>可视化类型：{viz_type}</li>
+                    <li>生成时间：{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</li>
+                </ul>
+            </div>
+        </div>
+        """

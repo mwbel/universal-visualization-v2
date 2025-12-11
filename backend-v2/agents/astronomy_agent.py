@@ -36,6 +36,186 @@ class AstronomyAgent(BaseVisualizationAgent):
             }
         })
 
+    def _load_templates(self) -> Dict[str, Any]:
+        """加载天文模板"""
+        return {
+            "astro_solar_system_orbits": {
+                "id": "astro_solar_system_orbits",
+                "name": "太阳系行星轨道运动",
+                "description": "展示太阳系八大行星的轨道运动模拟，包含动态公转演示",
+                "subject": "astronomy",
+                "html_template": self._get_solar_system_template()
+            }
+        }
+
+    def _get_solar_system_template(self) -> str:
+        """获取太阳系模拟模板"""
+        return """
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>__TITLE__</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body { margin: 0; background: #0b0b15; color: #fff; font-family: sans-serif; overflow: hidden; }
+        .controls-panel {
+            position: absolute; top: 20px; left: 20px; z-index: 100;
+            background: rgba(20, 20, 40, 0.8); padding: 15px; border-radius: 8px;
+            border: 1px solid #334; backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .control-group { margin-bottom: 10px; }
+        .control-group label { display: inline-block; width: 80px; color: #aaa; }
+        input[type="range"] { vertical-align: middle; }
+        button {
+            background: #4169E1; color: white; border: none; padding: 8px 15px;
+            border-radius: 4px; cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background: #5179f1; }
+        #plot { width: 100vw; height: 100vh; }
+        .legend-info {
+            position: absolute; bottom: 20px; right: 20px; z-index: 100;
+            background: rgba(20, 20, 40, 0.8); padding: 10px; border-radius: 8px;
+            font-size: 12px; color: #ccc; pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls-panel">
+        <h3 style="margin-top:0; color: #ffd700;">太阳系轨道模拟</h3>
+        <div class="control-group">
+            <button id="toggleBtn" onclick="toggleAnimation()">⏸ 暂停模拟</button>
+        </div>
+        <div class="control-group">
+            <label>演化速度:</label>
+            <input type="range" id="speed" min="0.1" max="5" step="0.1" value="1">
+            <span id="speedVal">1.0x</span>
+        </div>
+        <div class="control-group">
+            <label>视角:</label>
+            <select id="viewAngle" style="background:#334; color:white; border:none; padding:5px;">
+                <option value="default">默认视角</option>
+                <option value="top">俯视 (北极)</option>
+                <option value="side">侧视 (黄道面)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="legend-info">
+        支持鼠标拖拽旋转、滚轮缩放<br>
+        数据基于真实天文参数按比例缩放
+    </div>
+
+    <div id="plot"></div>
+
+    <script>
+        const data = __DATA__;
+        const config = __PLOTLY_CONFIG__;
+        
+        // 优化布局
+        config.layout.margin = {l:0, r:0, t:0, b:0};
+        config.layout.paper_bgcolor = '#0b0b15';
+        config.layout.plot_bgcolor = '#0b0b15';
+        config.layout.scene.bgcolor = '#0b0b15';
+        
+        // 初始渲染
+        Plotly.newPlot('plot', config.data, config.layout, {responsive: true});
+        
+        let isAnimating = true;
+        let animationFrameId = null;
+        let startTime = Date.now();
+        let lastTime = startTime;
+        let simTime = 0; // 模拟时间（天）
+        
+        // 速度控制
+        const speedInput = document.getElementById('speed');
+        const speedVal = document.getElementById('speedVal');
+        speedInput.addEventListener('input', (e) => {
+            speedVal.textContent = e.target.value + 'x';
+        });
+
+        // 视角控制
+        document.getElementById('viewAngle').addEventListener('change', (e) => {
+            const angle = e.target.value;
+            let camera = {eye: {x: 1.5, y: 1.5, z: 1.5}};
+            if (angle === 'top') camera = {eye: {x: 0, y: 0, z: 2.5}, up: {x:0, y:1, z:0}};
+            if (angle === 'side') camera = {eye: {x: 2.5, y: 0, z: 0.1}};
+            Plotly.relayout('plot', {'scene.camera': camera});
+        });
+        
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+            const btn = document.getElementById('toggleBtn');
+            btn.textContent = isAnimating ? '⏸ 暂停模拟' : '▶ 继续模拟';
+            if (isAnimating) {
+                lastTime = Date.now();
+                animate();
+            } else {
+                cancelAnimationFrame(animationFrameId);
+            }
+        }
+        
+        function animate() {
+            if (!isAnimating) return;
+            
+            const now = Date.now();
+            const dt = (now - lastTime) / 1000; // 秒
+            lastTime = now;
+            
+            const speed = parseFloat(speedInput.value);
+            // 基础速度：1秒 = 50天
+            simTime += dt * 50 * speed;
+            
+            const updates = {x: [], y: []};
+            const indices = [];
+            
+            // 遍历所有trace，找到行星marker
+            // 行星marker在 data.objects 中定义，trace名称与 object.name 对应
+            // 或者通过 trace.mode === 'markers' 且 trace.name != 'Sun' 来判断
+            // 注意：Plotly config data index 必须与 traces 一一对应
+            
+            // 预处理：建立 trace index 到 planet data 的映射
+            if (!window.planetTraceIndices) {
+                window.planetTraceIndices = [];
+                config.data.forEach((trace, idx) => {
+                    if (trace.mode === 'markers' && trace.type === 'scatter3d') {
+                        const planet = data.objects.find(p => p.name === trace.name);
+                        if (planet && planet.distance) { // 排除中心恒星或无轨道数据的对象
+                            window.planetTraceIndices.push({index: idx, planet: planet});
+                        }
+                    }
+                });
+            }
+            
+            window.planetTraceIndices.forEach(item => {
+                const p = item.planet;
+                // 计算新位置
+                // 周期 p.period (天)
+                const angle = (simTime / p.period) * 2 * Math.PI;
+                const r = p.distance;
+                
+                updates.x.push([r * Math.cos(angle)]);
+                updates.y.push([r * Math.sin(angle)]);
+                indices.push(item.index);
+            });
+            
+            if (indices.length > 0) {
+                // 使用 animate 替代 restyle 以获得更流畅的效果 (如果是2D)
+                // 3D scatter 还是用 restyle 比较稳定
+                Plotly.restyle('plot', updates, indices);
+            }
+            
+            animationFrameId = requestAnimationFrame(animate);
+        }
+        
+        animate();
+    </script>
+</body>
+</html>
+"""
+
     async def parse_requirement(self, prompt: str) -> Dict[str, Any]:
         """
         解析天文需求
@@ -423,7 +603,9 @@ class AstronomyAgent(BaseVisualizationAgent):
                     "y": [r * np.sin(current_angle)],
                     "z": [0],
                     "color": planet["color"],
-                    "size": 8 if planet["name"] in ["木星", "土星"] else 5
+                    "size": 8 if planet["name"] in ["木星", "土星"] else 5,
+                    "period": planet["period"],
+                    "distance": planet["a"]
                 })
 
             data["metadata"]["type"] = "solar_system"

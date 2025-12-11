@@ -16,7 +16,7 @@ const AppState = {
         language: 'zh-CN'
     },
     config: {
-        apiBaseUrl: 'http://localhost:9999/api/v2',
+        apiBaseUrl: 'http://localhost:9999/api/v3',
         maxInputLength: 5000,
         animationDuration: 300
     }

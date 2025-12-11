@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Any, Union
 import json
 import uuid
 import asyncio
-import datetime
+from datetime import datetime
 import os
 from pathlib import Path
 
@@ -29,9 +29,12 @@ from agents.template_engine import UnifiedTemplateEngine
 # 导入配置
 from config import settings
 
+# 导入新的聊天API
+from api import api_router, ChatIntegration
+
 app = FastAPI(
     title="万物可视化 v2.0 API",
-    description="基于集中式路由架构的智能可视化生成平台",
+    description="基于集中式路由架构的智能可视化生成平台 - 支持现代聊天界面",
     version="2.0.0"
 )
 
@@ -50,6 +53,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # 挂载前端目录
 app.mount("/frontend-v2", StaticFiles(directory="../frontend-v2", html=True), name="frontend")
 app.mount("/main-app", StaticFiles(directory="../main-app", html=True), name="main-app")
+app.mount("/frontend-v3", StaticFiles(directory="../frontend-v3", html=True), name="frontend-v3")
+
+# 注册新的聊天API路由
+app.include_router(api_router)
 
 # 全局状态
 class AppState:
@@ -105,12 +112,30 @@ async def root():
     return {
         "name": "万物可视化 v2.0 API",
         "version": "2.0.0",
-        "description": "基于集中式路由架构的智能可视化生成平台",
-        "endpoints": {
-            "generate": "/api/v2/generate",
-            "classify": "/api/v2/classify",
-            "templates": "/api/v2/templates",
-            "status": "/api/v2/status/{generation_id}"
+        "description": "基于集中式路由架构的智能可视化生成平台 - 支持现代聊天界面",
+        "frontend": {
+            "v2": "/frontend-v2",
+            "v3_chat": "/frontend-v3"
+        },
+        "api_versions": {
+            "v2": {
+                "description": "原始可视化API",
+                "endpoints": {
+                    "generate": "/api/v2/generate",
+                    "classify": "/api/v2/classify",
+                    "templates": "/api/v2/templates",
+                    "status": "/api/v2/status/{generation_id}",
+                    "highschool": "/api/v2/highschool/generate"
+                }
+            },
+            "v3": {
+                "description": "现代聊天界面API",
+                "endpoints": {
+                    "chat": "/api/v3/chat",
+                    "files": "/api/v3/files",
+                    "user": "/api/v3/user"
+                }
+            }
         }
     }
 
@@ -224,7 +249,7 @@ async def universal_generate(request: UniversalVisualizationRequest, background_
         # 记录生成状态
         state.active_generations[generation_id] = {
             "status": "initializing",
-            "created_at": datetime.datetime.now(),
+            "created_at": datetime.now(),
             "prompt": request.prompt,
             "progress": 0
         }
@@ -268,7 +293,7 @@ async def subject_specific_generate(subject: str, request: UniversalVisualizatio
 
         state.active_generations[generation_id] = {
             "status": "initializing",
-            "created_at": datetime.datetime.now(),
+            "created_at": datetime.now(),
             "subject": subject,
             "prompt": request.prompt,
             "progress": 0
@@ -526,7 +551,7 @@ async def get_visualization(viz_id: str):
             "visualization_id": viz_id,
             "html_content": html_content,
             "title": f"可视化 - {viz_id}",
-            "created_at": datetime.datetime.now().isoformat()
+            "created_at": datetime.now().isoformat()
         }
 
     except Exception as e:
@@ -575,14 +600,14 @@ async def process_visualization_generation(
             "status": "completed",
             "progress": 100,
             "html_url": f"/api/v2/visualizations/{viz_id}",
-            "completed_at": datetime.datetime.now()
+            "completed_at": datetime.now()
         })
 
     except Exception as e:
         state.active_generations[generation_id].update({
             "status": "failed",
             "error": str(e),
-            "failed_at": datetime.datetime.now()
+            "failed_at": datetime.now()
         })
 
 async def process_subject_specific_generation(
@@ -634,14 +659,14 @@ async def process_subject_specific_generation(
             "status": "completed",
             "progress": 100,
             "html_url": f"/api/v2/visualizations/{viz_id}",
-            "completed_at": datetime.datetime.now()
+            "completed_at": datetime.now()
         })
 
     except Exception as e:
         state.active_generations[generation_id].update({
             "status": "failed",
             "error": str(e),
-            "failed_at": datetime.datetime.now()
+            "failed_at": datetime.now()
         })
 
 # ==============================
@@ -656,7 +681,7 @@ async def health_check():
         "version": "2.0.0",
         "agents": len(state.router.agents),
         "active_generations": len(state.active_generations),
-        "timestamp": datetime.datetime.now()
+        "timestamp": datetime.now()
     }
 
 @app.get("/api/v2/health")
@@ -668,7 +693,7 @@ async def api_v2_health_check():
         "api_version": "v2",
         "agents": len(state.router.agents),
         "active_generations": len(state.active_generations),
-        "timestamp": datetime.datetime.now(),
+        "timestamp": datetime.now(),
         "endpoints": {
             "health": "/api/v2/health",
             "generate": "/api/v2/generate",
@@ -712,11 +737,23 @@ async def startup_event():
     # 将模板引擎注入到路由管理器
     state.router.set_template_engine(state.template_engine)
 
+    # 初始化聊天集成器
+    try:
+        from api.chat import chat_integration
+        chat_integration_instance = ChatIntegration(state.router, state.template_engine)
+        import api.chat
+        api.chat.chat_integration = chat_integration_instance
+        print("💬 聊天集成器已初始化")
+    except Exception as e:
+        print(f"⚠️  聊天集成器初始化警告: {str(e)}")
+
     print("🔧 统一模板引擎已就绪")
     print("✅ API网关已启动")
+    print("🎯 支持现代聊天界面 (v3)")
 
     # 确保输出目录存在
     Path("static/visualizations").mkdir(exist_ok=True)
+    Path("uploads").mkdir(exist_ok=True)
 
 @app.on_event("shutdown")
 async def shutdown_event():

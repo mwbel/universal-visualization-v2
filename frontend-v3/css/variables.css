@@ -1,0 +1,183 @@
+/* CSS 变量定义 */
+
+:root {
+  /* 颜色变量 - 浅色主题 */
+  --primary-color: #10a37f;
+  --primary-hover: #0d8f6d;
+  --secondary-color: #64748b;
+  --accent-color: #3b82f6;
+
+  /* 背景颜色 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7f8;
+  --bg-tertiary: #ececf1;
+  --bg-hover: #f0f0f1;
+
+  /* 文本颜色 */
+  --text-primary: #2d2d2d;
+  --text-secondary: #6e6e80;
+  --text-tertiary: #acacbe;
+  --text-inverse: #ffffff;
+
+  /* 边框和分割线 */
+  --border-primary: #e5e5e5;
+  --border-secondary: #d1d5db;
+  --border-hover: #c4c4c4;
+
+  /* 阴影 */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+
+  /* 尺寸 */
+  --sidebar-width: 320px;
+  --sidebar-collapsed-width: 0px;
+  --header-height: 60px;
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+
+  /* 间距 */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* 字体 */
+  --font-family-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+
+  /* 过渡动画 */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* Z-index层级 */
+  --z-dropdown: 1000;
+  --z-modal: 1050;
+  --z-toast: 1100;
+}
+
+/* 深色主题 */
+[data-theme="dark"] {
+  --primary-color: #10a37f;
+  --primary-hover: #0d8f6d;
+  --secondary-color: #acacbe;
+  --accent-color: #3b82f6;
+
+  /* 背景颜色 */
+  --bg-primary: #343541;
+  --bg-secondary: #202123;
+  --bg-tertiary: #2d2d2d;
+  --bg-hover: #2a2a32;
+
+  /* 文本颜色 */
+  --text-primary: #ececf1;
+  --text-secondary: #acacbe;
+  --text-tertiary: #8e8ea0;
+  --text-inverse: #000000;
+
+  /* 边框和分割线 */
+  --border-primary: #4e4e60;
+  --border-secondary: #565869;
+  --border-hover: #6a6c7d;
+
+  /* 阴影 - 在深色主题下调整透明度 */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3), 0 4px 6px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3), 0 10px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 响应式断点 */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 0px;
+    --sidebar-collapsed-width: 0px;
+    --font-size-base: 15px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  :root {
+    --sidebar-width: 280px;
+  }
+}
+
+/* 字体大小变体 */
+[data-font-size="small"] {
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 15px;
+  --font-size-lg: 17px;
+  --font-size-xl: 19px;
+  --font-size-2xl: 22px;
+  --font-size-3xl: 28px;
+}
+
+[data-font-size="large"] {
+  --font-size-xs: 13px;
+  --font-size-sm: 15px;
+  --font-size-base: 18px;
+  --font-size-lg: 20px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 26px;
+  --font-size-3xl: 32px;
+}
+
+/* 全局重置和基础样式 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-sans);
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  transition: color var(--transition-normal), background-color var(--transition-normal);
+}
+
+body {
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--primary-hover);
+}
