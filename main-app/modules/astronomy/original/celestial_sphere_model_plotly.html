@@ -8,15 +8,18 @@
     html, body { height: 100%; margin: 0; padding: 0; background: #0b0f1a; color: #e6e9ef; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif; }
     #container { position: relative; width: 100%; height: 100%; }
     #scene { position: absolute; inset: 0; }
-    #overlay { position: absolute; right: 8px; top: 8px; background: rgba(0,0,0,0.45); color: #fff; border-radius: 6px; padding: 8px 10px; font-size: 13px; line-height: 1.5; box-shadow: 0 2px 6px rgba(0,0,0,0.3); backdrop-filter: saturate(1.2) blur(2px); }
+    #overlay { position: absolute; right: 8px; top: 48px; background: rgba(0,0,0,0.45); color: #fff; border-radius: 6px; padding: 8px 10px; font-size: 13px; line-height: 1.5; box-shadow: 0 2px 6px rgba(0,0,0,0.3); backdrop-filter: saturate(1.2) blur(2px); }
+    #backBtn { position: absolute; right: 8px; top: 8px; display: inline-block; padding: 6px 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; color: #fff; text-decoration: none; font-size: 14px; transition: all 0.2s; z-index: 1000; }
+    #backBtn:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-1px); }
     #hint { position: absolute; left: 12px; bottom: 12px; color: #99a1b3; font-size: 12px; }
   </style>
   <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-  <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.1.1.min.js" integrity="sha256-HUEFyfiTnZJxCxur99FjbKYTvKSzwDaD3/x5TqHpFu4=" crossorigin="anonymous"></script>
+  <script charset="utf-8" src="./assets/lib/plotly.min.js"></script>
   <script src="./assets/astro_math.js"></script>
 </head>
 <body>
   <div id="container">
+    <a id="backBtn" href="./index.html">返回工具集首页</a>
     <div id="scene"></div>
     <div id="overlay">加载参数中…</div>
     <div id="hint">此页将逐步支持根据参数渲染天球视图</div>
@@ -106,7 +109,7 @@
       const z = Math.sin(alt);
       return {
         type: 'scatter3d', mode: 'markers', x:[x], y:[y], z:[z],
-        marker:{ color:'#ffcc66', size:6 }, name:'太阳', hovertemplate:`太阳\nAz=${pos.azimuth.toFixed(1)}°\nAlt=${pos.altitude.toFixed(1)}°<extra></extra>`
+        marker:{ color:'#ffcc66', size:15 }, name:'太阳', hovertemplate:`太阳\nAz=${pos.azimuth.toFixed(1)}°\nAlt=${pos.altitude.toFixed(1)}°<extra></extra>`
       };
     }
     function initPlot(params) {

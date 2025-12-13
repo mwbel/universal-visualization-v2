@@ -9,11 +9,11 @@
 <body class="theme-dark">
   <header class="app-header">
     <h1>天球球心可视化</h1>
-    <div class="header-actions"><a class="btn" href="/modern-astronomy/">返回模块主页</a></div>
+    <div class="header-actions"><a class="btn" href="./index.html">返回工具集首页</a></div>
   </header>
   <main class="container">
     <div id="topbar" class="topbar">
-      <div id="backContainer" class="section"></div>
+      <!-- <div id="backContainer" class="section"></div> -->
       <div id="locationContainer" class="section"></div>
       <div id="dateContainer" class="section"></div>
     </div>
@@ -26,6 +26,7 @@
   <script src="./assets/LocationSelector.js"></script>
   <script src="./assets/DateSelector.js"></script>
   <script>
+    // BackButton.renderBackButton('#backContainer');
     LocationSelector.renderLocationSelector('#locationContainer',{ url:'/data/cities.csv' });
     DateSelector.renderDateSelector('#dateContainer');
   </script>

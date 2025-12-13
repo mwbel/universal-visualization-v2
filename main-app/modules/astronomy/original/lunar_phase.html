@@ -25,7 +25,7 @@
 <body class="theme-dark">
   <header class="app-header">
     <h1>实时月相</h1>
-    <div class="header-actions"><a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a></div>
+    <div class="header-actions"><a class="btn" href="./index.html">返回工具集首页</a></div>
   </header>
   <main class="container">
     <div id="topbar" class="topbar">
@@ -66,20 +66,21 @@
         <summary class="btn">切换查看：Python 滑块版（日地月相位）</summary>
         <p class="hint">该视图由 Python 生成的 Plotly 页面提供，支持年份下拉与滑块交互。</p>
         <div class="iframe-wrap">
-          <iframe src="/app/modules/modern_astronomy/pages/sun_earth_moon_phase_slider_plotly.html" title="Python月相滑块"></iframe>
+          <iframe src="./sun_earth_moon_phase_slider_optimized.html" title="Python月相滑块"></iframe>
         </div>
       </details>
     </section>
   </main>
-  <div style="text-align: center; padding: 16px;">
-    <a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a>
-  </div>
+  <!-- <div style="text-align: center; padding: 16px;">
+    <a class="btn" href="./index.html">返回工具集首页</a>
+  </div> -->
   <footer class="app-footer">© 2025 Modern Astronomy</footer>
   <script src="./assets/BackButton.js"></script>
   <script src="./assets/LocationSelector.js"></script>
   <script src="./assets/DateSelector.js"></script>
   <script src="./assets/astro_math.js"></script>
   <script>
+    // BackButton.renderBackButton('#backContainer');
     LocationSelector.renderLocationSelector('#locationContainer',{ url:'/data/cities.csv' });
     DateSelector.renderDateSelector('#dateContainer');
   </script>

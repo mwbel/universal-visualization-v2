@@ -9,7 +9,7 @@
 <body class="theme-dark">
   <header class="app-header">
     <h1>不同纬度的星空</h1>
-    <div class="header-actions"><a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a></div>
+    <div class="header-actions"><a class="btn" href="./index.html">返回工具集首页</a></div>
   </header>
   <main class="container">
     <div id="topbar" class="topbar">
@@ -62,18 +62,39 @@
       </div>
     </section>
   </main>
-  <div style="text-align: center; padding: 16px;">
-    <a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a>
-  </div>
+  <!-- <div style="text-align: center; padding: 16px;">
+    <a class="btn" href="./index.html">返回工具集首页</a>
+  </div> -->
   <footer class="app-footer">© 2025 Modern Astronomy</footer>
   <script src="./assets/BackButton.js"></script>
   <script src="./assets/LocationSelector.js"></script>
   <script src="./assets/DateSelector.js"></script>
   <script src="./assets/astro_math.js"></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="./assets/lib/plotly.min.js"></script>
   <script>
-    LocationSelector.renderLocationSelector('#locationContainer',{ url:'/data/cities.csv' });
-    DateSelector.renderDateSelector('#dateContainer');
+    // 确保BackButton优先执行并添加错误处理
+    /*
+    try {
+      BackButton.renderBackButton('#backContainer');
+      console.log('BackButton 渲染成功');
+    } catch (error) {
+      console.error('BackButton 渲染失败:', error);
+    }
+    */
+
+    try {
+      LocationSelector.renderLocationSelector('#locationContainer',{ url:'/data/cities.csv' });
+      console.log('LocationSelector 渲染成功');
+    } catch (error) {
+      console.error('LocationSelector 渲染失败:', error);
+    }
+
+    try {
+      DateSelector.renderDateSelector('#dateContainer');
+      console.log('DateSelector 渲染成功');
+    } catch (error) {
+      console.error('DateSelector 渲染失败:', error);
+    }
 
     // 不同纬度星空可视化类
     class LatitudeStarsVisualization {

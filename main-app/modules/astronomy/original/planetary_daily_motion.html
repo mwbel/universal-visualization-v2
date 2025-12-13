@@ -28,11 +28,11 @@
 <body class="theme-dark">
   <header class="app-header">
     <h1>行星周年视运动轨迹</h1>
-    <div class="header-actions"><a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a></div>
+    <div class="header-actions"><a class="btn" href="./index.html">返回工具集首页</a></div>
   </header>
   <main class="container">
     <div id="topbar" class="topbar">
-      <div id="backContainer" class="section"></div>
+      <!-- BackButton removed, moved to header -->
       <div id="locationContainer" class="section"></div>
       <div id="dateContainer" class="section"></div>
     </div>
@@ -83,13 +83,13 @@
           3D 天球视角（太阳、月亮、七大行星周日视运动）
           <span id="overlay3d" style="margin-left:12px;">时间：--:--</span>
         </div>
-        <a class="btn" target="_blank" href="/app/modules/modern_astronomy/pages/celestial_sphere_model_plotly.html">新窗口打开</a>
+        <a class="btn" target="_blank" href="./celestial_sphere_model_plotly.html">新窗口打开</a>
       </div>
     </div>
   </section>
   </main>
   <div style="text-align: center; padding: 16px;">
-    <a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a>
+    <a class="btn" href="./index.html">返回工具集首页</a>
   </div>
   <footer class="app-footer">© 2025 Modern Astronomy</footer>
   <script src="./assets/BackButton.js"></script>
@@ -98,6 +98,7 @@
   <script src="./assets/astro_math.js"></script>
   <script src="./assets/daily_motion.js?v=2"></script>
   <script>
+    // BackButton.renderBackButton('#backContainer'); // Moved to header
     LocationSelector.renderLocationSelector('#locationContainer',{ url:'/data/cities.csv' });
     DateSelector.renderDateSelector('#dateContainer');
 
@@ -133,7 +134,7 @@
       const lat = document.querySelector('#locationContainer input[name="latitude"]')?.value || '31.23';
       const lon = document.querySelector('#locationContainer input[name="longitude"]')?.value || '121.47';
       const qs = new URLSearchParams({ lat, lon, tz, date, time: `${pad2(h)}:${pad2(m)}` , cb: String(Date.now())});
-      const iframeUrl = `/app/modules/modern_astronomy/pages/celestial_sphere_model_plotly.html?${qs.toString()}`;
+      const iframeUrl = `./celestial_sphere_model_plotly.html?${qs.toString()}`;
       celestial3dContainer.innerHTML = `<iframe id="celestial3d" src="${iframeUrl}" frameborder="0" scrolling="no" style="width:100%;height:100%;"></iframe>`;
       const overlay = document.getElementById('overlay3d');
       if (overlay) {

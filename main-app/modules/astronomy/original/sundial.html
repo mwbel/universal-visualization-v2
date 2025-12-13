@@ -9,11 +9,11 @@
 <body class="theme-dark">
   <header class="app-header">
     <h1>日晷可视化</h1>
-    <div class="header-actions"><a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a></div>
+    <div class="header-actions"><a class="btn" href="./index.html">返回工具集首页</a></div>
   </header>
   <main class="container">
     <div id="topbar" class="topbar">
-      <div id="backContainer" class="section"></div>
+      <!-- BackButton removed, moved to header -->
       <div id="locationContainer" class="section"></div>
       <div id="dateContainer" class="section"></div>
     </div>
@@ -66,14 +66,15 @@
     </section>
   </main>
   <div style="text-align:center; padding: 16px;">
-    <a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a>
+    <a class="btn" href="./index.html">返回工具集首页</a>
   </div>
   <footer class="app-footer">© 2025 Modern Astronomy</footer>
   <script src="./assets/BackButton.js"></script>
   <script src="./assets/LocationSelector.js"></script>
   <script src="./assets/DateSelector.js"></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="./assets/lib/plotly.min.js"></script>
   <script>
+    // BackButton.renderBackButton("#backContainer"); // Moved to header
     LocationSelector.renderLocationSelector('#locationContainer',{ url:'/data/cities.csv' });
     DateSelector.renderDateSelector('#dateContainer');
 

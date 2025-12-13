@@ -23,11 +23,11 @@
 <body class="theme-dark">
   <header class="app-header">
     <h1>太阳周年视运动轨迹</h1>
-    <div class="header-actions"><a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a></div>
+    <div class="header-actions"><a class="btn" href="./index.html">返回工具集首页</a></div>
   </header>
   <main class="container">
     <div id="topbar" class="topbar">
-      <div id="backContainer" class="section"></div>
+      <!-- BackButton removed, moved to header -->
       <div id="locationContainer" class="section"></div>
       <div id="dateContainer" class="section"></div>
     </div>
@@ -69,12 +69,12 @@
       <div id="celestial3dContainer" style="width:100%; height:560px; background:#0a0d12; border-radius:8px; overflow:hidden;"></div>
       <div class="legend" style="justify-content: space-between; align-items:center;">
         <div style="color:var(--muted)">3D 天球视角（太阳、月亮、七大行星周日视运动） <span id="overlay3d" style="margin-left:12px;">时间：--:--</span></div>
-        <a class="btn" target="_blank" href="/app/modules/modern_astronomy/pages/celestial_sphere_model_plotly.html">新窗口打开</a>
+        <a class="btn" target="_blank" href="./celestial_sphere_model_plotly.html">新窗口打开</a>
       </div>
     </div>
   </section>
   <div style="text-align: center; padding: 16px;">
-    <a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a>
+    <a class="btn" href="./index.html">返回工具集首页</a>
   </div>
   <footer class="app-footer">© 2025 Modern Astronomy</footer>
   <script src="./assets/BackButton.js"></script>
@@ -82,8 +82,30 @@
   <script src="./assets/DateSelector.js"></script>
   <script src="./assets/astro_math.js"></script>
   <script>
+  // 确保BackButton优先执行并添加错误处理
+  // BackButton.renderBackButton("#backContainer"); // Moved to header
+  /*
+  try {
+    BackButton.renderBackButton("#backContainer");
+    console.log('BackButton 渲染成功');
+  } catch (error) {
+    console.error('BackButton 渲染失败:', error);
+  }
+  */
+
+  try {
     LocationSelector.renderLocationSelector('#locationContainer',{ url:'/data/cities.csv' });
+    console.log('LocationSelector 渲染成功');
+  } catch (error) {
+    console.error('LocationSelector 渲染失败:', error);
+  }
+
+  try {
     DateSelector.renderDateSelector('#dateContainer');
+    console.log('DateSelector 渲染成功');
+  } catch (error) {
+    console.error('DateSelector 渲染失败:', error);
+  }
 
     // 加载 3D 天球（改为 iframe 嵌入，避免脚本注入问题）
     let lastLoad3dAt = 0;
@@ -99,7 +121,7 @@
       const lat = document.querySelector('#locationContainer input[name="latitude"]')?.value || '31.23';
       const lon = document.querySelector('#locationContainer input[name="longitude"]')?.value || '121.47';
       const qs = new URLSearchParams({ lat, lon, tz, date: dateStr, time: `${hour}:00`, cb: String(Date.now()) });
-      const iframeUrl = `/app/modules/modern_astronomy/pages/celestial_sphere_model_plotly.html?${qs.toString()}`;
+      const iframeUrl = `./celestial_sphere_model_plotly.html?${qs.toString()}`;
       document.getElementById('celestial3dContainer').innerHTML = `<iframe id="celestial3d" src="${iframeUrl}" frameborder="0" scrolling="no" style="width:100%;height:100%;"></iframe>`;
       const overlay = document.getElementById('overlay3d');
       if (overlay) overlay.textContent = `时间：${dateStr || '--'} ${hour}:00 ${tz>=0?`UTC+${tz}`:`UTC${tz}`}，地点：${lat}°, ${lon}°`;

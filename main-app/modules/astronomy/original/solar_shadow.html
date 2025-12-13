@@ -14,7 +14,7 @@
 <body class="theme-dark">
   <header class="app-header">
     <h1>杆子影长变化</h1>
-    <div class="header-actions"><a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a></div>
+    <div class="header-actions"><a class="btn" href="./index.html">返回工具集首页</a></div>
   </header>
   <main class="container">
     <div id="topbar" class="topbar">
@@ -74,15 +74,16 @@
       </div>
     </section>
   </main>
-  <div style="text-align: center; padding: 16px;">
-    <a class="btn" href="/app/modules/modern_astronomy/">返回模块主页</a>
-  </div>
+  <!-- <div style="text-align: center; padding: 16px;">
+    <a class="btn" href="./index.html">返回工具集首页</a>
+  </div> -->
   <footer class="app-footer">© 2025 Modern Astronomy</footer>
-  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script src="./assets/lib/plotly.min.js"></script>
   <script src="./assets/BackButton.js"></script>
   <script src="./assets/LocationSelector.js"></script>
   <script src="./assets/DateSelector.js"></script>
   <script>
+    // BackButton.renderBackButton("#backContainer");
     LocationSelector.renderLocationSelector('#locationContainer',{ url:'/data/cities.csv' });
     DateSelector.renderDateSelector('#dateContainer');
 

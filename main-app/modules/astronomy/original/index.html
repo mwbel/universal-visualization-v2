@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>天文学可视化工具集 · Trae开发</title>
+  <title>天文学可视化工具集</title>
   <link rel="stylesheet" href="./assets/styles.css" />
   <style>
     .card-grid {
@@ -91,9 +91,9 @@
     <header class="app-header">
       <h1>🌟 天文学可视化工具集</h1>
       <p style="color: var(--muted, rgba(255, 255, 255, 0.7)); margin-bottom: 20px;">
-        基于 Trae 开发的专业天文学计算和可视化工具
+        专业的天文学计算和可视化工具
       </p>
-      <a class="back-link" href="../../../index.html">← 返回主页</a>
+      <!-- <a class="back-link" href="../../../index.html">← 返回主页</a> -->
     </header>
 
     <main>
@@ -104,6 +104,18 @@
       <!-- 高优先级工具 -->
       <h2 class="category-header">🌙 月相与时间计算</h2>
       <section id="cards" class="card-grid">
+        <a class="card" data-keywords="高级 天文 可视化 天球 月相 天体 python 集成" href="advanced_astronomy.html">
+          <div class="card-tag">🌟 Python高级集成</div>
+          <div class="card-title">🚀 高级天文可视化系统</div>
+          <div class="card-desc">集成三大核心功能：3D天球模型、七大天体系统、高级月相系统，基于NASA DE421星历数据的精确计算</div>
+        </a>
+
+        <a class="card" data-keywords="python 月相 可视化 高精度 API" href="python_moon_phase.html">
+          <div class="card-tag">Python可视化</div>
+          <div class="card-title">🐍 Python月相可视化</div>
+          <div class="card-desc">基于Skyfield高精度天文计算库的月相可视化系统，支持月相圆盘、轨道视图和动画播放</div>
+        </a>
+
         <a class="card" data-keywords="月亮 月相 实时 照明" href="lunar_phase.html">
           <div class="card-tag">实时计算</div>
           <div class="card-title">🌙 实时月相</div>
@@ -139,31 +151,43 @@
         </a>
       </section>
 
-      <!-- 行星运动工具 -->
-      <h2 class="category-header">🪐 行星运动轨迹</h2>
+      <!-- 天体运动工具 -->
+      <h2 class="category-header">🪐 天体运动轨迹</h2>
       <section class="card-grid">
-        <a class="card" data-keywords="行星 周日 视运动 轨迹" href="planetary_daily_motion.html">
+        <a class="card" data-keywords="天体 周日 视运动 轨迹" href="planetary_daily_motion.html">
           <div class="card-tag">日常运动</div>
-          <div class="card-title">🌍 行星周日视运动轨迹</div>
-          <div class="card-desc">按地点/日期展示太阳与行星的日周轨迹，实时天体运动模拟</div>
+          <div class="card-title">🌍 天体周日视运动轨迹</div>
+          <div class="card-desc">按地点/日期展示太阳与天体的日周轨迹，实时天体运动模拟</div>
         </a>
 
-        <a class="card" data-keywords="行星 年视运动 周年 轨迹" href="planetary_annual_motion.html">
+        <a class="card" data-keywords="天体 年视运动 周年 轨迹" href="planetary_annual_motion.html">
           <div class="card-tag">年度运动</div>
-          <div class="card-title">🌍 行星周年视运动轨迹</div>
-          <div class="card-desc">全年不同日期的视运动展示，行星年度轨迹变化</div>
+          <div class="card-title">🌍 天体周年视运动轨迹</div>
+          <div class="card-desc">全年不同日期的视运动展示，天体年度轨迹变化</div>
         </a>
 
-        <a class="card" data-keywords="行星 运动 轨迹 plotly 交互" href="planetary_annual_motion_plotly.html">
+        <a class="card" data-keywords="天体 运动 轨迹 plotly 交互" href="planetary_annual_motion_plotly.html">
           <div class="card-tag">3D可视化</div>
-          <div class="card-title">🌌 行星运动3D轨迹</div>
-          <div class="card-desc">基于Plotly的3D行星运动轨迹可视化，交互式天体运动展示</div>
+          <div class="card-title">🌌 天体运动3D轨迹</div>
+          <div class="card-desc">基于Plotly的3D天体运动轨迹可视化，交互式天体运动展示</div>
+        </a>
+
+        <a class="card" data-keywords="天球 滑块 正午 周年 视运动" href="celestial_sphere_slider.html">
+          <div class="card-tag">交互式滑块</div>
+          <div class="card-title">🌐 天球滑块视运动系统</div>
+          <div class="card-desc">交互式3D天球模型，展示太阳正午周年视运动轨迹，支持日期滑块和地理位置调整</div>
         </a>
       </section>
 
       <!-- 天球与测量工具 -->
       <h2 class="category-header">📐 天球坐标与测量</h2>
       <section class="card-grid">
+        <a class="card" data-keywords="3D天球 七行星 地心模型 实时轨迹 交互" href="celestial_sphere_7planets.html">
+          <div class="card-tag">3D交互版</div>
+          <div class="card-title">🌌 七行星地心天球模型</div>
+          <div class="card-desc">全交互式Web版地心天球模型，支持自定义经纬度与时间，实时展示太阳/月亮/七行星位置与轨迹 (Astronomy Engine驱动)</div>
+        </a>
+
         <a class="card" data-keywords="天球 球心 可视化 坐标" href="celestial_center.html">
           <div class="card-tag">坐标系统</div>
           <div class="card-title">🌐 天球球心可视化</div>
@@ -176,7 +200,7 @@
           <div class="card-desc">基于Plotly的3D天球模型，交互式天球坐标展示</div>
         </a>
 
-        <a class="card" data-keywords="太阳 地球 月球 相位 滑块" href="sun_earth_moon_phase_slider_plotly.html">
+        <a class="card" data-keywords="太阳 地球 月球 相位 滑块" href="sun_earth_moon_phase_slider_optimized.html">
           <div class="card-tag">系统模拟</div>
           <div class="card-title">🌍🌙 日月地相位系统</div>
           <div class="card-desc">太阳-地球-月球系统的相位变化模拟，交互式控制</div>
@@ -201,7 +225,7 @@
     </main>
 
     <footer class="app-footer">
-      <p>© 2025 天文学可视化工具集 · 基于 Trae 开发</p>
+      <p>© 2025 天文学可视化工具集</p>
       <p style="font-size: 0.8rem; color: var(--muted, rgba(255, 255, 255, 0.5));">
         包含14个专业天文学可视化工具 | 支持交互式计算和实时渲染
       </p>
