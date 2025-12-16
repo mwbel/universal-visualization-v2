@@ -58,6 +58,10 @@ app.mount("/frontend-v3", StaticFiles(directory="../frontend-v3", html=True), na
 # 注册新的聊天API路由
 app.include_router(api_router)
 
+# 注册文件上传和分析API路由
+from api import file_upload
+app.include_router(file_upload.router)
+
 # 全局状态
 class AppState:
     def __init__(self):
