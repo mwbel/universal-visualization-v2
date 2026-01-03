@@ -2,7 +2,7 @@
  * VizContainer.js - 可视化容器组件
  * 动态加载和管理可视化页面
  */
-(function(global) {
+(function (global) {
   'use strict';
 
   class VizContainer {
@@ -263,10 +263,19 @@
 
       if (contentType && contentType.includes('text/html')) {
         const html = await response.text();
-        this.elements.frame.innerHTML = html;
 
-        // 执行脚本
-        this.executeScripts(this.elements.frame);
+        // Create a sandboxed iframe for the content
+        const iframe = document.createElement('iframe');
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = 'none';
+        iframe.sandbox = 'allow-scripts allow-same-origin'; // Enable scripts for interactive visualizations
+
+        // Use srcdoc for the HTML content
+        iframe.srcdoc = html;
+
+        this.elements.frame.innerHTML = '';
+        this.elements.frame.appendChild(iframe);
       } else {
         // 其他内容类型
         const blob = await response.blob();

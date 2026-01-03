@@ -91,7 +91,7 @@ class FileAnalysisResult(Base):
 
     # 提取的数据
     extracted_data = Column(JSON, comment="提取的结构化数据")
-    metadata = Column(JSON, comment="文件元数据")
+    file_metadata = Column(JSON, comment="文件元数据")
     suggested_visualizations = Column(JSON, comment="推荐的可视化类型")
 
     # 分析参数

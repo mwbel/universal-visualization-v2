@@ -62,6 +62,27 @@ app.include_router(api_router)
 from api import file_upload
 app.include_router(file_upload.router)
 
+# 添加文件分析聊天界面的专用路由
+@app.get("/chat", response_class=HTMLResponse)
+async def file_analysis_chat():
+    """文件分析聊天界面"""
+    try:
+        with open("static/file-analysis-chat.html", "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        return """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>页面未找到</title>
+        </head>
+        <body>
+            <h1>文件分析聊天界面未找到</h1>
+            <p>请确保 static/file-analysis-chat.html 文件存在</p>
+        </body>
+        </html>
+        """
+
 # 全局状态
 class AppState:
     def __init__(self):
@@ -110,38 +131,122 @@ class GenerationResponse(BaseModel):
 # 统一API网关端点
 # ==============================
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    """API根端点"""
-    return {
-        "name": "万物可视化 v2.0 API",
-        "version": "2.0.0",
-        "description": "基于集中式路由架构的智能可视化生成平台 - 支持现代聊天界面",
-        "frontend": {
-            "v2": "/frontend-v2",
-            "v3_chat": "/frontend-v3"
-        },
-        "api_versions": {
-            "v2": {
-                "description": "原始可视化API",
-                "endpoints": {
-                    "generate": "/api/v2/generate",
-                    "classify": "/api/v2/classify",
-                    "templates": "/api/v2/templates",
-                    "status": "/api/v2/status/{generation_id}",
-                    "highschool": "/api/v2/highschool/generate"
-                }
-            },
-            "v3": {
-                "description": "现代聊天界面API",
-                "endpoints": {
-                    "chat": "/api/v3/chat",
-                    "files": "/api/v3/files",
-                    "user": "/api/v3/user"
-                }
+    """主页 - 重定向到文件分析聊天界面"""
+    return """
+    <!DOCTYPE html>
+    <html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>万物可视化 v2.0 - 智能文件分析平台</title>
+        <meta http-equiv="refresh" content="1; url=/chat" />
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0;
+                text-align: center;
             }
-        }
-    }
+            .container {
+                max-width: 600px;
+                padding: 2rem;
+            }
+            .logo {
+                font-size: 4rem;
+                margin-bottom: 1rem;
+            }
+            h1 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+                font-weight: 700;
+            }
+            .description {
+                font-size: 1.25rem;
+                margin-bottom: 2rem;
+                opacity: 0.9;
+            }
+            .features {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+            .feature {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 1.5rem;
+                border-radius: 1rem;
+                backdrop-filter: blur(10px);
+            }
+            .feature-icon {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+            .btn {
+                display: inline-block;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                padding: 1rem 2rem;
+                text-decoration: none;
+                border-radius: 2rem;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                font-weight: 600;
+                transition: all 0.3s;
+            }
+            .btn:hover {
+                background: rgba(255, 255, 255, 0.3);
+                transform: translateY(-2px);
+            }
+            .links {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="logo">📊</div>
+            <h1>万物可视化 v2.0</h1>
+            <p class="description">智能文件分析 & 可视化生成平台</p>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">📁</div>
+                    <h3>智能文件分析</h3>
+                    <p>支持图片、文档、数据文件的自动分析和内容提取</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI驱动处理</h3>
+                    <p>基于深度学习的智能内容识别和数据提取</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📈</div>
+                    <h3>可视化生成</h3>
+                    <p>自动生成专业的交互式图表和仪表盘</p>
+                </div>
+            </div>
+
+            <div class="links">
+                <a href="/chat" class="btn">
+                    <i class="fas fa-comments"></i> 开始使用
+                </a>
+                <a href="/docs" class="btn">
+                    <i class="fas fa-book"></i> API文档
+                </a>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
 
 # 茅塞顿开专用API端点（必须放在通用路由前面，避免路径冲突）
 class HighSchoolRequest(BaseModel):

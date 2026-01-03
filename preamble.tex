@@ -1,0 +1,21 @@
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% 全局字体设置
+\large
+
+% 设置表格行高，让表格更易读
+\renewcommand{\arraystretch}{1.4}
+
+% 在文档开始时自动设置表格列宽
+\AtBeginDocument{
+  % 设置longtable的默认列宽（pandoc使用longtable）
+  \setlength{\LTleft}{0pt}
+  \setlength{\LTright}{0pt}
+}

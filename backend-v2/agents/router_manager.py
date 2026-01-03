@@ -13,7 +13,10 @@ from .astronomy_agent import AstronomyAgent
 from .physics_agent import PhysicsAgent
 from .chemistry_agent import ChemistryAgent
 from .biology_agent import BiologyAgent
-
+from .physics_agent import PhysicsAgent
+from .chemistry_agent import ChemistryAgent
+from .biology_agent import BiologyAgent
+from .general_agent import GeneralVisualizationAgent
 class SubjectClassifier:
     """智能学科分类器"""
 
@@ -204,7 +207,8 @@ class VisualizationRouter:
             "astronomy": AstronomyAgent(),
             "physics": PhysicsAgent(),
             "chemistry": ChemistryAgent(),
-            "biology": BiologyAgent()
+            "biology": BiologyAgent(),
+            "general": GeneralVisualizationAgent()
         }
 
         # 初始化学科分类器
@@ -250,9 +254,10 @@ class VisualizationRouter:
             # 2. 获取对应Agent
             agent = self.agents.get(subject)
             if not agent:
-                print(f"⚠️  学科 {subject} 暂不支持，使用数学Agent作为后备")
-                agent = self.agents["mathematics"]
-                subject = "mathematics"
+                print(f"⚠️  学科 {subject} 暂不支持，使用通用Agent (GeneralVisualizationAgent) 进行动态生成")
+                agent = self.agents["general"]
+                # 保持subject名称以便后续逻辑处理，或者也可以改为"general"
+                # subject = "general" 
                 self.routing_stats["fallback_count"] += 1
 
             # 更新学科计数
@@ -267,8 +272,16 @@ class VisualizationRouter:
             print(f"🎨 开始匹配 {subject} 学科模板...")
             template = await agent.match_template(requirement)
             if not template:
-                print(f"⚠️  未找到匹配模板，使用默认模板")
-                template = {"id": "default", "name": "默认模板"}
+                print(f"⚠️  未找到匹配模板，尝试使用通用Agent进行动态生成")
+                # 如果特定学科Agent无法匹配模板，并且不是general agent，则转交给general agent
+                if subject != "general" and "general" in self.agents:
+                    agent = self.agents["general"]
+                    print(f"🔄 切换至 GeneralAgent 处理: {prompt[:30]}...")
+                    # 重新解析需求（通用Agent通过解析获取原始prompt）
+                    requirement = await agent.parse_requirement(prompt)
+                    template = await agent.match_template(requirement)
+                else:
+                    template = {"id": "default", "name": "默认模板"}
 
             print(f"✅ 模板匹配完成: {template.get('name', '未知模板')}")
 

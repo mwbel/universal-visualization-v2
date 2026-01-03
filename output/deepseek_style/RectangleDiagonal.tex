@@ -1,0 +1,84 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+
+\geometry{a4paper, margin=1in}
+
+\title{\textbf{\Lsquare 勾股定理的几何证明}}
+\author{\textit{DeepSeek-R1 + Manim}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{引言}
+
+勾股定理是平面几何中最基本且最重要的定理之一。它描述了直角三角形三条边之间的关系：
+
+\begin{equation}
+\label{eq:pythagorean}
+a^2 + b^2 = c^2
+\end{equation}
+
+其中：
+\begin{itemize}
+    \item $a$ 和 $b$ 是直角三角形的两条直角边
+    \item $c$ 是斜边（直角所对的边）
+\end{itemize}
+
+\section{几何证明：矩形对角线}
+
+考虑一个宽度为 $a$、高度为 $b$ 的矩形。我们可以通过矩形的对角线来验证勾股定理。
+
+\subsection{矩形构造}
+
+设矩形 $ABCD$ 满足：
+\begin{itemize}
+    \item $AB = a = 3$ （宽度）
+    \item $AD = b = 4$ （高度）
+    \item $AC = c$ （对角线长度，待求）
+\end{itemize}
+
+\subsection{对角线长度计算}
+
+根据勾股定理，对角线长度为：
+
+\begin{align}
+c &= \sqrt{a^2 + b^2} \\
+  &= \sqrt{3^2 + 4^2} \\
+  &= \sqrt{9 + 16} \\
+  &= \sqrt{25} \\
+  &= 5
+\end{align}
+
+\subsection{数值验证}
+
+\begin{equation}
+3^2 + 4^2 = 9 + 16 = 25 = 5^2
+\end{equation}
+
+\section{可视化}
+
+使用 Manim 动画引擎，我们可以直观地展示这个几何关系：
+
+\begin{itemize}
+    \item \textcolor{blue}{蓝色矩形}：表示 $3 \times 4$ 的矩形
+    \item \textcolor{red}{红色对角线}：连接矩形的对角顶点，长度为 5
+    \item \textcolor{yellow}{黄色边框}：突出显示勾股定理公式
+\end{itemize}
+
+\section{结论}
+
+通过矩形的对角线，我们验证了勾股定理的正确性。对于 $3 \times 4$ 的矩形：
+
+\begin{center}
+\Large \textcolor{green}{$\boxed{3^2 + 4^2 = 5^2}$}
+\end{center}
+
+\end{document}

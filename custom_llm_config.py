@@ -21,6 +21,7 @@ class LLMProvider(str, Enum):
     DOUBAO = "doubao"
     KIMI = "kimi"
     DEEPSEEK = "deepseek"
+    GOOGLE = "google"
     CUSTOM = "custom"
 
 class LLMConfig:
@@ -88,13 +89,53 @@ class OpenAIClient(CustomLLMClient):
                 else:
                     raise Exception(f"OpenAI API错误: {response.status}")
 
+        except:
+            return False
+
+class GoogleGenAIClient(CustomLLMClient):
+    """Google Gemini客户端实现"""
+
+    async def generate_response(self, prompt: str, **kwargs) -> str:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.config.model_name}:generateContent?key={self.config.api_key}"
+        
+        headers = {
+            "Content-Type": "application/json"
+        }
+        
+        # Gemini API format
+        payload = {
+            "contents": [{
+                "parts": [{"text": prompt}]
+            }],
+            "generationConfig": {
+                "temperature": self.config.temperature,
+                "maxOutputTokens": self.config.max_tokens
+            }
+        }
+
+        async with aiohttp.ClientSession(headers=headers) as session:
+            async with session.post(url, json=payload, timeout=self.config.timeout) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    try:
+                        return result["candidates"][0]["content"]["parts"][0]["text"]
+                    except (KeyError, IndexError):
+                        raise Exception(f"Gemini API响应解析失败: {result}")
+                else:
+                    error_text = await response.text()
+                    raise Exception(f"Gemini API错误 {response.status}: {error_text}")
+
     async def validate_connection(self) -> bool:
+        # Simple validation call
         try:
+            # Try a minimal generation for validation since listing models might function differently with keys
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.config.model_name}:generateContent?key={self.config.api_key}"
+            payload = {
+                "contents": [{"parts": [{"text": "Hi"}]}],
+                "generationConfig": {"maxOutputTokens": 1}
+            }
             async with aiohttp.ClientSession() as session:
-                async with session.get(
-                    f"{self.config.base_url}/models",
-                    headers={"Authorization": f"Bearer {self.config.api_key}"}
-                ) as response:
+                async with session.post(url, json=payload, timeout=10) as response:
                     return response.status == 200
         except:
             return False
