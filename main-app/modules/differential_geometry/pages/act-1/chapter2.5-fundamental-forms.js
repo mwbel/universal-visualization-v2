@@ -9,7 +9,7 @@ let animationId = null;
 const initializedCharts = new Set();
 
 // 安全的Plotly渲染函数：自动选择newPlot或react
-function safePlotlyRender(containerId, data, layout, config = {responsive: true}) {
+function safePlotlyRender(containerId, data, layout, config = {responsive: true, displayModeBar: false}) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`[ERROR] Container ${containerId} not found`);
@@ -17,16 +17,45 @@ function safePlotlyRender(containerId, data, layout, config = {responsive: true}
     }
 
     try {
-        if (initializedCharts.has(containerId)) {
-            // 已经初始化过，使用react更新
+        // 检查容器是否已经初始化过Plotly图表
+        // 更可靠的检查方法：查看是否有内部Plotly属性
+        const isInitialized = container._fullLayout !== undefined ||
+                             (container.data && container.layout);
+
+        if (isInitialized) {
+            // 已经初始化过，使用react更新（更快且不会闪烁）
             Plotly.react(container, data, layout, config);
         } else {
             // 第一次渲染，使用newPlot
             Plotly.newPlot(container, data, layout, config);
-            initializedCharts.add(containerId);
         }
     } catch (error) {
         console.error(`[ERROR] Plotly rendering failed for ${containerId}:`, error);
+        // 如果react失败，尝试newPlot作为后备
+        try {
+            Plotly.newPlot(container, data, layout, config);
+        } catch (error2) {
+            console.error(`[ERROR] Fallback also failed for ${containerId}:`, error2);
+        }
+    }
+}
+
+// 安全的Plotly更新函数（用于已经存在的图表）
+function safePlotlyUpdate(container, data, layout, config = {responsive: true, displayModeBar: false}) {
+    try {
+        // 检查容器是否已经初始化
+        if (container._fullLayout || (container.data && container.layout)) {
+            Plotly.react(container, data, layout, config);
+        } else {
+            Plotly.newPlot(container, data, layout, config);
+        }
+    } catch (error) {
+        console.error('[ERROR] Plotly update failed:', error);
+        try {
+            Plotly.newPlot(container, data, layout, config);
+        } catch (error2) {
+            console.error('[ERROR] Fallback also failed:', error2);
+        }
     }
 }
 
@@ -34,10 +63,9 @@ function safePlotlyRender(containerId, data, layout, config = {responsive: true}
 
 // 更新第一基本形式曲面
 function updateFirstFormSurface() {
-    console.log('[DEBUG] updateFirstFormSurface called');
     const container = document.getElementById('first-form-surface');
     if (!container) {
-        console.error('[DEBUG] Container first-form-surface not found!');
+        console.error('[ERROR] Container first-form-surface not found!');
         return;
     }
 
@@ -53,13 +81,43 @@ function updateFirstFormSurface() {
         y: [v_param],
         z: [u_param*u_param - v_param*v_param],  // z = u² - v²
         type: 'scatter3d',
-        mode: 'markers',
+        mode: 'markers+text',
         marker: {
             color: 'red',
-            size: 6,
-            line: {color: 'darkred', width: 2}
+            size: 4,
+            line: {color: 'darkred', width: 1},
+            opacity: 0.9
+        },
+        text: [`P(${u_param.toFixed(1)}, ${v_param.toFixed(1)})`],
+        textposition: 'top center',
+        textfont: {
+            size: 11,
+            color: 'darkred',
+            family: 'Arial'
         },
         name: '当前计算点'
+    };
+
+    // 添加原点标记（黑色）
+    const originMarker = {
+        x: [0],
+        y: [0],
+        z: [0],
+        type: 'scatter3d',
+        mode: 'markers+text',
+        marker: {
+            color: 'black',
+            size: 3,
+            opacity: 0.8
+        },
+        text: ['O(0,0,0)'],
+        textposition: 'bottom center',
+        textfont: {
+            size: 10,
+            color: 'black',
+            family: 'Arial'
+        },
+        name: '原点'
     };
 
     const data = [
@@ -68,24 +126,59 @@ function updateFirstFormSurface() {
             y: surfaceData.y,
             z: surfaceData.z,
             type: 'surface',
-            opacity: 0.8,
-            colorscale: 'Viridis',
+            opacity: 0.9,
+            colorscale: [
+                [0, 'rgb(255, 0, 0)'],
+                [0.5, 'rgb(0, 255, 0)'],
+                [1, 'rgb(0, 0, 255)']
+            ],
             name: '曲面',
-            showscale: false
+            showscale: false,
+            contours: {
+                z: {
+                    show: true,
+                    usecolormap: true,
+                    highlightcolor: "lime",
+                    project: { z: true }
+                }
+            }
         },
+        originMarker,
         currentPointMarker
     ];
 
     const layout = {
-        title: `参数化曲面（双曲抛物面 $z = x^2 - y^2$）- 当前点: (${u_param.toFixed(1)}, ${v_param.toFixed(1)})`,
+        title: {
+            text: `参数化曲面（双曲抛物面 z = x² - y²）<br>当前点: (${u_param.toFixed(1)}, ${v_param.toFixed(1)})`,
+            font: {size: 14}
+        },
         scene: {
-            xaxis: {range: [-2, 2]},
-            yaxis: {range: [-2, 2]},
-            zaxis: {range: [-2, 2]},
-            aspectmode: 'cube'
+            xaxis: {
+                title: 'X',
+                range: [-2, 2],
+                showgrid: true,
+                zeroline: true
+            },
+            yaxis: {
+                title: 'Y',
+                range: [-2, 2],
+                showgrid: true,
+                zeroline: true
+            },
+            zaxis: {
+                title: 'Z',
+                range: [-2, 2],
+                showgrid: true,
+                zeroline: true
+            },
+            aspectmode: 'cube',
+            camera: {
+                eye: {x: 1.6, y: 1.6, z: 1.3}
+            }
         },
         height: 350,
-        margin: {l: 0, r: 0, t: 50, b: 0}
+        margin: {l: 0, r: 0, t: 60, b: 0},
+        autosize: true
     };
 
     // 使用安全的渲染函数
@@ -122,22 +215,33 @@ function generateParametricSurface(type, a, b) {
     const resolution = 30;
     const range = 2;
 
-    // 创建二维数组用于z值
+    // 创建二维数组用于z值，以及x和y的meshgrid
     const z = [];
     const x = [];
     const y = [];
 
-    // 首先创建x和y的一维坐标数组
+    // 创建x和y的二维数组(meshgrid格式)
     for (let i = 0; i <= resolution; i++) {
+        const x_row = [];
         const u = (i - resolution/2) * range / resolution;
-        x.push(u);
-    }
-    for (let j = 0; j <= resolution; j++) {
-        const v = (j - resolution/2) * range / resolution;
-        y.push(v);
+        for (let j = 0; j <= resolution; j++) {
+            const v = (j - resolution/2) * range / resolution;
+            x_row.push(u);  // x坐标沿u方向
+        }
+        x.push(x_row);
     }
 
-    // 然后创建z的二维数组
+    for (let i = 0; i <= resolution; i++) {
+        const y_row = [];
+        const u = (i - resolution/2) * range / resolution;
+        for (let j = 0; j <= resolution; j++) {
+            const v = (j - resolution/2) * range / resolution;
+            y_row.push(v);  // y坐标沿v方向
+        }
+        y.push(y_row);
+    }
+
+    // 创建z的二维数组
     for (let i = 0; i <= resolution; i++) {
         const z_row = [];
         const u = (i - resolution/2) * range / resolution;
@@ -154,6 +258,9 @@ function generateParametricSurface(type, a, b) {
                     break;
                 case 'cylinder':
                     z_val = v;
+                    break;
+                case 'plane':
+                    z_val = 0;
                     break;
                 default:
                     z_val = 0;
@@ -236,13 +343,11 @@ function showParameterGrid() {
 
 // 计算第一基本形式系数
 function calculateFirstFormCoefficients() {
-    console.log('Calculating first fundamental form coefficients...');
-
     const paramUElement = document.getElementById('param-u-ff');
     const paramVElement = document.getElementById('param-v-ff');
 
     if (!paramUElement || !paramVElement) {
-        console.error('Parameter sliders not found!');
+        console.error('[ERROR] Parameter sliders not found!');
         return;
     }
 
@@ -259,8 +364,6 @@ function calculateFirstFormCoefficients() {
     const u0 = parseFloat(paramUElement.value);
     const v0 = parseFloat(paramVElement.value);
 
-    console.log(`u0 = ${u0}, v0 = ${v0}`);
-
     // 计算偏导数
     const ru = {x: 1, y: 0, z: 2 * a * u0};
     const rv = {x: 0, y: 1, z: -2 * a * v0};
@@ -269,8 +372,6 @@ function calculateFirstFormCoefficients() {
     const E = ru.x * ru.x + ru.y * ru.y + ru.z * ru.z;
     const F = ru.x * rv.x + ru.y * rv.y + ru.z * rv.z;
     const G = rv.x * rv.x + rv.y * rv.y + rv.z * rv.z;
-
-    console.log(`E = ${E}, F = ${F}, G = ${G}`);
 
     // 更新显示
     const coeffE = document.getElementById('coeff-E');
@@ -293,8 +394,6 @@ function calculateFirstFormCoefficients() {
 
     // 可视化偏导数向量
     visualizeTangentVectors(ru, rv);
-
-    console.log('First fundamental form coefficients calculated successfully');
 }
 
 // 可视化切向量
@@ -352,15 +451,19 @@ function visualizeTangentVectors(ru, rv) {
         margin: {l: 0, r: 0, t: 50, b: 0}
     };
 
+    // 使用安全的Plotly调用
     try {
-        Plotly.react(container, data, layout, {responsive: true});
+        if (container._fullLayout || (container.data && container.layout)) {
+            Plotly.react(container, data, layout, {responsive: true, displayModeBar: false});
+        } else {
+            Plotly.newPlot(container, data, layout, {responsive: true, displayModeBar: false});
+        }
     } catch (error) {
-        console.error('[ERROR] Plotly.react failed in visualizeTangentVectors:', error);
-        // 尝试使用 newPlot 作为后备
+        console.error('[ERROR] Plotly failed in visualizeTangentVectors:', error);
         try {
-            Plotly.newPlot(container, data, layout, {responsive: true});
+            Plotly.newPlot(container, data, layout, {responsive: true, displayModeBar: false});
         } catch (error2) {
-            console.error('[ERROR] Plotly.newPlot also failed:', error2);
+            console.error('[ERROR] Fallback also failed:', error2);
         }
     }
 }
@@ -415,7 +518,7 @@ function showMetricProperties() {
         margin: {l: 0, r: 0, t: 50, b: 0}
     };
 
-    Plotly.react(container, data, layout, {responsive: true});
+    safePlotlyUpdate(container, data, layout);
 }
 
 // 可视化弧长
@@ -486,7 +589,7 @@ function visualizeArcLength() {
         margin: {l: 0, r: 0, t: 50, b: 0}
     };
 
-    Plotly.react(container, data, layout, {responsive: true});
+    safePlotlyUpdate(container, data, layout);
 }
 
 // 可视化面积元素
@@ -532,7 +635,7 @@ function updateSecondFormSurface() {
         margin: {l: 0, r: 0, t: 50, b: 0}
     };
 
-    Plotly.react(container, data, layout, {responsive: true});
+    safePlotlyUpdate(container, data, layout);
 }
 
 // 显示法向量场
@@ -588,7 +691,7 @@ function showNormalVectors() {
         margin: {l: 0, r: 0, t: 50, b: 0}
     };
 
-    Plotly.react(container, data, layout, {responsive: true});
+    safePlotlyUpdate(container, data, layout);
 }
 
 // 计算法向量
@@ -814,7 +917,7 @@ function visualizeFormsRelation() {
         margin: {l: 0, r: 0, t: 50, b: 0}
     };
 
-    Plotly.react(container, data, layout, {responsive: true});
+    safePlotlyUpdate(container, data, layout);
 }
 
 // 计算第一基本形式的度量场
@@ -947,7 +1050,7 @@ function demonstrateTheoremaEgregium() {
         margin: {l: 0, r: 0, t: 50, b: 0}
     };
 
-    Plotly.react(container, data, layout, {responsive: true});
+    safePlotlyUpdate(container, data, layout);
 }
 
 // 比较两个基本形式
@@ -1187,62 +1290,38 @@ function generatePlane(a, b) {
 
 // 初始化页面
 function initializePage() {
-    console.log('[DEBUG] initializePage called');
-    console.log('[DEBUG] typeof Plotly:', typeof Plotly);
-
     // 等待Plotly加载
     if (typeof Plotly === 'undefined') {
-        console.log('[DEBUG] Plotly not ready, waiting...');
         setTimeout(initializePage, 100);
         return;
     }
 
-    console.log('[DEBUG] Plotly loaded, initializing visualizations');
-
     // 设置滑块事件监听器
-    console.log('[DEBUG] Setting up slider listeners');
     setupSliderListeners();
 
     // 初始化可视化
     setTimeout(() => {
-        console.log('[DEBUG] Initializing visualizations...');
-
         // 更新滑块显示值
         const paramU_FF = document.getElementById('param-u-ff');
         const paramV_FF = document.getElementById('param-v-ff');
         if (paramU_FF && paramV_FF) {
             document.getElementById('param-u-ff-value').textContent = parseFloat(paramU_FF.value).toFixed(1);
             document.getElementById('param-v-ff-value').textContent = parseFloat(paramV_FF.value).toFixed(1);
-            console.log('[DEBUG] Slider values updated');
-        } else {
-            console.error('[DEBUG] Sliders not found!');
         }
 
         // 初始化第一基本形式
-        console.log('[DEBUG] Calling updateFirstFormSurface...');
         if (typeof updateFirstFormSurface === 'function') {
             updateFirstFormSurface();
-            console.log('[DEBUG] updateFirstFormSurface completed');
-        } else {
-            console.error('[DEBUG] updateFirstFormSurface is not a function');
         }
 
         // 初始化第二基本形式
-        console.log('[DEBUG] Calling updateSecondFormSurface...');
         if (typeof updateSecondFormSurface === 'function') {
             updateSecondFormSurface();
-            console.log('[DEBUG] updateSecondFormSurface completed');
-        } else {
-            console.error('[DEBUG] updateSecondFormSurface is not a function');
         }
 
         // 计算第一基本形式系数（必须在曲面初始化后）
-        console.log('[DEBUG] Calling calculateFirstFormCoefficients...');
         if (typeof calculateFirstFormCoefficients === 'function') {
             calculateFirstFormCoefficients();
-            console.log('[DEBUG] calculateFirstFormCoefficients completed');
-        } else {
-            console.error('[DEBUG] calculateFirstFormCoefficients is not a function');
         }
 
         // 计算第二基本形式系数
@@ -1254,8 +1333,6 @@ function initializePage() {
         if (typeof calculateInteractiveForms === 'function') {
             calculateInteractiveForms();
         }
-
-        console.log('[DEBUG] All visualizations initialized');
     }, 500);
 }
 

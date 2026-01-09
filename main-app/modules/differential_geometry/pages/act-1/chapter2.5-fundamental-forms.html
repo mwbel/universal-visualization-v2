@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第2.5章：第一基本形式与第二基本形式 - 可视化微分几何</title>
+    <link rel="stylesheet" href="../../../../lib/global-styles.css">
+    <script>
+    // 检查Plotly是否加载，如果没有则显示错误
+    window.addEventListener('error', function(e) {
+        if (e.filename && e.filename.includes('plotly')) {
+            console.error('Plotly加载失败，请检查网络连接');
+            document.addEventListener('DOMContentLoaded', function() {
+                const container = document.querySelector('.content-area');
+                if (container) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = 'background: #ffdddd; border: 2px solid #ff0000; padding: 20px; margin: 20px; border-radius: 5px;';
+                    errorDiv.innerHTML = `
+                        <h3>⚠️ 资源加载失败</h3>
+                        <p><strong>Plotly库</strong> 无法从CDN加载。这可能是因为：</p>
+                        <ul>
+                            <li>网络连接问题</li>
+                            <li>防火墙阻止</li>
+                            <li>CDN服务暂时不可用</li>
+                        </ul>
+                        <p><strong>解决方案：</strong></p>
+                        <ol>
+                            <li>检查网络连接</li>
+                            <li>尝试使用VPN</li>
+                            <li>或者下载Plotly到本地</li>
+                        </ol>
+                        <p><strong>下载地址：</strong> <a href="https://cdn.plot.ly/plotly-latest.min.js" target="_blank">https://cdn.plot.ly/plotly-latest.min.js</a></p>
+                        <p>将文件保存为 <code>plotly-latest.min.js</code> 放在当前目录，然后修改HTML引用。</p>
+                    `;
+                    container.insertBefore(errorDiv, container.firstChild);
+                }
+            });
+        }
+    }, true);
+    </script>
+    <script src="./plotly-latest.min.js" onerror="console.error('Plotly failed to load')"></script>
+    <script>
+    // MathJax配置
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            packages: {'[+]': ['base', 'ams', 'newcommand', 'noundefined']}
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            ignoreHtmlClass: 'tex2jax_ignore',
+            processHtmlClass: 'tex2jax_process'
+        },
+        startup: {
+            ready() {
+                console.log('MathJax is loaded, and typesetting is ready');
+                MathJax.startup.defaultReady();
+                return MathJax.startup.promise;
+            }
+        }
+    };
+    </script>
+    <!-- 使用MathJax CDN -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <style>
+        .forms-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .form-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-card h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+        }
+
+        .visualization-canvas {
+            width: 100%;
+            height: 350px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .control-btn:hover {
+            background: #0056b3;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+
+        .slider {
+            width: 150px;
+        }
+
+        .parameter-display {
+            font-family: monospace;
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .theorem-box {
+            background: #e8f5e8;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .example-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .metric-display {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .coefficient-matrix {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            gap: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .matrix-cell {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .viz-panel {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .viz-panel h4 {
+            margin-top: 0;
+            color: #007bff;
+            font-size: 14px;
+        }
+
+        .color-legend {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+
+        .color-sample {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid #333;
+        }
+
+        .property-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .property-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .property-list li:before {
+            content: "▸ ";
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="module-header">
+            <h1>第一幕：空间的本质</h1>
+            <nav class="module-nav">
+                <a href="../../index.html">返回微分几何</a>
+                <a href="../../../index.html">返回主页</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <!-- 调试面板切换按钮 -->
+            <div id="debug-toggle" style="position: fixed; top: 10px; right: 10px; z-index: 9999;">
+                <button class="control-btn" onclick="toggleDebugPanel()" style="background: #6c757d; padding: 8px 12px; font-size: 11px;">
+                    🔧 调试
+                </button>
+            </div>
+
+            <!-- 调试面板（默认隐藏） -->
+            <div id="debug-panel" style="display: none; background: #f0f0f0; border: 2px solid #333; padding: 15px; margin: 10px; border-radius: 5px;">
+                <h4 style="margin-top: 0;">🔧 调试面板</h4>
+                <div id="debug-status" style="margin-bottom: 10px;">状态: 初始化中...</div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="control-btn" onclick="manualInit()">手动初始化</button>
+                    <button class="control-btn" onclick="testPlotly()">测试Plotly</button>
+                    <button class="control-btn" onclick="testAllFunctions()">测试所有函数</button>
+                    <button class="control-btn" onclick="clearDebug()">清除日志</button>
+                </div>
+                <div id="debug-log" style="background: white; border: 1px solid #ccc; padding: 10px; margin-top: 10px; height: 150px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+            </div>
+
+            <script>
+                // 切换调试面板显示
+                function toggleDebugPanel() {
+                    const panel = document.getElementById('debug-panel');
+                    if (panel.style.display === 'none') {
+                        panel.style.display = 'block';
+                    } else {
+                        panel.style.display = 'none';
+                    }
+                }
+
+                // 调试函数
+                function log(msg) {
+                    const logDiv = document.getElementById('debug-log');
+                    const timestamp = new Date().toLocaleTimeString();
+                    logDiv.innerHTML += `[${timestamp}] ${msg}<br>`;
+                    logDiv.scrollTop = logDiv.scrollHeight;
+                    console.log(msg);
+                }
+
+                function clearDebug() {
+                    document.getElementById('debug-log').innerHTML = '';
+                }
+
+                function testPlotly() {
+                    log('测试 Plotly...');
+                    if (typeof Plotly !== 'undefined') {
+                        log('✓ Plotly 已加载, 版本: ' + Plotly.version);
+
+                        // 创建简单测试图表
+                        const testDiv = document.createElement('div');
+                        testDiv.style.cssText = 'width: 100%; height: 200px; margin: 10px 0;';
+                        testDiv.id = 'quick-test';
+                        document.getElementById('debug-panel').appendChild(testDiv);
+
+                        const data = [{z: [[1,2,3],[2,1,4],[3,4,1]], type: 'surface'}];
+                        Plotly.newPlot(testDiv, data, {title: '测试图表'});
+                        log('✓ 测试图表创建成功');
+                    } else {
+                        log('✗ Plotly 未加载');
+                    }
+                }
+
+                function testAllFunctions() {
+                    log('测试所有函数...');
+                    const functions = [
+                        'updateFirstFormSurface',
+                        'calculateFirstFormCoefficients',
+                        'showParameterGrid',
+                        'updateSecondFormSurface',
+                        'calculateSecondFormCoefficients'
+                    ];
+
+                    for (const funcName of functions) {
+                        if (typeof window[funcName] === 'function') {
+                            log(`✓ ${funcName} 存在`);
+                        } else {
+                            log(`✗ ${funcName} 不存在`);
+                        }
+                    }
+                }
+
+                function manualInit() {
+                    log('手动初始化...');
+                    try {
+                        if (typeof initializePage === 'function') {
+                            initializePage();
+                            log('✓ initializePage 执行成功');
+                        } else {
+                            log('✗ initializePage 函数不存在');
+                        }
+
+                        // 手动触发初始化
+                        setTimeout(() => {
+                            log('手动调用可视化函数...');
+                            if (typeof updateFirstFormSurface === 'function') {
+                                updateFirstFormSurface();
+                                log('✓ updateFirstFormSurface 执行');
+                            }
+                            if (typeof calculateFirstFormCoefficients === 'function') {
+                                calculateFirstFormCoefficients();
+                                log('✓ calculateFirstFormCoefficients 执行');
+                            }
+                        }, 500);
+                    } catch (error) {
+                        log('✗ 错误: ' + error.message);
+                        console.error(error);
+                    }
+                }
+
+                // 页面加载后的检查
+                window.addEventListener('load', function() {
+                    setTimeout(() => {
+                        const statusDiv = document.getElementById('debug-status');
+                        if (typeof Plotly !== 'undefined') {
+                            statusDiv.innerHTML = '✅ Plotly已就绪 | 页面加载完成';
+                            log('页面加载完成，Plotly可用');
+                        } else {
+                            statusDiv.innerHTML = '❌ Plotly未加载';
+                            log('警告: Plotly未加载');
+                        }
+                    }, 1000);
+                });
+            </script>
+
+            <aside class="sidebar">
+                <h3>第一幕章节</h3>
+                <ul class="nav-list">
+                    <li><a href="./chapter1-euclidean.html">第1章：欧几里得几何与非欧几何</a></li>
+                    <li><a href="./chapter2-gaussian.html">第2章：高斯曲率</a></li>
+                    <li><a href="./chapter2.5-fundamental-forms.html" class="current">第2.5章：基本形式</a></li>
+                    <li><a href="./chapter3-exercises.html">第3章：序幕和第一幕的习题</a></li>
+                </ul>
+
+                <h3>其他幕</h3>
+                <ul class="nav-list">
+                    <li><a href="../act-2/chapter4-metrics.html">第二幕：度量</a></li>
+                    <li><a href="../act-3/chapter8-curves.html">第三幕：曲率</a></li>
+                    <li><a href="../act-4/chapter21-history.html">第四幕：平行移动</a></li>
+                </ul>
+            </aside>
+
+            <div class="content-area">
+                <section class="chapter-section">
+                    <h2>第2.5章：第一基本形式与第二基本形式</h2>
+
+                    <div class="intro-content">
+                        <p>曲面的<strong>第一基本形式</strong>和<strong>第二基本形式</strong>是微分几何中描述曲面性质的两个核心工具。第一基本形式描述曲面的<strong>内蕴性质</strong>（度量），而第二基本形式描述曲面的<strong>外蕴性质</strong>（弯曲方式）。</p>
+
+                        <div class="formula-box">
+                            <strong>第一基本形式（First Fundamental Form）：</strong>
+                            $$I = E\,du^2 + 2F\,du\,dv + G\,dv^2$$
+
+                            其中系数矩阵为：
+                            $$\begin{pmatrix} E & F \\ F & G \end{pmatrix} = \begin{pmatrix} \mathbf{r}_u \cdot \mathbf{r}_u & \mathbf{r}_u \cdot \mathbf{r}_v \\ \mathbf{r}_v \cdot \mathbf{r}_u & \mathbf{r}_v \cdot \mathbf{r}_v \end{pmatrix}$$
+
+                            <strong>第二基本形式（Second Fundamental Form）：</strong>
+                            $$II = e\,du^2 + 2f\,du\,dv + g\,dv^2$$
+
+                            其中系数矩阵为：
+                            $$\begin{pmatrix} e & f \\ f & g \end{pmatrix} = \begin{pmatrix} \mathbf{r}_{uu} \cdot \mathbf{n} & \mathbf{r}_{uv} \cdot \mathbf{n} \\ \mathbf{r}_{vu} \cdot \mathbf{n} & \mathbf{r}_{vv} \cdot \mathbf{n} \end{pmatrix}$$
+
+                            这里 $\mathbf{n}$ 是曲面的单位法向量。
+                        </div>
+                    </div>
+                </section>
+
+                <section class="geometry-section">
+                    <h3>2.5.1 第一基本形式：曲面的度量</h3>
+
+                    <div class="concept-explanation">
+                        <p>第一基本形式描述了曲面上的距离、角度和面积。它是曲面论的内蕴量，即只依赖于曲面本身，而不依赖于曲面在三维空间中的嵌入方式。</p>
+
+                        <div class="theorem-box">
+                            <strong>第一基本形式的应用：</strong>
+                            <ul class="property-list">
+                                <li><strong>弧长：</strong> $ds^2 = E\,du^2 + 2F\,du\,dv + G\,dv^2$</li>
+                                <li><strong>面积：</strong> $dA = \sqrt{EG - F^2}\,du\,dv$</li>
+                                <li><strong>角度：</strong> $\cos\theta = \frac{E\,du_1\,du_2 + F(du_1\,dv_2 + du_2\,dv_1) + G\,dv_1\,dv_2}{\sqrt{I_1 \cdot I_2}}$</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="forms-container">
+                        <div class="form-card">
+                            <h3>参数曲面示例</h3>
+                            <div id="first-form-surface" class="visualization-canvas"></div>
+                            <div class="controls">
+                                <button class="control-btn" onclick="updateFirstFormSurface()">更新曲面</button>
+                                <button class="control-btn" onclick="showParameterGrid()">显示参数网格</button>
+                            </div>
+                            <div class="slider-container">
+                                <label>参数 u:</label>
+                                <input type="range" id="param-u-ff" class="slider" min="-2" max="2" value="0" step="0.1">
+                                <span class="parameter-display" id="param-u-ff-value">0.0</span>
+                            </div>
+                            <div class="slider-container">
+                                <label>参数 v:</label>
+                                <input type="range" id="param-v-ff" class="slider" min="-2" max="2" value="0" step="0.1">
+                                <span class="parameter-display" id="param-v-ff-value">0.0</span>
+                            </div>
+                            <div style="background: #e8f4fd; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 12px;">
+                                <strong>💡 交互说明：</strong>
+                                <ul style="margin: 5px 0; padding-left: 20px;">
+                                    <li>曲面的<strong>整体形状</strong>保持不变（双曲抛物面）</li>
+                                    <li><strong>红色标记点</strong>表示当前计算参数(u, v)在曲面上的位置</li>
+                                    <li>调整滑块会改变计算点位置，从而改变该点的<strong>切向量</strong>和<strong>度量系数</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-card">
+                            <h3>第一基本形式系数</h3>
+                            <div class="coefficient-matrix">
+                                <div></div>
+                                <div class="matrix-cell"><strong>∂/∂u</strong></div>
+                                <div class="matrix-cell"><strong>∂/∂v</strong></div>
+                                <div class="matrix-cell"><strong>∂/∂u</strong></div>
+                                <div class="matrix-cell" id="coeff-E">$E$ = 计算中...</div>
+                                <div class="matrix-cell" id="coeff-F">$F$ = 计算中...</div>
+                                <div class="matrix-cell"><strong>∂/∂v</strong></div>
+                                <div class="matrix-cell" id="coeff-F2">$F$ = 计算中...</div>
+                                <div class="matrix-cell" id="coeff-G">$G$ = 计算中...</div>
+                            </div>
+                            <div class="metric-display">
+                                <div>度量张量行列式: <span id="metric-det">计算中...</span></div>
+                                <div>面积元素: <span id="area-element">计算中...</span></div>
+                            </div>
+                            <div class="controls">
+                                <button class="control-btn" onclick="calculateFirstFormCoefficients()">计算系数</button>
+                                <button class="control-btn" onclick="showMetricProperties()">显示度量性质</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="visualization-grid">
+                        <div class="viz-panel">
+                            <h4>弧长测量可视化</h4>
+                            <div id="arc-length-viz" class="visualization-canvas" style="height: 250px;"></div>
+                            <div class="controls">
+                                <button class="control-btn" onclick="visualizeArcLength()">显示弧长</button>
+                            </div>
+                        </div>
+
+                        <div class="viz-panel">
+                            <h4>面积元素可视化</h4>
+                            <div id="area-element-viz" class="visualization-canvas" style="height: 250px;"></div>
+                            <div class="controls">
+                                <button class="control-btn" onclick="visualizeAreaElement()">显示面积元素</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="geometry-section">
+                    <h3>2.5.2 第二基本形式：曲面的弯曲</h3>
+
+                    <div class="concept-explanation">
+                        <p>第二基本形式描述了曲面在三维空间中的弯曲方式。它不是内蕴量，依赖于曲面在空间中的嵌入。第二基本形式与法向量的变化密切相关。</p>
+
+                        <div class="formula-box">
+                            <strong>第二基本形式的几何意义：</strong>
+                            <ul class="property-list">
+                                <li><strong>法曲率：</strong> $\kappa_n = \frac{II}{I} = \frac{e\,du^2 + 2f\,du\,dv + g\,dv^2}{E\,du^2 + 2F\,du\,dv + G\,dv^2}$</li>
+                                <li><strong>主曲率：</strong> 第二基本形式矩阵相对于第一基本形式矩阵的特征值</li>
+                                <li><strong>高斯曲率：</strong> $K = \frac{eg - f^2}{EG - F^2}$</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="forms-container">
+                        <div class="form-card">
+                            <h3>曲面与法向量</h3>
+                            <div id="second-form-surface" class="visualization-canvas"></div>
+                            <div class="controls">
+                                <button class="control-btn" onclick="updateSecondFormSurface()">更新曲面</button>
+                                <button class="control-btn" onclick="showNormalVectors()">显示法向量场</button>
+                                <button class="control-btn" onclick="animateNormalChange()">法向量变化动画</button>
+                            </div>
+                            <div class="slider-container">
+                                <label>曲面类型:</label>
+                                <select id="surface-type-sf" style="width: 150px; padding: 5px;">
+                                    <option value="saddle">双曲抛物面</option>
+                                    <option value="paraboloid">椭圆抛物面</option>
+                                    <option value="cylinder">圆柱面</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-card">
+                            <h3>第二基本形式系数</h3>
+                            <div class="coefficient-matrix">
+                                <div></div>
+                                <div class="matrix-cell"><strong>∂²/∂u²</strong></div>
+                                <div class="matrix-cell"><strong>∂²/∂u∂v</strong></div>
+                                <div class="matrix-cell"><strong>∂²/∂u∂v</strong></div>
+                                <div class="matrix-cell" id="coeff-e">e = 计算中...</div>
+                                <div class="matrix-cell" id="coeff-f">f = 计算中...</div>
+                                <div class="matrix-cell"><strong>∂²/∂v²</strong></div>
+                                <div class="matrix-cell" id="coeff-f2">f = 计算中...</div>
+                                <div class="matrix-cell" id="coeff-g">g = 计算中...</div>
+                            </div>
+                            <div class="metric-display">
+                                <div>第二基本形式行列式: <span id="second-form-det">计算中...</span></div>
+                                <div>高斯曲率 K = (eg-f²)/(EG-F²): <span id="gaussian-from-forms">计算中...</span></div>
+                            </div>
+                            <div class="controls">
+                                <button class="control-btn" onclick="calculateSecondFormCoefficients()">计算系数</button>
+                                <button class="control-btn" onclick="compareForms()">比较两个基本形式</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="geometry-section">
+                    <h3>2.5.3 两个基本形式的关系</h3>
+
+                    <div class="concept-explanation">
+                        <p>两个基本形式通过曲率张量联系在一起。高斯的绝妙定理（Theorema Egregium）表明，高斯曲率虽然由两个基本形式定义，但实际上只依赖于第一基本形式。</p>
+
+                        <div class="theorem-box">
+                            <strong>高斯绝妙定理：</strong>
+                            高斯曲率 $K = \frac{eg - f^2}{EG - F^2}$ 只依赖于第一基本形式及其导数，而不依赖于第二基本形式。
+                        </div>
+                    </div>
+
+                    <div id="forms-relation-viz" class="visualization-canvas"></div>
+
+                    <div class="controls">
+                        <button class="control-btn" onclick="visualizeFormsRelation()">可视化关系</button>
+                        <button class="control-btn" onclick="showShapeOperator()">形状算子</button>
+                        <button class="control-btn" onclick="demonstrateTheoremaEgregium()">演示绝妙定理</button>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>具体示例：</strong>
+                        <p>对于曲面 $z = x^2 + y^2$（抛物面），在原点(0,0)处：</p>
+                        <ul>
+                            <li>第一基本形式系数：E = G = 1, F = 0</li>
+                            <li>第二基本形式系数：e = g = 2, f = 0</li>
+                            <li>高斯曲率：K = (2×2 - 0)/(1×1 - 0) = 4</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="geometry-section">
+                    <h3>2.5.4 交互式计算器</h3>
+
+                    <div class="concept-explanation">
+                        <p>使用下面的交互式工具来探索不同曲面的两个基本形式。调整参数并观察系数的变化。</p>
+                    </div>
+
+                    <div class="forms-container">
+                        <div class="form-card">
+                            <h3>曲面参数</h3>
+                            <div class="slider-container">
+                                <label>曲面选择:</label>
+                                <select id="interactive-surface-type" style="width: 100%; padding: 5px;">
+                                    <option value="saddle">双曲抛物面: z = x² - y²</option>
+                                    <option value="paraboloid">椭圆抛物面: z = x² + y²</option>
+                                    <option value="plane">平面: z = 0</option>
+                                    <option value="helicoid">螺旋面: x = u cos v, y = u sin v, z = v</option>
+                                    <option value="catenoid">悬链面</option>
+                                </select>
+                            </div>
+                            <div class="slider-container">
+                                <label>参数 a:</label>
+                                <input type="range" id="interactive-param-a" class="slider" min="0.1" max="3" value="1" step="0.1">
+                                <span class="parameter-display" id="interactive-param-a-value">1.0</span>
+                            </div>
+                            <div class="slider-container">
+                                <label>参数 b:</label>
+                                <input type="range" id="interactive-param-b" class="slider" min="0.1" max="3" value="1" step="0.1">
+                                <span class="parameter-display" id="interactive-param-b-value">1.0</span>
+                            </div>
+                            <div class="slider-container">
+                                <label>点 u₀:</label>
+                                <input type="range" id="point-u0" class="slider" min="-1" max="1" value="0" step="0.1">
+                                <span class="parameter-display" id="point-u0-value">0.0</span>
+                            </div>
+                            <div class="slider-container">
+                                <label>点 v₀:</label>
+                                <input type="range" id="point-v0" class="slider" min="-1" max="1" value="0" step="0.1">
+                                <span class="parameter-display" id="point-v0-value">0.0</span>
+                            </div>
+                            <div class="controls">
+                                <button class="control-btn" onclick="calculateInteractiveForms()">计算基本形式</button>
+                                <button class="control-btn" onclick="exportFormsData()">导出数据</button>
+                            </div>
+                        </div>
+
+                        <div class="form-card">
+                            <h3>计算结果</h3>
+                            <div class="metric-display">
+                                <strong>第一基本形式系数：</strong>
+                                <div>$E$ = <span id="interactive-E">-</span></div>
+                                <div>$F$ = <span id="interactive-F">-</span></div>
+                                <div>$G$ = <span id="interactive-G">-</span></div>
+                                <div>$EG - F^2$ = <span id="interactive-EG-F2">-</span></div>
+                                <br>
+                                <strong>第二基本形式系数：</strong>
+                                <div>$e$ = <span id="interactive-e">-</span></div>
+                                <div>$f$ = <span id="interactive-f">-</span></div>
+                                <div>$g$ = <span id="interactive-g">-</span></div>
+                                <div>$eg - f^2$ = <span id="interactive-eg-f2">-</span></div>
+                                <br>
+                                <strong>曲率：</strong>
+                                <div>高斯曲率 K = <span id="interactive-K">-</span></div>
+                                <div>平均曲率 H = <span id="interactive-H">-</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="interactive-forms-viz" class="visualization-canvas"></div>
+                </section>
+
+                <div class="navigation-buttons">
+                    <button class="nav-btn prev-btn" onclick="window.location.href='./chapter2-gaussian.html'">← 第2章：高斯曲率</button>
+                    <button class="nav-btn next-btn" onclick="window.location.href='./chapter3-exercises.html'">第3章：习题 →</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./chapter2.5-fundamental-forms.js"></script>
+</body>
+</html>
