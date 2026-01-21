@@ -186,6 +186,10 @@ cleanup_paths.txt
 **/triangle.html
 *.html
 
+# 例外：允许期末速通目录的HTML文件
+!期末速通/*.html
+!期末速通/概率统计可视化/*.html
+
 # 大型虚拟环境和编译产物
 **/.venv/
 **/build/

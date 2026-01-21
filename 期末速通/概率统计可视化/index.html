@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>概率统计可视化索引</title>
+
+    <!-- 导航栏样式 -->
+    <link rel="stylesheet" href="../css/page-navbar.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .tag.chapter {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .tag.difficulty {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 24px;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .progress-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .progress-item {
+            margin-bottom: 12px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .progress-track {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4285f4, #34a853);
+            transition: width 0.3s;
+        }
+    </style>
+
+    <!-- ⚡ 快速加载：索引页不需要外部库，移除阻塞渲染的脚本 -->
+</head>
+<body>
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="../index.html" class="nav-btn nav-btn-home">期末速通主页</a>
+        </div>
+        <div class="page-title"><h1>📊 概率统计可视化</h1></div>
+        <div class="breadcrumb">
+            <div class="breadcrumb-item"><a href="../index.html">期末速通</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="#">概率统计可视化</a></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>🎲 概率论与数理统计可视化</h1>
+        <p class="subtitle">交互式学习核心概念，掌握统计思维</p>
+
+        <!-- 测试入口 -->
+        <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; color: #333;">🧪 测试与开发</h3>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
+                <a href="quick-test.html" style="flex: 1; min-width: 200px; padding: 15px; background: #4285f4; color: white; text-decoration: none; border-radius: 8px; text-align: center; font-weight: 600; transition: all 0.3s;">
+                    ⚡ 快速测试页
+                </a>
+                <a href="test-all-pages.html" style="flex: 1; min-width: 200px; padding: 15px; background: #34a853; color: white; text-decoration: none; border-radius: 8px; text-align: center; font-weight: 600; transition: all 0.3s;">
+                    🤖 自动化测试
+                </a>
+                <a href="README-TEST.md" style="flex: 1; min-width: 200px; padding: 15px; background: #fbbc04; color: #333; text-decoration: none; border-radius: 8px; text-align: center; font-weight: 600; transition: all 0.3s;">
+                    📖 测试指南
+                </a>
+            </div>
+        </div>
+
+        <!-- 概念导航 -->
+        <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; color: #333;">📖 全书概念导航</h3>
+            <p style="color: #666; margin-bottom: 15px;">浏览概率统计全书的核心概念和知识点，快速找到需要学习的内容</p>
+            <a href="../concept-navigator.html" style="display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.3s; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.4);">
+                🚀 打开概念导航 →
+            </a>
+        </div>
+
+        <!-- 进度概览 -->
+        <div class="progress-bar">
+            <h3 style="margin-top: 0; color: #333;">📊 可视化完成进度</h3>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>基础概念（第一章）</span>
+                    <span>4/6 (67%)</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: 67%;"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>随机变量（第二章）</span>
+                    <span>2/6 (33%)</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: 33%;"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>数字特征（第四章）</span>
+                    <span>3/4 (75%)</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: 75%;"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>总计</span>
+                    <span>13/30 (43%)</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: 43%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第一章：概率论的基本概念 -->
+        <h2 class="section-title">📘 第一章：概率论的基本概念</h2>
+        <div class="card-grid">
+            <a href="02-随机事件与样本空间-快速版.html" class="card">
+                <div class="card-icon">🎯</div>
+                <div class="card-title">随机事件与样本空间 <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">快速版</span></div>
+                <div class="card-desc">
+                    通过Venn图直观理解样本空间、事件及其运算（并、交、补）。
+                    <br><br>
+                    核心概念：样本空间Ω、事件A∪B、A∩B、补集A^c
+                    <br><br>
+                    <strong style="color: #4caf50;">✅ 极速加载版本 - 无需等待</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第一章</span>
+                    <span class="tag difficulty">基础</span>
+                    <span class="tag" style="background: #4caf50; color: white;">快速版</span>
+                </div>
+            </a>
+
+            <a href="16-条件概率.html" class="card">
+                <div class="card-icon">🔗</div>
+                <div class="card-title">条件概率</div>
+                <div class="card-desc">
+                    理解"在某个事件发生的条件下"另一个事件发生的概率。
+                    <br><br>
+                    核心公式：P(A|B) = P(A∩B) / P(B)
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第一章</span>
+                    <span class="tag difficulty">重要</span>
+                </div>
+            </a>
+
+            <a href="01-独立性.html" class="card">
+                <div class="card-icon">🔄</div>
+                <div class="card-title">事件的独立性</div>
+                <div class="card-desc">
+                    探索独立事件的特征：一个事件的发生不影响另一个事件。
+                    <br><br>
+                    核心条件：P(A∩B) = P(A) · P(B)
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第一章</span>
+                    <span class="tag difficulty">重要</span>
+                </div>
+            </a>
+
+            <a href="03-频率与概率-快速版.html" class="card">
+                <div class="card-icon">📈</div>
+                <div class="card-title">频率与概率 <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">快速版</span></div>
+                <div class="card-desc">
+                    通过模拟实验演示大数定律：频率如何收敛于概率。
+                    <br><br>
+                    核心原理：lim(n→∞) fn(A) = P(A)
+                    <br><br>
+                    <strong style="color: #4caf50;">✅ 极速加载版本 - 无需等待</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第一章</span>
+                    <span class="tag difficulty">核心</span>
+                    <span class="tag" style="background: #4caf50; color: white;">快速版</span>
+                </div>
+            </a>
+
+            <a href="06-全概率公式-快速版.html" class="card">
+                <div class="card-icon">🎲</div>
+                <div class="card-title">全概率公式 <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">快速版</span></div>
+                <div class="card-desc">
+                    通过"划分样本空间"来计算复杂事件的概率。
+                    <br><br>
+                    核心公式：P(B) = Σ P(Ai) · P(B|Ai)
+                    <br><br>
+                    <strong style="color: #4caf50;">✅ 极速加载版本 - 无需等待</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第一章</span>
+                    <span class="tag difficulty">重要</span>
+                    <span class="tag" style="background: #4caf50; color: white;">快速版</span>
+                </div>
+            </a>
+
+            <a href="07-贝叶斯公式-快速版.html" class="card">
+                <div class="card-icon">🔄</div>
+                <div class="card-title">贝叶斯公式 <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">快速版</span></div>
+                <div class="card-desc">
+                    逆向概率推理，根据新证据更新旧信念。
+                    <br><br>
+                    核心应用：医疗诊断、假阳性问题、垃圾邮件过滤
+                    <br><br>
+                    <strong style="color: #4caf50;">✅ 极速加载版本 - 无需等待</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第一章</span>
+                    <span class="tag difficulty">核心</span>
+                    <span class="tag" style="background: #4caf50; color: white;">快速版</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 第五章：大数定律及中心极限定理 -->
+        <h2 class="section-title">📕 第五章：大数定律及中心极限定理</h2>
+        <div class="card-grid">
+            <a href="08-中心极限定理-快速版.html" class="card">
+                <div class="card-icon">🎯</div>
+                <div class="card-title">中心极限定理（CLT） <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">快速版</span></div>
+                <div class="card-desc">
+                    统计学最重要的定理：无论总体分布如何，样本均值都趋近正态分布。
+                    <br><br>
+                    核心结论：X̄ → N(μ, σ²/n)，统计推断的基础
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第五章</span>
+                    <span class="tag difficulty">核心</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 第六-八章：统计推断 -->
+        <h2 class="section-title">📗 第六-八章：统计推断核心</h2>
+        <div class="card-grid">
+            <a href="09-三大抽样分布对比-快速版.html" class="card">
+                <div class="card-icon">📊</div>
+                <div class="card-title">三大抽样分布对比 <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">快速版</span></div>
+                <div class="card-desc">
+                    χ²分布、t分布、F分布的完整对比，理解它们的应用场景。
+                    <br><br>
+                    核心内容：方差估计、小样本检验、ANOVA的基础
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第六章</span>
+                    <span class="tag difficulty">重要</span>
+                </div>
+            </a>
+
+            <a href="10-假设检验流程-快速版.html" class="card">
+                <div class="card-icon">🔬</div>
+                <div class="card-title">假设检验完整流程 <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">快速版</span></div>
+                <div class="card-desc">
+                    系统学习假设检验：两类错误、p值、功效分析。
+                    <br><br>
+                    核心概念：Type I/II错误、显著性水平、检验决策
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第八章</span>
+                    <span class="tag difficulty">核心</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 第四章：随机变量的数字特征 -->
+        <h2 class="section-title">📙 第四章：随机变量的数字特征</h2>
+        <div class="card-grid">
+            <a href="04-数学期望-快速版.html" class="card">
+                <div class="card-icon">⚖️</div>
+                <div class="card-title">数学期望 <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">快速版</span></div>
+                <div class="card-desc">
+                    理解期望的几何意义：概率分布的"重心"或"平衡点"。
+                    <br><br>
+                    核心公式：E(X) = Σ xi · pi
+                    <br><br>
+                    <strong style="color: #4caf50;">✅ 极速加载版本 - 无需等待</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第四章</span>
+                    <span class="tag difficulty">核心</span>
+                    <span class="tag" style="background: #4caf50; color: white;">快速版</span>
+                </div>
+            </a>
+
+            <a href="05-方差-快速版.html" class="card">
+                <div class="card-icon">📏</div>
+                <div class="card-title">方差 <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">快速版</span></div>
+                <div class="card-desc">
+                    可视化方差的意义：衡量数据的离散程度和波动性。
+                    <br><br>
+                    核心公式：Var(X) = E[(X-μ)²] = σ²
+                    <br><br>
+                    <strong style="color: #4caf50;">✅ 极速加载版本 - 无需等待</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第四章</span>
+                    <span class="tag difficulty">重要</span>
+                    <span class="tag" style="background: #4caf50; color: white;">快速版</span>
+                </div>
+            </a>
+
+            <a href="11-离散型随机变量.html" class="card">
+                <div class="card-icon">🎲</div>
+                <div class="card-title">离散型随机变量</div>
+                <div class="card-desc">
+                    理解离散型随机变量的概率分布、期望和方差。
+                    <br><br>
+                    包含：伯努利分布、二项分布、泊松分布等
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第二章</span>
+                    <span class="tag difficulty">核心</span>
+                    <span class="tag" style="background: #4caf50; color: white;">新增</span>
+                </div>
+            </a>
+
+            <a href="12-连续型随机变量.html" class="card">
+                <div class="card-icon">📈</div>
+                <div class="card-title">连续型随机变量</div>
+                <div class="card-desc">
+                    理解概率密度函数(PDF)和累积分布函数(CDF)。
+                    <br><br>
+                    包含：均匀分布、正态分布、指数分布
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第二章</span>
+                    <span class="tag difficulty">核心</span>
+                    <span class="tag" style="background: #4caf50; color: white;">新增</span>
+                </div>
+            </a>
+
+            <a href="14-协方差与相关系数.html" class="card">
+                <div class="card-icon">🔗</div>
+                <div class="card-title">协方差与相关系数</div>
+                <div class="card-desc">
+                    可视化两个随机变量之间的线性关系强度。
+                    <br><br>
+                    核心概念：相关性、散点图、回归线
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第四章</span>
+                    <span class="tag difficulty">重要</span>
+                    <span class="tag" style="background: #4caf50; color: white;">新增</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 已有可视化（复用） -->
+        <h2 class="section-title">📚 更多概率分布可视化</h2>
+        <div class="card-grid">
+            <a href="17-正态分布.html" class="card">
+                <div class="card-icon">📊</div>
+                <div class="card-title">正态分布</div>
+                <div class="card-desc">
+                    最重要的连续型概率分布，68-95-99.7规则的可视化。
+                    <br><br>
+                    <strong style="color: #4caf50;">✅ 本地版本 - 快速加载</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第二章</span>
+                    <span class="tag difficulty">核心</span>
+                    <span class="tag" style="background: #4caf50; color: white;">可用</span>
+                </div>
+            </a>
+
+            <a href="11-离散型随机变量.html" class="card">
+                <div class="card-icon">🎰</div>
+                <div class="card-title">二项分布</div>
+                <div class="card-desc">
+                    n次独立重复试验中成功次数的离散分布。
+                    <br><br>
+                    <strong>包含在"离散型随机变量"中</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第二章</span>
+                    <span class="tag difficulty">重要</span>
+                </div>
+            </a>
+
+            <a href="11-离散型随机变量.html" class="card">
+                <div class="card-icon">✨</div>
+                <div class="card-title">泊松分布</div>
+                <div class="card-desc">
+                    稀有事件计数模型，单位时间内事件发生次数。
+                    <br><br>
+                    <strong>包含在"离散型随机变量"中</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第二章</span>
+                    <span class="tag difficulty">重要</span>
+                </div>
+            </a>
+
+            <a href="12-连续型随机变量.html" class="card">
+                <div class="card-icon">⏱️</div>
+                <div class="card-title">指数分布</div>
+                <div class="card-desc">
+                    描述等待时间的连续分布，无记忆性。
+                    <br><br>
+                    <strong>包含在"连续型随机变量"中</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第二章</span>
+                    <span class="tag difficulty">重要</span>
+                </div>
+            </a>
+
+            <a href="14-协方差与相关系数.html" class="card">
+                <div class="card-icon">🌐</div>
+                <div class="card-title">多维随机变量</div>
+                <div class="card-desc">
+                    两个相关随机变量的联合分布与相关性分析。
+                    <br><br>
+                    <strong>包含协方差与相关系数的可视化</strong>
+                </div>
+                <div class="card-meta">
+                    <span class="tag chapter">第三章</span>
+                    <span class="tag difficulty">进阶</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 底部说明 -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-top: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0;">💡 使用建议</h3>
+            <ol style="line-height: 1.8;">
+                <li><strong>按章节学习</strong>：建议按照第一章→第四章的顺序学习</li>
+                <li><strong>动手调整</strong>：每个可视化都有交互控件，动手调整参数观察变化</li>
+                <li><strong>关注公式</strong>：注意LaTeX数学公式，理解背后的数学原理</li>
+                <li><strong>联系实际</strong>：思考每个概念在实际问题中的应用</li>
+            </ol>
+            <p style="margin-top: 20px; color: #666;">
+                <strong>📌 注意</strong>：本页面持续更新中，更多可视化内容即将上线...
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s, transform 0.5s';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

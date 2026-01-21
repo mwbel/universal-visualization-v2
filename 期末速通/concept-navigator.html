@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全书概念导航 - 概率论与数理统计</title>
+    <!-- ⚡ 快速加载：内联CSS，避免外部文件阻塞渲染 -->
+    <style>
+        /* ========== 通用导航栏样式（内联） ========== */
+        .page-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            border: 1px solid #e0e0e0;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f1f3f4;
+            color: #202124;
+            text-decoration: none;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            background: #e8f0fe;
+            color: #4285f4;
+            border-color: #4285f4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+        }
+
+        .nav-btn-back::before {
+            content: '←';
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-right: 4px;
+        }
+
+        .nav-btn-home::before {
+            content: '🏠';
+            margin-right: 4px;
+        }
+
+        .page-title {
+            flex: 1;
+            text-align: center;
+        }
+
+        .page-title h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #202124;
+            margin: 0;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #5f6368;
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breadcrumb-item a {
+            color: #5f6368;
+            text-decoration: none;
+            transition: color 150ms;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #4285f4;
+        }
+
+        .breadcrumb-separator {
+            color: #9aa0a6;
+        }
+
+        .breadcrumb-item:last-child a {
+            color: #202124;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .page-navbar {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .page-title h1 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ========== 页面特定样式 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .back-nav {
+            margin-bottom: 20px;
+        }
+        .back-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f8f9fa;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .back-nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .stats-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 8px;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .search-box {
+            margin-bottom: 30px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .chapter {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .chapter:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+        }
+        .chapter-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        .chapter-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .chapter-title {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        .chapter-stats {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        .chapter-content {
+            padding: 20px;
+            display: none;
+            background: white;
+        }
+        .chapter-content.active {
+            display: block;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            border-left: 3px solid #667eea;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .concept-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .concept-card {
+            background: white;
+            border-radius: 20px;
+            padding: 8px 16px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .concept-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .concept-card.has-viz {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-color: #4caf50;
+        }
+        .concept-card.no-viz {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-color: #ff9800;
+        }
+        .concept-name {
+            font-weight: 500;
+            color: #333;
+        }
+        .concept-status {
+            display: inline-flex;
+            align-items: center;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .status-has {
+            background: #4caf50;
+            color: white;
+        }
+        .status-new {
+            background: #ff6b6b;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        .status-none {
+            background: #9e9e9e;
+            color: white;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .viz-link {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        .viz-link:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+        .filter-buttons {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .toggle-icon {
+            transition: transform 0.3s;
+        }
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* 卡片网格布局 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .viz-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .viz-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+        }
+
+        .viz-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .viz-card.new-badge::after {
+            content: '🔥 NEW';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .tag.chapter {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .tag.section {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .tag.difficulty {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .section-divider {
+            color: white;
+            font-size: 24px;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .no-viz-message {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 通用导航栏 -->
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()" data-tooltip="返回上一页">
+                返回上一级
+            </button>
+            <a href="index.html" class="nav-btn nav-btn-home" data-tooltip="返回期末速通主页">
+                期末速通主页
+            </a>
+        </div>
+
+        <div class="page-title">
+            <h1>📚 全书概念导航</h1>
+        </div>
+
+        <div class="breadcrumb">
+            <div class="breadcrumb-item">
+                <a href="index.html">期末速通</a>
+                <span class="breadcrumb-separator">/</span>
+            </div>
+            <div class="breadcrumb-item">
+                <a href="index.html">概率统计</a>
+                <span class="breadcrumb-separator">/</span>
+            </div>
+            <div class="breadcrumb-item">
+                <a href="#">概念导航</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <p class="subtitle">概率论与数理统计第五版 - 盛骤 等</p>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number">15</div>
+                <div class="stat-label">章节数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">80+</div>
+                <div class="stat-label">核心概念</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="viz-count">0</div>
+                <div class="stat-label">已有可视化</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="new-viz-count">0</div>
+                <div class="stat-label">新增可视化</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="coverage-rate">0%</div>
+                <div class="stat-label">覆盖率</div>
+            </div>
+        </div>
+
+        <div id="concepts-container"></div>
+    </div>
+
+    <script>
+        // 概念数据库 - 包含所有章节和概念
+        const chaptersData = [
+            {
+                id: 1,
+                title: "第一章 概率论的基本概念",
+                sections: [
+                    {
+                        title: "§1 随机试验",
+                        concepts: [
+                            { name: "随机试验", hasViz: true, isNew: false, url: "概率统计可视化/02-随机事件与样本空间.html" },
+                            { name: "样本空间", hasViz: true, isNew: false, url: "概率统计可视化/02-随机事件与样本空间.html" },
+                            { name: "随机事件", hasViz: true, isNew: false, url: "概率统计可视化/02-随机事件与样本空间.html" }
+                        ]
+                    },
+                    {
+                        title: "§2 样本空间、随机事件",
+                        concepts: [
+                            { name: "样本空间", hasViz: true, isNew: false, url: "概率统计可视化/02-随机事件与样本空间.html" },
+                            { name: "事件的关系", hasViz: true, isNew: false, url: "概率统计可视化/02-随机事件与样本空间.html" },
+                            { name: "事件的运算", hasViz: true, isNew: false, url: "概率统计可视化/02-随机事件与样本空间.html" }
+                        ]
+                    },
+                    {
+                        title: "§3 频率与概率",
+                        concepts: [
+                            { name: "频率", hasViz: true, isNew: false, url: "概率统计可视化/03-频率与概率-快速版.html" },
+                            { name: "概率", hasViz: true, isNew: false, url: "概率统计可视化/03-频率与概率-快速版.html" },
+                            { name: "概率的公理化定义", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§4 等可能概型（古典概型）",
+                        concepts: [
+                            { name: "古典概型", hasViz: false, isNew: false },
+                            { name: "排列组合", hasViz: false, isNew: false },
+                            { name: "古典概率计算", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§5 条件概率",
+                        concepts: [
+                            { name: "条件概率", hasViz: true, isNew: false, url: "概率统计可视化/index.html" },
+                            { name: "乘法公式", hasViz: false, isNew: false },
+                            { name: "全概率公式", hasViz: true, isNew: false, url: "概率统计可视化/06-全概率公式.html" },
+                            { name: "贝叶斯公式", hasViz: true, isNew: false, url: "概率统计可视化/07-贝叶斯公式.html" }
+                        ]
+                    },
+                    {
+                        title: "§6 独立性",
+                        concepts: [
+                            { name: "事件的独立性", hasViz: true, isNew: false, url: "概率统计可视化/01-独立性.html" },
+                            { name: "独立事件的概率", hasViz: false, isNew: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "第二章 随机变量及其分布",
+                sections: [
+                    {
+                        title: "§1 随机变量",
+                        concepts: [
+                            { name: "随机变量", hasViz: false, isNew: false },
+                            { name: "离散型随机变量", hasViz: true, isNew: false, url: "http://localhost:8080/continuous_random_variable.html" },
+                            { name: "连续型随机变量", hasViz: true, isNew: false, url: "http://localhost:8080/continuous_random_variable.html" }
+                        ]
+                    },
+                    {
+                        title: "§2 离散型随机变量及其分布律",
+                        concepts: [
+                            { name: "分布律", hasViz: false, isNew: false },
+                            { name: "伯努利分布", hasViz: false, isNew: false },
+                            { name: "二项分布", hasViz: true, isNew: false, url: "http://localhost:3000/modules/probability_statistics/pages/二项分布现代化可视化_离线版.html" },
+                            { name: "泊松分布", hasViz: true, isNew: false, url: "http://localhost:3000/modules/probability_statistics/pages/泊松分布交互式可视化_完整离线版.html" },
+                            { name: "几何分布", hasViz: true, isNew: true, url: "http://localhost:8080/common_discrete_distributions.html" },
+                            { name: "超几何分布", hasViz: true, isNew: true, url: "http://localhost:8080/common_discrete_distributions.html" },
+                            { name: "负二项分布", hasViz: true, isNew: true, url: "http://localhost:8080/common_discrete_distributions.html" }
+                        ]
+                    },
+                    {
+                        title: "§3 随机变量的分布函数",
+                        concepts: [
+                            { name: "分布函数", hasViz: true, isNew: false, url: "http://localhost:8080/distribution_function.html" },
+                            { name: "分布函数的性质", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§4 连续型随机变量及其概率密度",
+                        concepts: [
+                            { name: "概率密度函数", hasViz: false, isNew: false },
+                            { name: "均匀分布", hasViz: false, isNew: false },
+                            { name: "指数分布", hasViz: true, isNew: false, url: "http://localhost:3000/modules/probability_statistics/pages/指数分布交互式可视化.html" },
+                            { name: "正态分布", hasViz: true, isNew: false, url: "http://localhost:3000/modules/probability_statistics/pages/正态分布交互式可视化.html" }
+                        ]
+                    },
+                    {
+                        title: "§5 随机变量的函数的分布",
+                        concepts: [
+                            { name: "随机变量的函数", hasViz: false, isNew: false },
+                            { name: "线性变换", hasViz: true, isNew: true, url: "http://localhost:8080/transformation_of_random_variables.html" },
+                            { name: "平方变换", hasViz: true, isNew: true, url: "http://localhost:8080/transformation_of_random_variables.html" },
+                            { name: "变量之和（卷积）", hasViz: true, isNew: true, url: "http://localhost:8080/transformation_of_random_variables.html" },
+                            { name: "变量之商", hasViz: true, isNew: true, url: "http://localhost:8080/transformation_of_random_variables.html" }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "第三章 多维随机变量及其分布",
+                sections: [
+                    {
+                        title: "§1 二维随机变量",
+                        concepts: [
+                            { name: "二维随机变量", hasViz: false, isNew: false },
+                            { name: "联合分布函数", hasViz: false, isNew: false },
+                            { name: "联合概率密度/分布律", hasViz: true, isNew: true, url: "http://localhost:8080/bivariate_random_variable.html" },
+                            { name: "二维正态分布", hasViz: true, isNew: false, url: "http://localhost:3000/modules/probability_statistics/pages/二维正态分布交互式可视化.html" }
+                        ]
+                    },
+                    {
+                        title: "§2 边缘分布",
+                        concepts: [
+                            { name: "边缘分布", hasViz: true, isNew: true, url: "http://localhost:8080/marginal_conditional_distribution.html" },
+                            { name: "边缘概率密度", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§3 条件分布",
+                        concepts: [
+                            { name: "条件分布", hasViz: true, isNew: true, url: "http://localhost:8080/marginal_conditional_distribution.html" },
+                            { name: "条件概率密度", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§4 相互独立的随机变量",
+                        concepts: [
+                            { name: "独立性", hasViz: false, isNew: false },
+                            { name: "独立性的判别", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§5 两个随机变量的函数的分布",
+                        concepts: [
+                            { name: "和的分布", hasViz: false, isNew: false },
+                            { name: "商的分布", hasViz: false, isNew: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "第四章 随机变量的数字特征",
+                sections: [
+                    {
+                        title: "§1 数学期望",
+                        concepts: [
+                            { name: "数学期望", hasViz: true, isNew: false, url: "概率统计可视化/04-数学期望.html" },
+                            { name: "期望的性质", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§2 方差",
+                        concepts: [
+                            { name: "方差", hasViz: true, isNew: false, url: "概率统计可视化/05-方差.html" },
+                            { name: "标准差", hasViz: true, isNew: false, url: "概率统计可视化/05-方差.html" }
+                        ]
+                    },
+                    {
+                        title: "§3 协方差及相关系数",
+                        concepts: [
+                            { name: "协方差", hasViz: true, isNew: false, url: "http://localhost:8080/covariance_correlation.html" },
+                            { name: "相关系数", hasViz: true, isNew: false, url: "http://localhost:8080/covariance_correlation.html" }
+                        ]
+                    },
+                    {
+                        title: "§4 矩、协方差矩阵",
+                        concepts: [
+                            { name: "矩", hasViz: false, isNew: false },
+                            { name: "协方差矩阵", hasViz: false, isNew: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "第五章 大数定律及中心极限定理",
+                sections: [
+                    {
+                        title: "§1 大数定律",
+                        concepts: [
+                            { name: "大数定律", hasViz: true, isNew: false, url: "http://localhost:8080/law_of_large_numbers.html" },
+                            { name: "切比雪夫不等式", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§2 中心极限定理",
+                        concepts: [
+                            { name: "中心极限定理", hasViz: true, isNew: false, url: "概率统计可视化/08-中心极限定理.html" },
+                            { name: "样本均值的分布", hasViz: false, isNew: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: "第六章 样本及抽样分布",
+                sections: [
+                    {
+                        title: "§1 随机样本",
+                        concepts: [
+                            { name: "随机样本", hasViz: false, isNew: false },
+                            { name: "样本容量", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§2 直方图和箱线图",
+                        concepts: [
+                            { name: "直方图", hasViz: true, isNew: false, url: "http://localhost:8080/histogram_boxplot.html" },
+                            { name: "箱线图", hasViz: true, isNew: false, url: "http://localhost:8080/histogram_boxplot.html" }
+                        ]
+                    },
+                    {
+                        title: "§3 抽样分布",
+                        concepts: [
+                            { name: "抽样分布", hasViz: true, isNew: false, url: "概率统计可视化/09-三大抽样分布对比.html" },
+                            { name: "χ²分布", hasViz: true, isNew: false, url: "概率统计可视化/09-三大抽样分布对比.html" },
+                            { name: "t分布", hasViz: true, isNew: false, url: "概率统计可视化/09-三大抽样分布对比.html" },
+                            { name: "F分布", hasViz: true, isNew: false, url: "概率统计可视化/09-三大抽样分布对比.html" }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 7,
+                title: "第七章 参数估计",
+                sections: [
+                    {
+                        title: "§1 点估计",
+                        concepts: [
+                            { name: "点估计", hasViz: true, isNew: false, url: "http://localhost:8080/point_estimation.html" },
+                            { name: "矩估计", hasViz: false, isNew: false },
+                            { name: "最大似然估计", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§2 基于截尾样本的最大似然估计",
+                        concepts: [
+                            { name: "截尾样本", hasViz: false, isNew: false },
+                            { name: "截尾最大似然估计", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§3 估计量的评选标准",
+                        concepts: [
+                            { name: "无偏性", hasViz: false, isNew: false },
+                            { name: "有效性", hasViz: false, isNew: false },
+                            { name: "一致性", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§4 区间估计",
+                        concepts: [
+                            { name: "区间估计", hasViz: true, isNew: false, url: "http://localhost:8080/interval_estimation.html" },
+                            { name: "置信区间", hasViz: true, isNew: false, url: "http://localhost:8080/interval_estimation.html" }
+                        ]
+                    },
+                    {
+                        title: "§5 正态总体均值与方差的区间估计",
+                        concepts: [
+                            { name: "均值的区间估计", hasViz: true, isNew: false, url: "http://localhost:8080/normal_parameter_estimation.html" },
+                            { name: "方差的区间估计", hasViz: true, isNew: false, url: "http://localhost:8080/normal_parameter_estimation.html" }
+                        ]
+                    },
+                    {
+                        title: "§6 (0-1)分布参数的区间估计",
+                        concepts: [
+                            { name: "比例的置信区间", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§7 单侧置信区间",
+                        concepts: [
+                            { name: "单侧置信区间", hasViz: false, isNew: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 8,
+                title: "第八章 假设检验",
+                sections: [
+                    {
+                        title: "§1 假设检验",
+                        concepts: [
+                            { name: "假设检验", hasViz: true, isNew: false, url: "概率统计可视化/10-假设检验流程.html" },
+                            { name: "原假设与备择假设", hasViz: false, isNew: false },
+                            { name: "两类错误", hasViz: true, isNew: false, url: "概率统计可视化/10-假设检验流程.html" }
+                        ]
+                    },
+                    {
+                        title: "§2 正态总体均值的假设检验",
+                        concepts: [
+                            { name: "Z检验", hasViz: false, isNew: false },
+                            { name: "t检验", hasViz: true, isNew: false, url: "http://localhost:8080/t_test.html" }
+                        ]
+                    },
+                    {
+                        title: "§3 正态总体方差的假设检验",
+                        concepts: [
+                            { name: "χ²检验", hasViz: true, isNew: false, url: "http://localhost:8080/chi_square_test.html" }
+                        ]
+                    },
+                    {
+                        title: "§4 置信区间与假设检验之间的关系",
+                        concepts: [
+                            { name: "置信区间与假设检验", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§5 样本容量的选取",
+                        concepts: [
+                            { name: "样本容量", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§6 分布拟合检验",
+                        concepts: [
+                            { name: "拟合优度检验", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§7 假设检验问题的p值法",
+                        concepts: [
+                            { name: "p值", hasViz: false, isNew: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 9,
+                title: "第九章 方差分析及回归分析",
+                sections: [
+                    {
+                        title: "§1 单因素试验的方差分析",
+                        concepts: [
+                            { name: "单因素方差分析", hasViz: true, isNew: false, url: "http://localhost:8080/anova.html" },
+                            { name: "F检验", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§2 双因素试验的方差分析",
+                        concepts: [
+                            { name: "双因素方差分析", hasViz: true, isNew: false, url: "http://localhost:8080/anova.html" }
+                        ]
+                    },
+                    {
+                        title: "§3 一元线性回归",
+                        concepts: [
+                            { name: "一元线性回归", hasViz: true, isNew: false, url: "http://localhost:8080/linear_regression.html" },
+                            { name: "最小二乘法", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§4 多元线性回归",
+                        concepts: [
+                            { name: "多元线性回归", hasViz: true, isNew: false, url: "http://localhost:8080/multiple_regression.html" }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 10,
+                title: "第十章 bootstrap方法（自助法）",
+                sections: [
+                    {
+                        title: "§1 非参数bootstrap方法",
+                        concepts: [
+                            { name: "非参数bootstrap", hasViz: true, isNew: true, url: "http://localhost:8080/bootstrap_method.html" },
+                            { name: "重采样", hasViz: true, isNew: true, url: "http://localhost:8080/bootstrap_method.html" }
+                        ]
+                    },
+                    {
+                        title: "§2 参数bootstrap方法",
+                        concepts: [
+                            { name: "参数bootstrap", hasViz: true, isNew: true, url: "http://localhost:8080/bootstrap_method.html" }
+                        ]
+                    },
+                    {
+                        title: "§3 bootstrap假设检验方法举例",
+                        concepts: [
+                            { name: "bootstrap假设检验", hasViz: true, isNew: true, url: "http://localhost:8080/bootstrap_method.html" }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 11,
+                title: "第十二章 随机过程（高级专题）",
+                sections: [
+                    {
+                        title: "§1 随机过程的概念",
+                        concepts: [
+                            { name: "随机过程", hasViz: false, isNew: false },
+                            { name: "样本函数", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§2 随机过程的统计描述",
+                        concepts: [
+                            { name: "均值函数", hasViz: false, isNew: false },
+                            { name: "方差函数", hasViz: false, isNew: false },
+                            { name: "自相关函数", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§3 泊松过程和维纳过程",
+                        concepts: [
+                            { name: "泊松过程", hasViz: false, isNew: false },
+                            { name: "维纳过程", hasViz: false, isNew: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 13,
+                title: "第十三章 马尔可夫链（高级专题）",
+                sections: [
+                    {
+                        title: "§1 定义与例子",
+                        concepts: [
+                            { name: "马尔可夫链", hasViz: false, isNew: false },
+                            { name: "转移概率", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§2 多步转移概率的确定",
+                        concepts: [
+                            { name: "Chapman-Kolmogorov方程", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§3 遍历性",
+                        concepts: [
+                            { name: "平稳分布", hasViz: false, isNew: false },
+                            { name: "极限分布", hasViz: false, isNew: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 14,
+                title: "第十四章 平稳随机过程（高级专题）",
+                sections: [
+                    {
+                        title: "§1 平稳随机过程的概念",
+                        concepts: [
+                            { name: "平稳随机过程", hasViz: false, isNew: false },
+                            { name: "严平稳", hasViz: false, isNew: false },
+                            { name: "宽平稳", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§2 各态历经性",
+                        concepts: [
+                            { name: "各态历经性", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§3 相关函数的性质",
+                        concepts: [
+                            { name: "相关函数", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§4 平稳随机过程的功率谱密度",
+                        concepts: [
+                            { name: "功率谱密度", hasViz: false, isNew: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 15,
+                title: "第十五章 时间序列分析（高级专题）",
+                sections: [
+                    {
+                        title: "§1 平稳时间序列",
+                        concepts: [
+                            { name: "时间序列", hasViz: false, isNew: false },
+                            { name: "平稳性", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§2 线性自回归滑动平均模型",
+                        concepts: [
+                            { name: "AR模型", hasViz: false, isNew: false },
+                            { name: "MA模型", hasViz: false, isNew: false },
+                            { name: "ARMA模型", hasViz: false, isNew: false }
+                        ]
+                    },
+                    {
+                        title: "§3 模型的应用",
+                        concepts: [
+                            { name: "模型识别", hasViz: false, isNew: false },
+                            { name: "预测", hasViz: false, isNew: false }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        // 渲染卡片（新版）
+        function renderChapters() {
+            const container = document.getElementById('concepts-container');
+            container.innerHTML = '';
+
+            let allVizCount = 0;
+            let newVizCount = 0;
+            let totalConcepts = 0;
+
+            chaptersData.forEach(chapter => {
+                let chapterHasViz = false;
+                const chapterGrid = document.createElement('div');
+                chapterGrid.className = 'card-grid';
+                chapterGrid.id = `chapter-${chapter.id}-cards`;
+
+                chapter.sections.forEach(section => {
+                    section.concepts.forEach(concept => {
+                        totalConcepts++;
+                        if (concept.hasViz) {
+                            allVizCount++;
+                            if (concept.isNew) newVizCount++;
+                            chapterHasViz = true;
+
+                            // 创建可视化卡片
+                            const card = createVizCard(concept, chapter.title, section.title);
+                            chapterGrid.appendChild(card);
+                        }
+                    });
+                });
+
+                if (chapterHasViz) {
+                    // 添加章节标题
+                    const divider = document.createElement('div');
+                    divider.className = 'section-divider';
+                    divider.innerHTML = `<span>📚</span><span>${chapter.title}</span>`;
+                    container.appendChild(divider);
+
+                    container.appendChild(chapterGrid);
+                }
+            });
+
+            // 更新统计
+            document.getElementById('viz-count').textContent = allVizCount;
+            document.getElementById('new-viz-count').textContent = newVizCount;
+            const coverage = ((allVizCount / totalConcepts) * 100).toFixed(1);
+            document.getElementById('coverage-rate').textContent = coverage + '%';
+        }
+
+        // 创建可视化卡片
+        function createVizCard(concept, chapterTitle, sectionTitle) {
+            const card = document.createElement('a');
+            card.href = concept.url;
+            card.className = 'viz-card';
+            if (concept.isNew) {
+                card.classList.add('new-badge');
+            }
+            card.target = '_blank';
+
+            // 根据概念名称选择图标
+            const icon = getConceptIcon(concept.name);
+
+            // 生成描述
+            const description = generateConceptDescription(concept.name);
+
+            // 提取章节编号
+            const chapterNum = chapterTitle.match(/第(.+)章/)[1];
+            const sectionTitleShort = sectionTitle.replace(/^§\d+\s*/, '');
+
+            card.innerHTML = `
+                <div class="card-icon">${icon}</div>
+                <div class="card-title">${concept.name}</div>
+                <div class="card-desc">${description}</div>
+                <div class="card-meta">
+                    <span class="tag chapter">第${chapterNum}章</span>
+                    <span class="tag section">${sectionTitleShort}</span>
+                    ${concept.isNew ? '<span class="tag difficulty">新增</span>' : ''}
+                </div>
+            `;
+
+            return card;
+        }
+
+        // 根据概念名称返回图标
+        function getConceptIcon(conceptName) {
+            const iconMap = {
+                '随机事件': '🎯',
+                '样本空间': '🎲',
+                '独立性': '🔄',
+                '频率': '📈',
+                '概率': '🎲',
+                '全概率公式': '🔢',
+                '贝叶斯公式': '🔄',
+                '数学期望': '⚖️',
+                '方差': '📏',
+                '中心极限定理': '🎯',
+                'χ²分布': '📊',
+                't分布': '📊',
+                'F分布': '📊',
+                '假设检验': '🔬',
+                '正态分布': '📊',
+                '二项分布': '🎰',
+                '泊松分布': '✨',
+                '指数分布': '⏱️',
+                '二维正态分布': '🌐',
+                '条件概率': '🔗',
+                '大数定律': '📊',
+                '抽样分布': '📊'
+            };
+
+            for (const [key, icon] of Object.entries(iconMap)) {
+                if (conceptName.includes(key)) {
+                    return icon;
+                }
+            }
+            return '📖';
+        }
+
+        // 生成概念描述
+        function generateConceptDescription(conceptName) {
+            const descMap = {
+                '随机事件': '通过Venn图直观理解样本空间、事件及其运算（并、交、补）',
+                '样本空间': '随机试验所有可能结果的集合',
+                '独立性': '探索独立事件的特征：P(A∩B) = P(A) · P(B)',
+                '频率': '通过模拟实验演示大数定律：频率如何收敛于概率',
+                '概率': '随机事件发生可能性大小的度量',
+                '全概率公式': '通过"划分样本空间"来计算复杂事件的概率',
+                '贝叶斯公式': '逆向概率推理，根据新证据更新旧信念',
+                '数学期望': '理解期望的几何意义：概率分布的"重心"',
+                '方差': '可视化方差的意义：衡量数据的离散程度',
+                '中心极限定理': '统计学最重要的定理：样本均值趋近正态分布',
+                'χ²分布': '用于方差估计和拟合优度检验',
+                't分布': '小样本情况下的均值检验',
+                'F分布': '两个方差的比较，ANOVA的基础',
+                '假设检验': '系统学习假设检验：两类错误、p值、功效分析',
+                '正态分布': '最重要的连续型概率分布，68-95-99.7规则',
+                '二项分布': 'n次独立重复试验中成功次数的离散分布',
+                '泊松分布': '稀有事件计数模型，单位时间内事件发生次数',
+                '指数分布': '描述等待时间的连续分布，无记忆性',
+                '二维正态分布': '两个相关的正态随机变量的联合分布',
+                '条件概率': '理解"在某个事件发生的条件下"另一个事件发生的概率',
+                '大数定律': '大量重复试验中，频率稳定于概率',
+                '抽样分布': '统计量的概率分布，统计推断的基础'
+            };
+
+            for (const [key, desc] of Object.entries(descMap)) {
+                if (conceptName.includes(key)) {
+                    return desc;
+                }
+            }
+            return '交互式可视化学习核心概念';
+        }
+
+        // 更新统计数据
+        function updateStats() {
+            let totalConcepts = 0;
+            let hasVizCount = 0;
+            let newVizCount = 0;
+
+            chaptersData.forEach(chapter => {
+                chapter.sections.forEach(section => {
+                    section.concepts.forEach(concept => {
+                        totalConcepts++;
+                        if (concept.hasViz) {
+                            hasVizCount++;
+                            if (concept.isNew) newVizCount++;
+                        }
+                    });
+                });
+            });
+
+            const coverageRate = ((hasVizCount / totalConcepts) * 100).toFixed(1);
+
+            document.getElementById('viz-count').textContent = hasVizCount;
+            document.getElementById('new-viz-count').textContent = newVizCount;
+            document.getElementById('coverage-rate').textContent = coverageRate + '%';
+        }
+
+        // 初始化
+        renderChapters();
+    </script>
+</body>
+</html>
