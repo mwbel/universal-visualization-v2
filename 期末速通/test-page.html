@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>期末速通 - 系统诊断</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-item {
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .test-item.pass {
+            background: #d4edda;
+            color: #155724;
+        }
+        .test-item.fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status-icon {
+            font-size: 24px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 期末速通系统诊断</h1>
+
+    <div class="test-card">
+        <h2>资源加载测试</h2>
+        <div id="testResults"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>快速操作</h2>
+        <button class="btn" onclick="window.location.href='index.html'">打开期末速通主页</button>
+        <button class="btn" onclick="window.location.href='concept-navigator.html'">打开概念导航</button>
+        <button class="btn btn-success" onclick="checkBrowser()">检查浏览器兼容性</button>
+    </div>
+
+    <div class="test-card">
+        <h2>系统信息</h2>
+        <div id="systemInfo"></div>
+    </div>
+
+    <script>
+        const resources = [
+            { name: '主页面', url: 'index.html' },
+            { name: '概念导航', url: 'concept-navigator.html' },
+            { name: '现代样式表', url: 'css/final-sprint-modern.css' },
+            { name: '主逻辑脚本', url: 'final-sprint.js' },
+            { name: '导航栏辅助', url: 'js/navbar-helper.js' },
+            { name: '页面导航样式', url: 'css/page-navbar.css' }
+        ];
+
+        async function testResource(resource) {
+            try {
+                const response = await fetch(resource.url);
+                return {
+                    name: resource.name,
+                    status: response.ok ? 'pass' : 'fail',
+                    code: response.status
+                };
+            } catch (error) {
+                return {
+                    name: resource.name,
+                    status: 'fail',
+                    error: error.message
+                };
+            }
+        }
+
+        async function runTests() {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = '<p>正在测试...</p>';
+
+            let passCount = 0;
+            let failCount = 0;
+
+            for (const resource of resources) {
+                const result = await testResource(resource);
+
+                if (result.status === 'pass') {
+                    passCount++;
+                    resultsDiv.innerHTML += `
+                        <div class="test-item pass">
+                            <span>${result.name}</span>
+                            <span class="status-icon">✅</span>
+                        </div>
+                    `;
+                } else {
+                    failCount++;
+                    resultsDiv.innerHTML += `
+                        <div class="test-item fail">
+                            <span>${result.name} (${result.code || result.error})</span>
+                            <span class="status-icon">❌</span>
+                        </div>
+                    `;
+                }
+            }
+
+            resultsDiv.innerHTML += `
+                <div style="margin-top: 20px; padding: 12px; background: ${passCount === resources.length ? '#d4edda' : '#fff3cd'}; border-radius: 8px;">
+                    <strong>测试结果:</strong> ${passCount} 通过, ${failCount} 失败
+                </div>
+            `;
+
+            // 显示系统信息
+            showSystemInfo();
+        }
+
+        function showSystemInfo() {
+            const infoDiv = document.getElementById('systemInfo');
+            infoDiv.innerHTML = `
+                <p><strong>浏览器:</strong> ${navigator.userAgent}</p>
+                <p><strong>当前时间:</strong> ${new Date().toLocaleString('zh-CN')}</p>
+                <p><strong>页面路径:</strong> ${window.location.href}</p>
+                <p><strong>JavaScript:</strong> ✅ 已启用</p>
+                <p><strong>LocalStorage:</strong> ${typeof(Storage) !== "undefined" ? '✅ 支持' : '❌ 不支持'}</p>
+            `;
+        }
+
+        function checkBrowser() {
+            const issues = [];
+
+            if (typeof fetch === 'undefined') {
+                issues.push('❌ Fetch API 不支持');
+            }
+
+            if (typeof localStorage === 'undefined') {
+                issues.push('❌ LocalStorage 不支持');
+            }
+
+            if (!window.Promise) {
+                issues.push('❌ Promise 不支持');
+            }
+
+            if (issues.length === 0) {
+                alert('✅ 浏览器兼容性检查通过！\n\n您的浏览器支持所有必需的功能。');
+            } else {
+                alert('⚠️ 浏览器兼容性问题:\n\n' + issues.join('\n') + '\n\n建议使用最新版本的Chrome、Firefox或Safari。');
+            }
+        }
+
+        // 页面加载时运行测试
+        window.onload = runTests;
+    </script>
+</body>
+</html>

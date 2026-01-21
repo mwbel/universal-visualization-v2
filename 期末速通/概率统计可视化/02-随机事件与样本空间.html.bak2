@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机事件与样本空间 - 概率统计可视化</title>
+
+    <!-- Plotly.js -->
+    <script src="https://cdn.staticfile.org/plotly.js/2.26.0/plotly.min.js"></script>
+
+    <!-- MathJax -->
+    <script>
+    window.MathJax = {
+      tex: {inlineMath: [['$', '$']], displayMath: [['$$', '$$']]},
+      svg: {fontCache: 'global'}
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- 导航栏样式 -->
+    <link rel="stylesheet" href="../css/page-navbar.css">
+
+    <style>
+        body {margin: 0; padding: 20px; font-family: 'Segoe UI', system-ui, sans-serif;}
+
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; flex-direction: column;
+        }
+
+        .loading-spinner {
+            width: 50px; height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4285f4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}}
+
+        #loading-overlay.loaded {display: none;}
+
+        .section-container {margin-bottom: 32px;}
+        .intro-box {background: #f1f5f9; padding: 24px; border-radius: 8px; border-left: 5px solid #5B8CBA;}
+        .mathjax-block {padding: 15px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; margin: 15px 0;}
+        .control-panel {background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;}
+    </style>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">正在加载可视化...</div>
+    </div>
+
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="../index.html" class="nav-btn nav-btn-home">期末速通主页</a>
+        </div>
+        <div class="page-title"><h1>📊 随机事件与样本空间</h1></div>
+        <div class="breadcrumb">
+            <div class="breadcrumb-item"><a href="../index.html">期末速通</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="../index.html">概率统计</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="#">随机事件与样本空间</a></div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <h1 style="font-size: 28px; color: #5B8CBA; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+            样本空间与事件关系可视化
+        </h1>
+
+        <div class="section-container intro-box">
+            <h2 style="margin-bottom: 15px;">📖 一言以蔽之</h2>
+            <p style="font-size: 18px; font-weight: 500;">
+                <strong>样本空间</strong> $\Omega$ 是随机试验所有可能结果的集合，<strong>事件</strong>是样本空间的子集。
+            </p>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">🛠️ 适用场景</h3>
+                <ul>
+                    <li>掷硬币：$\Omega = \{正面, 反面\}$</li>
+                    <li>掷骰子：$\Omega = \{1, 2, 3, 4, 5, 6\}$</li>
+                    <li>抽样检验：$\Omega = \{\text{合格}, \text{不合格}\}$</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">📐 基本概念</h3>
+                <div class="mathjax-block">
+                    $$\Omega: \text{样本空间（全集）}$$
+                    $$A, B: \text{事件（子集）}$$
+                    $$A \cup B: \text{事件并（A或B发生）}$$
+                    $$A \cap B: \text{事件交（A和B同时发生）}$$
+                    $$A^c \text{或} \overline{A}: \text{事件补（A不发生）}$$
+                </div>
+            </div>
+        </div>
+
+        <div class="section-container">
+            <h2>🎛️ Venn图可视化</h2>
+
+            <div class="control-panel">
+                <label>事件A比例: <input type="range" id="sizeA" min="0.1" max="0.8" step="0.05" value="0.4"></label>
+                <span id="sizeA-val">0.4</span><br>
+
+                <label>事件B比例: <input type="range" id="sizeB" min="0.1" max="0.8" step="0.05" value="0.4"></label>
+                <span id="sizeB-val">0.4</span><br>
+
+                <label>重叠程度: <input type="range" id="overlap" min="0" max="0.8" step="0.05" value="0.2"></label>
+                <span id="overlap-val">0.2</span>
+
+                <div id="info" style="margin-top:15px; font-weight:bold;"></div>
+            </div>
+
+            <div id="plot" style="width:100%;height:450px;"></div>
+
+            <div style="margin-top: 20px; background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">💡 事件关系说明</h3>
+                <ul>
+                    <li><strong>并事件 $A \cup B$</strong>：红色+蓝色区域（A或B至少一个发生）</li>
+                    <li><strong>交事件 $A \cap B$</strong>：紫色重叠区域（A和B同时发生）</li>
+                    <li><strong>差事件 $A - B$</strong>：纯红色区域（A发生但B不发生）</li>
+                    <li><strong>互斥事件</strong>：当重叠=0时，A和B不能同时发生</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(() => document.getElementById('loading-overlay').classList.add('loaded'), 500);
+        });
+
+        function draw() {
+            const sizeA = parseFloat(document.getElementById('sizeA').value);
+            const sizeB = parseFloat(document.getElementById('sizeB').value);
+            const overlap = parseFloat(document.getElementById('overlap').value);
+
+            document.getElementById('sizeA-val').innerText = sizeA.toFixed(2);
+            document.getElementById('sizeB-val').innerText = sizeB.toFixed(2);
+            document.getElementById('overlap-val').innerText = overlap.toFixed(2);
+
+            // 计算概率（简化模型）
+            const pA = sizeA;
+            const pB = sizeB;
+            const pAB = Math.min(sizeA, sizeB) * overlap;
+            const pAorB = pA + pB - pAB;
+            const pNotA = 1 - pA;
+            const pDisjoint = overlap === 0 ? '✅ 互斥' : '❌ 不互斥';
+
+            const infoEl = document.getElementById('info');
+            infoEl.innerHTML = `
+                $P(A) = ${pA.toFixed(2)}$ <br>
+                $P(B) = ${pB.toFixed(2)}$ <br>
+                $P(A \\cup B) = ${pAorB.toFixed(2)}$ <br>
+                $P(A \\cap B) = ${pAB.toFixed(2)}$ <br>
+                $P(A^c) = ${pNotA.toFixed(2)}$ <br>
+                ${pDisjoint}
+            `;
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([infoEl]);
+            }
+
+            // Venn图布局
+            const centerA = 4 - overlap * 2;
+            const centerB = 6 + overlap * 2;
+
+            const layout = {
+                title: {text: '<b>样本空间 $\Omega$ 与事件 A、B</b>', font: {size: 18}},
+                xaxis: {range: [0, 10], showgrid: false, zeroline: false, showticklabels: false},
+                yaxis: {range: [0, 10], showgrid: false, zeroline: false, showticklabels: false},
+                shapes: [
+                    {
+                        type: 'circle',
+                        xref: 'x', yref: 'y',
+                        x0: centerA - sizeA * 3, y0: 2,
+                        x1: centerA + sizeA * 3, y1: 6,
+                        fillcolor: 'rgba(255, 99, 71, 0.4)',
+                        line: {color: 'red', width: 3}
+                    },
+                    {
+                        type: 'circle',
+                        xref: 'x', yref: 'y',
+                        x0: centerB - sizeB * 3, y0: 2,
+                        x1: centerB + sizeB * 3, y1: 6,
+                        fillcolor: 'rgba(65, 105, 225, 0.4)',
+                        line: {color: 'blue', width: 3}
+                    },
+                    {
+                        type: 'rect',
+                        xref: 'x', yref: 'y',
+                        x0: 0.5, y0: 0.5, x1: 9.5, y1: 9.5,
+                        fillcolor: 'rgba(200, 200, 200, 0.1)',
+                        line: {color: '#666', width: 4, dash: 'dash'}
+                    }
+                ],
+                annotations: [
+                    {x: centerA, y: 4, text: `<b>A</b><br>P(A)=${pA.toFixed(2)}`, showarrow: false, font: {size: 14, color: '#8B0000'}},
+                    {x: centerB, y: 4, text: `<b>B</b><br>P(B)=${pB.toFixed(2)}`, showarrow: false, font: {size: 14, color: '#00008B'}},
+                    {x: 5, y: 8.5, text: `<b>Ω (样本空间)</b>`, showarrow: false, font: {size: 16, color: '#333'}},
+                    {x: 5, y: 1, text: `$P(A \\cup B) = ${pAorB.toFixed(2)}$`, showarrow: false, font: {size: 14}}
+                ],
+                margin: {l: 0, r: 0, t: 40, b: 0}
+            };
+
+            Plotly.newPlot('plot', [], layout, {responsive: true, displayModeBar: false});
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('sizeA').addEventListener('input', draw);
+            document.getElementById('sizeB').addEventListener('input', draw);
+            document.getElementById('overlap').addEventListener('input', draw);
+            draw();
+        });
+    </script>
+</body>
+</html>

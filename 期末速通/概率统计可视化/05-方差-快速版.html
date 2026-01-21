@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>方差 - 快速版</title>
+    <link rel="stylesheet" href="../css/page-navbar.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #5B8CBA; margin-bottom: 10px; }
+        .controls { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        label { display: block; font-weight: 600; margin-bottom: 8px; }
+        input[type="range"] { width: 250px; }
+        canvas { width: 100%; height: 400px; background: white; border: 1px solid #ddd; border-radius: 8px; }
+        .result { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .info-box { background: #fff3e0; padding: 15px; border-radius: 6px; margin-top: 15px; border-left: 4px solid #ff9800; }
+    </style>
+</head>
+<body>
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="../index.html" class="nav-btn nav-btn-home">期末速通主页</a>
+        </div>
+        <div class="page-title"><h1>📏 方差 - 快速版</h1></div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>📏 方差的几何意义</h1>
+            <p>衡量数据的离散程度和波动性</p>
+        </div>
+
+        <div class="controls">
+            <label>分布集中度: <span id="spread-val">2</span></label>
+            <input type="range" id="spread" min="1" max="5" step="0.5" value="2" oninput="draw()"><br>
+            
+            <label>期望值 μ: <span id="mean-val">5</span></label>
+            <input type="range" id="mean" min="0" max="10" step="0.5" value="5" oninput="draw()">
+            
+            <div id="calcs" style="margin-top:15px; font-weight:bold; padding: 10px; background: #fff; border-radius: 6px;"></div>
+        </div>
+
+        <div class="result">
+            <canvas id="chart"></canvas>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 方差的意义</h3>
+            <ul>
+                <li><strong>方差</strong>：Var(X) = σ²，衡量离散程度</li>
+                <li><strong>标准差</strong>：σ = √Var(X)</li>
+                <li><strong>68-95-99.7规则</strong>：
+                    <ul>
+                        <li>μ±σ：约68%的数据</li>
+                        <li>μ±2σ：约95%的数据</li>
+                        <li>μ±3σ：约99.7%的数据</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+        
+        function normalPDF(x, mu, sigma) {
+            return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+        }
+        
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            draw();
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        function draw() {
+            const spread = parseFloat(document.getElementById('spread').value);
+            const mu = parseFloat(document.getElementById('mean').value);
+            const sigma = spread / 2;
+            
+            document.getElementById('spread-val').textContent = spread.toFixed(1);
+            document.getElementById('mean-val').textContent = mu.toFixed(1);
+            
+            const variance = sigma * sigma;
+            const calcsEl = document.getElementById('calcs');
+            calcsEl.innerHTML = `
+                期望 μ = E(X) = ${mu.toFixed(2)} | 
+                标准差 σ = ${sigma.toFixed(2)} | 
+                方差 σ² = Var(X) = ${variance.toFixed(2)}
+            `;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 60;
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            const xValues = [];
+            const yValues = [];
+            for (let x = 0; x <= 10; x += 0.1) {
+                xValues.push(x);
+                yValues.push(normalPDF(x, mu, sigma));
+            }
+
+            function toX(x) {
+                return padding + (x / 10) * (width - 2 * padding);
+            }
+
+            function toY(y) {
+                return height - padding - (y / Math.max(...yValues)) * (height - 2 * padding);
+            }
+
+            // 绘制曲线
+            ctx.strokeStyle = '#dc3912';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            xValues.forEach((x, i) => {
+                const px = toX(x);
+                const py = toY(yValues[i]);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            });
+            ctx.stroke();
+
+            // 绘制标注线
+            const styles = [
+                { x: mu, color: '#4285f4', dash: 'dash', label: `μ=${mu.toFixed(1)}` },
+                { x: mu - sigma, color: '#34a853', dash: 'dot', label: 'μ-σ' },
+                { x: mu + sigma, color: '#34a853', dash: 'dot', label: 'μ+σ' },
+                { x: mu - 2*sigma, color: '#fbbc05', dash: 'dot', label: 'μ-2σ' },
+                { x: mu + 2*sigma, color: '#fbbc05', dash: 'dot', label: 'μ+2σ' }
+            ];
+
+            styles.forEach(style => {
+                if (style.x >= 0 && style.x <= 10) {
+                    ctx.strokeStyle = style.color;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash(style.dash === 'dash' ? [10, 5] : [5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(toX(style.x), toY(0));
+                    ctx.lineTo(toX(style.x), toY(normalPDF(style.x, mu, sigma)));
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            });
+
+            // 坐标轴
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(toX(0), toY(0));
+            ctx.lineTo(toX(10), toY(0));
+            ctx.stroke();
+        }
+
+        draw();
+    </script>
+</body>
+</html>

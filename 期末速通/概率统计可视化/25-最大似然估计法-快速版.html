@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最大似然估计法 - 快速版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .back-nav {
+            margin-bottom: 20px;
+        }
+        .back-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 16px;
+            font-size: 22px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+        .section h3 {
+            color: #333;
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .example-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .example-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .step-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .highlight {
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-nav">
+        <a href="../index.html">← 返回期末速通主页</a>
+        <a href="../concept-navigator-fast.html">← 返回导航页</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 最大似然估计法（Maximum Likelihood Estimation, MLE）</h1>
+            <p>第七章：最常用的参数估计方法</p>
+        </div>
+
+        <!-- 基本思想 -->
+        <div class="section">
+            <h2>💡 基本思想</h2>
+
+            <div class="formula-box">
+                <strong>核心思想：</strong>找到使"观察到当前样本"概率最大的参数值<br>
+                <br>
+                <strong>直观理解：</strong><br>
+                如果我们观察到了某组数据，那么这组数据出现的概率应该比较大<br>
+                我们选择那个使这组数据"最可能"出现的参数作为估计值
+            </div>
+
+            <div class="example-box">
+                <h4>🎯 类比：破案推理</h4>
+                <p><strong>情景：</strong>案发现场发现一枚指纹（样本）</p>
+                <p><strong>可能嫌疑人：</strong>A, B, C（不同参数）</p>
+                <p><strong>MLE思路：</strong>谁的指纹最像现场指纹？→ 选择最匹配的那个</p>
+                <p><strong>数学化：</strong>哪个参数下，观察到该样本的概率最大？</p>
+            </div>
+
+            <h3>似然函数（Likelihood Function）</h3>
+            <div class="formula-box">
+                <strong>定义：</strong>L(θ) = f(x₁, x₂, ..., xₙ; θ)<br>
+                <br>
+                <strong>独立同分布样本：</strong><br>
+                L(θ) = Πᵢ₌₁ⁿ f(xᵢ; θ)<br>
+                <br>
+                <strong>对数似然（Log-Likelihood）：</strong><br>
+                ln L(θ) = Σᵢ₌₁ⁿ ln f(xᵢ; θ)
+            </div>
+        </div>
+
+        <!-- 基本步骤 -->
+        <div class="section">
+            <h2>📋 基本步骤</h2>
+
+            <div class="step-box">
+                <strong>步骤1：</strong>写出似然函数 L(θ) = Πᵢ f(xᵢ; θ)<br>
+                <strong>步骤2：</strong>取对数：ln L(θ) = Σᵢ ln f(xᵢ; θ)<br>
+                <strong>步骤3：</strong>求导：d(ln L)/dθ = 0<br>
+                <strong>步骤4：</strong>解方程得到估计值 θ̂
+            </div>
+
+            <div class="example-box">
+                <h4>💡 为什么要取对数？</h4>
+                <ol>
+                    <li><strong>简化计算：</strong>乘积变成求和， easier to differentiate</li>
+                    <li><strong>数值稳定：</strong>避免多个小概率相乘导致下溢</li>
+                    <li><strong>单调变换：</strong>ln是单调增函数，最大化L等价于最大化lnL</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 典型例子 -->
+        <div class="section">
+            <h2>📚 典型例子</h2>
+
+            <h3>例1：正态分布 N(μ, σ²)</h3>
+            <div class="example-box">
+                <h4>问题</h4>
+                <p>样本 x₁, x₂, ..., xₙ ~ N(μ, σ²)，求 μ, σ² 的MLE</p>
+
+                <h4>解</h4>
+                <p><strong>① 似然函数：</strong></p>
+                <p>L(μ, σ²) = Πᵢ [1/√(2πσ²) · exp(-(xᵢ-μ)²/(2σ²))]</p>
+
+                <p><strong>② 对数似然：</strong></p>
+                <p>ln L = Σᵢ [ln(1/√(2πσ²)) - (xᵢ-μ)²/(2σ²)]</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= -n/2 · ln(2πσ²) - Σᵢ (xᵢ-μ)²/(2σ²)</p>
+
+                <p><strong>③ 对μ求偏导：</strong></p>
+                <p>∂(ln L)/∂μ = Σᵢ (xᵢ-μ)/σ² = 0</p>
+                <p>→ Σᵢ xᵢ - nμ = 0</p>
+                <p><span class="highlight">→ μ̂ = (1/n) Σᵢ xᵢ = X̄</span></p>
+
+                <p><strong>④ 对σ²求偏导：</strong></p>
+                <p>∂(ln L)/∂σ² = -n/(2σ²) + Σᵢ (xᵢ-μ)²/(2σ⁴) = 0</p>
+                <p>→ -nσ² + Σᵢ (xᵢ-μ)² = 0</p>
+                <p><span class="highlight">→ σ̂² = (1/n) Σᵢ (xᵢ - X̄)²</span></p>
+
+                <p><strong>注意：</strong>MLE的σ̂²分母是n，不是n-1（有偏但渐近无偏）</p>
+            </div>
+
+            <h3>例2：指数分布 Exp(λ)</h3>
+            <div class="example-box">
+                <h4>问题</h4>
+                <p>样本 x₁, x₂, ..., xₙ ~ Exp(λ)，求 λ 的MLE</p>
+
+                <h4>解</h4>
+                <p><strong>① 似然函数：</strong></p>
+                <p>L(λ) = Πᵢ [λ · exp(-λxᵢ)] = λⁿ · exp(-λ Σᵢ xᵢ)</p>
+
+                <p><strong>② 对数似然：</strong></p>
+                <p>ln L = n ln λ - λ Σᵢ xᵢ</p>
+
+                <p><strong>③ 求导：</strong></p>
+                <p>d(ln L)/dλ = n/λ - Σᵢ xᵢ = 0</p>
+
+                <p><strong>④ 求解：</strong></p>
+                <p><span class="highlight">λ̂ = n / Σᵢ xᵢ = 1/X̄</span></p>
+
+                <p><strong>结论：</strong>与矩估计结果相同！</p>
+            </div>
+
+            <h3>例3：泊松分布 Poisson(λ)</h3>
+            <div class="example-box">
+                <h4>问题</h4>
+                <p>样本 x₁, x₂, ..., xₙ ~ Poisson(λ)，求 λ 的MLE</p>
+
+                <h4>解</h4>
+                <p><strong>① 似然函数：</strong></p>
+                <p>L(λ) = Πᵢ [e^(-λ) · λ^(xᵢ) / xᵢ!]</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= e^(-nλ) · λ^(Σᵢ xᵢ) / Πᵢ xᵢ!</p>
+
+                <p><strong>② 对数似然：</strong></p>
+                <p>ln L = -nλ + (Σᵢ xᵢ) · ln λ - Σᵢ ln(xᵢ!)</p>
+
+                <p><strong>③ 求导：</strong></p>
+                <p>d(ln L)/dλ = -n + (Σᵢ xᵢ) / λ = 0</p>
+
+                <p><strong>④ 求解：</strong></p>
+                <p><span class="highlight">λ̂ = (1/n) Σᵢ xᵢ = X̄</span></p>
+            </div>
+
+            <h3>例4：均匀分布 U(0, θ)</h3>
+            <div class="example-box">
+                <h4>问题</h4>
+                <p>样本 x₁, x₂, ..., xₙ ~ U(0, θ)，求 θ 的MLE</p>
+
+                <h4>解</h4>
+                <p><strong>① 似然函数：</strong></p>
+                <p>L(θ) = Πᵢ [1/θ · I(0 ≤ xᵢ ≤ θ)] = (1/θⁿ) · I(max(xᵢ) ≤ θ)</p>
+
+                <p><strong>② 分析：</strong></p>
+                <p>L(θ) = θ^(-n)，当 θ ≥ max(xᵢ)</p>
+                <p>L(θ) = 0，当 θ < max(xᵢ)</p>
+
+                <p><strong>③ 最大化：</strong></p>
+                <p>L(θ)随θ增大而减小（负指数）</p>
+                <p>因此取最小的可能值：θ = max(xᵢ)</p>
+
+                <p><strong>④ 结论：</strong></p>
+                <p><span class="highlight">θ̂ = max(x₁, x₂, ..., xₙ) = X₍ₙ₎</span></p>
+
+                <p><strong>注意：</strong>此例不能用求导法！需要用不等式约束分析。</p>
+            </div>
+        </div>
+
+        <!-- MLE的性质 -->
+        <div class="section">
+            <h2>🏆 MLE 的优良性质</h2>
+
+            <table>
+                <tr>
+                    <th>性质</th>
+                    <th>数学表述</th>
+                    <th>直观含义</th>
+                </tr>
+                <tr>
+                    <td><strong>相合性</strong></td>
+                    <td>θ̂_n →<sub>p</sub> θ₀</td>
+                    <td>样本量增大时，估计值收敛于真实值</td>
+                </tr>
+                <tr>
+                    <td><strong>渐近正态性</strong></td>
+                    <td>√n(θ̂ - θ₀) →<sub>d</sub> N(0, I⁻¹(θ₀))</td>
+                    <td>大样本下，估计服从正态分布</td>
+                </tr>
+                <tr>
+                    <td><strong>渐近有效性</strong></td>
+                    <td>方差达到Cramer-Rao下界</td>
+                    <td>在所有相合估计中，方差最小</td>
+                </tr>
+                <tr>
+                    <td><strong>不变性</strong></td>
+                    <td>如果 θ̂ 是θ的MLE，则 g(θ̂) 是g(θ)的MLE</td>
+                    <td>参数变换后仍可直接代入</td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>💡 实际意义</h4>
+                <ul>
+                    <li><strong>相合性：</strong>数据越多，估计越准确</li>
+                    <li><strong>渐近正态：</strong>可以构造置信区间、进行假设检验</li>
+                    <li><strong>有效性：</strong>MLE是"最好"的估计之一（大样本）</li>
+                    <li><strong>不变性：</strong>估计方差时，直接用 θ̂² 即可，无需重新推导</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 与矩估计的比较 -->
+        <div class="section">
+            <h2>🔄 MLE vs 矩估计</h2>
+
+            <table>
+                <tr>
+                    <th>特性</th>
+                    <th>矩估计</th>
+                    <th>MLE</th>
+                </tr>
+                <tr>
+                    <td><strong>思想</strong></td>
+                    <td>匹配矩</td>
+                    <td>最大化似然</td>
+                </tr>
+                <tr>
+                    <td><strong>计算</strong></td>
+                    <td>简单，解方程</td>
+                    <td>复杂，可能需迭代</td>
+                </tr>
+                <tr>
+                    <td><strong>效率</strong></td>
+                    <td>较低</td>
+                    <td>渐近最优</td>
+                </tr>
+                <tr>
+                    <td><strong>唯一性</strong></td>
+                    <td>可能不唯一</td>
+                    <td>通常唯一（凸似然）</td>
+                </tr>
+                <tr>
+                    <td><strong>适用性</strong></td>
+                    <td>矩存在即可</td>
+                    <td>需知道分布类型</td>
+                </tr>
+                <tr>
+                    <td><strong>小样本</strong></td>
+                    <td>可能更好</td>
+                    <td>可能不稳定</td>
+                </tr>
+            </table>
+
+            <h3>何时选择哪种方法？</h3>
+            <div class="formula-box">
+                <strong>选择矩估计：</strong><br>
+                • 分布未知，只知道矩<br>
+                • 需要快速得到粗略估计<br>
+                • 小样本情况<br>
+                <br>
+                <strong>选择MLE：</strong><br>
+                • 分布类型已知<br>
+                • 需要精确估计<br>
+                • 大样本情况<br>
+                • 需要构造置信区间/假设检验
+            </div>
+        </div>
+
+        <!-- 数值优化 -->
+        <div class="section">
+            <h2>🔢 数值优化方法</h2>
+
+            <div class="formula-box">
+                <strong>当无法解析求解时，使用数值方法：</strong><br>
+                <br>
+                <strong>梯度上升：</strong>θ₍ₖ₊₁₎ = θ₍ₖ₎ + α · ∇(ln L(θ₍ₖ₎))<br>
+                <br>
+                <strong>牛顿法：</strong>θ₍ₖ₊₁₎ = θ₍ₖ₎ - [H(θ₍ₖ₎)]⁻¹ · ∇(ln L(θ₍ₖ₎))<br>
+                其中 H 是 Hessian 矩阵（二阶导数矩阵）<br>
+                <br>
+                <strong>常用软件：</strong><br>
+                • R: optim(), mle()<br>
+                • Python: scipy.optimize.minimize()<br>
+                • MATLAB: fminsearch()
+            </div>
+        </div>
+
+        <!-- 总结 -->
+        <div class="section">
+            <h2>📝 总结</h2>
+            <div style="line-height: 2;">
+                <strong>1. 核心思想：</strong>使观察样本概率最大的参数值<br>
+                <strong>2. 基本步骤：</strong>①似然函数 ②取对数 ③求导 ④求解<br>
+                <strong>3. 优良性质：</strong>相合、渐近正态、渐近有效、不变性<br>
+                <strong>4. 优势：</strong>效率高、性质好、适用推断<br>
+                <strong>5. 劣势：</strong>计算复杂、需知分布、小样本可能不稳定<br>
+                <strong>6. 应用：</strong>现代统计学中最常用的参数估计方法
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('✅ 最大似然估计法 - 快速版加载完成');
+    </script>
+</body>
+</html>

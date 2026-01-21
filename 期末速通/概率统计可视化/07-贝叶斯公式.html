@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贝叶斯公式 - 概率统计可视化</title>
+    <style>
+        * {box-sizing: border-box;}
+        body {margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;}
+        .page-navbar {display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; padding: 16px 20px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); flex-wrap: wrap;}
+        .nav-buttons {display: flex; gap: 12px; flex-wrap: wrap;}
+        .nav-btn {display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #f1f3f4; color: #202124; text-decoration: none; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s;}
+        .nav-btn:hover {background: #e8f0fe; color: #4285f4; transform: translateY(-2px);}
+        .page-title h1 {margin: 0; font-size: 20px; color: #202124;}
+        .breadcrumb {display: flex; gap: 8px; font-size: 14px;}
+        .breadcrumb-item a {color: #5f6368; text-decoration: none;}
+        .content-wrapper {max-width: 1400px; margin: 0 auto;}
+        #loading-overlay {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.98); display: flex; justify-content: center; align-items: center; z-index: 10000; flex-direction: column; transition: opacity 0.1s;}
+        #loading-overlay.loaded {opacity: 0; pointer-events: none;}
+        .loading-spinner {width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #4285f4; border-radius: 50%; animation: spin 1s linear infinite;}
+        @keyframes spin {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}}
+        .loading-text {margin-top: 20px; font-size: 16px; color: #5f6368;}
+        .section-container {margin-bottom: 32px;}
+        .intro-box {background: #f1f5f9; padding: 24px; border-radius: 8px; border-left: 5px solid #5B8CBA;}
+        .mathjax-block {padding: 15px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; margin: 15px 0; overflow-x: auto;}
+        .control-panel {background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;}
+        input[type="range"] {margin: 5px 10px 5px 5px;}
+        label {font-weight: 500;}
+        .comparison-box {display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;}
+        .prior-box, .posterior-box {padding: 20px; border-radius: 8px; background: white;}
+        .prior-box {border-left: 5px solid #ff9800;}
+        .posterior-box {border-left: 5px solid #4caf50;}
+    </style>
+
+    <!-- 🚀 极速加载优化：本地资源 + 懒加载 -->
+    <script>
+    /* Plotly懒加载：只在需要时加载 */
+    window.PlotlyLazyLoader = {
+        loaded: false,
+        callbacks: [],
+        load: function(callback) {
+            if (this.loaded) {
+                callback();
+            } else {
+                this.callbacks.push(callback);
+                if (this.callbacks.length === 1) {
+                    var script = document.createElement("script");
+                    script.src = "lib/plotly.min.js";
+                    script.onload = () => {
+                        this.loaded = true;
+                        this.callbacks.forEach(cb => cb());
+                        this.callbacks = [];
+                    };
+                    document.head.appendChild(script);
+                }
+            }
+        }
+    };
+    </script>
+    <script>
+    /* MathJax配置 - 内联以加快渲染 */
+    window.MathJax = {
+        tex: {
+            inlineMath: [["\$","\$"], ["\\(","\\)"]],
+            displayMath: [["\\$","\\$"], ["\\[","\\]"]],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: "global"
+        },
+        startup: {
+            typeset: false,
+            ready: () => {
+                MathJax.startup.defaultReady();
+                console.log("✅ MathJax加载完成");
+            }
+        }
+    };
+    </script>
+    <link rel="preload" href="lib/plotly.min.js" as="script" crossorigin="anonymous">
+    <link rel="preload" href="lib/tex-mml-chtml.js" as="script" crossorigin="anonymous">
+    <script id="MathJax-script" defer src="lib/tex-mml-chtml.js" onload="console.log("✅ MathJax脚本加载完成")"></script>
+    <script>
+    window.MathJax = {tex: {inlineMath: [['$', '$']], displayMath: [['$$', '$$']]}, svg: {fontCache: 'global'}};
+    </script>
+</head>
+<body>
+    <div id="loading-overlay"><div class="loading-spinner"></div><div class="loading-text">加载中......</div></div>
+
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="history.back()">← 返回</button>
+            <a href="../index.html" class="nav-btn">🏠 主页</a>
+        </div>
+        <div class="page-title"><h1>🔄 贝叶斯公式</h1></div>
+        <div class="breadcrumb">
+            <span><a href="../index.html">期末速通</a> / </span>
+            <span><a href="index.html">概率统计</a> / </span>
+            <span>贝叶斯公式</span>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <h1 style="font-size: 28px; color: #5B8CBA; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+            贝叶斯公式可视化
+        </h1>
+
+        <div class="section-container intro-box">
+            <h2 style="margin-bottom: 15px;">📖 一言以蔽之</h2>
+            <p style="font-size: 18px; font-weight: 500;">
+                <strong>贝叶斯公式</strong>：逆向概率推理，根据"新证据"更新"旧信念"。观察到结果B后，推断原因Aᵢ导致B的概率。
+            </p>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">🛠️ 经典应用</h3>
+                <ul>
+                    <li><strong>医疗诊断</strong>：检测结果阳性，真正患病的概率是多少？（假阳性问题）</li>
+                    <li><strong>垃圾邮件过滤</strong>：出现某些关键词，是垃圾邮件的概率？</li>
+                    <li><strong>机器学习</strong>：朴素贝叶斯分类器</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">📐 数学公式</h3>
+                <div class="mathjax-block">
+                    $$P(A_i|B) = \frac{P(A_i) \cdot P(B|A_i)}{\sum_{j=1}^{n} P(A_j) \cdot P(B|A_j)}$$
+                </div>
+                <p><strong>直观理解</strong>：</p>
+                <ul>
+                    <li><strong>后验概率</strong> P(Aᵢ|B)：观察到证据B后，对原因Aᵢ的信念</li>
+                    <li><strong>先验概率</strong> P(Aᵢ)：观察证据前，对原因Aᵢ的初始信念</li>
+                    <li><strong>似然度</strong> P(B|Aᵢ)：原因Aᵢ导致证据B的可能性</li>
+                    <li><strong>证据概率</strong> P(B)：所有原因导致证据B的总概率（全概率公式）</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-container">
+            <h2>🎛️ 医疗诊断案例（假阳性问题）</h2>
+            <p style="margin-bottom: 15px;">
+                某疾病发病率1%，检测准确率99%。如果检测结果为阳性，真正患病的概率是多少？
+            </p>
+
+            <div class="control-panel">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0; color: #dc3912;">患病人群</h4>
+                        <label>先验概率 P(患病): <input type="range" id="prior-sick" min="0.01" max="0.5" step="0.01" value="0.01"></label>
+                        <span id="prior-sick-val">0.01</span><br>
+                        <label>检测阳性率 P(阳性|患病): <input type="range" id="sensitivity" min="0.5" max="1" step="0.01" value="0.99"></label>
+                        <span id="sensitivity-val">0.99</span>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0; color: #3366cc;">健康人群</h4>
+                        <label>先验概率 P(健康): <input type="range" id="prior-healthy" min="0.5" max="0.99" step="0.01" value="0.99" readonly></label>
+                        <span id="prior-healthy-val">0.99</span><br>
+                        <label>假阳性率 P(阳性|健康): <input type="range" id="false-positive" min="0" max="0.5" step="0.01" value="0.01"></label>
+                        <span id="false-positive-val">0.01</span>
+                    </div>
+                </div>
+
+                <div id="calcs" style="font-weight:bold; padding: 15px; background: white; border-radius: 8px;"></div>
+            </div>
+
+            <div class="comparison-box">
+                <div class="prior-box">
+                    <h3 style="margin-top: 0; color: #ff9800;">📊 先验概率（检测前）</h3>
+                    <div id="prior-chart" style="width:100%;height:300px;"></div>
+                </div>
+                <div class="posterior-box">
+                    <h3 style="margin-top: 0; color: #4caf50;">📈 后验概率（检测阳性后）</h3>
+                    <div id="posterior-chart" style="width:100%;height:300px;"></div>
+                </div>
+            </div>
+
+            <div id="bayes-update-chart" style="width:100%;height:500px; margin-top: 20px;"></div>
+
+            <div style="margin-top: 20px; background: #fff3cd; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">💡 观察要点</h3>
+                <ul>
+                    <li><strong>反直觉结果</strong>：即使检测准确率高达99%，但实际患病率只有1%时，阳性结果下真正患病的概率约50%！</li>
+                    <li><strong>原因</strong>：健康人群基数大，假阳性的绝对数量可能超过真阳性</li>
+                    <li><strong>贝叶斯更新</strong>：先验概率1% → 后验概率约50%（证据大大更新了信念）</li>
+                    <li><strong>实际应用</strong>：这就是为什么罕见病需要多次检测来确认</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-container">
+            <h2>🧮 通用三原因贝叶斯模型</h2>
+            <p style="margin-bottom: 15px;">观察事件B后，三个可能原因的后验概率：</p>
+
+            <div class="control-panel">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0; color: #dc3912;">原因 A₁</h4>
+                        <label>先验 P(A₁): <input type="range" id="pa1" min="0.1" max="0.8" step="0.05" value="0.3"></label>
+                        <span id="pa1-val">0.3</span><br>
+                        <label>似然 P(B|A₁): <input type="range" id="pb1" min="0" max="1" step="0.05" value="0.8"></label>
+                        <span id="pb1-val">0.8</span>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0; color: #3366cc;">原因 A₂</h4>
+                        <label>先验 P(A₂): <input type="range" id="pa2" min="0.1" max="0.8" step="0.05" value="0.5"></label>
+                        <span id="pa2-val">0.5</span><br>
+                        <label>似然 P(B|A₂): <input type="range" id="pb2" min="0" max="1" step="0.05" value="0.4"></label>
+                        <span id="pb2-val">0.4</span>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0; color: #109618;">原因 A₃</h4>
+                        <label>先验 P(A₃): <input type="range" id="pa3" min="0.1" max="0.8" step="0.05" value="0.2"></label>
+                        <span id="pa3-val">0.2</span><br>
+                        <label>似然 P(B|A₃): <input type="range" id="pb3" min="0" max="1" step="0.05" value="0.1"></label>
+                        <span id="pb3-val">0.1</span>
+                    </div>
+                </div>
+
+                <div id="bayes-calcs" style="font-weight:bold; padding: 15px; background: white; border-radius: 8px;"></div>
+            </div>
+
+            <div id="bayes-comparison-chart" style="width:100%;height:450px;"></div>
+
+            <div style="margin-top: 20px; background: #d4edda; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">💡 贝叶斯推理流程</h3>
+                <ol>
+                    <li><strong>设定先验</strong>：根据历史知识或经验，设定 P(Aᵢ)</li>
+                    <li><strong>收集证据</strong>：观察到事件B发生</li>
+                    <li><strong>评估似然</strong>：每个原因Aᵢ导致B的可能性 P(B|Aᵢ)</li>
+                    <li><strong>计算后验</strong>：用贝叶斯公式更新信念，得到 P(Aᵢ|B)</li>
+                    <li><strong>迭代更新</strong>：后验可以作为新的先验，持续更新</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(100);
+            if (typeof Plotly !== 'undefined') initCharts();
+            else setTimeout(initCharts, 100);
+        });
+
+        const els = {
+            priorSick: document.getElementById('prior-sick'), sensitivity: document.getElementById('sensitivity'),
+            priorHealthy: document.getElementById('prior-healthy'), falsePositive: document.getElementById('false-positive'),
+            priorSickVal: document.getElementById('prior-sick-val'), sensitivityVal: document.getElementById('sensitivity-val'),
+            priorHealthyVal: document.getElementById('prior-healthy-val'), falsePositiveVal: document.getElementById('false-positive-val'),
+            calcs: document.getElementById('calcs'),
+            priorChart: document.getElementById('prior-chart'), posteriorChart: document.getElementById('posterior-chart'),
+            bayesUpdateChart: document.getElementById('bayes-update-chart'),
+            pa1: document.getElementById('pa1'), pb1: document.getElementById('pb1'),
+            pa2: document.getElementById('pa2'), pb2: document.getElementById('pb2'),
+            pa3: document.getElementById('pa3'), pb3: document.getElementById('pb3'),
+            pa1Val: document.getElementById('pa1-val'), pb1Val: document.getElementById('pb1-val'),
+            pa2Val: document.getElementById('pa2-val'), pb2Val: document.getElementById('pb2-val'),
+            pa3Val: document.getElementById('pa3-val'), pb3Val: document.getElementById('pb3-val'),
+            bayesCalcs: document.getElementById('bayes-calcs'), bayesComparisonChart: document.getElementById('bayes-comparison-chart')
+        };
+
+        function initCharts() {
+            ['priorSick', 'sensitivity', 'falsePositive'].forEach(id => els[id].addEventListener('input', drawMedicalCase));
+            ['pa1', 'pb1', 'pa2', 'pb2', 'pa3', 'pb3'].forEach(id => els[id].addEventListener('input', drawGeneralCase));
+            drawMedicalCase();
+            drawGeneralCase();
+        }
+
+        function drawMedicalCase() {
+            const priorSick = parseFloat(els.priorSick.value);
+            const sensitivity = parseFloat(els.sensitivity.value);
+            const priorHealthy = 1 - priorSick;
+            const falsePositive = parseFloat(els.falsePositive.value);
+
+            els.priorSickVal.textContent = priorSick.toFixed(2);
+            els.sensitivityVal.textContent = sensitivity.toFixed(2);
+            els.priorHealthyVal.textContent = priorHealthy.toFixed(2);
+            els.falsePositiveVal.textContent = falsePositive.toFixed(2);
+
+            // 贝叶斯公式计算
+            const pPositiveGivenSick = sensitivity;
+            const pPositiveGivenHealthy = falsePositive;
+            const pPositive = priorSick * pPositiveGivenSick + priorHealthy * pPositiveGivenHealthy;
+            const pSickGivenPositive = (priorSick * pPositiveGivenSick) / pPositive;
+            const pHealthyGivenPositive = (priorHealthy * pPositiveGivenHealthy) / pPositive;
+
+            els.calcs.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; text-align: center;">
+                    <div style="color: #dc3912;">
+                        <strong>真阳性</strong><br>
+                        ${priorSick.toFixed(3)} × ${pPositiveGivenSick.toFixed(2)} = <strong>${(priorSick * pPositiveGivenSick).toFixed(4)}</strong>
+                    </div>
+                    <div style="color: #3366cc;">
+                        <strong>假阳性</strong><br>
+                        ${priorHealthy.toFixed(3)} × ${pPositiveGivenHealthy.toFixed(2)} = <strong>${(priorHealthy * pPositiveGivenHealthy).toFixed(4)}</strong>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 6px;">
+                    <strong style="font-size: 18px;">P(阳性) = ${pPositive.toFixed(4)}</strong>
+                </div>
+                <div style="text-align: center; margin-top: 15px; padding: 10px; background: #c8e6c9; border-radius: 6px;">
+                    <strong style="font-size: 18px; color: #2e7d32;">检测阳性后，真正患病概率 P(患病|阳性) = ${pSickGivenPositive.toFixed(4)} (${(pSickGivenPositive*100).toFixed(1)}%)</strong>
+                </div>
+            `;
+
+            // 先验概率图
+            const priorData = [{
+                values: [priorSick, priorHealthy],
+                labels: ['患病', '健康'],
+                type: 'pie',
+                marker: {colors: ['#dc3912', '#3366cc']},
+                textinfo: 'label+percent',
+                hoverinfo: 'label+value+percent'
+            }];
+            Plotly.newPlot(els.priorChart, priorData, {
+                title: '<b>先验分布</b>', margin: {t: 40, b: 20, l: 20, r: 20}
+            }, {responsive: true, displayModeBar: false});
+
+            // 后验概率图
+            const posteriorData = [{
+                values: [pSickGivenPositive, pHealthyGivenPositive],
+                labels: ['真患病', '假阳性'],
+                type: 'pie',
+                marker: {colors: ['#dc3912', '#3366cc']},
+                textinfo: 'label+percent',
+                hoverinfo: 'label+value+percent'
+            }];
+            Plotly.newPlot(els.posteriorChart, posteriorData, {
+                title: '<b>后验分布（观察证据后）</b>', margin: {t: 40, b: 20, l: 20, r: 20}
+            }, {responsive: true, displayModeBar: false});
+
+            // 贝叶斯更新流程图
+            const updateTrace1 = {
+                x: ['患病\n(先验)', '健康\n(先验)'],
+                y: [priorSick, priorHealthy],
+                name: '先验概率',
+                type: 'bar',
+                marker: {color: ['#ff9800', '#ff9800']},
+                text: [priorSick.toFixed(3), priorHealthy.toFixed(3)],
+                textposition: 'auto'
+            };
+            const updateTrace2 = {
+                x: ['患病\n(后验)', '健康\n(后验)'],
+                y: [pSickGivenPositive, pHealthyGivenPositive],
+                name: '后验概率',
+                type: 'bar',
+                marker: {color: ['#4caf50', '#4caf50']},
+                text: [pSickGivenPositive.toFixed(3), pHealthyGivenPositive.toFixed(3)],
+                textposition: 'auto'
+            };
+            Plotly.newPlot(els.bayesUpdateChart, [updateTrace1, updateTrace2], {
+                title: '<b>贝叶斯更新：先验 → 后验</b>',
+                barmode: 'group',
+                yaxis: {title: '概率', range: [0, 1]},
+                margin: {t: 40, b: 80, l: 50, r: 20}
+            }, {responsive: true, displayModeBar: false});
+        }
+
+        function drawGeneralCase() {
+            const pa1 = parseFloat(els.pa1.value), pb1 = parseFloat(els.pb1.value);
+            const pa2 = parseFloat(els.pa2.value), pb2 = parseFloat(els.pb2.value);
+            const pa3 = parseFloat(els.pa3.value), pb3 = parseFloat(els.pb3.value);
+
+            // 归一化P(Aᵢ)
+            const total = pa1 + pa2 + pa3;
+            const pA1 = pa1 / total, pA2 = pa2 / total, pA3 = pa3 / total;
+
+            els.pa1Val.textContent = pA1.toFixed(2); els.pb1Val.textContent = pb1.toFixed(2);
+            els.pa2Val.textContent = pA2.toFixed(2); els.pb2Val.textContent = pb2.toFixed(2);
+            els.pa3Val.textContent = pA3.toFixed(2); els.pb3Val.textContent = pb3.toFixed(2);
+
+            // 贝叶斯公式
+            const branch1 = pA1 * pb1, branch2 = pA2 * pb2, branch3 = pA3 * pb3;
+            const pB = branch1 + branch2 + branch3;
+            const pA1givenB = branch1 / pB, pA2givenB = branch2 / pB, pA3givenB = branch3 / pB;
+
+            els.bayesCalcs.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; margin-bottom: 15px;">
+                    <div style="color: #dc3912;">
+                        <strong>P(A₁|B)</strong><br>
+                        ${(pA1 * pb1).toFixed(3)} / ${pB.toFixed(3)} = <strong>${pA1givenB.toFixed(3)}</strong>
+                    </div>
+                    <div style="color: #3366cc;">
+                        <strong>P(A₂|B)</strong><br>
+                        ${(pA2 * pb2).toFixed(3)} / ${pB.toFixed(3)} = <strong>${pA2givenB.toFixed(3)}</strong>
+                    </div>
+                    <div style="color: #109618;">
+                        <strong>P(A₃|B)</strong><br>
+                        ${(pA3 * pb3).toFixed(3)} / ${pB.toFixed(3)} = <strong>${pA3givenB.toFixed(3)}</strong>
+                    </div>
+                </div>
+                <div style="text-align: center; padding: 10px; background: #e3f2fd; border-radius: 6px;">
+                    <strong style="font-size: 16px;">P(B) = ${pB.toFixed(4)} (归一化常量)</strong>
+                </div>
+            `;
+
+            // 对比图
+            const priorTrace = {
+                x: ['A₁', 'A₂', 'A₃'],
+                y: [pA1, pA2, pA3],
+                name: '先验 P(Aᵢ)',
+                type: 'bar',
+                marker: {color: '#ff9800'}
+            };
+            const posteriorTrace = {
+                x: ['A₁', 'A₂', 'A₃'],
+                y: [pA1givenB, pA2givenB, pA3givenB],
+                name: '后验 P(Aᵢ|B)',
+                type: 'bar',
+                marker: {color: '#4caf50'}
+            };
+            const likelihoodTrace = {
+                x: ['A₁', 'A₂', 'A₃'],
+                y: [pb1, pb2, pb3],
+                name: '似然 P(B|Aᵢ)',
+                type: 'bar',
+                marker: {color: '#2196f3'},
+                yaxis: 'y2'
+            };
+
+            Plotly.newPlot(els.bayesComparisonChart, [priorTrace, posteriorTrace, likelihoodTrace], {
+                title: '<b>贝叶斯公式：先验 vs 后验 vs 似然</b>',
+                barmode: 'group',
+                yaxis: {title: '概率', range: [0, 1]},
+                yaxis2: {title: '似然度', overlaying: 'y', side: 'right', range: [0, 1]},
+                margin: {t: 40, b: 50, l: 50, r: 50},
+                legend: {orientation: 'h', y: -0.2}
+            }, {responsive: true, displayModeBar: false});
+        }
+    </script>
+</body>
+</html>

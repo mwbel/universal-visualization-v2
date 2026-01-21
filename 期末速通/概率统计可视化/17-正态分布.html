@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>正态分布 - 概率统计</title>
+    <link rel="stylesheet" href="../css/page-navbar.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #5B8CBA; margin-bottom: 10px; }
+        .controls { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        label { display: block; font-weight: 600; margin-bottom: 8px; }
+        input[type="range"] { width: 250px; }
+        canvas { width: 100%; height: 400px; background: white; border: 1px solid #ddd; border-radius: 8px; }
+        .result { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .info-box { background: #e3f2fd; padding: 15px; border-radius: 6px; margin-top: 15px; border-left: 4px solid #2196F3; }
+    </style>
+</head>
+<body>
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="index.html" class="nav-btn nav-btn-home">概率统计主页</a>
+        </div>
+        <div class="page-title"><h1>📊 正态分布</h1></div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>📊 正态分布可视化</h1>
+            <p>最重要的连续型概率分布 - 68-95-99.7规则</p>
+        </div>
+
+        <div class="controls">
+            <label>均值 μ: <span id="mu-val">0</span></label>
+            <input type="range" id="mu" min="-5" max="5" step="0.5" value="0" oninput="draw()"><br>
+            
+            <label>标准差 σ: <span id="sigma-val">1</span></label>
+            <input type="range" id="sigma" min="0.5" max="3" step="0.1" value="1" oninput="draw()">
+        </div>
+
+        <div class="result">
+            <canvas id="chart"></canvas>
+            <div id="stats" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 正态分布特性</h3>
+            <ul>
+                <li><strong>68-95-99.7规则</strong>：
+                    <ul>
+                        <li>μ±σ：约68%的数据</li>
+                        <li>μ±2σ：约95%的数据</li>
+                        <li>μ±3σ：约99.7%的数据</li>
+                    </ul>
+                </li>
+                <li><strong>对称性</strong>：关于均值μ对称</li>
+                <li><strong>钟形曲线</strong>：中间高，两边低</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+        
+        function normalPDF(x, mu, sigma) {
+            return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+        }
+        
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            draw();
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        function draw() {
+            const mu = parseFloat(document.getElementById('mu').value);
+            const sigma = parseFloat(document.getElementById('sigma').value);
+            
+            document.getElementById('mu-val').textContent = mu.toFixed(1);
+            document.getElementById('sigma-val').textContent = sigma.toFixed(1);
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 60;
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            const xValues = [];
+            const yValues = [];
+            for (let x = mu - 4*sigma; x <= mu + 4*sigma; x += 0.1) {
+                xValues.push(x);
+                yValues.push(normalPDF(x, mu, sigma));
+            }
+
+            function toX(x) {
+                return padding + ((x - (mu - 4*sigma)) / (8*sigma)) * (width - 2*padding);
+            }
+
+            function toY(y) {
+                return height - padding - (y / Math.max(...yValues)) * (height - 2*padding);
+            }
+
+            // 绘制曲线
+            ctx.strokeStyle = '#dc3912';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            xValues.forEach((x, i) => {
+                const px = toX(x);
+                const py = toY(yValues[i]);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            });
+            ctx.stroke();
+
+            // 绘制μ线
+            ctx.strokeStyle = '#4285f4';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([10, 5]);
+            ctx.beginPath();
+            ctx.moveTo(toX(mu), toY(0));
+            ctx.lineTo(toX(mu), toY(normalPDF(mu, mu, sigma)));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 绘制σ区间
+            const styles = [
+                { x: mu, color: '#4285f4', label: 'μ' },
+                { x: mu - sigma, color: '#34a853', label: 'μ-σ' },
+                { x: mu + sigma, color: '#34a853', label: 'μ+σ' },
+                { x: mu - 2*sigma, color: '#fbbc05', label: 'μ-2σ' },
+                { x: mu + 2*sigma, color: '#fbbc05', label: 'μ+2σ' }
+            ];
+
+            styles.forEach(style => {
+                ctx.strokeStyle = style.color;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(toX(style.x), toY(0));
+                ctx.lineTo(toX(style.x), toY(normalPDF(style.x, mu, sigma) * 0.1));
+                ctx.stroke();
+                ctx.setLineDash([]);
+            });
+
+            // 坐标轴
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(toX(mu - 4*sigma), toY(0));
+            ctx.lineTo(toX(mu + 4*sigma), toY(0));
+            ctx.stroke();
+
+            // 更新统计
+            document.getElementById('stats').innerHTML = `
+                <strong>均值 μ = ${mu.toFixed(2)}</strong> | 
+                <strong>标准差 σ = ${sigma.toFixed(2)}</strong> | 
+                <strong>方差 σ² = ${(sigma*sigma).toFixed(2)}</strong>
+            `;
+        }
+
+        draw();
+    </script>
+</body>
+</html>

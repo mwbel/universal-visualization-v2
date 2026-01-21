@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速测试 - 概率统计可视化（极速版）</title>
+    <style>
+        /* 内联CSS，减少HTTP请求 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .page-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        .page-link:hover {
+            background: #4285f4;
+            color: white;
+            border-color: #4285f4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(66,133,244,0.3);
+        }
+
+        .page-link .icon {
+            font-size: 28px;
+        }
+
+        .page-link .info {
+            flex: 1;
+        }
+
+        .page-link .title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .page-link .desc {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge.new {
+            background: #e6f4ea;
+            color: #34a853;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4285f4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ 概率统计可视化 - 快速测试</h1>
+            <p>极速加载版本，无需等待外部资源</p>
+        </div>
+
+        <div class="section">
+            <h2>🆕 新建页面（最近完成）</h2>
+            <div class="page-grid">
+                <a href="07-贝叶斯公式.html" target="_blank" class="page-link">
+                    <div class="icon">🔄</div>
+                    <div class="info">
+                        <div class="title">贝叶斯公式 <span class="badge new">NEW</span></div>
+                        <div class="desc">逆向概率推理，医疗诊断案例</div>
+                    </div>
+                </a>
+
+                <a href="08-中心极限定理.html" target="_blank" class="page-link">
+                    <div class="icon">🎯</div>
+                    <div class="info">
+                        <div class="title">中心极限定理 <span class="badge new">NEW</span></div>
+                        <div class="desc">统计学的核心定理</div>
+                    </div>
+                </a>
+
+                <a href="09-三大抽样分布对比.html" target="_blank" class="page-link">
+                    <div class="icon">📊</div>
+                    <div class="info">
+                        <div class="title">三大抽样分布对比 <span class="badge new">NEW</span></div>
+                        <div class="desc">χ²、t、F分布完整对比</div>
+                    </div>
+                </a>
+
+                <a href="10-假设检验流程.html" target="_blank" class="page-link">
+                    <div class="icon">🔬</div>
+                    <div class="info">
+                        <div class="title">假设检验流程 <span class="badge new">NEW</span></div>
+                        <div class="desc">两类错误、p值、功效分析</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📚 所有页面</h2>
+            <div class="page-grid">
+                <a href="02-随机事件与样本空间.html" target="_blank" class="page-link">
+                    <div class="icon">🎯</div>
+                    <div class="info">
+                        <div class="title">随机事件与样本空间</div>
+                        <div class="desc">Venn图可视化</div>
+                    </div>
+                </a>
+
+                <a href="01-独立性.html" target="_blank" class="page-link">
+                    <div class="icon">🔄</div>
+                    <div class="info">
+                        <div class="title">事件的独立性</div>
+                        <div class="desc">P(A∩B) = P(A) · P(B)</div>
+                    </div>
+                </a>
+
+                <a href="03-频率与概率.html" target="_blank" class="page-link">
+                    <div class="icon">📈</div>
+                    <div class="info">
+                        <div class="title">频率与概率</div>
+                        <div class="desc">大数定律演示</div>
+                    </div>
+                </a>
+
+                <a href="04-数学期望.html" target="_blank" class="page-link">
+                    <div class="icon">⚖️</div>
+                    <div class="info">
+                        <div class="title">数学期望</div>
+                        <div class="desc">概率分布的重心</div>
+                    </div>
+                </a>
+
+                <a href="05-方差.html" target="_blank" class="page-link">
+                    <div class="icon">📏</div>
+                    <div class="info">
+                        <div class="title">方差</div>
+                        <div class="desc">离散程度度量</div>
+                    </div>
+                </a>
+
+                <a href="06-全概率公式.html" target="_blank" class="page-link">
+                    <div class="icon">🎲</div>
+                    <div class="info">
+                        <div class="title">全概率公式</div>
+                        <div class="desc">划分样本空间</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💡 性能优化说明</h2>
+            <p style="color: #666; line-height: 1.8;">
+                <strong>当前页面特点：</strong><br>
+                ✅ 所有CSS内联，无需额外请求<br>
+                ✅ 无外部JavaScript库依赖<br>
+                ✅ 瞬间加载完成<br><br>
+
+                <strong>目标页面：</strong><br>
+                ⚠️ 需要加载Plotly和MathJax（约1-2MB）<br>
+                💡 首次加载可能需要3-10秒（取决于网速）<br>
+                🚀 建议使用Chrome/Edge浏览器以获得最佳性能<br>
+                📱 建议在网络良好的环境下访问
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>📊 概率统计可视化模块 | 期末速通项目</p>
+        </div>
+    </div>
+
+    <script>
+        // 显示加载完成时间
+        window.addEventListener('load', function() {
+            const loadTime = performance.now();
+            console.log('✅ 页面加载完成，耗时: ' + loadTime.toFixed(2) + 'ms');
+        });
+    </script>
+</body>
+</html>

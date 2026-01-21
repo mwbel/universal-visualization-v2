@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>协方差与相关系数 - 概率统计可视化</title>
+    <link rel="stylesheet" href="../css/page-navbar.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #5B8CBA; margin-bottom: 10px; }
+        .formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+            font-size: 16px;
+            font-style: italic;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        input[type="range"] {
+            width: 300px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #3367d6;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        canvas {
+            width: 100%;
+            height: 450px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #4285f4;
+        }
+        .stat-box.positive { border-left-color: #34a853; }
+        .stat-box.negative { border-left-color: #dc3912; }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        .info-box {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="../index.html" class="nav-btn nav-btn-home">期末速通主页</a>
+        </div>
+        <div class="page-title"><h1>📊 协方差与相关系数</h1></div>
+        <div class="breadcrumb">
+            <div class="breadcrumb-item"><a href="../index.html">期末速通</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="index.html">概率统计</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="#">协方差与相关系数</a></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🔗 协方差与相关系数可视化</h1>
+            <p>理解两个随机变量之间的线性关系强度和方向</p>
+        </div>
+
+        <div class="formula">
+            <strong>核心公式：</strong><br>
+            协方差：Cov(X,Y) = E[(X - μₓ)(Y - μᵧ)] = E(XY) - E(X)E(Y)<br>
+            相关系数：ρ = Cov(X,Y) / (σₓ · σᵧ)，范围[-1, 1]<br>
+            含义：ρ > 0 正相关，ρ < 0 负相关，ρ = 0 无线性相关
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>相关系数 ρ: <span id="corr-val">0.7</span></label>
+                <input type="range" id="correlation" min="-0.99" max="0.99" step="0.01" value="0.7" oninput="update()"><br>
+                <small style="color: #666;">调整相关系数，观察散点图的变化</small>
+            </div>
+
+            <div class="control-group">
+                <label>数据点数量: <span id="n-val">100</span></label>
+                <input type="range" id="n-points" min="20" max="300" step="10" value="100" oninput="update()">
+            </div>
+
+            <div class="control-group">
+                <button onclick="generateData()">🎲 重新生成数据</button>
+                <button onclick="setCorrelation(0.95)">强正相关 (0.95)</button>
+                <button onclick="setCorrelation(-0.95)">强负相关 (-0.95)</button>
+                <button onclick="setCorrelation(0)">无相关 (0)</button>
+            </div>
+        </div>
+
+        <div class="result">
+            <h3>📊 散点图与回归线</h3>
+            <canvas id="chart"></canvas>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">相关系数 ρ</div>
+                    <div class="stat-value" id="rho-display">-</div>
+                </div>
+                <div class="stat-box" id="cov-box">
+                    <div class="stat-label">协方差 Cov(X,Y)</div>
+                    <div class="stat-value" id="cov-display">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">X 均值</div>
+                    <div class="stat-value" id="mean-x">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Y 均值</div>
+                    <div class="stat-value" id="mean-y">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">X 标准差</div>
+                    <div class="stat-value" id="std-x">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Y 标准差</div>
+                    <div class="stat-value" id="std-y">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 协方差与相关系数解读</h3>
+            <ul>
+                <li><strong>协方差 Cov(X,Y)</strong>：衡量两个变量协同变化的程度
+                    <ul>
+                        <li>> 0：X增大时Y倾向于增大</li>
+                        <li>< 0：X增大时Y倾向于减小</li>
+                        <li>= 0：无线性关系</li>
+                    </ul>
+                </li>
+                <li><strong>相关系数 ρ</strong>：标准化的协方差，更易解释
+                    <ul>
+                        <li>ρ ≈ 1：强正相关，点几乎在一条直线上（正相关）</li>
+                        <li>ρ ≈ -1：强负相关，点几乎在一条直线上（负相关）</li>
+                        <li>ρ ≈ 0：无线性相关，点分散无规律</li>
+                        <li>|ρ| > 0.7：强相关；|ρ| < 0.3：弱相关</li>
+                    </ul>
+                </li>
+                <li><strong>注意</strong>：相关系数只衡量线性关系，不反映非线性关系</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+        let dataPoints = [];
+        let targetCorr = 0.7;
+
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            draw();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        function setCorrelation(rho) {
+            document.getElementById('correlation').value = rho;
+            update();
+        }
+
+        function generateData() {
+            const n = parseInt(document.getElementById('n-points').value);
+            const rho = parseFloat(document.getElementById('correlation').value);
+            targetCorr = rho;
+
+            // 生成相关数据
+            dataPoints = [];
+            for (let i = 0; i < n; i++) {
+                // 生成标准正态分布
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z1 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                const z2 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math.PI * u2);
+
+                // 应用相关系数
+                const x = z1;
+                const y = rho * z1 + Math.sqrt(1 - rho * rho) * z2;
+
+                // 缩放到合适的范围
+                dataPoints.push({
+                    x: x * 20 + 100,
+                    y: y * 20 + 100
+                });
+            }
+
+            update();
+        }
+
+        function calculateStats() {
+            if (dataPoints.length === 0) return null;
+
+            const n = dataPoints.length;
+            const meanX = dataPoints.reduce((sum, p) => sum + p.x, 0) / n;
+            const meanY = dataPoints.reduce((sum, p) => sum + p.y, 0) / n;
+
+            const varianceX = dataPoints.reduce((sum, p) => sum + Math.pow(p.x - meanX, 2), 0) / n;
+            const varianceY = dataPoints.reduce((sum, p) => sum + Math.pow(p.y - meanY, 2), 0) / n;
+            const stdX = Math.sqrt(varianceX);
+            const stdY = Math.sqrt(varianceY);
+
+            const covariance = dataPoints.reduce((sum, p) =>
+                sum + (p.x - meanX) * (p.y - meanY), 0) / n;
+
+            const correlation = covariance / (stdX * stdY);
+
+            return {
+                meanX, meanY, stdX, stdY,
+                covariance, correlation
+            };
+        }
+
+        function calculateRegressionLine(stats) {
+            // 最小二乘法回归线: y = ax + b
+            const { meanX, meanY, covariance, varianceX } = stats;
+            const a = covariance / varianceX;
+            const b = meanY - a * meanX;
+            return { a, b };
+        }
+
+        function update() {
+            const rho = parseFloat(document.getElementById('correlation').value);
+            const n = parseInt(document.getElementById('n-points').value);
+            document.getElementById('corr-val').textContent = rho.toFixed(2);
+            document.getElementById('n-val').textContent = n;
+
+            if (dataPoints.length === 0 || Math.abs(rho - targetCorr) > 0.01) {
+                generateData();
+                return;
+            }
+
+            draw();
+        }
+
+        function draw() {
+            if (dataPoints.length === 0) return;
+
+            const stats = calculateStats();
+            if (!stats) return;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 60;
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            // 计算坐标范围
+            const xValues = dataPoints.map(p => p.x);
+            const yValues = dataPoints.map(p => p.y);
+            const minX = Math.min(...xValues);
+            const maxX = Math.max(...xValues);
+            const minY = Math.min(...yValues);
+            const maxY = Math.max(...yValues);
+            const paddingX = (maxX - minX) * 0.1;
+            const paddingY = (maxY - minY) * 0.1;
+
+            function toX(x) {
+                return padding + (x - (minX - paddingX)) / ((maxX - minX) + 2 * paddingX) * (width - 2 * padding);
+            }
+
+            function toY(y) {
+                return height - padding - (y - (minY - paddingY)) / ((maxY - minY) + 2 * paddingY) * (height - 2 * padding);
+            }
+
+            // 绘制网格
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                const x = padding + i * (width - 2 * padding) / 10;
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, height - padding);
+                ctx.stroke();
+
+                const y = padding + i * (height - 2 * padding) / 10;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+
+            // 绘制回归线
+            const line = calculateRegressionLine(stats);
+            const x1 = minX - paddingX;
+            const y1 = line.a * x1 + line.b;
+            const x2 = maxX + paddingX;
+            const y2 = line.a * x2 + line.b;
+
+            ctx.strokeStyle = '#dc3912';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(toX(x1), toY(y1));
+            ctx.lineTo(toX(x2), toY(y2));
+            ctx.stroke();
+
+            // 绘制数据点
+            dataPoints.forEach(point => {
+                const px = toX(point.x);
+                const py = toY(point.y);
+
+                // 根据相关性设置颜色
+                const hue = stats.correlation > 0 ? 120 : 0; // 绿色或红色
+                const saturation = Math.abs(stats.correlation) * 100;
+                ctx.fillStyle = `hsl(${hue}, ${saturation}%, 50%)`;
+                ctx.strokeStyle = `hsl(${hue}, ${saturation}%, 30%)`;
+                ctx.lineWidth = 1;
+
+                ctx.beginPath();
+                ctx.arc(px, py, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            });
+
+            // 绘制均值点
+            ctx.fillStyle = '#4285f4';
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(toX(stats.meanX), toY(stats.meanY), 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // 绘制坐标轴
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(toX(minX - paddingX), toY(minY - paddingY));
+            ctx.lineTo(toX(minX - paddingX), toY(maxY + paddingY));
+            ctx.moveTo(toX(minX - paddingX), toY(minY - paddingY));
+            ctx.lineTo(toX(maxX + paddingX), toY(minY - paddingY));
+            ctx.stroke();
+
+            // 坐标轴标签
+            ctx.fillStyle = '#333';
+            ctx.font = '14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('X', width / 2, height - 20);
+
+            ctx.save();
+            ctx.translate(20, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Y', 0, 0);
+            ctx.restore();
+
+            // 图例
+            ctx.fillStyle = '#dc3912';
+            ctx.fillRect(width - 150, 40, 20, 3);
+            ctx.fillStyle = '#333';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('回归线', width - 120, 45);
+
+            ctx.fillStyle = '#4285f4';
+            ctx.beginPath();
+            ctx.arc(width - 140, 65, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#333';
+            ctx.fillText('均值点', width - 120, 70);
+
+            // 更新统计显示
+            document.getElementById('rho-display').textContent = stats.correlation.toFixed(4);
+            document.getElementById('cov-display').textContent = stats.covariance.toFixed(2);
+            document.getElementById('mean-x').textContent = stats.meanX.toFixed(2);
+            document.getElementById('mean-y').textContent = stats.meanY.toFixed(2);
+            document.getElementById('std-x').textContent = stats.stdX.toFixed(2);
+            document.getElementById('std-y').textContent = stats.stdY.toFixed(2);
+
+            // 更新协方差框样式
+            const covBox = document.getElementById('cov-box');
+            covBox.className = 'stat-box' + (stats.covariance > 0 ? ' positive' : stats.covariance < 0 ? ' negative' : '');
+        }
+
+        // 初始化
+        generateData();
+    </script>
+</body>
+</html>

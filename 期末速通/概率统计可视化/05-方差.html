@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>方差 - 概率统计可视化</title>
+
+
+    <script>
+    window.MathJax = {tex: {inlineMath: [['$', '$']], displayMath: [['$$', '$$']]}, svg: {fontCache: 'global'}};
+    </script>
+
+    <link rel="stylesheet" href="../css/page-navbar.css">
+
+    <style>
+        body {margin: 0; padding: 20px; font-family: 'Segoe UI', system-ui, sans-serif;}
+        #loading-overlay {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); display: flex; justify-content: center; align-items: center; z-index: 10000; flex-direction: column;}
+        .loading-spinner {width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #4285f4; border-radius: 50%; animation: spin 1s linear infinite;}
+        @keyframes spin {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}}
+        #loading-overlay.loaded {display: none;}
+        .section-container {margin-bottom: 32px;}
+        .intro-box {background: #f1f5f9; padding: 24px; border-radius: 8px; border-left: 5px solid #5B8CBA;}
+        .mathjax-block {padding: 15px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; margin: 15px 0;}
+        .control-panel {background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;}
+    </style>
+
+    <!-- 🚀 极速加载优化：本地资源 + 懒加载 -->
+    <script>
+    /* Plotly懒加载：只在需要时加载 */
+    window.PlotlyLazyLoader = {
+        loaded: false,
+        callbacks: [],
+        load: function(callback) {
+            if (this.loaded) {
+                callback();
+            } else {
+                this.callbacks.push(callback);
+                if (this.callbacks.length === 1) {
+                    var script = document.createElement("script");
+                    script.src = "lib/plotly.min.js";
+                    script.onload = () => {
+                        this.loaded = true;
+                        this.callbacks.forEach(cb => cb());
+                        this.callbacks = [];
+                    };
+                    document.head.appendChild(script);
+                }
+            }
+        }
+    };
+    </script>
+    <script>
+    /* MathJax配置 - 内联以加快渲染 */
+    window.MathJax = {
+        tex: {
+            inlineMath: [["\$","\$"], ["\\(","\\)"]],
+            displayMath: [["\\$","\\$"], ["\\[","\\]"]],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: "global"
+        },
+        startup: {
+            typeset: false,
+            ready: () => {
+                MathJax.startup.defaultReady();
+                console.log("✅ MathJax加载完成");
+            }
+        }
+    };
+    </script>
+    <link rel="preload" href="lib/plotly.min.js" as="script" crossorigin="anonymous">
+    <link rel="preload" href="lib/tex-mml-chtml.js" as="script" crossorigin="anonymous">
+    <script id="MathJax-script" defer src="lib/tex-mml-chtml.js" onload="console.log("✅ MathJax脚本加载完成")"></script>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">加载中......</div>
+    </div>
+
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="../index.html" class="nav-btn nav-btn-home">期末速通主页</a>
+        </div>
+        <div class="page-title"><h1>📊 方差</h1></div>
+        <div class="breadcrumb">
+            <div class="breadcrumb-item"><a href="../index.html">期末速通</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="../index.html">概率统计</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="#">方差</a></div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <h1 style="font-size: 28px; color: #5B8CBA; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+            方差的几何意义可视化
+        </h1>
+
+        <div class="section-container intro-box">
+            <h2 style="margin-bottom: 15px;">📖 一言以蔽之</h2>
+            <p style="font-size: 18px; font-weight: 500;">
+                <strong>方差</strong> $Var(X)$ 衡量随机变量取值的<strong>离散程度</strong>，反映数据偏离期望的平均距离。
+            </p>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">🛠️ 直观理解</h3>
+                <ul>
+                    <li><strong>离散程度</strong>：方差大 = 数据分散，方差小 = 数据集中</li>
+                    <li><strong>波动性</strong>：衡量随机变量取值的不稳定性</li>
+                    <li><strong>偏离程度</strong>：各点与期望的距离的平方平均</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">📐 数学定义</h3>
+                <div class="mathjax-block">
+                    $$Var(X) = E[(X - E(X))^2] = \sum_{i} (x_i - \mu)^2 \cdot p_i$$
+                </div>
+                <p>其中 $\mu = E(X)$ 是期望值。</p>
+                <p><strong>简化公式：</strong></p>
+                <div class="mathjax-block">
+                    $$Var(X) = E(X^2) - [E(X)]^2$$
+                </div>
+            </div>
+        </div>
+
+        <div class="section-container">
+            <h2>🎛️ 方差的可视化</h2>
+
+            <div class="control-panel">
+                <label>分布集中度: <input type="range" id="spread" min="1" max="5" step="0.5" value="2"></label>
+                <span id="spread-val">2</span><br>
+
+                <label>期望值 $\mu$: <input type="range" id="mean" min="0" max="10" step="0.5" value="5"></label>
+                <span id="mean-val">5</span>
+
+                <div id="calcs" style="margin-top:15px; font-weight:bold; padding: 10px; background: #fff; border-radius: 6px;"></div>
+            </div>
+
+            <div id="plot" style="width:100%;height:450px;"></div>
+
+            <div style="margin-top: 20px; background: #f8d7da; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">💡 几何意义</h3>
+                <ul>
+                    <li><strong>红色曲线</strong>：概率密度函数</li>
+                    <li><strong>蓝色竖线</strong>：期望值 $\mu$（中心位置）</li>
+                    <li><strong>标准差 $\sigma$</strong>：衡量分布的"宽度"</li>
+                    <li><strong>68-95-99.7规则</strong>：
+                        <ul>
+                            <li>$\mu \pm \sigma$：约68%的数据</li>
+                            <li>$\mu \pm 2\sigma$：约95%的数据</li>
+                            <li>$\mu \pm 3\sigma$：约99.7%的数据</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loading-overlay').classList.add('loaded'), 500);
+        });
+
+        // 正态分布密度函数
+        function normalPDF(x, mu, sigma) {
+            return (1 / (sigma * Math.sqrt(2 * Math.PI))) *
+                   Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+        }
+
+        function draw() {
+            const spread = parseFloat(document.getElementById('spread').value);
+            const mu = parseFloat(document.getElementById('mean').value);
+
+            const sigma = spread / 2;
+
+            document.getElementById('spread-val').innerText = spread.toFixed(1);
+            document.getElementById('mean-val').innerText = mu.toFixed(1);
+
+            // 生成正态分布曲线
+            const xValues = [];
+            const yValues = [];
+            for (let x = 0; x <= 10; x += 0.1) {
+                xValues.push(x);
+                yValues.push(normalPDF(x, mu, sigma));
+            }
+
+            // 计算方差和标准差
+            const variance = sigma * sigma;
+            const stdDev = sigma;
+
+            const calcsEl = document.getElementById('calcs');
+            calcsEl.innerHTML = `
+                期望 $\\mu = E(X) = ${mu.toFixed(2)}$ <br>
+                标准差 $\\sigma = ${stdDev.toFixed(2)}$ <br>
+                方差 $\\sigma^2 = Var(X) = ${variance.toFixed(2)}$ <br>
+                $P(\\mu - \\sigma < X < \\mu + \\sigma) \\approx 68\\%$ <br>
+                $P(\\mu - 2\\sigma < X < \\mu + 2\\sigma) \\approx 95\\%$
+            `;
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([calcsEl]);
+            }
+
+            // 绘制正态分布曲线
+            const trace1 = {
+                x: xValues,
+                y: yValues,
+                mode: 'lines',
+                name: '概率密度',
+                line: {color: '#dc3912', width: 3}
+            };
+
+            // 标注区域
+            const shapes = [
+                // 期望线
+                {type: 'line', x0: mu, y0: 0, x1: mu, y1: Math.max(...yValues),
+                 line: {color: '#4285f4', width: 3, dash: 'dash'}},
+                // ±1σ
+                {type: 'line', x0: mu - sigma, y0: 0, x1: mu - sigma, y1: normalPDF(mu - sigma, mu, sigma),
+                 line: {color: '#34a853', width: 2, dash: 'dot'}},
+                {type: 'line', x0: mu + sigma, y0: 0, x1: mu + sigma, y1: normalPDF(mu + sigma, mu, sigma),
+                 line: {color: '#34a853', width: 2, dash: 'dot'}},
+                // ±2σ
+                {type: 'line', x0: mu - 2*sigma, y0: 0, x1: mu - 2*sigma, y1: normalPDF(mu - 2*sigma, mu, sigma),
+                 line: {color: '#fbbc05', width: 2, dash: 'dot'}},
+                {type: 'line', x0: mu + 2*sigma, y0: 0, x1: mu + 2*sigma, y1: normalPDF(mu + 2*sigma, mu, sigma),
+                 line: {color: '#fbbc05', width: 2, dash: 'dot'}}
+            ];
+
+            const annotations = [
+                {x: mu, y: Math.max(...yValues) * 1.1, text: `<b>μ=${mu.toFixed(1)}</b>`, showarrow: false, font: {size: 14, color: '#4285f4'}},
+                {x: mu - sigma, y: normalPDF(mu - sigma, mu, sigma) * 1.1, text: `<b>μ-σ</b>`, showarrow: false, font: {size: 12, color: '#34a853'}},
+                {x: mu + sigma, y: normalPDF(mu + sigma, mu, sigma) * 1.1, text: `<b>μ+σ</b>`, showarrow: false, font: {size: 12, color: '#34a853'}}
+            ];
+
+            const layout = {
+                title: {
+                    text: `<b>正态分布的方差 (μ=${mu.toFixed(1)}, σ=${stdDev.toFixed(1)})</b>`,
+                    font: {size: 18}
+                },
+                xaxis: {title: 'x', showgrid: true, range: [0, 10]},
+                yaxis: {title: '概率密度 f(x)', showgrid: true},
+                shapes: shapes,
+                annotations: annotations,
+                margin: {l: 60, r: 30, t: 50, b: 60}
+            };
+
+            Plotly.newPlot('plot', [trace1], layout, {responsive: true, displayModeBar: false});
+        }
+
+        // 旧方式已禁用，使用window.onload, () => {
+            document.getElementById('spread').addEventListener('input', draw);
+            document.getElementById('mean').addEventListener('input', draw);
+            draw();
+        });
+    </script>
+</body>
+</html>

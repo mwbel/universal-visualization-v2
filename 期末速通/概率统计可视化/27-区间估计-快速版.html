@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>区间估计与单侧置信区间 - 快速版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .back-nav {
+            margin-bottom: 20px;
+        }
+        .back-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 16px;
+            font-size: 22px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+        .section h3 {
+            color: #333;
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .example-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .example-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .highlight {
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #667eea;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-nav">
+        <a href="../index.html">← 返回期末速通主页</a>
+        <a href="../concept-navigator-fast.html">← 返回导航页</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📏 区间估计与单侧置信区间</h1>
+            <p>第七章：从点估计到区间估计</p>
+        </div>
+
+        <!-- 区间估计基本概念 -->
+        <div class="section">
+            <h2>📖 区间估计的基本概念</h2>
+
+            <div class="formula-box">
+                <strong>点估计 vs 区间估计：</strong><br>
+                • 点估计：θ̂ = 5.2（给出一个数值）<br>
+                • 区间估计：θ ∈ [4.8, 5.6]（给出一个范围）<br>
+                <br>
+                <strong>置信区间（Confidence Interval, CI）：</strong><br>
+                随机区间 [θ̂_L, θ̂_U]，满足 P(θ ∈ [θ̂_L, θ̂_U]) = 1 - α<br>
+                其中 1-α 称为置信水平（Confidence Level）
+            </div>
+
+            <div class="example-box">
+                <h4>💡 直观理解</h4>
+                <p><strong>民意调查：</strong>"支持率在48%-52%之间（95%置信水平）"</p>
+                <p><strong>含义：</strong>如果重复调查100次，大约有95次，真实支持率会落在[48%,52%]内</p>
+                <p><strong>注意：</strong>不是说"真实支持率有95%的概率在这个区间"，而是"这个方法有95%的概率覆盖真值"</p>
+            </div>
+
+            <h3>常用置信水平</h3>
+            <table>
+                <tr>
+                    <th>置信水平 1-α</th>
+                    <th>α</th>
+                    <th>临界值 z_{α/2}</th>
+                    <th>应用场景</th>
+                </tr>
+                <tr>
+                    <td>90%</td>
+                    <td>0.10</td>
+                    <td>1.645</td>
+                    <td>初步探索、容忍不确定性</td>
+                </tr>
+                <tr>
+                    <td>95%</td>
+                    <td>0.05</td>
+                    <td>1.960</td>
+                    <td><strong>最常用</strong>、科学研究的标准</td>
+                </tr>
+                <tr>
+                    <td>99%</td>
+                    <td>0.01</td>
+                    <td>2.576</td>
+                    <td>高风险决策、医学试验</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 正态总体均值的区间估计 -->
+        <div class="section">
+            <h2>📊 正态总体均值的区间估计</h2>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('known')">方差已知</button>
+                <button class="tab" onclick="switchTab('unknown')">方差未知</button>
+            </div>
+
+            <div id="known" class="tab-content active">
+                <h3>方差 σ² 已知：Z区间</h3>
+                <div class="formula-box">
+                    <strong>条件：</strong>X₁, ..., Xₙ ~ N(μ, σ²)，σ² 已知<br>
+                    <br>
+                    <strong>枢轴量（Pivot）：</strong>Z = (X̄ - μ) / (σ/√n) ~ N(0,1)<br>
+                    <br>
+                    <strong>置信区间：</strong><br>
+                    μ ∈ [X̄ - z_{α/2} · σ/√n,  X̄ + z_{α/2} · σ/√n]<br>
+                    <br>
+                    <strong>缩写：</strong>X̄ ± z_{α/2} · σ/√n
+                </div>
+
+                <div class="example-box">
+                    <h4>💡 例子：食品包装重量</h4>
+                    <p>声称平均重量500g，已知σ=10g，抽n=16，X̄=495g</p>
+                    <p><strong>95%置信区间：</strong></p>
+                    <p>495 ± 1.96 × 10/4</p>
+                    <p>= 495 ± 4.9</p>
+                    <p><span class="highlight">= [490.1, 499.9]</span></p>
+                    <p><strong>结论：</strong>500不在区间内，平均重量显著小于500g</p>
+                </div>
+            </div>
+
+            <div id="unknown" class="tab-content">
+                <h3>方差 σ² 未知：t区间</h3>
+                <div class="formula-box">
+                    <strong>条件：</strong>X₁, ..., Xₙ ~ N(μ, σ²)，σ² 未知<br>
+                    <br>
+                    <strong>枢轴量：</strong>T = (X̄ - μ) / (S/√n) ~ t(n-1)<br>
+                    <br>
+                    <strong>置信区间：</strong><br>
+                    μ ∈ [X̄ - t_{α/2}(n-1) · S/√n,  X̄ + t_{α/2}(n-1) · S/√n]<br>
+                    <br>
+                    <strong>缩写：</strong>X̄ ± t_{α/2}(n-1) · S/√n
+                </div>
+
+                <div class="example-box">
+                    <h4>💡 例子：学生成绩</h4>
+                    <p>抽样n=25个学生，平均分X̄=78，标准差S=10</p>
+                    <p><strong>95%置信区间：</strong></p>
+                    <p>自由度 = n-1 = 24</p>
+                    <p>t_{0.025}(24) = 2.064</p>
+                    <p>78 ± 2.064 × 10/5</p>
+                    <p>= 78 ± 4.13</p>
+                    <p><span class="highlight">= [73.87, 82.13]</span></p>
+                    <p><strong>注意：</strong>用t分布比Z分布更宽（更保守）</p>
+                </div>
+
+                <div class="formula-box">
+                    <strong>为什么用t分布？</strong><br>
+                    • σ未知时用S估计，增加了不确定性<br>
+                    • t分布比正态分布更"扁平"，尾部更厚<br>
+                    • 当n→∞时，t分布收敛于正态分布
+                </div>
+            </div>
+        </div>
+
+        <!-- 正态总体方差的区间估计 -->
+        <div class="section">
+            <h2>📏 正态总体方差的区间估计</h2>
+
+            <div class="formula-box">
+                <strong>条件：</strong>X₁, ..., Xₙ ~ N(μ, σ²)<br>
+                <br>
+                <strong>枢轴量：</strong>χ² = (n-1)S²/σ² ~ χ²(n-1)<br>
+                <br>
+                <strong>置信区间：</strong><br>
+                σ² ∈ [(n-1)S²/χ²_{α/2}(n-1),  (n-1)S²/χ²_{1-α/2}(n-1)]
+            </div>
+
+            <div class="example-box">
+                <h4>💡 例子：生产过程稳定性</h4>
+                <p>抽样n=25个产品，S²=0.015</p>
+                <p><strong>95%置信区间：</strong></p>
+                <p>自由度 = 24</p>
+                <p>χ²_{0.975}(24) = 12.401</p>
+                <p>χ²_{0.025}(24) = 39.364</p>
+                <p>下限 = 24×0.015/39.364 = 0.0091</p>
+                <p>上限 = 24×0.015/12.401 = 0.0290</p>
+                <p><span class="highlight">σ² ∈ [0.0091, 0.0290]</span></p>
+                <p><span class="highlight">σ ∈ [0.095, 0.170]</span></p>
+            </div>
+        </div>
+
+        <!-- 0-1分布参数的区间估计 -->
+        <div class="section">
+            <h2>📊 0-1分布参数p的区间估计</h2>
+
+            <div class="formula-box">
+                <strong>条件：</strong>X ~ B(n, p)，X是成功次数<br>
+                <br>
+                <strong>点估计：</strong>p̂ = X/n<br>
+                <br>
+                <strong>大样本置信区间（正态近似）：</strong><br>
+                p ∈ [p̂ - z_{α/2} · √[p̂(1-p̂)/n],  p̂ + z_{α/2} · √[p̂(1-p̂)/n]]
+            </div>
+
+            <div class="example-box">
+                <h4>💡 例子：选举民意调查</h4>
+                <p>调查n=1000人，X=520人支持候选人A</p>
+                <p><strong>点估计：</strong>p̂ = 520/1000 = 0.52</p>
+                <p><strong>标准误差：</strong>SE = √(0.52×0.48/1000) = 0.0158</p>
+                <p><strong>95%置信区间：</strong></p>
+                <p>0.52 ± 1.96 × 0.0158</p>
+                <p>= 0.52 ± 0.031</p>
+                <p><span class="highlight">= [0.489, 0.551]</span></p>
+                <p><strong>结论：</strong>我们有95%的信心认为真实支持率在48.9%到55.1%之间</p>
+            </div>
+
+            <div class="formula-box">
+                <strong>小样本情况（n < 30）：</strong><br>
+                使用 Clopper-Pearson 精确区间或 Wilson 得分区间<br>
+                <br>
+                <strong>Wilson 得分区间（推荐）：</strong><br>
+                p ∈ [p̃ - z_{α/2}·√[p̂(1-p̂)/n + z²/(4n²)],  p̃ + z_{α/2}·√[p̂(1-p̂)/n + z²/(4n²)]]<br>
+                其中 p̃ = (p̂ + z²/(2n)) / (1 + z²/n)
+            </div>
+        </div>
+
+        <!-- 单侧置信区间 -->
+        <div class="section">
+            <h2>⬆️⬇️ 单侧置信区间</h2>
+
+            <div class="formula-box">
+                <strong>为什么需要单侧？</strong><br>
+                有时我们只关心上限或下限，不需要双侧<br>
+                <br>
+                <strong>上置信界（Upper Confidence Bound）：</strong><br>
+                P(μ ≤ μ̄) = 1 - α<br>
+                μ ≤ X̄ + z_α · σ/√n（正态，σ²已知）<br>
+                <br>
+                <strong>下置信界（Lower Confidence Bound）：</strong><br>
+                P(μ ≥ μ̲) = 1 - α<br>
+                μ ≥ X̄ - z_α · σ/√n
+            </div>
+
+            <div class="example-box">
+                <h4>💡 应用场景：产品质量保证</h4>
+                <p><strong>情景：</strong>需要证明产品平均寿命至少为1000小时</p>
+                <p><strong>方法：</strong>使用单侧置信下界</p>
+                <p><strong>结果：</strong>μ̲ = 1050小时（95%置信下界）</p>
+                <p><strong>结论：</strong>我们有95%的信心认为真实平均寿命 ≥ 1050 > 1000 ✓</p>
+                <p><strong>优势：</strong>单侧区间比双侧更窄，更容易通过检验</p>
+            </div>
+
+            <table>
+                <tr>
+                    <th>类型</th>
+                    <th>双侧区间</th>
+                    <th>单侧上界</th>
+                    <th>单侧下界</th>
+                </tr>
+                <tr>
+                    <td><strong>形式</strong></td>
+                    <td>[L, U]</td>
+                    <td>(-∞, U]</td>
+                    <td>[L, +∞)</td>
+                </tr>
+                <tr>
+                    <td><strong>使用</strong></td>
+                    <td>估计参数范围</td>
+                    <td>"不超过多少"</td>
+                    <td>"至少有多少"</td>
+                </tr>
+                <tr>
+                    <td><strong>临界值</strong></td>
+                    <td>z_{α/2}</td>
+                    <td>z_α</td>
+                    <td>z_α</td>
+                </tr>
+                <tr>
+                    <td><strong>例子</strong></td>
+                    <td>μ ∈ [490, 510]</td>
+                    <td>μ ≤ 508</td>
+                    <td>μ ≥ 492</td>
+                </tr>
+            </table>
+
+            <h3>单侧 vs 双侧的选择</h3>
+            <div class="formula-box">
+                <strong>使用单侧区间：</strong><br>
+                • 质量控制：寿命 ≥ 某值，缺陷率 ≤ 某值<br>
+                • 环境监测：污染物含量 ≤ 某值<br>
+                • 金融风险：VaR（在险价值）≤ 某值<br>
+                <br>
+                <strong>使用双侧区间：</strong><br>
+                • 一般性的参数估计<br>
+                • 需要同时知道上限和下限<br>
+                • 不确定方向的情况
+            </div>
+        </div>
+
+        <!-- 置信区间的解释 -->
+        <div class="section">
+            <h2>⚠️ 置信区间的正确解释</h2>
+
+            <div class="example-box">
+                <h4>❌ 常见误解</h4>
+                <ul>
+                    <li>"真实参数有95%的概率在这个区间内" → <strong>错误！</strong></li>
+                    <li>"这个区间包含真实参数的概率是95%" → <strong>错误！</strong></li>
+                </ul>
+
+                <h4>✅ 正确理解</h4>
+                <ul>
+                    <li>"这个方法有95%的概率产生包含真值的区间"</li>
+                    <li>"如果我们重复抽样100次，大约有95次，区间会包含真值"</li>
+                    <li>"置信水平是方法的可靠程度，不是特定区间的概率"</li>
+                </ul>
+            </div>
+
+            <h3>贝叶斯学派 vs 频率学派</h3>
+            <table>
+                <tr>
+                    <th>方面</th>
+                    <th>频率学派（置信区间）</th>
+                    <th>贝叶斯学派（可信区间）</th>
+                </tr>
+                <tr>
+                    <td><strong>参数</strong></td>
+                    <td>固定的未知常数</td>
+                    <td>随机变量，有分布</td>
+                </tr>
+                <tr>
+                    <td><strong>区间</strong></td>
+                    <td>随机的</td>
+                    <td>固定的</td>
+                </tr>
+                <tr>
+                    <td><strong>解释</strong></td>
+                    <td>方法的可靠程度</td>
+                    <td>参数在区间内的概率</td>
+                </tr>
+                <tr>
+                    <td><strong>例子</strong></td>
+                    <td>"95%的区间会覆盖真值"</td>
+                    <td>"参数有95%概率在这个区间"</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 样本量的确定 -->
+        <div class="section">
+            <h2>🔢 样本量的确定</h2>
+
+            <div class="formula-box">
+                <strong>问题：</strong>给定精度Δ和置信水平1-α，需要多大的样本量？<br>
+                <br>
+                <strong>均值估计的样本量公式：</strong><br>
+                n = (2 · z_{α/2} · σ / Δ)²<br>
+                <br>
+                其中 Δ = 允许的误差范围（区间宽度的一半）
+            </div>
+
+            <div class="example-box">
+                <h4>💡 例子：确定调查样本量</h4>
+                <p>希望误差不超过±3%，置信水平95%，已知σ≈0.5</p>
+                <p>n = (2 × 1.96 × 0.5 / 0.03)²</p>
+                <p>= (3.267 / 0.03)²</p>
+                <p>= 108.9² ≈ <span class="highlight">1068</span></p>
+                <p><strong>结论：</strong>需要至少1068个样本</p>
+            </div>
+
+            <div class="formula-box">
+                <strong>比例估计的样本量公式：</strong><br>
+                n = z_{α/2}² · p(1-p) / Δ²<br>
+                <br>
+                <strong>最保守估计（p=0.5时方差最大）：</strong><br>
+                n = z_{α/2}² · 0.25 / Δ² = (z_{α/2} / 2Δ)²
+            </div>
+        </div>
+
+        <!-- 总结 -->
+        <div class="section">
+            <h2>📝 总结</h2>
+            <div style="line-height: 2;">
+                <strong>1. 区间估计：</strong>给出参数的可能范围，带有置信水平<br>
+                <strong>2. 置信水平：</strong>1-α，常用95%，表示方法的可靠程度<br>
+                <strong>3. 均值区间：</strong>σ已知用Z，σ未知用t<br>
+                <strong>4. 单侧区间：</strong>用于"不超过"或"至少"的情况，区间更窄<br>
+                <strong>5. 正确解释：</strong>是"方法的可靠程度"，不是"参数的概率"<br>
+                <strong>6. 样本量：</strong>根据精度要求和置信水平计算
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // 隐藏所有内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            // 移除所有tab的active类
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // 显示选中的内容
+            document.getElementById(tabName).classList.add('active');
+            // 激活选中的tab
+            event.target.classList.add('active');
+        }
+
+        console.log('✅ 区间估计与单侧置信区间 - 快速版加载完成');
+    </script>
+</body>
+</html>

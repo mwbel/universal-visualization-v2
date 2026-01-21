@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>假设检验扩展 - 快速版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .back-nav {
+            margin-bottom: 20px;
+        }
+        .back-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 16px;
+            font-size: 22px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+        .section h3 {
+            color: #333;
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .example-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .example-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .highlight {
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        canvas {
+            background: white;
+            border-radius: 8px;
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+        }
+        .chart-wrapper {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-nav">
+        <a href="../index.html">← 返回期末速通主页</a>
+        <a href="../concept-navigator-fast.html">← 返回导航页</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🔬 假设检验扩展</h1>
+            <p>正态总体参数检验与p值</p>
+        </div>
+
+        <!-- 正态总体均值的检验 -->
+        <div class="section">
+            <h2>📊 正态总体均值的假设检验</h2>
+
+            <h3>1. 方差已知：Z检验</h3>
+            <div class="formula-box">
+                <strong>条件：</strong>X₁, ..., Xₙ ~ N(μ, σ²)，σ² 已知<br>
+                <strong>假设：</strong>H₀: μ = μ₀ vs H₁: μ ≠ μ₀<br>
+                <strong>检验统计量：</strong>Z = (X̄ - μ₀) / (σ/√n) ~ N(0,1)<br>
+                <strong>拒绝域：</strong>|Z| > z_{α/2}
+            </div>
+
+            <div class="example-box">
+                <h4>💡 例子：食品包装重量检验</h4>
+                <p>声称平均重量500g，已知σ=10g，抽16包，平均495g</p>
+                <p>H₀: μ = 500 vs H₁: μ ≠ 500</p>
+                <p>Z = (495-500)/(10/4) = -2</p>
+                <p>|Z| = 2 > 1.96 = z₀.₀₂₅</p>
+                <p><strong>结论：</strong>拒绝H₀，平均重量显著不等于500g</p>
+            </div>
+
+            <h3>2. 方差未知：t检验</h3>
+            <div class="formula-box">
+                <strong>条件：</strong>X₁, ..., Xₙ ~ N(μ, σ²)，σ² 未知<br>
+                <strong>假设：</strong>H₀: μ = μ₀ vs H₁: μ ≠ μ₀<br>
+                <strong>检验统计量：</strong>T = (X̄ - μ₀) / (S/√n) ~ t(n-1)<br>
+                <strong>拒绝域：</strong>|T| > t_{α/2}(n-1)
+            </div>
+
+            <h3>3. 成对数据的t检验</h3>
+            <div class="formula-box">
+                <strong>场景：</strong>比较同一组对象在两个条件下的差异<br>
+                <strong>方法：</strong>计算差值 dᵢ = Xᵢ - Yᵢ，对 dᵢ 做单样本t检验<br>
+                <strong>统计量：</strong>T = d̄ / (S_d/√n) ~ t(n-1)
+            </div>
+
+            <div class="example-box">
+                <h4>💡 例子：减肥产品效果检验</h4>
+                <p>10人使用减肥产品前后体重对比</p>
+                <p>差值：前后体重差 = 使用前 - 使用后</p>
+                <p>H₀: μ_d = 0（无效）vs H₁: μ_d > 0（有效）</p>
+            </div>
+        </div>
+
+        <!-- 正态总体方差的检验 -->
+        <div class="section">
+            <h2>📏 正态总体方差的假设检验</h2>
+
+            <div class="formula-box">
+                <strong>条件：</strong>X₁, ..., Xₙ ~ N(μ, σ²)<br>
+                <strong>假设：</strong>H₀: σ² = σ₀² vs H₁: σ² ≠ σ₀²<br>
+                <strong>检验统计量：</strong>χ² = (n-1)S²/σ₀² ~ χ²(n-1)<br>
+                <strong>拒绝域：</strong>χ² < χ²_{1-α/2}(n-1) 或 χ² > χ²_{α/2}(n-1)
+            </div>
+
+            <div class="example-box">
+                <h4>💡 例子：生产过程稳定性检验</h4>
+                <p>要求产品方差不超过0.01，抽25个产品，S²=0.015</p>
+                <p>H₀: σ² = 0.01 vs H₁: σ² > 0.01</p>
+                <p>χ² = 24×0.015/0.01 = 36</p>
+                <p>临界值：χ²₀.₀₅(24) = 36.415</p>
+                <p>36 < 36.415，<strong>接受H₀</strong>，方差符合要求</p>
+            </div>
+
+            <h3>两个正态总体方差的比较：F检验</h3>
+            <div class="formula-box">
+                <strong>条件：</strong>X₁, ..., Xₙ ~ N(μ₁, σ₁²)，Y₁, ..., Yₘ ~ N(μ₂, σ₂²)<br>
+                <strong>假设：</strong>H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂²<br>
+                <strong>检验统计量：</strong>F = S₁²/S₂² ~ F(n-1, m-1)<br>
+                <strong>拒绝域：</strong>F > F_{α/2}(n-1, m-1) 或 F < F_{1-α/2}(n-1, m-1)
+            </div>
+        </div>
+
+        <!-- p值 -->
+        <div class="section">
+            <h2>🎯 假设检验的p值</h2>
+
+            <div class="formula-box">
+                <strong>p值的定义：</strong>在H₀为真的条件下，观察到当前或更极端样本的概率<br>
+                <strong>决策规则：</strong>如果 p < α，拒绝 H₀<br>
+                <strong>优势：</strong>不需要查表，直接给出显著性水平
+            </div>
+
+            <h3>不同检验的p值计算</h3>
+            <table>
+                <tr>
+                    <th>检验类型</th>
+                    <th>统计量</th>
+                    <th>p值（双尾）</th>
+                </tr>
+                <tr>
+                    <td>Z检验</td>
+                    <td>Z = z₀</td>
+                    <td>p = 2 × P(Z > |z₀|)</td>
+                </tr>
+                <tr>
+                    <td>t检验</td>
+                    <td>T = t₀</td>
+                    <td>p = 2 × P(T > |t₀|)</td>
+                </tr>
+                <tr>
+                    <td>χ²检验</td>
+                    <td>χ² = χ₀²</td>
+                    <td>p = 2 × min{P(χ² < χ₀²), P(χ² > χ₀²)}</td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>💡 p值的直观理解</h4>
+                <p><strong>p = 0.03：</strong>在H₀为真时，只有3%的概率观察到这样的数据</p>
+                <p><strong>p = 0.23：</strong>即使H₀为真，也有23%的概率观察到这样的数据</p>
+                <p><strong>决策：</strong>p = 0.03 < 0.05 → 拒绝H₀</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p = 0.23 > 0.05 → 接受H₀</p>
+            </div>
+
+            <h3>p值可视化</h3>
+            <div class="chart-wrapper">
+                <canvas id="pValueChart" width="800" height="300"></canvas>
+            </div>
+
+            <div class="formula-box">
+                <strong>当前演示：</strong><br>
+                观测统计量 z₀ = <span id="z0Value">1.5</span><br>
+                p值 = 2 × P(Z > <span id="z0Abs">1.5</span>) = <span id="pValueResult">--</span>
+            </div>
+        </div>
+
+        <!-- 样本容量的选择 -->
+        <div class="section">
+            <h2>📐 样本容量的选择</h2>
+
+            <div class="formula-box">
+                <strong>问题：</strong>给定显著性水平α和功效1-β，需要多大的样本量？<br>
+                <br>
+                <strong>Z检验的样本量公式：</strong><br>
+                n = [(z_{α/2} + z_β) × σ / Δ]²<br>
+                <br>
+                其中：<br>
+                • Δ = 我们希望检测出的最小差异（效应大小）<br>
+                • α = 第一类错误概率（显著性水平）<br>
+                • β = 第二类错误概率<br>
+                • 1-β = 功效（正确拒绝错误H₀的概率）
+            </div>
+
+            <div class="example-box">
+                <h4>💡 例子：药物疗效试验</h4>
+                <p>想检测出至少5mmHg的血压降低效果（Δ=5）</p>
+                <p>已知σ=15，α=0.05，功效=80%（β=0.2）</p>
+                <p>z_{α/2} = 1.96，z_β = 0.84</p>
+                <p>n = [(1.96 + 0.84) × 15 / 5]² ≈ <strong>56</strong></p>
+                <p>需要至少56人参与试验</p>
+            </div>
+
+            <h3>影响样本量的因素</h3>
+            <table>
+                <tr>
+                    <th>因素</th>
+                    <th>影响</th>
+                    <th>原因</th>
+                </tr>
+                <tr>
+                    <td>效应大小 Δ</td>
+                    <td>Δ越小，n越大</td>
+                    <td>检测小差异需要更多数据</td>
+                </tr>
+                <tr>
+                    <td>显著性 α</td>
+                    <td>α越小，n越大</td>
+                    <td>更严格的标准需要更多证据</td>
+                </tr>
+                <tr>
+                    <td>功效 1-β</td>
+                    <td>功效越大，n越大</td>
+                    <td>降低第二类错误需要更多数据</td>
+                </tr>
+                <tr>
+                    <td>方差 σ²</td>
+                    <td>σ²越大，n越大</td>
+                    <td>数据越分散，需要更多样本</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 分布拟合检验 -->
+        <div class="section">
+            <h2>📊 分布拟合检验</h2>
+
+            <h3>χ²拟合优度检验</h3>
+            <div class="formula-box">
+                <strong>目的：</strong>检验样本是否来自某个理论分布<br>
+                <strong>假设：</strong>H₀: 样本来自分布F₀ vs H₁: 样本不来自F₀<br>
+                <strong>步骤：</strong><br>
+                ① 将数据分成k个区间<br>
+                ② 计算每个区间的观测频数 Oᵢ<br>
+                ③ 计算每个区间的理论频数 Eᵢ = n × pᵢ<br>
+                ④ 计算统计量：χ² = Σᵢ₌₁ᵏ (Oᵢ - Eᵢ)²/Eᵢ<br>
+                <strong>拒绝域：</strong>χ² > χ²_{α}(k-r-1)<br>
+                其中r是被估计的参数个数
+            </div>
+
+            <div class="example-box">
+                <h4>💡 例子：骰子是否均匀</h4>
+                <p>掷骰子600次，各面出现次数：<br>
+                1面:85, 2面:105, 3面:95, 4面:100, 5面:110, 6面:105</p>
+                <p>如果骰子均匀，每个面期望出现100次</p>
+                <p>χ² = Σ(Oᵢ-100)²/100 = (85-100)²/100 + ... = <strong>5.5</strong></p>
+                <p>临界值：χ²₀.₀₅(5) = 11.07</p>
+                <p>5.5 < 11.07，<strong>接受H₀</strong>，骰子是均匀的</p>
+            </div>
+
+            <h3>正态性检验</h3>
+            <div class="formula-box">
+                <strong>Shapiro-Wilk检验：</strong>适用于小样本（n < 50）<br>
+                <strong>Kolmogorov-Smirnov检验：</strong>适用于大样本<br>
+                <strong>Q-Q图：</strong>图形化检验，数据点应近似落在直线上
+            </div>
+        </div>
+
+        <!-- 总结 -->
+        <div class="section">
+            <h2>📝 总结</h2>
+            <div style="line-height: 2;">
+                <strong>1. 均值检验：</strong>Z检验（σ已知）、t检验（σ未知）<br>
+                <strong>2. 方差检验：</strong>χ²检验（单个方差）、F检验（两个方差）<br>
+                <strong>3. p值：</strong>观察到当前或更极端数据的概率，p < α时拒绝H₀<br>
+                <strong>4. 样本量选择：</strong>考虑效应大小、显著性、功效、方差<br>
+                <strong>5. 分布拟合检验：</strong>χ²检验判断数据是否符合理论分布<br>
+                <strong>6. 实际应用：</strong>质量控制、医学试验、市场调研等
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function drawPValueChart() {
+            const canvas = document.getElementById('pValueChart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 800, 300);
+
+            const padding = 60;
+            const chartWidth = 800 - 2 * padding;
+            const chartHeight = 300 - 2 * padding;
+
+            // 坐标轴
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, 300 - padding);
+            ctx.lineTo(800 - padding, 300 - padding);
+            ctx.stroke();
+
+            // 绘制标准正态分布曲线
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            for (let px = 0; px <= chartWidth; px++) {
+                const x = (px / chartWidth) * 8 - 4;
+                const y = Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+                const canvasX = padding + px;
+                const canvasY = 300 - padding - y * chartHeight * 1.5;
+
+                if (px === 0) ctx.moveTo(canvasX, canvasY);
+                else ctx.lineTo(canvasX, canvasY);
+            }
+            ctx.stroke();
+
+            // 标记观测值
+            const z0 = parseFloat(document.getElementById('z0Value').textContent);
+            const z0Abs = Math.abs(z0);
+            document.getElementById('z0Abs').textContent = z0Abs.toFixed(2);
+
+            // 计算p值（简化）
+            const pValue = 2 * (1 - normalCDF(z0Abs));
+            document.getElementById('pValueResult').textContent = pValue.toFixed(4);
+
+            // 标记右侧拒绝域
+            ctx.fillStyle = 'rgba(255, 107, 107, 0.3)';
+            for (let px = 0; px <= chartWidth; px++) {
+                const x = (px / chartWidth) * 8 - 4;
+                if (x >= z0Abs) {
+                    const y = Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+                    const canvasX = padding + px;
+                    const canvasY = 300 - padding - y * chartHeight * 1.5;
+                    ctx.fillRect(canvasX, canvasY, 2, chartHeight * 1.5);
+                }
+            }
+
+            // 标记左侧拒绝域
+            for (let px = 0; px <= chartWidth; px++) {
+                const x = (px / chartWidth) * 8 - 4;
+                if (x <= -z0Abs) {
+                    const y = Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+                    const canvasX = padding + px;
+                    const canvasY = 300 - padding - y * chartHeight * 1.5;
+                    ctx.fillRect(canvasX, canvasY, 2, chartHeight * 1.5);
+                }
+            }
+
+            // 标记观测值线
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            const x1 = padding + ((z0Abs - (-4)) / 8) * chartWidth;
+            ctx.moveTo(x1, padding);
+            ctx.lineTo(x1, 300 - padding);
+            ctx.stroke();
+
+            const x2 = padding + ((-z0Abs - (-4)) / 8) * chartWidth;
+            ctx.beginPath();
+            ctx.moveTo(x2, padding);
+            ctx.lineTo(x2, 300 - padding);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 标签
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`z₀ = ${z0Abs.toFixed(2)}`, x1, padding - 10);
+            ctx.fillText(`-z₀ = ${(-z0Abs).toFixed(2)}`, x2, padding - 10);
+            ctx.fillText('拒绝域', padding + chartWidth * 0.9, padding + 20);
+            ctx.fillText('拒绝域', padding + chartWidth * 0.1, padding + 20);
+        }
+
+        function normalCDF(x) {
+            const a1 =  0.254829592;
+            const a2 = -0.284496736;
+            const a3 =  1.421413741;
+            const a4 = -1.453152027;
+            const a5 =  1.061405429;
+            const p  =  0.3275911;
+
+            const sign = (x >= 0) ? 1 : -1;
+            x = Math.abs(x);
+
+            const t = 1.0/(1.0 + p*x);
+            const y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*Math.exp(-x*x);
+
+            return sign*y;
+        }
+
+        window.onload = function() {
+            console.log('✅ 假设检验扩展 - 快速版加载完成');
+            drawPValueChart();
+        };
+    </script>
+</body>
+</html>

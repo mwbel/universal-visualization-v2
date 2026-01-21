@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>估计量的评选标准 - 快速版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .back-nav {
+            margin-bottom: 20px;
+        }
+        .back-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 16px;
+            font-size: 22px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+        .section h3 {
+            color: #333;
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .example-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .example-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .highlight {
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .criterion-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .criterion-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-nav">
+        <a href="../index.html">← 返回期末速通主页</a>
+        <a href="../concept-navigator-fast.html">← 返回导航页</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🏆 估计量的评选标准</h1>
+            <p>第七章：如何判断一个估计量的好坏？</p>
+        </div>
+
+        <!-- 基本概念 -->
+        <div class="section">
+            <h2>📖 基本概念</h2>
+
+            <div class="formula-box">
+                <strong>估计量（Estimator）：</strong>用于估计参数的统计量，是样本的函数<br>
+                <strong>估计值（Estimate）：</strong>估计量在具体样本中的取值<br>
+                <br>
+                <strong>例子：</strong><br>
+                • 估计量：θ̂ = X̄（随机变量）<br>
+                • 估计值：θ̂ = 5.2（具体数值）
+            </div>
+
+            <div class="example-box">
+                <h4>💡 为什么需要评选标准？</h4>
+                <p>对于同一个参数，可能有多个估计方法：</p>
+                <ul>
+                    <li>正态分布均值 μ：可用 X̄、中位数、切尾均值</li>
+                    <li>均匀分布参数 θ：可用 max(Xᵢ)、2X̄、(n+1)X₍ₙ₎/n</li>
+                </ul>
+                <p><strong>问题：</strong>哪个更好？需要客观标准！</p>
+            </div>
+        </div>
+
+        <!-- 四大标准 -->
+        <div class="section">
+            <h2>📊 四大评选标准</h2>
+
+            <div class="comparison-grid">
+                <div class="criterion-card">
+                    <h4>1. 无偏性（Unbiasedness）</h4>
+                    <div class="formula-box">
+                        <strong>定义：</strong>E(θ̂) = θ<br>
+                        <strong>偏差：</strong>Bias(θ̂) = E(θ̂) - θ
+                    </div>
+                    <p><strong>直观理解：</strong>估计量的期望等于真实值，"平均来说"准确</p>
+                    <p><strong>例子：</strong>E(X̄) = μ ✓，E(S²) = σ² ✓</p>
+                </div>
+
+                <div class="criterion-card">
+                    <h4>2. 有效性（Efficiency）</h4>
+                    <div class="formula-box">
+                        <strong>定义：</strong>在所有无偏估计中，方差最小<br>
+                        Var(θ̂₁) < Var(θ̂₂) ⇒ θ̂₁ 更有效
+                    </div>
+                    <p><strong>直观理解：</strong>估计的波动越小越好</p>
+                    <p><strong>例子：</strong>X̄ 比中位数更有效（方差更小）</p>
+                </div>
+
+                <div class="criterion-card">
+                    <h4>3. 一致性（Consistency）</h4>
+                    <div class="formula-box">
+                        <strong>定义：</strong>θ̂ →<sub>p</sub> θ（依概率收敛）<br>
+                        即：lim(n→∞) P(|θ̂ - θ| < ε) = 1
+                    </div>
+                    <p><strong>直观理解：</strong>样本量增大时，估计值趋近真实值</p>
+                    <p><strong>例子：</strong>X̄ →<sub>p</sub> μ（大数定律）</p>
+                </div>
+
+                <div class="criterion-card">
+                    <h4>4. 充分性（Sufficiency）</h4>
+                    <div class="formula-box">
+                        <strong>定义：</strong>包含样本中关于参数的全部信息<br>
+                        P(X|θ̂, θ) = P(X|θ̂)（不依赖θ）
+                    </div>
+                    <p><strong>直观理解：</strong>不丢失样本中的信息</p>
+                    <p><strong>例子：</strong>X̄ 对 μ 是充分的</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 详细解释 -->
+        <div class="section">
+            <h2>📚 详细解释与例子</h2>
+
+            <h3>1. 无偏性详解</h3>
+            <div class="example-box">
+                <h4>✅ 无偏估计的例子</h4>
+                <ul>
+                    <li><strong>样本均值：</strong>E(X̄) = μ</li>
+                    <li><strong>样本方差：</strong>E(S²) = σ²（注意：分母是n-1）</li>
+                    <li><strong>样本比例：</strong>E(p̂) = p</li>
+                </ul>
+
+                <h4>❌ 有偏估计的例子</h4>
+                <ul>
+                    <li><strong>MLE的方差：</strong>E(σ̂²_MLE) = (n-1)σ²/n（低估）</li>
+                    <li><strong>样本标准差：</strong>E(S) ≠ σ（非线性函数）</li>
+                </ul>
+
+                <h4>💡 有偏估计一定不好吗？</h4>
+                <p>不一定！例如：Ridge回归是有偏的，但方差更小，总体MSE可能更小</p>
+            </div>
+
+            <h3>2. 有效性详解</h3>
+
+            <div class="formula-box">
+                <strong>Cramer-Rao 下界（CRB）：</strong><br>
+                Var(θ̂) ≥ 1/[nI(θ)]<br>
+                其中 I(θ) = E[(∂ ln f(X;θ)/∂θ)²] 是 Fisher 信息<br>
+                <br>
+                <strong>达到CRB的估计称为"有效估计"</strong>
+            </div>
+
+            <table>
+                <tr>
+                    <th>估计量</th>
+                    <th>方差</th>
+                    <th>有效性</th>
+                </tr>
+                <tr>
+                    <td>样本均值 X̄</td>
+                    <td>σ²/n</td>
+                    <td>✅ 达到CRB</td>
+                </tr>
+                <tr>
+                    <td>样本中位数 ~X</td>
+                    <td>≈ 1.57σ²/n（正态总体）</td>
+                    <td>❌ 未达到CRB</td>
+                </tr>
+                <tr>
+                    <td>切尾均值</td>
+                    <td>介于两者之间</td>
+                    <td>⚠️ 抗异常值，但效率较低</td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>💡 偏差-方差权衡（Bias-Variance Tradeoff）</h4>
+                <p><strong>均方误差：</strong>MSE = E[(θ̂ - θ)²] = Var(θ̂) + [Bias(θ̂)]²</p>
+                <p>有时接受小的偏差，换取更小的方差，从而降低MSE</p>
+                <p><strong>应用：</strong>正则化方法（Ridge、Lasso）</p>
+            </div>
+
+            <h3>3. 一致性详解</h3>
+
+            <div class="formula-box">
+                <strong>充分条件：</strong>如果满足以下条件，则 θ̂ 是一致估计：<br>
+                ① lim(n→∞) E(θ̂) = θ（渐近无偏）<br>
+                ② lim(n→∞) Var(θ̂) = 0（方差趋于0）<br>
+                <br>
+                <strong>马尔可夫不等式：</strong>可直接证明一致性
+            </div>
+
+            <div class="example-box">
+                <h4>💡 一致 vs 不一致</h4>
+                <p><strong>一致的：</strong>X̄ → μ, S² → σ², p̂ → p</p>
+                <p><strong>不一致的：</strong>用前10个样本的均值（不随n增加）</p>
+                <p><strong>一致性是最基本的要求</strong>：数据越多，估计应该越准确</p>
+            </div>
+
+            <h3>4. 充分性详解</h3>
+
+            <div class="formula-box">
+                <strong>因子分解定理（Neyman-Fisher）：</strong><br>
+                f(x₁, ..., xₙ; θ) = g(T(x₁, ..., xₙ), θ) · h(x₁, ..., xₙ)<br>
+                <br>
+                如果能这样分解，则 T 是充分的统计量
+            </div>
+
+            <div class="example-box">
+                <h4>💡 充分统计量的例子</h4>
+                <ul>
+                    <li><strong>正态 N(μ, σ²)：</strong>T = (ΣXᵢ, ΣXᵢ²) 对 (μ, σ²) 充分或</li>
+                    <li><strong>泊松 Poisson(λ)：</strong>T = ΣXᵢ 对 λ 充分</li>
+                    <li><strong>均匀 U(0, θ)：</strong>T = max(Xᵢ) 对 θ 充分</li>
+                </ul>
+                <p><strong>意义：</strong>充分统计量压缩了数据，但不损失信息</p>
+            </div>
+        </div>
+
+        <!-- 估计量的比较 -->
+        <div class="section">
+            <h2>⚖️ 综合比较：哪个估计量更好？</h2>
+
+            <h3>例：正态分布均值 μ 的估计</h3>
+
+            <table>
+                <tr>
+                    <th>估计量</th>
+                    <th>无偏性</th>
+                    <th>方差</th>
+                    <th>有效性</th>
+                    <th>一致性</th>
+                    <th>稳健性</th>
+                    <th>推荐场景</th>
+                </tr>
+                <tr>
+                    <td><strong>X̄</strong><br>样本均值</td>
+                    <td>✅</td>
+                    <td>σ²/n</td>
+                    <td>✅ 最有效</td>
+                    <td>✅</td>
+                    <td>❌ 对异常值敏感</td>
+                    <td>数据干净、正态分布</td>
+                </tr>
+                <tr>
+                    <td><strong>~X</strong><br>中位数</td>
+                    <td>✅</td>
+                    <td>≈1.57σ²/n</td>
+                    <td>⚠️ 较低</td>
+                    <td>✅</td>
+                    <td>✅ 抗异常值</td>
+                    <td>有异常值、重尾分布</td>
+                </tr>
+                <tr>
+                    <td><strong>X̄_tr</strong><br>切尾均值</td>
+                    <td>⚠️ 可能有偏</td>
+                    <td>介于两者</td>
+                    <td>⚠️ 中等</td>
+                    <td>✅</td>
+                    <td>✅ 较稳健</td>
+                    <td>平衡效率与稳健性</td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>💡 实际建议</h4>
+                <ol>
+                    <li><strong>优先考虑无偏性：</strong>系统偏差会误导结论</li>
+                    <li><strong>在无偏估计中，选择方差最小的：</strong>更精确</li>
+                    <li><strong>如果小样本或有异常值：</strong>牺牲部分效率，换取稳健性</li>
+                    <li><strong>大样本时，一致性最重要：</strong>数据够多，几乎所有估计都收敛</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 最小方差无偏估计 -->
+        <div class="section">
+            <h2>🥇 最小方差无偏估计（MVUE）</h2>
+
+            <div class="formula-box">
+                <strong>定义：</strong>在所有无偏估计中，方差最小的估计<br>
+                <br>
+                <strong>Lehmann-Scheffé 定理：</strong><br>
+                如果 T 是充分完备统计量，且 E(φ(T)) = θ<br>
+                则 φ(T) 是 MVUE
+            </div>
+
+            <div class="example-box">
+                <h4>💡 MVUE 的例子</h4>
+                <ul>
+                    <li><strong>正态均值：</strong>X̄ 是 μ 的 MVUE</li>
+                    <li><strong>正态方差：</strong>S² 是 σ² 的 MVUE（分母n-1）</li>
+                    <li><strong>泊松参数：</strong>X̄ 是 λ 的 MVUE</li>
+                </ul>
+                <p><strong>MVUE 是"黄金标准"</strong>：既无偏，又最精确</p>
+            </div>
+        </div>
+
+        <!-- 总结 -->
+        <div class="section">
+            <h2>📝 总结</h2>
+            <div style="line-height: 2;">
+                <strong>1. 无偏性：</strong>E(θ̂) = θ，平均来说准确（最基本要求）<br>
+                <strong>2. 有效性：</strong>Var(θ̂) 最小，波动越小越好（精确度）<br>
+                <strong>3. 一致性：</strong>θ̂ →<sub>p</sub> θ，样本增大时收敛（大样本性质）<br>
+                <strong>4. 充分性：</strong>包含全部信息，不损失数据（信息利用）<br>
+                <strong>5. 权衡：</strong>无偏性 vs 有效性，效率 vs 稳健性<br>
+                <strong>6. MVUE：</strong>最小方差无偏估计，理论最优
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('✅ 估计量的评选标准 - 快速版加载完成');
+    </script>
+</body>
+</html>

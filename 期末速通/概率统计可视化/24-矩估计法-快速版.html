@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>矩估计法 - 快速版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .back-nav {
+            margin-bottom: 20px;
+        }
+        .back-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 16px;
+            font-size: 22px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+        .section h3 {
+            color: #333;
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .example-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .example-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .step-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .highlight {
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-nav">
+        <a href="../index.html">← 返回期末速通主页</a>
+        <a href="../concept-navigator-fast.html">← 返回导航页</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📐 矩估计法（Method of Moments）</h1>
+            <p>第七章：参数估计方法之一</p>
+        </div>
+
+        <!-- 基本思想 -->
+        <div class="section">
+            <h2>💡 基本思想</h2>
+
+            <div class="formula-box">
+                <strong>核心思想：</strong>用样本矩估计总体矩<br>
+                <br>
+                <strong>直观理解：</strong><br>
+                样本来自于总体，因此样本的特征应该反映总体的特征<br>
+                如果我们用样本矩来"匹配"总体矩，就可以解出参数
+            </div>
+
+            <div class="example-box">
+                <h4>🎯 类比：用照片估计真人</h4>
+                <p><strong>总体：</strong>真人的身高、体重、年龄等特征（未知）</p>
+                <p><strong>样本：</strong>一张照片中能测量的身高、体重等</p>
+                <p><strong>矩估计：</strong>假设照片的测量值 ≈ 真实值，从而推断真实参数</p>
+            </div>
+        </div>
+
+        <!-- 基本步骤 -->
+        <div class="section">
+            <h2>📋 基本步骤</h2>
+
+            <div class="step-box">
+                <strong>步骤1：</strong>计算总体的前k阶矩<br>
+                <strong>步骤2：</strong>计算样本的前k阶矩<br>
+                <strong>步骤3：</strong>令总体矩 = 样本矩，建立方程组<br>
+                <strong>步骤4：</strong>解方程组，得到参数估计值
+            </div>
+
+            <h3>详细说明</h3>
+
+            <div class="formula-box">
+                <strong>设总体 X 有 k 个未知参数 θ₁, θ₂, ..., θ_k</strong><br>
+                <br>
+                <strong>① 总体矩：</strong><br>
+                μ_i = E(X^i) = μ_i(θ₁, θ₂, ..., θ_k)，i = 1, 2, ..., k<br>
+                <br>
+                <strong>② 样本矩：</strong><br>
+                A_i = (1/n) Σⱼ₌₁ⁿ Xⱼ^i，i = 1, 2, ..., k<br>
+                <br>
+                <strong>③ 建立方程组：</strong><br>
+                μ_i(θ₁, θ₂, ..., θ_k) = A_i，i = 1, 2, ..., k<br>
+                <br>
+                <strong>④ 求解：</strong><br>
+                θ̂_i = g_i(A₁, A₂, ..., A_k)，i = 1, 2, ..., k
+            </div>
+        </div>
+
+        <!-- 典型例子 -->
+        <div class="section">
+            <h2>📚 典型例子</h2>
+
+            <h3>例1：指数分布 Exp(λ)</h3>
+            <div class="example-box">
+                <h4>问题</h4>
+                <p>总体 X ~ Exp(λ)，求 λ 的矩估计</p>
+
+                <h4>解</h4>
+                <p><strong>① 总体矩：</strong>E(X) = 1/λ</p>
+                <p><strong>② 样本矩：</strong>A₁ = X̄</p>
+                <p><strong>③ 建立方程：</strong>1/λ̂ = X̄</p>
+                <p><strong>④ 求解：</strong><span class="highlight">λ̂ = 1/X̄</span></p>
+            </div>
+
+            <h3>例2：正态分布 N(μ, σ²)</h3>
+            <div class="example-box">
+                <h4>问题</h4>
+                <p>总体 X ~ N(μ, σ²)，求 μ, σ² 的矩估计</p>
+
+                <h4>解</h4>
+                <p><strong>① 总体矩：</strong><br>
+                E(X) = μ<br>
+                E(X²) = Var(X) + [E(X)]² = σ² + μ²</p>
+
+                <p><strong>② 样本矩：</strong><br>
+                A₁ = X̄ = (1/n) Σⱼ Xⱼ<br>
+                A₂ = (1/n) Σⱼ Xⱼ²</p>
+
+                <p><strong>③ 建立方程组：</strong><br>
+                μ̂ = A₁ = X̄<br>
+                σ̂² + μ̂² = A₂</p>
+
+                <p><strong>④ 求解：</strong><br>
+                <span class="highlight">μ̂ = X̄</span><br>
+                <span class="highlight">σ̂² = A₂ - A₁² = (1/n) Σⱼ Xⱼ² - X̄² = (1/n) Σⱼ (Xⱼ - X̄)²</span></p>
+
+                <p><strong>注意：</strong>σ̂² 的分母是 n，不是 n-1（这是矩估计，不是无偏估计）</p>
+            </div>
+
+            <h3>例3：均匀分布 U(a, b)</h3>
+            <div class="example-box">
+                <h4>问题</h4>
+                <p>总体 X ~ U(a, b)，求 a, b 的矩估计</p>
+
+                <h4>解</h4>
+                <p><strong>① 总体矩：</strong><br>
+                E(X) = (a+b)/2<br>
+                Var(X) = (b-a)²/12<br>
+                E(X²) = Var(X) + [E(X)]² = (b-a)²/12 + (a+b)²/4</p>
+
+                <p><strong>② 样本矩：</strong><br>
+                A₁ = X̄<br>
+                A₂ = (1/n) Σⱼ Xⱼ²</p>
+
+                <p><strong>③ 建立方程组：</strong><br>
+                (â + b̂)/2 = X̄ → â + b̂ = 2X̄<br>
+                (b̂ - â)²/12 = S²（样本方差）</p>
+
+                <p><strong>④ 求解：</strong><br>
+                b̂ - â = √(12S²) = 2√3 · S<br>
+                â + b̂ = 2X̄</p>
+                <p><span class="highlight">â = X̄ - √3 · S</span><br>
+                <span class="highlight">b̂ = X̄ + √3 · S</span></p>
+            </div>
+
+            <h3>例4：泊松分布 Poisson(λ)</h3>
+            <div class="example-box">
+                <h4>问题</h4>
+                <p>总体 X ~ Poisson(λ)，求 λ 的矩估计</p>
+
+                <h4>解</h4>
+                <p><strong>① 总体矩：</strong>E(X) = λ（泊松分布的期望=参数）</p>
+                <p><strong>② 样本矩：</strong>A₁ = X̄</p>
+                <p><strong>③ 建立方程：</strong>λ̂ = X̄</p>
+                <p><strong>④ 求解：</strong><span class="highlight">λ̂ = X̄</span></p>
+                <p><strong>结论：</strong>样本均值直接估计λ（非常直观！）</p>
+            </div>
+        </div>
+
+        <!-- 优点与缺点 -->
+        <div class="section">
+            <h2>⚖️ 优点与缺点</h2>
+
+            <table>
+                <tr>
+                    <th>方面</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td><strong>优点1：计算简单</strong></td>
+                    <td>只需要样本矩，不需要复杂的优化算法</td>
+                </tr>
+                <tr>
+                    <td><strong>优点2：直观易懂</strong></td>
+                    <td>"匹配矩"的思想很容易理解</td>
+                </tr>
+                <tr>
+                    <td><strong>优点3：适用广泛</strong></td>
+                    <td>不依赖特定的分布形式</td>
+                </tr>
+                <tr>
+                    <td><strong>缺点1：可能不唯一</strong></td>
+                    <td>用不同阶的矩可能得到不同的估计</td>
+                </tr>
+                <tr>
+                    <td><strong>缺点2：效率较低</strong></td>
+                    <td>在大样本下，通常不如最大似然估计精确</td>
+                </tr>
+                <tr>
+                    <td><strong>缺点3：无偏性不保证</strong></td>
+                    <td>矩估计不一定是最优的估计</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 与其他方法的比较 -->
+        <div class="section">
+            <h2>🔄 与最大似然估计的比较</h2>
+
+            <table>
+                <tr>
+                    <th>特性</th>
+                    <th>矩估计法</th>
+                    <th>最大似然估计（MLE）</th>
+                </tr>
+                <tr>
+                    <td><strong>思想</strong></td>
+                    <td>匹配矩（特征匹配）</td>
+                    <td>最大化似然函数（概率最大化）</td>
+                </tr>
+                <tr>
+                    <td><strong>计算</strong></td>
+                    <td>简单，直接解方程</td>
+                    <td>复杂，通常需要迭代</td>
+                </tr>
+                <tr>
+                    <td><strong>性质</strong></td>
+                    <td>相合估计，渐近正态</td>
+                    <td>相合、渐近有效（方差最小）</td>
+                </tr>
+                <tr>
+                    <td><strong>适用性</strong></td>
+                    <td>需要矩存在</td>
+                    <td>需要知道分布类型</td>
+                </tr>
+                <tr>
+                    <td><strong>推荐场景</strong></td>
+                    <td>快速估计、初步分析</td>
+                    <td>精确估计、推断分析</td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>💡 实际建议</h4>
+                <ul>
+                    <li><strong>初步分析：</strong>先用矩估计得到参数的粗略估计</li>
+                    <li><strong>精确分析：</strong>再用MLE作为初始值，进行更精确的估计</li>
+                    <li><strong>稳健性：</strong>矩估计对异常值更敏感，MLE在小样本下可能不稳定</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 实际应用 -->
+        <div class="section">
+            <h2>🎯 实际应用</h2>
+
+            <h3>1. 金融：收益率分布的参数估计</h3>
+            <div class="example-box">
+                <p>假设股票日收益率服从正态分布 N(μ, σ²)</p>
+                <p>收集100天的收益率数据，计算：</p>
+                <ul>
+                    <li>X̄ = 0.001（平均日收益率0.1%）</li>
+                    <li>S² = 0.0004（波动率）</li>
+                </ul>
+                <p><strong>矩估计：</strong>μ̂ = 0.001，σ̂² = 0.0004</p>
+            </div>
+
+            <h3>2. 工程：产品寿命估计</h3>
+            <div class="example-box">
+                <p>假设电子元件寿命服从指数分布 Exp(λ)</p>
+                <p>测试n个元件，平均寿命 X̄ = 1000小时</p>
+                <p><strong>矩估计：</strong>λ̂ = 1/1000 = 0.001（失效率）</p>
+            </div>
+
+            <h3>3. 质量控制：缺陷率估计</h3>
+            <div class="example-box">
+                <p>假设产品缺陷数服从泊松分布 Poisson(λ)</p>
+                <p>检查n批产品，平均每批缺陷数 X̄ = 2.5</p>
+                <p><strong>矩估计：</strong>λ̂ = 2.5（平均缺陷率）</p>
+            </div>
+        </div>
+
+        <!-- 总结 -->
+        <div class="section">
+            <h2>📝 总结</h2>
+            <div style="line-height: 2;">
+                <strong>1. 基本思想：</strong>用样本矩估计总体矩，建立方程求解参数<br>
+                <strong>2. 计算步骤：</strong>①总体矩 ②样本矩 ③建立方程 ④求解<br>
+                <strong>3. 优点：</strong>简单、直观、适用广泛<br>
+                <strong>4. 缺点：</strong>可能不唯一、效率较低、无偏性不保证<br>
+                <strong>5. 应用：</strong>金融、工程、质量控制等领域<br>
+                <strong>6. 与MLE关系：</strong>矩估计可作为MLE的初始值，两者结合使用效果更好
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('✅ 矩估计法 - 快速版加载完成');
+    </script>
+</body>
+</html>

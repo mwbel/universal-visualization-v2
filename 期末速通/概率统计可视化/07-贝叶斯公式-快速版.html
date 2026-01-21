@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贝叶斯公式 - 快速版</title>
+    <link rel="stylesheet" href="../css/page-navbar.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #5B8CBA; margin-bottom: 10px; }
+        .formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .example-box {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ff9800;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        input[type="range"] {
+            width: 100%;
+            max-width: 300px;
+        }
+        .chart-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .chart-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        canvas {
+            width: 100%;
+            height: 350px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #2196F3;
+        }
+        .calculation-box {
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #9c27b0;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="../index.html" class="nav-btn nav-btn-home">期末速通主页</a>
+        </div>
+        <div class="page-title"><h1>🔄 贝叶斯公式</h1></div>
+        <div class="breadcrumb">
+            <div class="breadcrumb-item"><a href="../index.html">期末速通</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="index.html">概率统计</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="#">贝叶斯公式</a></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🔄 贝叶斯公式可视化</h1>
+            <p>根据新证据更新旧信念 - 逆向概率推理</p>
+        </div>
+
+        <div class="formula">
+            <strong>核心公式：</strong><br>
+            P(A|B) = P(B|A) · P(A) / P(B)<br>
+            其中 P(B) = P(B|A) · P(A) + P(B|A^c) · P(A^c)<br><br>
+            <strong>直观理解：</strong>后验概率 = 似然 × 先验 / 标准化常数
+        </div>
+
+        <div class="example-box">
+            <h3 style="margin-top: 0;">🏥 经典例子：医疗检测</h3>
+            <p><strong>场景：</strong>某疾病患病率为1%，检测准确率为99%（真阳性），假阳性率为2%。</p>
+            <p><strong>问题：</strong>如果检测结果为阳性，实际患病的概率是多少？</p>
+            <p><strong>直觉：</strong>大多数人认为是99%，<strong>但实际只有约33%</strong>！</p>
+        </div>
+
+        <div class="controls">
+            <h3 style="margin-top: 0;">参数设置</h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <label>先验概率 P(A): <span id="pa-val">0.01</span></label>
+                    <input type="range" id="pa" min="0.001" max="0.5" step="0.001" value="0.01" oninput="update()"><br>
+                    <small style="color: #666;">患病率 / 初始概率</small>
+                </div>
+
+                <div>
+                    <label>真阳性率 P(B|A): <span id="pba-val">0.99</span></label>
+                    <input type="range" id="pba" min="0.5" max="1" step="0.01" value="0.99" oninput="update()"><br>
+                    <small style="color: #666;">检测准确率 / 敏感度</small>
+                </div>
+
+                <div>
+                    <label>假阳性率 P(B|A^c): <span id="pba-not-val">0.02</span></label>
+                    <input type="range" id="pba-not" min="0" max="0.5" step="0.01" value="0.02" oninput="update()"><br>
+                    <small style="color: #666;">误报率 / 1-特异度</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-box">
+                <h3>📊 概率树状图</h3>
+                <canvas id="tree-chart"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>🎯 条件概率对比</h3>
+                <canvas id="comparison-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="result">
+            <h3>📈 计算结果</h3>
+            <div id="stats"></div>
+
+            <div class="calculation-box" id="calculation"></div>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 贝叶斯公式的理解</h3>
+            <ul>
+                <li><strong>核心思想</strong>：根据新信息（证据B）更新对事件A的信念</li>
+                <li><strong>三个概率</strong>：
+                    <ul>
+                        <li><strong>先验概率 P(A)</strong>：在看到证据前的初始信念</li>
+                        <li><strong>似然概率 P(B|A)</strong>：如果A发生，证据B出现的可能性</li>
+                        <li><strong>后验概率 P(A|B)</strong>：看到证据B后，更新后的信念</li>
+                    </ul>
+                </li>
+                <li><strong>应用场景</strong>：
+                    <ul>
+                        <li>医疗诊断：根据症状判断患病概率</li>
+                        <li>垃圾邮件过滤：根据内容判断邮件类型</li>
+                        <li>机器学习：朴素贝叶斯分类器</li>
+                        <li>决策分析：在不确定情况下做决策</li>
+                    </ul>
+                </li>
+                <li><strong>常见误区</strong>：忽略基础概率（先验概率），只关注准确率</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const treeCanvas = document.getElementById('tree-chart');
+        const comparisonCanvas = document.getElementById('comparison-chart');
+        const treeCtx = treeCanvas.getContext('2d');
+        const comparisonCtx = comparisonCanvas.getContext('2d');
+
+        function resizeCanvas() {
+            const rect = treeCanvas.getBoundingClientRect();
+            treeCanvas.width = rect.width;
+            treeCanvas.height = rect.height;
+            comparisonCanvas.width = rect.width;
+            comparisonCanvas.height = rect.height;
+            draw();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        function update() {
+            const pa = parseFloat(document.getElementById('pa').value);
+            const pba = parseFloat(document.getElementById('pba').value);
+            const pba_not = parseFloat(document.getElementById('pba-not').value);
+
+            document.getElementById('pa-val').textContent = pa.toFixed(3);
+            document.getElementById('pba-val').textContent = pba.toFixed(2);
+            document.getElementById('pba-not-val').textContent = pba_not.toFixed(2);
+
+            draw();
+        }
+
+        function draw() {
+            const pa = parseFloat(document.getElementById('pa').value);
+            const pba = parseFloat(document.getElementById('pba').value);
+            const pba_not = parseFloat(document.getElementById('pba-not').value);
+            const pa_not = 1 - pa;
+
+            // 计算后验概率
+            const pb = pba * pa + pba_not * pa_not;
+            const pab = pba * pa / pb;
+            const pa_not_b = pba_not * pa_not / pb;
+
+            drawTreeDiagram(pa, pa_not, pba, pba_not, pb, pab, pa_not_b);
+            drawComparisonDiagram(pba, pab, pba_not, pa_not_b);
+            updateStats(pa, pba, pba_not, pb, pab, pa_not_b);
+        }
+
+        function drawTreeDiagram(pa, pa_not, pba, pba_not, pb, pab, pa_not_b) {
+            const ctx = treeCtx;
+            const width = treeCanvas.width;
+            const height = treeCanvas.height;
+            const padding = 60;
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            const rootX = width / 2;
+            const rootY = padding;
+            const level1Y = height * 0.45;
+            const level2Y = height * 0.85;
+
+            // 计算分支位置
+            const branchWidth = width * 0.7;
+            const leftX = width / 2 - branchWidth / 2;
+            const rightX = width / 2 + branchWidth / 2;
+            const aX = leftX + branchWidth * pa / 2;
+            const a_notX = rightX - branchWidth * pa_not / 2;
+
+            // 绘制根节点
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(rootX, rootY, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('人群', rootX, rootY - 15);
+
+            // 第一层：患病/不患病
+            // A分支（患病）
+            ctx.strokeStyle = '#dc3912';
+            ctx.lineWidth = pa * 20;
+            ctx.beginPath();
+            ctx.moveTo(rootX, rootY);
+            ctx.lineTo(aX, level1Y);
+            ctx.stroke();
+
+            ctx.fillStyle = '#dc3912';
+            ctx.beginPath();
+            ctx.arc(aX, level1Y, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText('患病 A', aX, level1Y - 20);
+            ctx.font = '12px sans-serif';
+            ctx.fillText(`P(A)=${pa.toFixed(3)}`, aX, level1Y + 25);
+
+            // A^c分支（不患病）
+            ctx.strokeStyle = '#3366cc';
+            ctx.lineWidth = pa_not * 20;
+            ctx.beginPath();
+            ctx.moveTo(rootX, rootY);
+            ctx.lineTo(a_notX, level1Y);
+            ctx.stroke();
+
+            ctx.fillStyle = '#3366cc';
+            ctx.beginPath();
+            ctx.arc(a_notX, level1Y, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText('不患病 A^c', a_notX, level1Y - 20);
+            ctx.font = '12px sans-serif';
+            ctx.fillText(`P(A^c)=${pa_not.toFixed(3)}`, a_notX, level1Y + 25);
+
+            // 第二层：检测结果
+            // 从A分出的两个分支
+            const offset = 60;
+
+            // A→B（真阳性）
+            ctx.strokeStyle = '#4285f4';
+            ctx.lineWidth = pba * 8;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(aX, level1Y);
+            ctx.lineTo(aX - offset, level2Y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#4285f4';
+            ctx.beginPath();
+            ctx.arc(aX - offset, level2Y, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#333';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('阳性 B', aX - offset, level2Y - 12);
+            ctx.fillText(`${(pba * 100).toFixed(0)}%`, aX - offset, level2Y + 15);
+
+            // A→B^c（假阴性）
+            ctx.strokeStyle = '#999';
+            ctx.lineWidth = (1 - pba) * 5;
+            ctx.beginPath();
+            ctx.moveTo(aX, level1Y);
+            ctx.lineTo(aX + offset/2, level2Y);
+            ctx.stroke();
+
+            ctx.fillStyle = '#999';
+            ctx.beginPath();
+            ctx.arc(aX + offset/2, level2Y, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#999';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('阴性', aX + offset/2, level2Y + 12);
+
+            // A^c→B（假阳性）
+            ctx.strokeStyle = '#4285f4';
+            ctx.lineWidth = pba_not * 8;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(a_notX, level1Y);
+            ctx.lineTo(a_notX + offset/2, level2Y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#4285f4';
+            ctx.beginPath();
+            ctx.arc(a_notX + offset/2, level2Y, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#333';
+            ctx.font = '11px sans-serif';
+            ctx.fillText('阳性 B', a_notX + offset/2, level2Y - 12);
+            ctx.fillText(`${(pba_not * 100).toFixed(0)}%`, a_notX + offset/2, level2Y + 15);
+
+            // A^c→B^c（真阴性）
+            ctx.strokeStyle = '#999';
+            ctx.lineWidth = (1 - pba_not) * 5;
+            ctx.beginPath();
+            ctx.moveTo(a_notX, level1Y);
+            ctx.lineTo(a_notX - offset, level2Y);
+            ctx.stroke();
+
+            ctx.fillStyle = '#999';
+            ctx.beginPath();
+            ctx.arc(a_notX - offset, level2Y, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#999';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('阴性', a_notX - offset, level2Y + 12);
+
+            // 显示检测结果概率
+            ctx.fillStyle = '#4285f4';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`P(阳性) = ${pb.toFixed(4)}`, width / 2, height - 20);
+        }
+
+        function drawComparisonDiagram(pba, pab, pba_not, pa_not_b) {
+            const ctx = comparisonCtx;
+            const width = comparisonCanvas.width;
+            const height = comparisonCanvas.height;
+            const padding = 60;
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            const barHeight = 60;
+            const barWidth = width - 2 * padding;
+            const startY = 80;
+
+            // P(B|A) - 准确率
+            const y1 = startY;
+            ctx.fillStyle = '#f5f5f5';
+            ctx.fillRect(padding, y1, barWidth, barHeight);
+
+            ctx.fillStyle = '#dc3912';
+            ctx.fillRect(padding, y1, barWidth * pba, barHeight);
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`P(B|A) = ${(pba * 100).toFixed(1)}%`, padding + 10, y1 + barHeight / 2 + 5);
+            ctx.font = '12px sans-serif';
+            ctx.fillStyle = '#666';
+            ctx.fillText('如果患病，检测阳性的概率（准确率）', padding + 10, y1 - 10);
+
+            // P(A|B) - 后验概率
+            const y2 = startY + barHeight + 60;
+            ctx.fillStyle = '#f5f5f5';
+            ctx.fillRect(padding, y2, barWidth, barHeight);
+
+            ctx.fillStyle = '#4285f4';
+            ctx.fillRect(padding, y2, barWidth * pab, barHeight);
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText(`P(A|B) = ${(pab * 100).toFixed(1)}%`, padding + 10, y2 + barHeight / 2 + 5);
+            ctx.font = '12px sans-serif';
+            ctx.fillStyle = '#666';
+            ctx.fillText('如果检测阳性，实际患病的概率（后验概率）', padding + 10, y2 - 10);
+
+            // 箭头指示差异
+            ctx.strokeStyle = '#ff9800';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(padding + barWidth * pba, y1 + barHeight + 10);
+            ctx.lineTo(padding + barWidth * pab, y2 - 10);
+            ctx.stroke();
+
+            // 差异标注
+            const diff = pba - pab;
+            ctx.fillStyle = '#ff9800';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`差异: ${(diff * 100).toFixed(1)}%`, (padding + padding + barWidth) / 2, (y1 + y2) / 2);
+
+            // 底部说明
+            ctx.fillStyle = '#666';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`假阳性会将P(A|B)显著降低`, width / 2, height - 20);
+        }
+
+        function updateStats(pa, pba, pba_not, pb, pab, pa_not_b) {
+            const statsEl = document.getElementById('stats');
+            statsEl.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 4px solid #dc3912;">
+                        <div style="font-size: 12px; color: #666;">先验概率 P(A)</div>
+                        <div style="font-size: 20px; font-weight: 600; color: #333;">${(pa * 100).toFixed(2)}%</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 4px solid #4285f4;">
+                        <div style="font-size: 12px; color: #666;">检测阳性概率 P(B)</div>
+                        <div style="font-size: 20px; font-weight: 600; color: #333;">${(pb * 100).toFixed(2)}%</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 4px solid #9c27b0;">
+                        <div style="font-size: 12px; color: #666;">后验概率 P(A|B)</div>
+                        <div style="font-size: 20px; font-weight: 600; color: #9c27b0;">${(pab * 100).toFixed(2)}%</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 4px solid #4caf50;">
+                        <div style="font-size: 12px; color: #666;">P(B|A) 准确率</div>
+                        <div style="font-size: 20px; font-weight: 600; color: #333;">${(pba * 100).toFixed(1)}%</div>
+                    </div>
+                </div>
+            `;
+
+            const calcEl = document.getElementById('calculation');
+            calcEl.innerHTML = `
+                <h4 style="margin-top: 0; color: #333;">📐 贝叶斯公式计算详解</h4>
+                <p><strong>步骤1：计算先验概率</strong></p>
+                <p style="padding-left: 20px;">
+                    P(A) = ${pa.toFixed(3)} (患病率)<br>
+                    P(A^c) = ${(1 - pa).toFixed(3)} (不患病率)
+                </p>
+
+                <p><strong>步骤2：计算证据B的全概率</strong></p>
+                <p style="padding-left: 20px;">
+                    P(B) = P(B|A)·P(A) + P(B|A^c)·P(A^c)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ${pba.toFixed(2)} × ${pa.toFixed(3)} + ${pba_not.toFixed(2)} × ${(1 - pa).toFixed(3)}<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ${(pba * pa).toFixed(4)} + ${(pba_not * (1 - pa)).toFixed(4)}<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <strong>${pb.toFixed(4)}</strong>
+                </p>
+
+                <p><strong>步骤3：应用贝叶斯公式</strong></p>
+                <p style="padding-left: 20px;">
+                    P(A|B) = P(B|A) · P(A) / P(B)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ${pba.toFixed(2)} × ${pa.toFixed(3)} / ${pb.toFixed(4)}<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ${(pba * pa).toFixed(4)} / ${pb.toFixed(4)}<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <strong style="color: #9c27b0; font-size: 18px;">${pab.toFixed(4)}</strong> (${(pab * 100).toFixed(2)}%)
+                </p>
+
+                <p style="margin-top: 15px; padding: 10px; background: white; border-radius: 4px;">
+                    <strong>💡 重要结论：</strong><br>
+                    虽然检测准确率高达 <strong>${(pba * 100).toFixed(0)}%</strong>，<br>
+                    但当检测为阳性时，实际患病的概率只有 <strong style="color: #dc3912; font-size: 18px;">${(pab * 100).toFixed(1)}%</strong>！<br>
+                    <strong style="color: #ff9800;">这就是著名的"假阳性悖论"。</strong>
+                </p>
+            `;
+        }
+
+        // 初始化
+        update();
+    </script>
+</body>
+</html>

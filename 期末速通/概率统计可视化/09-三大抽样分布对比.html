@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三大抽样分布 - 概率统计可视化</title>
+    <style>
+        * {box-sizing: border-box;}
+        body {margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;}
+        .page-navbar {display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; padding: 16px 20px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); flex-wrap: wrap;}
+        .nav-buttons {display: flex; gap: 12px; flex-wrap: wrap;}
+        .nav-btn {display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #f1f3f4; color: #202124; text-decoration: none; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s;}
+        .nav-btn:hover {background: #e8f0fe; color: #4285f4; transform: translateY(-2px);}
+        .page-title h1 {margin: 0; font-size: 20px; color: #202124;}
+        .breadcrumb {display: flex; gap: 8px; font-size: 14px;}
+        .breadcrumb-item a {color: #5f6368; text-decoration: none;}
+        .content-wrapper {max-width: 1400px; margin: 0 auto;}
+        #loading-overlay {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.98); display: flex; justify-content: center; align-items: center; z-index: 10000; flex-direction: column; transition: opacity 0.1s;}
+        #loading-overlay.loaded {opacity: 0; pointer-events: none;}
+        .loading-spinner {width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #4285f4; border-radius: 50%; animation: spin 1s linear infinite;}
+        @keyframes spin {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}}
+        .loading-text {margin-top: 20px; font-size: 16px; color: #5f6368;}
+        .section-container {margin-bottom: 32px;}
+        .intro-box {background: #f1f5f9; padding: 24px; border-radius: 8px; border-left: 5px solid #5B8CBA;}
+        .mathjax-block {padding: 15px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; margin: 15px 0; overflow-x: auto;}
+        .control-panel {background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;}
+        input[type="range"] {margin: 5px 10px 5px 5px;}
+        label {font-weight: 500;}
+        .dist-card {background: white; padding: 20px; border-radius: 8px; border: 2px solid #e2e8f0; transition: all 0.3s;}
+        .dist-card:hover {border-color: #4285f4; box-shadow: 0 4px 12px rgba(66,133,244,0.2);}
+        .dist-title {font-size: 20px; font-weight: 600; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px;}
+        .dist-icon {font-size: 28px;}
+    </style>
+
+    <!-- 🚀 极速加载优化：本地资源 + 懒加载 -->
+    <script>
+    /* Plotly懒加载：只在需要时加载 */
+    window.PlotlyLazyLoader = {
+        loaded: false,
+        callbacks: [],
+        load: function(callback) {
+            if (this.loaded) {
+                callback();
+            } else {
+                this.callbacks.push(callback);
+                if (this.callbacks.length === 1) {
+                    var script = document.createElement("script");
+                    script.src = "lib/plotly.min.js";
+                    script.onload = () => {
+                        this.loaded = true;
+                        this.callbacks.forEach(cb => cb());
+                        this.callbacks = [];
+                    };
+                    document.head.appendChild(script);
+                }
+            }
+        }
+    };
+    </script>
+    <script>
+    /* MathJax配置 - 内联以加快渲染 */
+    window.MathJax = {
+        tex: {
+            inlineMath: [["\$","\$"], ["\\(","\\)"]],
+            displayMath: [["\\$","\\$"], ["\\[","\\]"]],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: "global"
+        },
+        startup: {
+            typeset: false,
+            ready: () => {
+                MathJax.startup.defaultReady();
+                console.log("✅ MathJax加载完成");
+            }
+        }
+    };
+    </script>
+    <link rel="preload" href="lib/plotly.min.js" as="script" crossorigin="anonymous">
+    <link rel="preload" href="lib/tex-mml-chtml.js" as="script" crossorigin="anonymous">
+    <script id="MathJax-script" defer src="lib/tex-mml-chtml.js" onload="console.log("✅ MathJax脚本加载完成")"></script>
+    <script>
+    window.MathJax = {tex: {inlineMath: [['$', '$']], displayMath: [['$$', '$$']]}, svg: {fontCache: 'global'}};
+    </script>
+</head>
+<body>
+    <div id="loading-overlay"><div class="loading-spinner"></div><div class="loading-text">加载中......</div></div>
+
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="history.back()">← 返回</button>
+            <a href="../index.html" class="nav-btn">🏠 主页</a>
+        </div>
+        <div class="page-title"><h1>📊 三大抽样分布</h1></div>
+        <div class="breadcrumb">
+            <span><a href="../index.html">期末速通</a> / </span>
+            <span><a href="index.html">概率统计</a> / </span>
+            <span>三大抽样分布</span>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <h1 style="font-size: 28px; color: #5B8CBA; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+            三大抽样分布对比可视化
+        </h1>
+
+        <div class="section-container intro-box">
+            <h2 style="margin-bottom: 15px;">📖 一言以蔽之</h2>
+            <p style="font-size: 18px; font-weight: 500;">
+                <strong>三大抽样分布</strong>：从正态总体抽样时产生的三种重要分布——χ²分布、t分布、F分布。它们是统计推断的基石！
+            </p>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">🛠️ 应用场景</h3>
+                <ul>
+                    <li><strong>χ²分布</strong>：方差估计、拟合优度检验、列联表分析</li>
+                    <li><strong>t分布</strong>：小样本均值检验、回归系数显著性检验</li>
+                    <li><strong>F分布</strong>：方差分析（ANOVA）、方差齐性检验</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">📐 与正态分布的关系</h3>
+                <div class="mathjax-block">
+                    设 $X_1, X_2, \ldots, X_n$ 独立同分布于 $N(0, 1)$，则：
+
+                    <strong>χ²分布</strong>：$$\chi^2 = \sum_{i=1}^{n} X_i^2 \sim \chi^2(n)$$
+
+                    <strong>t分布</strong>：$$T = \frac{Z}{\sqrt{\chi^2/n}} \sim t(n)$$
+
+                    <strong>F分布</strong>：$$F = \frac{\chi^2_1/n_1}{\chi^2_2/n_2} \sim F(n_1, n_2)$$
+                </div>
+            </div>
+        </div>
+
+        <!-- 三分布概览卡片 -->
+        <div class="section-container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <div class="dist-card" style="border-color: #dc3912;">
+                    <div class="dist-title" style="color: #dc3912;">
+                        <span class="dist-icon">χ²</span>
+                        <span>卡方分布 (Chi-square)</span>
+                    </div>
+                    <p><strong>定义</strong>：标准正态变量的平方和</p>
+                    <p><strong>参数</strong>：自由度 ν (nu)</p>
+                    <p><strong>特点</strong>：非负、右偏，ν→∞时趋近正态</p>
+                    <p><strong>应用</strong>：方差检验、拟合优度</p>
+                    <div class="mathjax-block">
+                        $$E(\chi^2) = \nu, \quad Var(\chi^2) = 2\nu$$
+                    </div>
+                </div>
+
+                <div class="dist-card" style="border-color: #3366cc;">
+                    <div class="dist-title" style="color: #3366cc;">
+                        <span class="dist-icon">t</span>
+                        <span>t分布 (Student's t)</span>
+                    </div>
+                    <p><strong>定义</strong>：正态变量除以√(卡方/自由度)</p>
+                    <p><strong>参数</strong>：自由度 ν</p>
+                    <p><strong>特点</strong>：对称、肥尾，ν→∞时→N(0,1)</p>
+                    <p><strong>应用</strong>：小样本均值检验</p>
+                    <div class="mathjax-block">
+                        $$E(t) = 0, \quad Var(t) = \frac{\nu}{\nu-2} \quad (\nu>2)$$
+                    </div>
+                </div>
+
+                <div class="dist-card" style="border-color: #109618;">
+                    <div class="dist-title" style="color: #109618;">
+                        <span class="dist-icon">F</span>
+                        <span>F分布 (Fisher's F)</span>
+                    </div>
+                    <p><strong>定义</strong>：两个卡方分布之比</p>
+                    <p><strong>参数</strong>：自由度 (ν₁, ν₂)</p>
+                    <p><strong>特点</strong>：非负、右偏，专门比较方差</p>
+                    <p><strong>应用</strong>：ANOVA、方差齐性检验</p>
+                    <div class="mathjax-block">
+                        $$E(F) = \frac{\nu_2}{\nu_2-2} \quad (\nu_2>2)$$
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- χ²分布可视化 -->
+        <div class="section-container">
+            <h2 style="color: #dc3912;">📊 χ²分布（卡方分布）</h2>
+            <p style="margin-bottom: 15px;">用于单样本方差检验、拟合优度检验、列联表独立性检验。</p>
+
+            <div class="control-panel">
+                <label>自由度 ν: <input type="range" id="chi2-df" min="1" max="20" step="1" value="5"></label>
+                <span id="chi2-df-val">ν = 5</span>
+                <label style="margin-left: 20px;">显著性水平 α: <select id="chi2-alpha">
+                    <option value="0.01">0.01</option>
+                    <option value="0.05" selected>0.05</option>
+                    <option value="0.10">0.10</option>
+                </select></label>
+            </div>
+
+            <div id="chi2-plot" style="width:100%;height:450px;"></div>
+
+            <div style="margin-top: 20px; background: #d4edda; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">💡 观察要点</h3>
+                <ul>
+                    <li><strong>形状变化</strong>：ν=1时严重右偏，ν增大时逐渐对称，ν>30时可近似为正态分布</li>
+                    <li><strong>临界值</strong>：红色阴影区域是拒绝域（面积为α），临界值χ²ₐ(ν)随ν增大而增大</li>
+                    <li><strong>期望与方差</strong>：E=ν，Var=2ν，所以变异系数CV=√(2/ν)</li>
+                    <li><strong>可加性</strong>：独立的χ²变量之和仍服从χ²分布（自由度相加）</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- t分布可视化 -->
+        <div class="section-container">
+            <h2 style="color: #3366cc;">📈 t分布（学生t分布）</h2>
+            <p style="margin-bottom: 15px;">用于小样本均值检验、回归系数显著性检验。当σ未知时用t检验替代z检验。</p>
+
+            <div class="control-panel">
+                <label>自由度 ν: <input type="range" id="t-df" min="1" max="30" step="1" value="5"></label>
+                <span id="t-df-val">ν = 5</span>
+                <label style="margin-left: 20px;">检验类型: <select id="t-test-type">
+                    <option value="two-tail">双侧检验</option>
+                    <option value="left-tail">左单侧</option>
+                    <option value="right-tail">右单侧</option>
+                </select></label>
+                <label style="margin-left: 20px;">α: <select id="t-alpha">
+                    <option value="0.01">0.01</option>
+                    <option value="0.05" selected>0.05</option>
+                    <option value="0.10">0.10</option>
+                </select></label>
+                <label style="margin-left: 20px;"><input type="checkbox" id="show-normal" checked> 对比标准正态分布</label>
+            </div>
+
+            <div id="t-plot" style="width:100%;height:450px;"></div>
+
+            <div style="margin-top: 20px; background: #d4edda; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">💡 观察要点</h3>
+                <ul>
+                    <li><strong>肥尾现象</strong>：相比正态分布，t分布尾部更厚（小样本时极端值更常见）</li>
+                    <li><strong>收敛速度</strong>：ν→∞时t分布→标准正态分布N(0,1)，ν>30时几乎无区别</li>
+                    <li><strong>临界值</strong>：tₐ/₂(ν) > zₐ/₂，小样本时需要更大的"证据"才能拒绝原假设</li>
+                    <li><strong>实用性</strong>：真实世界σ几乎总是未知，所以t检验比z检验更常用</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- F分布可视化 -->
+        <div class="section-container">
+            <h2 style="color: #109618;">📉 F分布（方差比分布）</h2>
+            <p style="margin-bottom: 15px;">用于方差分析（ANOVA）、方差齐性检验（Levene检验）、回归模型整体显著性检验。</p>
+
+            <div class="control-panel">
+                <label>自由度₁ ν₁: <input type="range" id="f-df1" min="1" max="20" step="1" value="5"></label>
+                <span id="f-df1-val">ν₁ = 5</span>
+                <label style="margin-left: 20px;">自由度₂ ν₂: <input type="range" id="f-df2" min="1" max="20" step="1" value="10"></label>
+                <span id="f-df2-val">ν₂ = 10</span>
+                <label style="margin-left: 20px;">α: <select id="f-alpha">
+                    <option value="0.01">0.01</option>
+                    <option value="0.05" selected>0.05</option>
+                    <option value="0.10">0.10</option>
+                </select></label>
+            </div>
+
+            <div id="f-plot" style="width:100%;height:450px;"></div>
+
+            <div style="margin-top: 20px; background: #d4edda; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">💡 观察要点</h3>
+                <ul>
+                    <li><strong>非负性</strong>：F≥0，因为它是方差之比（平方项）</li>
+                    <li><strong>不对称</strong>：严重右偏，峰值接近0（大概率是小值）</li>
+                    <li><strong>临界值</strong>：Fₐ(ν₁,ν₂)通常>1，只有当组间方差显著大于组内方差时才拒绝H₀</li>
+                    <li><strong>互惠关系</strong>：F₁₋ₐ(ν₁,ν₂) = 1 / Fₐ(ν₂,ν₁)</li>
+                    <li><strong>ANOVA原理</strong>：F = MS_between / MS_within，值越大说明组间差异越显著</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 综合对比 -->
+        <div class="section-container">
+            <h2>🔄 三分布关系总结</h2>
+            <p style="margin-bottom: 15px;">理解三大抽样分布之间的联系：</p>
+
+            <div class="control-panel">
+                <button onclick="showRelationship()" style="padding: 10px 20px; background: #4285f4; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer;">🔄 展示关系图</button>
+            </div>
+
+            <div id="relationship-plot" style="width:100%;height:500px;"></div>
+
+            <div style="margin-top: 20px; background: #fff3cd; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">📝 关键结论</h3>
+                <ol>
+                    <li><strong>正态分布是基础</strong>：三大抽样分布都源于正态总体</li>
+                    <li><strong>极限行为</strong>：自由度→∞时，χ²、t、F都趋近于正态分布</li>
+                    <li><strong>小样本用t</strong>：σ未知时用t检验，σ已知时用z检验（几乎不适用）</li>
+                    <li><strong>比较方差用F</strong>：ANOVA、方差齐性检验的基石</li>
+                    <li><strong>检验列联表用χ²</strong>：分类数据关联性检验的首选</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 应用决策树 -->
+        <div class="section-container">
+            <h2>🎯 选择合适的检验：决策指南</h2>
+            <div style="background: white; padding: 20px; border-radius: 8px; border: 2px solid #4285f4;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                        <h4 style="margin-top: 0; color: #dc3912;">单样本均值检验</h4>
+                        <p><strong>σ已知</strong> → z检验（正态分布）</p>
+                        <p><strong>σ未知，n≥30</strong> → z检验（近似）</p>
+                        <p><strong>σ未知，n<30</strong> → t检验</p>
+                    </div>
+                    <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                        <h4 style="margin-top: 0; color: #3366cc;">两样本均值比较</h4>
+                        <p><strong>独立样本</strong> → 两样本t检验</p>
+                        <p><strong>配对样本</strong> → 配对t检验</p>
+                        <p><strong>多组均值</strong> → 单因素ANOVA（F检验）</p>
+                    </div>
+                    <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                        <h4 style="margin-top: 0; color: #109618;">方差检验</h4>
+                        <p><strong>单样本方差</strong> → χ²检验</p>
+                        <p><strong>两样本方差</strong> → F检验</p>
+                        <p><strong>多样本方差</strong> → Levene检验/Bartlett检验</p>
+                    </div>
+                    <div style="padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                        <h4 style="margin-top: 0; color: #ff9800;">分类数据</h4>
+                        <p><strong>拟合优度</strong> → χ²拟合优度检验</p>
+                        <p><strong>独立性</strong> → χ²列联表检验</p>
+                        <p><strong>相关性</strong> → 相关系数检验（t或F）</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(100);
+            if (typeof Plotly !== 'undefined') initDistributions();
+            else setTimeout(initDistributions, 100);
+        });
+
+        function initDistributions() {
+            // χ²分布
+            const chi2Df = document.getElementById('chi2-df');
+            const chi2Alpha = document.getElementById('chi2-alpha');
+            chi2Df.addEventListener('input', () => {
+                document.getElementById('chi2-df-val').textContent = `ν = ${chi2Df.value}`;
+                drawChi2Distribution();
+            });
+            chi2Alpha.addEventListener('change', drawChi2Distribution);
+            drawChi2Distribution();
+
+            // t分布
+            const tDf = document.getElementById('t-df');
+            const tAlpha = document.getElementById('t-alpha');
+            const tTestType = document.getElementById('t-test-type');
+            const showNormal = document.getElementById('show-normal');
+
+            tDf.addEventListener('input', () => {
+                document.getElementById('t-df-val').textContent = `ν = ${tDf.value}`;
+                drawTDistribution();
+            });
+            [tAlpha, tTestType, showNormal].forEach(el => el.addEventListener('change', drawTDistribution));
+            drawTDistribution();
+
+            // F分布
+            const fDf1 = document.getElementById('f-df1');
+            const fDf2 = document.getElementById('f-df2');
+            const fAlpha = document.getElementById('f-alpha');
+
+            fDf1.addEventListener('input', () => {
+                document.getElementById('f-df1-val').textContent = `ν₁ = ${fDf1.value}`;
+                drawFDistribution();
+            });
+            fDf2.addEventListener('input', () => {
+                document.getElementById('f-df2-val').textContent = `ν₂ = ${fDf2.value}`;
+                drawFDistribution();
+            });
+            fAlpha.addEventListener('change', drawFDistribution);
+            drawFDistribution();
+
+            // 关系图
+            showRelationship();
+        }
+
+        // χ²分布PDF
+        function chi2PDF(x, df) {
+            if (x <= 0) return 0;
+            const k = df / 2;
+            return Math.pow(x, k - 1) * Math.exp(-x / 2) / (Math.pow(2, k) * gamma(k));
+        }
+
+        // t分布PDF
+        function tPDF(x, df) {
+            const k = (df + 1) / 2;
+            return gamma(k) / (Math.sqrt(df * Math.PI) * gamma(df / 2)) * Math.pow(1 + x * x / df, -k);
+        }
+
+        // F分布PDF
+        function fPDF(x, df1, df2) {
+            if (x <= 0) return 0;
+            const d1 = df1, d2 = df2;
+            const c = gamma((d1 + d2) / 2) / (gamma(d1 / 2) * gamma(d2 / 2));
+            return c * Math.pow(d1 / d2, d1 / 2) * Math.pow(x, d1 / 2 - 1) * Math.pow(1 + d1 * x / d2, -(d1 + d2) / 2);
+        }
+
+        // 标准正态PDF
+        function normalPDF(x) {
+            return Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
+        }
+
+        // Gamma函数（近似）
+        function gamma(z) {
+            if (z < 0.5) return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
+            z -= 1;
+            const g = 7;
+            const c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+                771.32342877765313, -176.61502916214059, 12.507343278686905,
+                -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+            let x = c[0];
+            for (let i = 1; i < g + 2; i++) x += c[i] / (z + i);
+            const t = z + g + 0.5;
+            return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
+        }
+
+        // χ²分布逆CDF（近似）
+        function chi2Inv(p, df) {
+            // Wilson-Hilferty近似
+            const z = normalInv(p);
+            return df * Math.pow(1 - 2 / (9 * df) + z * Math.sqrt(2 / (9 * df)), 3);
+        }
+
+        // t分布逆CDF（近似）
+        function tInv(p, df) {
+            // 简化近似，实际应用可用更精确算法
+            if (df >= 30) return normalInv(p);
+            // 这里简化处理，实际应使用更精确的算法
+            return normalInv(p) * (1 + (1 + normalInv(p) * normalInv(p)) / (4 * df));
+        }
+
+        // 正态分布逆CDF
+        function normalInv(p) {
+            const a = [-3.969683028665376e+01, 2.209460984245205e+02,
+                -2.759285104469687e+02, 1.383577518672690e+02,
+                -3.066479806614716e+01, 2.506628277459239e+00];
+            const b = [-5.447609879822406e+01, 1.615858368580409e+02,
+                -1.556989798598866e+02, 6.680131188771972e+01,
+                -1.328068155288572e+01];
+            const c = [-7.784894002430293e-03, -3.223964580411365e-01,
+                -2.400758277161838e+00, -2.549732539343734e+00,
+                4.374664141464968e+00, 2.938163982698783e+00];
+            const d = [7.784695709041462e-03, 3.224671290700398e-01,
+                2.445134137142996e+00, 3.754408661907416e+00];
+
+            const pLow = 0.02425, pHigh = 1 - pLow;
+            let q, r;
+
+            if (p < pLow) {
+                q = Math.sqrt(-2 * Math.log(p));
+                return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+                    ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+            } else if (p <= pHigh) {
+                q = p - 0.5;
+                r = q * q;
+                return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q /
+                    (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+            } else {
+                q = Math.sqrt(-2 * Math.log(1 - p));
+                return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+                    ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+            }
+        }
+
+        function drawChi2Distribution() {
+            const df = parseInt(document.getElementById('chi2-df').value);
+            const alpha = parseFloat(document.getElementById('chi2-alpha').value);
+
+            const xVals = [];
+            const yVals = [];
+            for (let x = 0; x <= Math.max(30, df * 3); x += 0.1) {
+                xVals.push(x);
+                yVals.push(chi2PDF(x, df));
+            }
+
+            const criticalValue = chi2Inv(1 - alpha, df);
+
+            const trace1 = {
+                x: xVals, y: yVals,
+                mode: 'lines', name: `χ²(${df})`,
+                line: {width: 3, color: '#dc3912'}
+            };
+
+            const rejectX = xVals.filter(x => x >= criticalValue);
+            const rejectY = rejectX.map(x => chi2PDF(x, df));
+
+            const trace2 = {
+                x: rejectX, y: rejectY,
+                mode: 'lines', name: '拒绝域',
+                fill: 'tozeroy', line: {color: 'transparent'},
+                marker: {color: 'rgba(220, 57, 18, 0.3)'}
+            };
+
+            const layout = {
+                title: `<b>χ²分布 (自由度 ν=${df})</b><br>临界值 χ²_${alpha}(${df}) = ${criticalValue.toFixed(3)}`,
+                xaxis: {title: 'x', range: [0, Math.max(30, df * 3) * 0.95]},
+                yaxis: {title: '概率密度'},
+                margin: {t: 60, b: 50, l: 60, r: 20},
+                shapes: [{
+                    type: 'line', x0: criticalValue, y1: 0, x1: criticalValue, y0: Math.max(...yVals),
+                    line: {dash: 'dash', width: 2, color: 'black'}
+                }],
+                annotations: [{
+                    x: criticalValue, y: Math.max(...yVals) * 0.5,
+                    text: `临界值=${criticalValue.toFixed(2)}`, showarrow: true, arrowhead: 2
+                }]
+            };
+
+            Plotly.newPlot('chi2-plot', [trace1, trace2], layout, {responsive: true, displayModeBar: false});
+        }
+
+        function drawTDistribution() {
+            const df = parseInt(document.getElementById('t-df').value);
+            const alpha = parseFloat(document.getElementById('t-alpha').value);
+            const testType = document.getElementById('t-test-type').value;
+            const showNormal = document.getElementById('show-normal').checked;
+
+            const xVals = [];
+            const tVals = [];
+            const normalVals = [];
+
+            for (let x = -5; x <= 5; x += 0.05) {
+                xVals.push(x);
+                tVals.push(tPDF(x, df));
+                normalVals.push(normalPDF(x));
+            }
+
+            const traces = [];
+
+            if (showNormal) {
+                traces.push({
+                    x: xVals, y: normalVals,
+                    mode: 'lines', name: 'N(0,1)',
+                    line: {width: 2, color: '#999', dash: 'dash'}
+                });
+            }
+
+            traces.push({
+                x: xVals, y: tVals,
+                mode: 'lines', name: `t(${df})`,
+                line: {width: 3, color: '#3366cc'}
+            });
+
+            // 添加拒绝域
+            let criticalValue;
+            if (testType === 'two-tail') {
+                criticalValue = tInv(1 - alpha / 2, df);
+                const rejectLeftX = xVals.filter(x => x <= -criticalValue);
+                const rejectRightX = xVals.filter(x => x >= criticalValue);
+                traces.push({
+                    x: rejectLeftX, y: rejectLeftX.map(x => tPDF(x, df)),
+                    fill: 'tozeroy', name: '拒绝域', line: {color: 'transparent'},
+                    marker: {color: 'rgba(51, 102, 204, 0.3)'}
+                });
+                traces.push({
+                    x: rejectRightX, y: rejectRightX.map(x => tPDF(x, df)),
+                    fill: 'tozerox', name: '', line: {color: 'transparent'},
+                    marker: {color: 'rgba(51, 102, 204, 0.3)'}
+                });
+            } else if (testType === 'right-tail') {
+                criticalValue = tInv(1 - alpha, df);
+                const rejectX = xVals.filter(x => x >= criticalValue);
+                traces.push({
+                    x: rejectX, y: rejectX.map(x => tPDF(x, df)),
+                    fill: 'tozeroy', name: '拒绝域', line: {color: 'transparent'},
+                    marker: {color: 'rgba(51, 102, 204, 0.3)'}
+                });
+            } else {
+                criticalValue = -tInv(1 - alpha, df);
+                const rejectX = xVals.filter(x => x <= criticalValue);
+                traces.push({
+                    x: rejectX, y: rejectX.map(x => tPDF(x, df)),
+                    fill: 'tozeroy', name: '拒绝域', line: {color: 'transparent'},
+                    marker: {color: 'rgba(51, 102, 204, 0.3)'}
+                });
+            }
+
+            const title = testType === 'two-tail' ?
+                `<b>t分布 (自由度 ν=${df})</b><br>双侧检验: t_${alpha}/2(${df}) = ±${criticalValue.toFixed(3)}` :
+                testType === 'right-tail' ?
+                `<b>t分布 (自由度 ν=${df})</b><br>右单侧: t_${alpha}(${df}) = ${criticalValue.toFixed(3)}` :
+                `<b>t分布 (自由度 ν=${df})</b><br>左单侧: t_${1-alpha}(${df}) = ${criticalValue.toFixed(3)}`;
+
+            const layout = {
+                title: title,
+                xaxis: {title: 't'},
+                yaxis: {title: '概率密度'},
+                margin: {t: 60, b: 50, l: 60, r: 20}
+            };
+
+            Plotly.newPlot('t-plot', traces, layout, {responsive: true, displayModeBar: false});
+        }
+
+        function drawFDistribution() {
+            const df1 = parseInt(document.getElementById('f-df1').value);
+            const df2 = parseInt(document.getElementById('f-df2').value);
+            const alpha = parseFloat(document.getElementById('f-alpha').value);
+
+            const maxX = Math.max(5, (df1 + df2) / df2 * 2);
+
+            const xVals = [];
+            const yVals = [];
+
+            for (let x = 0; x <= maxX; x += 0.05) {
+                xVals.push(x);
+                yVals.push(fPDF(x, df1, df2));
+            }
+
+            const criticalValue = fInv(1 - alpha, df1, df2);
+
+            const trace1 = {
+                x: xVals, y: yVals,
+                mode: 'lines', name: `F(${df1},${df2})`,
+                line: {width: 3, color: '#109618'}
+            };
+
+            const rejectX = xVals.filter(x => x >= criticalValue);
+            const trace2 = {
+                x: rejectX, y: rejectX.map(x => fPDF(x, df1, df2)),
+                fill: 'tozeroy', name: '拒绝域', line: {color: 'transparent'},
+                marker: {color: 'rgba(16, 150, 24, 0.3)'}
+            };
+
+            const layout = {
+                title: `<b>F分布 (自由度 ν₁=${df1}, ν₂=${df2})</b><br>临界值 F_${alpha}(${df1},${df2}) ≈ ${criticalValue.toFixed(3)}`,
+                xaxis: {title: 'F', range: [0, maxX]},
+                yaxis: {title: '概率密度'},
+                margin: {t: 60, b: 50, l: 60, r: 20},
+                shapes: [{
+                    type: 'line', x0: criticalValue, y1: 0, x1: criticalValue, y0: Math.max(...yVals),
+                    line: {dash: 'dash', width: 2, color: 'black'}
+                }]
+            };
+
+            Plotly.newPlot('f-plot', [trace1, trace2], layout, {responsive: true, displayModeBar: false});
+        }
+
+        // F分布逆CDF（简化近似）
+        function fInv(p, df1, df2) {
+            // 使用正态近似（简化版，实际应用需要更精确算法）
+            const z = normalInv(p);
+            const mean = df2 > 2 ? df2 / (df2 - 2) : 1;
+            const variance = df2 > 4 ? 2 * df2 * df2 * (df1 + df2 - 2) / (df1 * (df2 - 2) * (df2 - 2) * (df2 - 4)) : 0.5;
+            return Math.max(0.1, mean + z * Math.sqrt(variance));
+        }
+
+        function showRelationship() {
+            const df = 5;
+
+            const xVals = [];
+            const chi2Vals = [];
+            const tVals = [];
+            const normalVals = [];
+
+            for (let x = -4; x <= 15; x += 0.1) {
+                if (x >= 0) {
+                    xVals.push(x);
+                    chi2Vals.push(chi2PDF(x, df));
+                    tVals.push(x >= -4 && x <= 4 ? tPDF(x, df) : null);
+                    normalVals.push(x >= -4 && x <= 4 ? normalPDF(x) : null);
+                }
+            }
+
+            const trace1 = {
+                x: xVals, y: chi2Vals,
+                mode: 'lines', name: 'χ²分布',
+                xaxis: 'x', yaxis: 'y',
+                line: {width: 3, color: '#dc3912'}
+            };
+
+            const trace2 = {
+                x: xVals.map(x => x >= -4 && x <= 4 ? x : null), y: tVals,
+                mode: 'lines', name: 't分布',
+                xaxis: 'x2', yaxis: 'y2',
+                line: {width: 3, color: '#3366cc'}
+            };
+
+            const trace3 = {
+                x: xVals.map(x => x >= -4 && x <= 4 ? x : null), y: normalVals,
+                mode: 'lines', name: '标准正态',
+                xaxis: 'x2', yaxis: 'y2',
+                line: {width: 2, color: '#999', dash: 'dash'}
+            };
+
+            const layout = {
+                title: '<b>三大抽样分布对比 (自由度 = 5)</b>',
+                grid: {rows: 1, columns: 2, pattern: 'independent'},
+                xaxis: {domain: [0, 0.48], title: 'χ²', range: [0, 15]},
+                yaxis: {domain: [0, 1], title: '密度', anchor: 'x'},
+                xaxis2: {domain: [0.52, 1], title: 't / N(0,1)', range: [-4, 4]},
+                yaxis2: {domain: [0, 1], title: '密度', anchor: 'x2'},
+                margin: {t: 60, b: 60, l: 60, r: 20},
+                showlegend: true,
+                legend: {orientation: 'h', y: -0.2}
+            };
+
+            Plotly.newPlot('relationship-plot', [trace1, trace2, trace3], layout, {responsive: true, displayModeBar: false});
+        }
+    </script>
+</body>
+</html>

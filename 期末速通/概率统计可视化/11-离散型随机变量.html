@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>离散型随机变量 - 概率统计可视化</title>
+    <link rel="stylesheet" href="../css/page-navbar.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #5B8CBA; margin-bottom: 10px; }
+        .formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+            font-style: italic;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        select, input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #3367d6;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        canvas {
+            width: 100%;
+            height: 400px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="../index.html" class="nav-btn nav-btn-home">期末速通主页</a>
+        </div>
+        <div class="page-title"><h1>📊 离散型随机变量</h1></div>
+        <div class="breadcrumb">
+            <div class="breadcrumb-item"><a href="../index.html">期末速通</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="index.html">概率统计</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="#">离散型随机变量</a></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎲 离散型随机变量可视化</h1>
+            <p>理解离散型随机变量的概率分布、期望和方差</p>
+        </div>
+
+        <div class="formula">
+            <strong>核心公式：</strong><br>
+            概率分布：P(X = xi) = pi, 其中 Σpi = 1<br>
+            期望：E(X) = Σ xi · pi<br>
+            方差：Var(X) = Σ (xi - μ)² · pi
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>选择分布类型：</label>
+                <select id="distribution" onchange="updateDistribution()">
+                    <option value="bernoulli">伯努利分布 (单次试验)</option>
+                    <option value="binomial">二项分布 (n次试验)</option>
+                    <option value="poisson">泊松分布 (稀有事件)</option>
+                    <option value="custom">自定义分布</option>
+                </select>
+            </div>
+
+            <div id="bernoulli-controls" class="control-group">
+                <label>成功概率 p: <span id="p-val">0.5</span></label>
+                <input type="range" id="p-bernoulli" min="0.1" max="0.9" step="0.05" value="0.5" oninput="update()">
+            </div>
+
+            <div id="binomial-controls" class="control-group" style="display:none;">
+                <label>试验次数 n: <span id="n-val">10</span></label>
+                <input type="range" id="n-binomial" min="5" max="50" step="1" value="10" oninput="update()">
+                <label>成功概率 p: <span id="p-binomial-val">0.5</span></label>
+                <input type="range" id="p-binomial" min="0.1" max="0.9" step="0.05" value="0.5" oninput="update()">
+            </div>
+
+            <div id="poisson-controls" class="control-group" style="display:none;">
+                <label>平均值 λ: <span id="lambda-val">5</span></label>
+                <input type="range" id="lambda" min="1" max="20" step="0.5" value="5" oninput="update()">
+            </div>
+
+            <div id="custom-controls" class="control-group" style="display:none;">
+                <label>输入概率值 (用逗号分隔，和必须为1):</label>
+                <input type="text" id="custom-probs" value="0.1,0.2,0.4,0.2,0.1" style="width: 300px; padding: 8px;">
+                <button onclick="applyCustom()">应用</button>
+            </div>
+        </div>
+
+        <div class="result">
+            <h3>📈 概率分布图</h3>
+            <canvas id="chart"></canvas>
+        </div>
+
+        <div class="result">
+            <h3>📊 统计特性</h3>
+            <div id="stats"></div>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 离散型随机变量的特征</h3>
+            <ul>
+                <li><strong>取值离散</strong>：只能取有限个或可列个数值</li>
+                <li><strong>概率分布列</strong>：每个取值都有对应的概率</li>
+                <li><strong>概率和为1</strong>：所有可能取值的概率之和等于1</li>
+                <li><strong>期望</strong>：加权平均，表示分布的中心位置</li>
+                <li><strong>方差</strong>：衡量取值的离散程度</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+        let currentDist = 'bernoulli';
+
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            draw();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        function updateDistribution() {
+            currentDist = document.getElementById('distribution').value;
+            document.getElementById('bernoulli-controls').style.display = currentDist === 'bernoulli' ? 'block' : 'none';
+            document.getElementById('binomial-controls').style.display = currentDist === 'binomial' ? 'block' : 'none';
+            document.getElementById('poisson-controls').style.display = currentDist === 'poisson' ? 'block' : 'none';
+            document.getElementById('custom-controls').style.display = currentDist === 'custom' ? 'block' : 'none';
+            update();
+        }
+
+        function getDistribution() {
+            if (currentDist === 'bernoulli') {
+                const p = parseFloat(document.getElementById('p-bernoulli').value);
+                return {
+                    values: [0, 1],
+                    probs: [1-p, p],
+                    name: `伯努利分布 (p=${p})`
+                };
+            } else if (currentDist === 'binomial') {
+                const n = parseInt(document.getElementById('n-binomial').value);
+                const p = parseFloat(document.getElementById('p-binomial').value);
+                const values = [];
+                const probs = [];
+                for (let k = 0; k <= n; k++) {
+                    values.push(k);
+                    probs.push(binomialPMF(n, k, p));
+                }
+                return {
+                    values: values,
+                    probs: probs,
+                    name: `二项分布 (n=${n}, p=${p})`
+                };
+            } else if (currentDist === 'poisson') {
+                const lambda = parseFloat(document.getElementById('lambda').value);
+                const values = [];
+                const probs = [];
+                // 显示到 lambda + 3*sqrt(lambda)
+                const maxK = Math.min(50, Math.ceil(lambda + 3 * Math.sqrt(lambda)));
+                for (let k = 0; k <= maxK; k++) {
+                    values.push(k);
+                    probs.push(poissonPMF(lambda, k));
+                }
+                return {
+                    values: values,
+                    probs: probs,
+                    name: `泊松分布 (λ=${lambda})`
+                };
+            } else if (currentDist === 'custom') {
+                const probStr = document.getElementById('custom-probs').value;
+                const probs = probStr.split(',').map(s => parseFloat(s.trim()));
+                const values = probs.map((_, i) => i);
+                return {
+                    values: values,
+                    probs: probs,
+                    name: '自定义分布'
+                };
+            }
+        }
+
+        function binomialPMF(n, k, p) {
+            function factorial(n) {
+                if (n <= 1) return 1;
+                let result = 1;
+                for (let i = 2; i <= n; i++) result *= i;
+                return result;
+            }
+            function combination(n, k) {
+                return factorial(n) / (factorial(k) * factorial(n - k));
+            }
+            return combination(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+        }
+
+        function poissonPMF(lambda, k) {
+            function factorial(n) {
+                if (n <= 1) return 1;
+                let result = 1;
+                for (let i = 2; i <= n; i++) result *= i;
+                return result;
+            }
+            return Math.pow(lambda, k) * Math.exp(-lambda) / factorial(k);
+        }
+
+        function update() {
+            if (currentDist === 'bernoulli') {
+                const p = parseFloat(document.getElementById('p-bernoulli').value);
+                document.getElementById('p-val').textContent = p.toFixed(2);
+            } else if (currentDist === 'binomial') {
+                const n = parseInt(document.getElementById('n-binomial').value);
+                const p = parseFloat(document.getElementById('p-binomial').value);
+                document.getElementById('n-val').textContent = n;
+                document.getElementById('p-binomial-val').textContent = p.toFixed(2);
+            } else if (currentDist === 'poisson') {
+                const lambda = parseFloat(document.getElementById('lambda').value);
+                document.getElementById('lambda-val').textContent = lambda.toFixed(1);
+            }
+            draw();
+        }
+
+        function calculateStats(dist) {
+            let mean = 0, variance = 0;
+            for (let i = 0; i < dist.values.length; i++) {
+                mean += dist.values[i] * dist.probs[i];
+            }
+            for (let i = 0; i < dist.values.length; i++) {
+                variance += Math.pow(dist.values[i] - mean, 2) * dist.probs[i];
+            }
+            return { mean, variance, stdDev: Math.sqrt(variance) };
+        }
+
+        function draw() {
+            const dist = getDistribution();
+            const stats = calculateStats(dist);
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 60;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // 白色背景
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            if (dist.values.length === 0) return;
+
+            const xValues = dist.values;
+            const yValues = dist.probs;
+            const maxY = Math.max(...yValues) * 1.2;
+
+            // 坐标转换
+            function toX(x) {
+                const range = Math.max(...xValues) - Math.min(...xValues);
+                return padding + (x - Math.min(...xValues)) / (range || 1) * (width - 2 * padding);
+            }
+
+            function toY(y) {
+                return height - padding - y / maxY * (height - 2 * padding);
+            }
+
+            // 绘制坐标轴
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(toX(Math.min(...xValues)), toY(0));
+            ctx.lineTo(toX(Math.max(...xValues)), toY(0));
+            ctx.moveTo(toX(Math.min(...xValues)), toY(0));
+            ctx.lineTo(toX(Math.min(...xValues)), toY(maxY));
+            ctx.stroke();
+
+            // 绘制柱状图
+            const barWidth = (width - 2 * padding) / xValues.length * 0.7;
+            xValues.forEach((x, i) => {
+                const barX = toX(x);
+                const barY = toY(yValues[i]);
+                const barHeight = toY(0) - barY;
+
+                // 渐变色
+                const gradient = ctx.createLinearGradient(barX, barY, barX, toY(0));
+                gradient.addColorStop(0, '#4285f4');
+                gradient.addColorStop(1, '#34a853');
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(barX - barWidth/2, barY, barWidth, barHeight);
+
+                // 边框
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(barX - barWidth/2, barY, barWidth, barHeight);
+
+                // 数值标签
+                ctx.fillStyle = '#333';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(x.toString(), barX, toY(0) + 20);
+
+                // 概率标签
+                ctx.fillStyle = '#666';
+                ctx.font = '11px sans-serif';
+                ctx.fillText(yValues[i].toFixed(3), barX, barY - 5);
+            });
+
+            // 绘制期望线
+            ctx.strokeStyle = '#dc3912';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(toX(stats.mean), toY(0));
+            ctx.lineTo(toX(stats.mean), toY(maxY));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 期望标签
+            ctx.fillStyle = '#dc3912';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`E(X)=${stats.mean.toFixed(2)}`, toX(stats.mean) + 5, toY(maxY * 0.9));
+
+            // 坐标轴标签
+            ctx.fillStyle = '#333';
+            ctx.font = '14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('取值 x', width / 2, height - 20);
+
+            ctx.save();
+            ctx.translate(20, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('概率 P(X=x)', 0, 0);
+            ctx.restore();
+
+            // 更新统计信息
+            const statsEl = document.getElementById('stats');
+            statsEl.innerHTML = `
+                <p><strong>分布类型：</strong>${dist.name}</p>
+                <p><strong>期望 E(X) =</strong> ${stats.mean.toFixed(4)}</p>
+                <p><strong>方差 Var(X) =</strong> ${stats.variance.toFixed(4)}</p>
+                <p><strong>标准差 σ =</strong> ${stats.stdDev.toFixed(4)}</p>
+                <p><strong>取值范围：</strong> ${Math.min(...xValues)} 到 ${Math.max(...xValues)}</p>
+            `;
+        }
+
+        function applyCustom() {
+            update();
+        }
+
+        // 初始化
+        update();
+    </script>
+</body>
+</html>

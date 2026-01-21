@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机事件与样本空间 - 快速版</title>
+    <link rel="stylesheet" href="../css/page-navbar.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #5B8CBA; margin-bottom: 10px; }
+        .formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+            font-size: 16px;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        input[type="range"] {
+            width: 300px;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        canvas {
+            width: 100%;
+            height: 500px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #2196F3;
+        }
+        .stats-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .stats-display p {
+            margin: 8px 0;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="../index.html" class="nav-btn nav-btn-home">期末速通主页</a>
+        </div>
+        <div class="page-title"><h1>📊 随机事件与样本空间</h1></div>
+        <div class="breadcrumb">
+            <div class="breadcrumb-item"><a href="../index.html">期末速通</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="index.html">概率统计</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="#">随机事件与样本空间</a></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 样本空间与事件关系可视化</h1>
+            <p>通过Venn图直观理解样本空间、事件及其运算</p>
+        </div>
+
+        <div class="formula">
+            <strong>基本概念：</strong><br>
+            样本空间 Ω：所有可能结果的集合<br>
+            事件 A, B：样本空间的子集<br>
+            并集 A∪B：A或B发生<br>
+            交集 A∩B：A和B同时发生<br>
+            补集 A^c：A不发生
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>事件A的大小: <span id="sizeA-val">0.4</span></label>
+                <input type="range" id="sizeA" min="0.1" max="0.8" step="0.05" value="0.4" oninput="draw()">
+            </div>
+
+            <div class="control-group">
+                <label>事件B的大小: <span id="sizeB-val">0.4</span></label>
+                <input type="range" id="sizeB" min="0.1" max="0.8" step="0.05" value="0.4" oninput="draw()">
+            </div>
+
+            <div class="control-group">
+                <label>重叠程度: <span id="overlap-val">0.2</span></label>
+                <input type="range" id="overlap" min="0" max="0.8" step="0.05" value="0.2" oninput="draw()">
+            </div>
+
+            <div class="control-group">
+                <label>显示模式：</label>
+                <select id="displayMode" onchange="draw()" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                    <option value="both">显示两个事件</option>
+                    <option value="union">高亮并集 A∪B</option>
+                    <option value="intersection">高亮交集 A∩B</option>
+                    <option value="difference">高亮差集 A-B</option>
+                    <option value="complement">高亮补集 A^c</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="result">
+            <h3>📊 Venn图可视化</h3>
+            <canvas id="chart"></canvas>
+
+            <div class="stats-display" id="stats"></div>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 事件关系说明</h3>
+            <ul>
+                <li><strong>并事件 A∪B</strong>：红色或蓝色区域（A或B至少一个发生）</li>
+                <li><strong>交事件 A∩B</strong>：紫色重叠区域（A和B同时发生）</li>
+                <li><strong>差事件 A-B</strong>：纯红色区域（A发生但B不发生）</li>
+                <li><strong>补事件 A^c</strong>：圆外区域（A不发生）</li>
+                <li><strong>互斥事件</strong>：当重叠=0时，A和B不能同时发生</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            draw();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        function draw() {
+            const sizeA = parseFloat(document.getElementById('sizeA').value);
+            const sizeB = parseFloat(document.getElementById('sizeB').value);
+            const overlap = parseFloat(document.getElementById('overlap').value);
+            const displayMode = document.getElementById('displayMode').value;
+
+            document.getElementById('sizeA-val').textContent = sizeA.toFixed(2);
+            document.getElementById('sizeB-val').textContent = sizeB.toFixed(2);
+            document.getElementById('overlap-val').textContent = overlap.toFixed(2);
+
+            // 计算概率
+            const pA = sizeA;
+            const pB = sizeB;
+            const pAB = Math.min(sizeA, sizeB) * overlap;
+            const pAorB = pA + pB - pAB;
+            const pNotA = 1 - pA;
+            const pADiffB = pA - pAB;
+            const pDisjoint = overlap === 0;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 60;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // 白色背景
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            // 计算圆的位置
+            const centerA = width / 2 - 100 + overlap * 100;
+            const centerB = width / 2 + 100 - overlap * 100;
+            const radiusA = sizeA * 120;
+            const radiusB = sizeB * 120;
+            const centerY = height / 2;
+
+            // 绘制样本空间矩形
+            ctx.fillStyle = 'rgba(200, 200, 200, 0.1)';
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 5]);
+            ctx.fillRect(padding, padding, width - 2 * padding, height - 2 * padding);
+            ctx.strokeRect(padding, padding, width - 2 * padding, height - 2 * padding);
+            ctx.setLineDash([]);
+
+            // 绘制圆B（背景）
+            ctx.fillStyle = 'rgba(65, 105, 225, 0.4)';
+            ctx.strokeStyle = '#4169E1';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(centerB, centerY, radiusB, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // 绘制圆A
+            ctx.fillStyle = 'rgba(255, 99, 71, 0.4)';
+            ctx.strokeStyle = '#DC143C';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(centerA, centerY, radiusA, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // 高亮特定区域
+            ctx.save();
+            if (displayMode === 'union') {
+                // 高亮并集
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
+                ctx.beginPath();
+                ctx.arc(centerA, centerY, radiusA, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(centerB, centerY, radiusB, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (displayMode === 'intersection') {
+                // 高亮交集
+                ctx.fillStyle = 'rgba(138, 43, 226, 0.6)';
+                ctx.beginPath();
+                ctx.arc(centerA, centerY, radiusA, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.beginPath();
+                ctx.arc(centerB, centerY, radiusB, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (displayMode === 'difference') {
+                // 高亮差集 A-B
+                ctx.fillStyle = 'rgba(255, 99, 71, 0.6)';
+                ctx.beginPath();
+                ctx.arc(centerA, centerY, radiusA, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(centerB, centerY, radiusB, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalCompositeOperation = 'source-over';
+            } else if (displayMode === 'complement') {
+                // 高亮补集（圆外）
+                ctx.fillStyle = 'rgba(100, 100, 100, 0.2)';
+                ctx.fillRect(padding, padding, width - 2 * padding, height - 2 * padding);
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(centerA, centerY, radiusA, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalCompositeOperation = 'source-over';
+            }
+            ctx.restore();
+
+            // 绘制标签
+            ctx.fillStyle = '#8B0000';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('A', centerA, centerY);
+            ctx.fillText(`P(A)=${pA.toFixed(2)}`, centerA, centerY + 20);
+
+            ctx.fillStyle = '#00008B';
+            ctx.fillText('B', centerB, centerY);
+            ctx.fillText(`P(B)=${pB.toFixed(2)}`, centerB, centerY + 20);
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.fillText('Ω (样本空间)', width / 2, padding + 30);
+
+            // 显示模式说明
+            let modeText = '';
+            if (displayMode === 'union') {
+                modeText = `并集 A∪B 的概率: P(A∪B) = ${pAorB.toFixed(2)}`;
+            } else if (displayMode === 'intersection') {
+                modeText = `交集 A∩B 的概率: P(A∩B) = ${pAB.toFixed(2)}`;
+            } else if (displayMode === 'difference') {
+                modeText = `差集 A-B 的概率: P(A-B) = ${pADiffB.toFixed(2)}`;
+            } else if (displayMode === 'complement') {
+                modeText = `补集 A^c 的概率: P(A^c) = ${pNotA.toFixed(2)}`;
+            }
+
+            // 更新统计信息
+            const statsEl = document.getElementById('stats');
+            const disjointText = pDisjoint ?
+                '<span class="highlight">✅ 互斥事件 (P(A∩B)=0)</span>' :
+                '<span class="highlight">❌ 不互斥</span>';
+
+            statsEl.innerHTML = `
+                <p><strong>P(A) =</strong> ${pA.toFixed(2)}</p>
+                <p><strong>P(B) =</strong> ${pB.toFixed(2)}</p>
+                <p><strong>P(A∪B) =</strong> ${pAorB.toFixed(2)}</p>
+                <p><strong>P(A∩B) =</strong> ${pAB.toFixed(2)}</p>
+                <p><strong>P(A^c) =</strong> ${pNotA.toFixed(2)}</p>
+                <p><strong>P(A-B) =</strong> ${pADiffB.toFixed(2)}</p>
+                <p>${disjointText}</p>
+                ${modeText ? `<p style="margin-top: 15px; font-size: 16px; color: #4285f4;"><strong>${modeText}</strong></p>` : ''}
+            `;
+        }
+
+        // 初始化
+        draw();
+    </script>
+</body>
+</html>

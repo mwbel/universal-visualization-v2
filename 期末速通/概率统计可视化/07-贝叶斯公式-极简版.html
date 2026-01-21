@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贝叶斯公式 - 极简版（无外部依赖）</title>
+    <style>
+        * {box-sizing: border-box; margin: 0; padding: 0;}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {max-width: 1200px; margin: 0 auto;}
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {color: #5B8CBA; margin-bottom: 10px;}
+        .formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 18px;
+            font-family: 'Times New Roman', serif;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .control-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 5px 0;
+        }
+        .value {
+            display: inline-block;
+            min-width: 50px;
+            font-weight: bold;
+            color: #4285f4;
+        }
+        .result {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        canvas {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+            background: white;
+            border: 1px solid #ddd;
+        }
+        .nav {
+            margin: 20px 0;
+        }
+        .nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #4285f4;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-right: 10px;
+        }
+        .info {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .info h3 {margin-top: 0;}
+    </style>
+
+    <!-- 🚀 极速加载优化：本地资源 + 懒加载 -->
+    <script>
+    /* Plotly懒加载：只在需要时加载 */
+    window.PlotlyLazyLoader = {
+        loaded: false,
+        callbacks: [],
+        load: function(callback) {
+            if (this.loaded) {
+                callback();
+            } else {
+                this.callbacks.push(callback);
+                if (this.callbacks.length === 1) {
+                    var script = document.createElement("script");
+                    script.src = "lib/plotly.min.js";
+                    script.onload = () => {
+                        this.loaded = true;
+                        this.callbacks.forEach(cb => cb());
+                        this.callbacks = [];
+                    };
+                    document.head.appendChild(script);
+                }
+            }
+        }
+    };
+    </script>
+    <script>
+    /* MathJax配置 - 内联以加快渲染 */
+    window.MathJax = {
+        tex: {
+            inlineMath: [["\$","\$"], ["\\(","\\)"]],
+            displayMath: [["\\$","\\$"], ["\\[","\\]"]],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: "global"
+        },
+        startup: {
+            typeset: false,
+            ready: () => {
+                MathJax.startup.defaultReady();
+                console.log("✅ MathJax加载完成");
+            }
+        }
+    };
+    </script>
+    <link rel="preload" href="lib/plotly.min.js" as="script" crossorigin="anonymous">
+    <link rel="preload" href="lib/tex-mml-chtml.js" as="script" crossorigin="anonymous">
+    <script id="MathJax-script" defer src="lib/tex-mml-chtml.js" onload="console.log("✅ MathJax脚本加载完成")"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 贝叶斯公式 - 极简版</h1>
+            <p>⚡ 无外部依赖，瞬间加载！</p>
+        </div>
+
+        <div class="content">
+            <h2>医疗诊断案例</h2>
+            <p>某疾病发病率1%，检测准确率99%。如果检测结果阳性，真正患病的概率是多少？</p>
+
+            <div class="formula">
+                <strong>贝叶斯公式：</strong> P(患病|阳性) = P(患病) × P(阳性|患病) / P(阳性)
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>发病率 P(患病): <span class="value" id="prior-val">1%</span></label>
+                    <input type="range" id="prior" min="0.1" max="10" step="0.1" value="1" oninput="update()">
+                </div>
+                <div class="control-group">
+                    <label>检测准确率: <span class="value" id="sensitivity-val">99%</span></label>
+                    <input type="range" id="sensitivity" min="80" max="99.9" step="0.1" value="99" oninput="update()">
+                </div>
+                <div class="control-group">
+                    <label>假阳性率: <span class="value" id="false-positive-val">1%</span></label>
+                    <input type="range" id="false-positive" min="0.1" max="10" step="0.1" value="1" oninput="update()">
+                </div>
+            </div>
+
+            <div class="result" id="result">
+                计算中...
+            </div>
+
+            <canvas id="chart"></canvas>
+
+            <div class="info">
+                <h3>💡 观察要点</h3>
+                <ul>
+                    <li><strong>反直觉结果</strong>：即使检测准确率99%，实际患病率1%时，阳性结果下真正患病概率约50%</li>
+                    <li><strong>原因</strong>：健康人群基数大，假阳性的绝对数量可能超过真阳性</li>
+                    <li><strong>贝叶斯更新</strong>：先验概率1% → 后验概率约50%（证据大大更新了信念）</li>
+                </ul>
+            </div>
+
+            <div class="nav">
+                <a href="quick-test-fast.html">← 返回测试页</a>
+                <a href="index.html">→ 主索引页</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取Canvas上下文
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+
+        // 设置Canvas尺寸
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            update();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        // 更新计算和图表
+        function update() {
+            const prior = parseFloat(document.getElementById('prior').value) / 100;
+            const sensitivity = parseFloat(document.getElementById('sensitivity').value) / 100;
+            const falsePositive = parseFloat(document.getElementById('false-positive').value) / 100;
+            const priorHealthy = 1 - prior;
+
+            // 更新显示值
+            document.getElementById('prior-val').textContent = (prior * 100).toFixed(1) + '%';
+            document.getElementById('sensitivity-val').textContent = (sensitivity * 100).toFixed(1) + '%';
+            document.getElementById('false-positive-val').textContent = (falsePositive * 100).toFixed(1) + '%';
+
+            // 贝叶斯公式计算
+            const pPositive = prior * sensitivity + priorHealthy * falsePositive;
+            const pSickGivenPositive = (prior * sensitivity) / pPositive;
+
+            // 更新结果
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <div style="font-size: 18px; margin-bottom: 10px;">
+                    检测阳性后，真正患病概率：<strong style="color: #dc3912; font-size: 24px;">${(pSickGivenPositive * 100).toFixed(1)}%</strong>
+                </div>
+                <div style="font-size: 14px; color: #666;">
+                    先验概率: ${(prior * 100).toFixed(1)}% → 后验概率: ${(pSickGivenPositive * 100).toFixed(1)}%
+                </div>
+            `;
+
+            // 绘制图表
+            drawChart(prior, pSickGivenPositive);
+        }
+
+        // 绘制图表（使用纯Canvas）
+        function drawChart(prior, posterior) {
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+
+            // 绘制背景
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            const barWidth = 100;
+            const maxHeight = height * 0.6;
+
+            // 先验概率柱状图
+            const priorHeight = prior * maxHeight * 10;
+            ctx.fillStyle = '#ff9800';
+            ctx.fillRect(centerX - barWidth - 20, centerY + 50 - priorHeight, barWidth, priorHeight);
+
+            // 后验概率柱状图
+            const posteriorHeight = posterior * maxHeight;
+            ctx.fillStyle = '#4caf50';
+            ctx.fillRect(centerX + 20, centerY + 50 - posteriorHeight, barWidth, posteriorHeight);
+
+            // 添加文本
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('先验概率', centerX - barWidth/2 - 20, centerY + 70);
+            ctx.fillText('后验概率', centerX + barWidth/2 + 20, centerY + 70);
+
+            // 数值
+            ctx.font = 'bold 20px sans-serif';
+            ctx.fillStyle = '#ff9800';
+            ctx.fillText(`${(prior * 100).toFixed(1)}%`, centerX - barWidth/2 - 20, centerY + 40 - priorHeight);
+            ctx.fillStyle = '#4caf50';
+            ctx.fillText(`${(posterior * 100).toFixed(1)}%`, centerX + barWidth/2 + 20, centerY + 40 - posteriorHeight);
+
+            // 标题
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.fillText('贝叶斯更新：先验 → 后验', centerX, 30);
+        }
+
+        // 初始化
+        window.addEventListener('load', function() {
+            console.log('✅ 极简版页面加载完成，无外部依赖！');
+            update();
+        });
+    </script>
+</body>
+</html>

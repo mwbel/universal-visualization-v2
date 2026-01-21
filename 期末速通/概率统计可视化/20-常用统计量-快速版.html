@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常用统计量 - 快速版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .back-nav {
+            margin-bottom: 20px;
+        }
+        .back-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 16px;
+            font-size: 22px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .example-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .highlight {
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-nav">
+        <a href="../index.html">← 返回期末速通主页</a>
+        <a href="../concept-navigator-fast.html">← 返回导航页</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📊 常用统计量</h1>
+            <p>从样本数据计算出的用于推断总体特征的数值</p>
+        </div>
+
+        <div class="section">
+            <h2>📖 基本概念</h2>
+            <div class="formula-box">
+                <strong>统计量（Statistic）：</strong>样本的函数，不包含任何未知参数<br>
+                <strong>样本：</strong>X₁, X₂, ..., Xₙ（从总体中随机抽取的n个观测值）<br>
+                <strong>总体：</strong>研究对象的全体，通常服从某个分布 F(x)
+            </div>
+            <div class="example-box">
+                <h4>💡 统计量的作用</h4>
+                <ul>
+                    <li><strong>估计参数：</strong>用样本均值估计总体均值</li>
+                    <li><strong>假设检验：</strong>用检验统计量做决策</li>
+                    <li><strong>描述数据：</strong>概括样本的特征</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📈 常用统计量表</h2>
+            <table>
+                <tr>
+                    <th>统计量名称</th>
+                    <th>定义公式</th>
+                    <th>用途</th>
+                    <th>对应总体参数</th>
+                </tr>
+                <tr>
+                    <td><strong>样本均值</strong></td>
+                    <td>X̄ = (1/n) Σ Xᵢ</td>
+                    <td>估计总体均值</td>
+                    <td>μ = E(X)</td>
+                </tr>
+                <tr>
+                    <td><strong>样本方差</strong></td>
+                    <td>S² = (1/(n-1)) Σ (Xᵢ - X̄)²</td>
+                    <td>估计总体方差</td>
+                    <td>σ² = Var(X)</td>
+                </tr>
+                <tr>
+                    <td><strong>样本标准差</strong></td>
+                    <td>S = √S²</td>
+                    <td>衡量数据离散程度</td>
+                    <td>σ = √Var(X)</td>
+                </tr>
+                <tr>
+                    <td><strong>样本k阶矩</strong></td>
+                    <td>Aₖ = (1/n) Σ Xᵢᵏ</td>
+                    <td>矩估计法</td>
+                    <td>μₖ = E(Xᵏ)</td>
+                </tr>
+                <tr>
+                    <td><strong>样本k阶中心矩</strong></td>
+                    <td>Bₖ = (1/n) Σ (Xᵢ - X̄)ᵏ</td>
+                    <td>估计偏度、峰度</td>
+                    <td>νₖ = E[(X-μ)ᵏ]</td>
+                </tr>
+                <tr>
+                    <td><strong>样本偏度</strong></td>
+                    <td>G₁ = B₃ / S³</td>
+                    <td>衡量对称性</td>
+                    <td>γ₁ = ν₃ / σ³</td>
+                </tr>
+                <tr>
+                    <td><strong>样本峰度</strong></td>
+                    <td>G₂ = B₄ / S⁴ - 3</td>
+                    <td>衡量尖锐程度</td>
+                    <td>γ₂ = ν₄ / σ⁴ - 3</td>
+                </tr>
+                <tr>
+                    <td><strong>次序统计量</strong></td>
+                    <td>X₍₁₎ ≤ X₍₂₎ ≤ ... ≤ X₍ₙ₎</td>
+                    <td>分位数、极值</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><strong>样本中位数</strong></td>
+                    <td>~X = X₍[(n+1)/2]₎</td>
+                    <td>中心位置（抗异常值）</td>
+                    <td>中位数</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>🔍 重要的统计量详解</h2>
+
+            <h3>1. 样本均值 X̄</h3>
+            <div class="formula-box">
+                <strong>定义：</strong>X̄ = (1/n) Σᵢ₌₁ⁿ Xᵢ<br>
+                <strong>性质：</strong><br>
+                • E(X̄) = μ（无偏性）<br>
+                • Var(X̄) = σ²/n（样本量越大，方差越小）<br>
+                • X̄ ~ N(μ, σ²/n)（当总体正态或n大时）
+            </div>
+
+            <h3>2. 样本方差 S²</h3>
+            <div class="formula-box">
+                <strong>定义：</strong>S² = (1/(n-1)) Σᵢ₌₁ⁿ (Xᵢ - X̄)²<br>
+                <strong>为什么除以 n-1 而不是 n？</strong><br>
+                • 为了保证无偏性：E(S²) = σ²<br>
+                • 如果除以 n，会低估真实的方差<br>
+                • n-1 称为<strong>自由度</strong>
+            </div>
+
+            <div class="example-box">
+                <h4>💡 自由度的直观理解</h4>
+                <p>有n个数X₁, X₂, ..., Xₙ，当X̄已知时，只有n-1个数可以自由变化</p>
+                <p>例如：3个数均值为5，已知前两个数是3和7，第三个数必然是5</p>
+            </div>
+
+            <h3>3. 次序统计量</h3>
+            <div class="formula-box">
+                <strong>定义：</strong>将样本按从小到大排序：X₍₁₎ ≤ X₍₂₎ ≤ ... ≤ X₍ₙ₎<br>
+                <strong>应用：</strong><br>
+                • <span class="highlight">样本中位数</span>：~X = X₍[(n+1)/2]₎<br>
+                • <span class="highlight">极差</span>：R = X₍ₙ₎ - X₍₁₎（衡量离散程度）<br>
+                • <span class="highlight">四分位数</span>：Q₁ = X₍[n/4]₎，Q₃ = X₍[3n/4]₎
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 统计量的分布</h2>
+
+            <h3>样本均值的抽样分布</h3>
+            <div class="formula-box">
+                <strong>定理：</strong>若 X₁, ..., Xₙ ~ N(μ, σ²)<br>
+                则 X̄ ~ N(μ, σ²/n)<br>
+                <br>
+                <strong>标准化：</strong>Z = (X̄ - μ) / (σ/√n) ~ N(0,1)
+            </div>
+
+            <h3>样本方差的分布</h3>
+            <div class="formula-box">
+                <strong>定理：</strong>若 X₁, ..., Xₙ ~ N(μ, σ²)<br>
+                则 (n-1)S²/σ² ~ χ²(n-1)<br>
+                <br>
+                <strong>推论：</strong>S² 与 X̄ 相互独立（正态总体）
+            </div>
+
+            <h3>t 统计量</h3>
+            <div class="formula-box">
+                <strong>定义：</strong>T = (X̄ - μ) / (S/√n)<br>
+                <strong>分布：</strong>T ~ t(n-1)（当总体正态时）<br>
+                <strong>用途：</strong>小样本情况下对均值的推断
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 统计量的性质</h2>
+
+            <table>
+                <tr>
+                    <th>性质</th>
+                    <th>定义</th>
+                    <th>直观含义</th>
+                    <th>例子</th>
+                </tr>
+                <tr>
+                    <td><strong>无偏性</strong></td>
+                    <td>E(θ̂) = θ</td>
+                    <td>估计量的期望等于真实值</td>
+                    <td>X̄ 是 μ 的无偏估计</td>
+                </tr>
+                <tr>
+                    <td><strong>有效性</strong></td>
+                    <td>Var(θ̂₁) < Var(θ̂₂)</td>
+                    <td>方差越小越精确</td>
+                    <td>X̄ 比 ~X 更有效</td>
+                </tr>
+                <tr>
+                    <td><strong>一致性</strong></td>
+                    <td>θ̂ →<sub>p</sub> θ</td>
+                    <td>样本量增大时收敛于真实值</td>
+                    <td>X̄ 依概率收敛于 μ</td>
+                </tr>
+                <tr>
+                    <td><strong>充分性</strong></td>
+                    <td>包含所有信息</td>
+                    <td>不丢失样本中的信息</td>
+                    <td>X̄ 对 μ 是充分的</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>💡 实际应用</h2>
+
+            <h3>1. 质量控制</h3>
+            <div class="example-box">
+                <p>从生产线上抽取n个产品，计算样本均值X̄和标准差S</p>
+                <p>如果 X̄ 超出控制限（μ ± 3σ/√n），则报警</p>
+            </div>
+
+            <h3>2. 民意调查</h3>
+            <div class="example-box">
+                <p>调查n个选民，支持率 p̂ = k/n（k是支持人数）</p>
+                <p>估计误差 = 1.96 × √[p̂(1-p̂)/n]</p>
+            </div>
+
+            <h3>3. 金融风险</h3>
+            <div class="example-box">
+                <p>用历史收益率计算样本均值和标准差</p>
+                <p>VaR（在险价值）= X̄ - 1.65 × S（95%置信水平）</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📝 总结</h2>
+            <div style="line-height: 2;">
+                <strong>1. 统计量：</strong>样本的函数，不含未知参数<br>
+                <strong>2. 核心统计量：</strong>样本均值 X̄、样本方差 S²、次序统计量<br>
+                <strong>3. 重要性质：</strong>无偏性、有效性、一致性、充分性<br>
+                <strong>4. 抽样分布：</strong>X̄ ~ N(μ, σ²/n)、(n-1)S²/σ² ~ χ²(n-1)<br>
+                <strong>5. 应用：</strong>参数估计、假设检验、质量控制等
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('✅ 常用统计量 - 快速版加载完成');
+    </script>
+</body>
+</html>

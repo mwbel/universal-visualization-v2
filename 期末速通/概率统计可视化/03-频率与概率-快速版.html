@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>频率与概率 - 快速版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #5B8CBA; margin-bottom: 10px; }
+        .formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        input[type="range"] {
+            width: 100%;
+            max-width: 300px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #3367d6;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        canvas {
+            width: 100%;
+            height: 400px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-nav">
+        <a href="../index.html">← 返回期末速通主页</a>
+        <a href="../concept-navigator-fast.html">← 返回导航页</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📈 频率与概率 - 大数定律</h1>
+            <p>通过模拟实验演示：当试验次数n增大时，频率fn(A)收敛于概率P(A)</p>
+        </div>
+
+        <div class="formula">
+            <strong>大数定律：</strong> lim(n→∞) P(|fn(A) - P(A)| < ε) = 1
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>试验次数 n: <span id="trials-val">1000</span></label>
+                <input type="range" id="trials" min="100" max="10000" step="100" value="1000" oninput="update()">
+            </div>
+            <div class="control-group">
+                <label>概率 P(A): <span id="prob-val">0.5</span></label>
+                <input type="range" id="probability" min="0.1" max="0.9" step="0.1" value="0.5" oninput="update()">
+            </div>
+            <button onclick="startSimulation()">▶ 开始模拟</button>
+            <button onclick="stopSimulation()">⏸ 停止</button>
+        </div>
+
+        <div class="result">
+            <h3>模拟结果</h3>
+            <p>试验次数: <strong id="total-trials">0</strong></p>
+            <p>事件A发生次数: <strong id="success-count">0</strong></p>
+            <p>频率 fn(A): <strong id="frequency" style="color: #4285f4; font-size: 24px;">0.000</strong></p>
+            <p>概率 P(A): <strong id="probability-display" style="color: #666;">0.500</strong></p>
+        </div>
+
+        <canvas id="chart"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+        let simulationInterval = null;
+        let trials = 0;
+        let successes = 0;
+        let frequencyHistory = [];
+        let maxHistoryLength = 100;
+
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            drawChart();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        function update() {
+            const n = parseInt(document.getElementById('trials').value);
+            const p = parseFloat(document.getElementById('probability').value);
+            document.getElementById('trials-val').textContent = n;
+            document.getElementById('prob-val').textContent = p.toFixed(1);
+            document.getElementById('probability-display').textContent = p.toFixed(3);
+        }
+
+        function startSimulation() {
+            stopSimulation();
+            trials = 0;
+            successes = 0;
+            frequencyHistory = [];
+
+            simulationInterval = setInterval(runTrial, 10);
+        }
+
+        function stopSimulation() {
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+            }
+        }
+
+        function runTrial() {
+            const maxTrials = parseInt(document.getElementById('trials').value);
+            const p = parseFloat(document.getElementById('probability').value);
+
+            // 一次模拟100次试验，加快速度
+            const batchSize = 100;
+            for (let i = 0; i < batchSize && trials < maxTrials; i++) {
+                trials++;
+                const random = Math.random();
+                if (random < p) {
+                    successes++;
+                }
+            }
+
+            const frequency = successes / trials;
+
+            // 记录历史
+            if (trials % 100 === 0 || trials === maxTrials) {
+                frequencyHistory.push({ trials, frequency });
+                if (frequencyHistory.length > maxHistoryLength) {
+                    frequencyHistory.shift();
+                }
+            }
+
+            // 更新显示
+            document.getElementById('total-trials').textContent = trials;
+            document.getElementById('success-count').textContent = successes;
+            document.getElementById('frequency').textContent = frequency.toFixed(3);
+
+            drawChart();
+
+            if (trials >= maxTrials) {
+                stopSimulation();
+            }
+        }
+
+        function drawChart() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 60;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // 白色背景
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            if (frequencyHistory.length === 0) {
+                ctx.fillStyle = '#999';
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('点击"开始模拟"查看大数定律效果', width / 2, height / 2);
+                return;
+            }
+
+            const p = parseFloat(document.getElementById('probability').value);
+            const maxTrials = parseInt(document.getElementById('trials').value);
+
+            // 计算坐标范围
+            const xMin = 0;
+            const xMax = maxTrials;
+            const yMin = 0;
+            const yMax = 1;
+
+            // 坐标转换函数
+            function toX(x) {
+                return padding + (x - xMin) / (xMax - xMin) * (width - 2 * padding);
+            }
+
+            function toY(y) {
+                return height - padding - (y - yMin) / (yMax - yMin) * (height - 2 * padding);
+            }
+
+            // 绘制坐标轴
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(toX(xMin), toY(yMin));
+            ctx.lineTo(toX(xMax), toY(yMin));
+            ctx.moveTo(toX(xMin), toY(yMin));
+            ctx.lineTo(toX(xMin), toY(yMax));
+            ctx.stroke();
+
+            // 绘制概率线（红色虚线）
+            ctx.strokeStyle = '#dc3912';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(toX(xMin), toY(p));
+            ctx.lineTo(toX(xMax), toY(p));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 绘制频率曲线
+            ctx.strokeStyle = '#4285f4';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            frequencyHistory.forEach((point, index) => {
+                const x = toX(point.trials);
+                const y = toY(point.frequency);
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // 坐标轴标签
+            ctx.fillStyle = '#333';
+            ctx.font = '14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('试验次数 n', width / 2, height - 20);
+
+            ctx.save();
+            ctx.translate(20, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('频率 / 概率', 0, 0);
+            ctx.restore();
+
+            // 图例
+            ctx.fillStyle = '#dc3912';
+            ctx.fillRect(width - 150, 40, 20, 3);
+            ctx.fillStyle = '#333';
+            ctx.font = '14px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('概率 P(A)', width - 120, 45);
+
+            ctx.fillStyle = '#4285f4';
+            ctx.fillRect(width - 150, 70, 20, 3);
+            ctx.fillStyle = '#333';
+            ctx.fillText('频率 fn(A)', width - 120, 75);
+        }
+
+        // 初始化
+        update();
+    </script>
+</body>
+</html>

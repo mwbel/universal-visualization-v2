@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>数学期望 - 概率统计可视化</title>
+
+
+    <script>
+    window.MathJax = {tex: {inlineMath: [['$', '$']], displayMath: [['$$', '$$']]}, svg: {fontCache: 'global'}};
+    </script>
+
+    <link rel="stylesheet" href="../css/page-navbar.css">
+
+    <style>
+        body {margin: 0; padding: 20px; font-family: 'Segoe UI', system-ui, sans-serif;}
+        #loading-overlay {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); display: flex; justify-content: center; align-items: center; z-index: 10000; flex-direction: column;}
+        .loading-spinner {width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #4285f4; border-radius: 50%; animation: spin 1s linear infinite;}
+        @keyframes spin {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}}
+        #loading-overlay.loaded {display: none;}
+        .section-container {margin-bottom: 32px;}
+        .intro-box {background: #f1f5f9; padding: 24px; border-radius: 8px; border-left: 5px solid #5B8CBA;}
+        .mathjax-block {padding: 15px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; margin: 15px 0;}
+        .control-panel {background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;}
+    </style>
+
+    <!-- 🚀 极速加载优化：本地资源 + 懒加载 -->
+    <script>
+    /* Plotly懒加载：只在需要时加载 */
+    window.PlotlyLazyLoader = {
+        loaded: false,
+        callbacks: [],
+        load: function(callback) {
+            if (this.loaded) {
+                callback();
+            } else {
+                this.callbacks.push(callback);
+                if (this.callbacks.length === 1) {
+                    var script = document.createElement("script");
+                    script.src = "lib/plotly.min.js";
+                    script.onload = () => {
+                        this.loaded = true;
+                        this.callbacks.forEach(cb => cb());
+                        this.callbacks = [];
+                    };
+                    document.head.appendChild(script);
+                }
+            }
+        }
+    };
+    </script>
+    <script>
+    /* MathJax配置 - 内联以加快渲染 */
+    window.MathJax = {
+        tex: {
+            inlineMath: [["\$","\$"], ["\\(","\\)"]],
+            displayMath: [["\\$","\\$"], ["\\[","\\]"]],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: "global"
+        },
+        startup: {
+            typeset: false,
+            ready: () => {
+                MathJax.startup.defaultReady();
+                console.log("✅ MathJax加载完成");
+            }
+        }
+    };
+    </script>
+    <link rel="preload" href="lib/plotly.min.js" as="script" crossorigin="anonymous">
+    <link rel="preload" href="lib/tex-mml-chtml.js" as="script" crossorigin="anonymous">
+    <script id="MathJax-script" defer src="lib/tex-mml-chtml.js" onload="console.log("✅ MathJax脚本加载完成")"></script>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">加载中......</div>
+    </div>
+
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="../index.html" class="nav-btn nav-btn-home">期末速通主页</a>
+        </div>
+        <div class="page-title"><h1>📊 数学期望</h1></div>
+        <div class="breadcrumb">
+            <div class="breadcrumb-item"><a href="../index.html">期末速通</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="../index.html">概率统计</a><span class="breadcrumb-separator">/</span></div>
+            <div class="breadcrumb-item"><a href="#">数学期望</a></div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <h1 style="font-size: 28px; color: #5B8CBA; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+            数学期望的几何意义可视化
+        </h1>
+
+        <div class="section-container intro-box">
+            <h2 style="margin-bottom: 15px;">📖 一言以蔽之</h2>
+            <p style="font-size: 18px; font-weight: 500;">
+                <strong>数学期望</strong> $E(X)$ 是随机变量的<strong>平均值</strong>，可以理解为数据的"重心"位置。
+            </p>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">🛠️ 直观理解</h3>
+                <ul>
+                    <li><strong>加权平均</strong>：每个值乘以其概率，再求和</li>
+                    <li><strong>重心</strong>：概率分布的"平衡点"</li>
+                    <li><strong>长期平均</strong>：大量重复试验的平均值</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">📐 数学定义</h3>
+                <p><strong>离散型：</strong></p>
+                <div class="mathjax-block">
+                    $$E(X) = \sum_{i} x_i \cdot p_i = x_1 p_1 + x_2 p_2 + \cdots$$
+                </div>
+                <p><strong>连续型：</strong></p>
+                <div class="mathjax-block">
+                    $$E(X) = \int_{-\infty}^{\infty} x \cdot f(x) dx$$
+                </div>
+            </div>
+        </div>
+
+        <div class="section-container">
+            <h2>🎛️ 离散型随机变量的期望</h2>
+
+            <div class="control-panel">
+                <label>$x_1$: <input type="range" id="x1" min="0" max="10" step="0.5" value="2"></label>
+                <span id="x1-val">2</span>
+                <label> $p_1$: <input type="range" id="p1" min="0.1" max="0.9" step="0.05" value="0.3"></label>
+                <span id="p1-val">0.3</span><br>
+
+                <label>$x_2$: <input type="range" id="x2" min="0" max="10" step="0.5" value="5"></label>
+                <span id="x2-val">5</span>
+                <label> $p_2$: <input type="range" id="p2" min="0.1" max="0.9" step="0.05" value="0.5"></label>
+                <span id="p2-val">0.5</span><br>
+
+                <label>$x_3$: <input type="range" id="x3" min="0" max="10" step="0.5" value="8"></label>
+                <span id="x3-val">8</span>
+                <label> $p_3$: <input type="range" id="p3" min="0"1" max="0.9" step="0.05" value="0.2"></label>
+                <span id="p3-val">0.2</span>
+
+                <div id="calcs" style="margin-top:15px; font-weight:bold; padding: 10px; background: #fff; border-radius: 6px;"></div>
+            </div>
+
+            <div id="plot" style="width:100%;height:450px;"></div>
+
+            <div style="margin-top: 20px; background: #fff3cd; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">💡 几何意义</h3>
+                <ul>
+                    <li><strong>柱子高度</strong>：表示该值的概率大小</li>
+                    <li><strong>红色虚线</strong>：期望值位置（分布的"重心"）</li>
+                    <li><strong>期望值</strong>：围绕这个点，概率分布"平衡"</li>
+                    <li><strong>公式</strong>：$E(X) = x_1 p_1 + x_2 p_2 + x_3 p_3$</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loading-overlay').classList.add('loaded'), 500);
+        });
+
+        function draw() {
+            const x1 = parseFloat(document.getElementById('x1').value);
+            const x2 = parseFloat(document.getElementById('x2').value);
+            const x3 = parseFloat(document.getElementById('x3').value);
+            let p1 = parseFloat(document.getElementById('p1').value);
+            let p2 = parseFloat(document.getElementById('p2').value);
+            let p3 = parseFloat(document.getElementById('p3').value);
+
+            // 归一化概率
+            const total = p1 + p2 + p3;
+            p1 /= total; p2 /= total; p3 /= total;
+
+            document.getElementById('x1-val').innerText = x1.toFixed(1);
+            document.getElementById('x2-val').innerText = x2.toFixed(1);
+            document.getElementById('x3-val').innerText = x3.toFixed(1);
+            document.getElementById('p1-val').innerText = p1.toFixed(2);
+            document.getElementById('p2-val').innerText = p2.toFixed(2);
+            document.getElementById('p3-val').innerText = p3.toFixed(2);
+
+            // 计算期望
+            const E = x1 * p1 + x2 * p2 + x3 * p3;
+
+            const calcsEl = document.getElementById('calcs');
+            calcsEl.innerHTML = `
+                $E(X) = x_1 p_1 + x_2 p_2 + x_3 p_3$ <br>
+                $= ${x1} \\times ${p1.toFixed(2)} + ${x2} \\times ${p2.toFixed(2)} + ${x3} \\times ${p3.toFixed(2)}$ <br>
+                $= ${(x1 * p1).toFixed(2)} + ${(x2 * p2).toFixed(2)} + ${(x3 * p3).toFixed(2)}$ <br>
+                $= <strong>${E.toFixed(3)}</strong>$
+            `;
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([calcsEl]);
+            }
+
+            // 绘制柱状图
+            const trace1 = {
+                x: [x1, x2, x3],
+                y: [p1, p2, p3],
+                type: 'bar',
+                name: '概率',
+                marker: {
+                    color: ['#4285f4', '#34a853', '#fbbc05'],
+                    line: {color: '#333', width: 2}
+                },
+                width: 0.5,
+                text: [`$x_1=${x1}$<br>$p_1=${p1.toFixed(2)}$`,
+                       `$x_2=${x2}$<br>$p_2=${p2.toFixed(2)}$`,
+                       `$x_3=${x3}$<br>$p_3=${p3.toFixed(2)}$`],
+                textposition: 'outside'
+            };
+
+            const shapes = [
+                {
+                    type: 'line',
+                    x0: E, y0: 0, x1: E, y1: Math.max(p1, p2, p3) * 1.1,
+                    line: {color: '#dc3912', width: 3, dash: 'dash'}
+                }
+            ];
+
+            const annotations = [
+                {
+                    x: E, y: Math.max(p1, p2, p3) * 1.15,
+                    text: `<b>E(X) = ${E.toFixed(3)}</b>`,
+                    showarrow: false,
+                    font: {size: 16, color: '#dc3912'}
+                }
+            ];
+
+            const layout = {
+                title: {
+                    text: '<b>离散型随机变量的分布与期望</b>',
+                    font: {size: 18}
+                },
+                xaxis: {title: '取值 x', showgrid: true},
+                yaxis: {title: '概率 P(X=x)', showgrid: true},
+                shapes: shapes,
+                annotations: annotations,
+                margin: {l: 60, r: 30, t: 50, b: 60}
+            };
+
+            Plotly.newPlot('plot', [trace1], layout, {responsive: true, displayModeBar: false});
+        }
+
+        // 旧方式已禁用，使用window.onload, () => {
+            ['x1', 'x2', 'x3', 'p1', 'p2', 'p3'].forEach(id => {
+                document.getElementById(id).addEventListener('input', draw);
+            });
+            draw();
+        });
+    </script>
+</body>
+</html>

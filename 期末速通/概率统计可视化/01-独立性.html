@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>独立性 - 概率统计可视化</title>
+
+    <!-- 预加载关键资源 -->
+
+    <!-- 内联关键样式（避免额外请求） -->
+    <style>
+        /* ========== 基础样式 ========== */
+        * {box-sizing: border-box;}
+        body {margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;}
+
+        /* ========== 导航栏样式（内联） ========== */
+        .page-navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 16px; margin-bottom: 24px; padding: 16px 20px;
+            background: #ffffff; border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12); flex-wrap: wrap;
+        }
+        .nav-buttons {display: flex; gap: 12px; flex-wrap: wrap;}
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; background: #f1f3f4; color: #202124;
+            text-decoration: none; border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 500; cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover {background: #e8f0fe; color: #4285f4; transform: translateY(-2px);}
+        .page-title h1 {margin: 0; font-size: 20px; color: #202124;}
+        .breadcrumb {display: flex; gap: 8px; font-size: 14px;}
+        .breadcrumb-item a {color: #5f6368; text-decoration: none;}
+        .breadcrumb-item a:hover {color: #4285f4;}
+
+        /* ========== 页面样式 ========== */
+        .content-wrapper {max-width: 1400px; margin: 0 auto;}
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.98); display: flex;
+            justify-content: center; align-items: center; z-index: 10000;
+            flex-direction: column; transition: opacity 0.1s;
+        }
+        #loading-overlay.loaded {opacity: 0; pointer-events: none;}
+        .loading-spinner {
+            width: 50px; height: 50px; border: 5px solid #f3f3f3;
+            border-top: 5px solid #4285f4; border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}}
+        .loading-text {margin-top: 20px; font-size: 16px; color: #5f6368;}
+
+        .section-container {margin-bottom: 32px;}
+        .intro-box {
+            background: #f1f5f9; padding: 24px; border-radius: 8px;
+            border-left: 5px solid #5B8CBA;
+        }
+        .mathjax-block {
+            padding: 15px; background: #ffffff; border: 1px solid #e2e8f0;
+            border-radius: 8px; margin: 15px 0; overflow-x: auto;
+        }
+        .control-panel {
+            background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;
+        }
+        input[type="range"] {margin: 5px 10px 5px 5px;}
+        label {font-weight: 500;}
+    </style>
+
+    <!-- 🚀 极速加载优化：本地资源 + 懒加载 -->
+    <script>
+    /* Plotly懒加载：只在需要时加载 */
+    window.PlotlyLazyLoader = {
+        loaded: false,
+        callbacks: [],
+        load: function(callback) {
+            if (this.loaded) {
+                callback();
+            } else {
+                this.callbacks.push(callback);
+                if (this.callbacks.length === 1) {
+                    var script = document.createElement("script");
+                    script.src = "lib/plotly.min.js";
+                    script.onload = () => {
+                        this.loaded = true;
+                        this.callbacks.forEach(cb => cb());
+                        this.callbacks = [];
+                    };
+                    document.head.appendChild(script);
+                }
+            }
+        }
+    };
+    </script>
+    <script>
+    /* MathJax配置 - 内联以加快渲染 */
+    window.MathJax = {
+        tex: {
+            inlineMath: [["\$","\$"], ["\\(","\\)"]],
+            displayMath: [["\\$","\\$"], ["\\[","\\]"]],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: "global"
+        },
+        startup: {
+            typeset: false,
+            ready: () => {
+                MathJax.startup.defaultReady();
+                console.log("✅ MathJax加载完成");
+            }
+        }
+    };
+    </script>
+    <link rel="preload" href="lib/plotly.min.js" as="script" crossorigin="anonymous">
+    <link rel="preload" href="lib/tex-mml-chtml.js" as="script" crossorigin="anonymous">
+    <script id="MathJax-script" defer src="lib/tex-mml-chtml.js" onload="console.log("✅ MathJax脚本加载完成")"></script>
+
+    <!-- Plotly.js（延迟加载） -->
+
+    <!-- MathJax（延迟加载 + 优化配置） -->
+    <script>
+    window.MathJax = {
+      tex: {inlineMath: [['$', '$']], displayMath: [['$$', '$$']], processEscapes: true},
+      svg: {fontCache: 'global'},
+      startup: {
+        ready() {return MathJax.startup.defaultReady();},
+        pageReady() {
+          // 只渲染需要数学公式的元素
+          return MathJax.startup.defaultPageReady();
+        }
+      },
+      // 延迟渲染，避免阻塞
+      chunks: {js: ['configTeX'], inline: ['protected'], js: ['noErrors', 'noUndefined']}
+    };
+    </script>
+    <script id="MathJax-script" defer
+            onerror="console.error('MathJax加载失败，将使用纯文本显示公式')">
+    </script>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">加载中......</div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="history.back()">← 返回</button>
+            <a href="../index.html" class="nav-btn">🏠 主页</a>
+        </div>
+        <div class="page-title"><h1>📊 独立性</h1></div>
+        <div class="breadcrumb">
+            <span><a href="../index.html">期末速通</a> / </span>
+            <span><a href="index.html">概率统计</a> / </span>
+            <span>独立性</span>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="content-wrapper">
+        <h1 style="font-size: 28px; color: #5B8CBA; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+            事件独立性可视化
+        </h1>
+
+        <!-- 介绍区域 -->
+        <div class="section-container intro-box">
+            <h2 style="margin-bottom: 15px;">📖 一言以蔽之</h2>
+            <p style="font-size: 18px; font-weight: 500;">
+                两个事件 $A$ 和 $B$ <strong>独立</strong>，意味着一个事件的发生与否<strong>不影响</strong>另一个事件发生的概率。
+            </p>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">🛠️ 适用场景</h3>
+                <ul>
+                    <li>连续掷硬币，第一次的结果不影响第二次</li>
+                    <li>有放回抽样，每次抽样结果独立</li>
+                    <li>两个独立的随机试验结果</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 18px; color: #64748b;">📐 数学定义</h3>
+                <p>事件 $A$ 和 $B$ 独立，当且仅当：</p>
+                <div class="mathjax-block">
+                    $$P(A \cap B) = P(A) \cdot P(B)$$
+                </div>
+                <p>等价地：</p>
+                <div class="mathjax-block">
+                    $$P(A|B) = P(A) \quad \text{或} \quad P(B|A) = P(B)$$
+                </div>
+            </div>
+        </div>
+
+        <!-- 参数探索与可视化区域 -->
+        <div class="section-container">
+            <h2>🎛️ 参数探索与可视化</h2>
+
+            <div class="control-panel">
+                <label>$P(A)$: <input type="range" id="pa" min="0.1" max="0.9" step="0.05" value="0.5"></label>
+                <span id="pa-val">0.5</span><br>
+
+                <label>$P(B)$: <input type="range" id="pb" min="0.1" max="0.9" step="0.05" value="0.4"></label>
+                <span id="pb-val">0.4</span><br>
+
+                <label>$P(A \cap B)$: <input type="range" id="pab" min="0" max="0.4" step="0.01" value="0.2"></label>
+                <span id="pab-val">0.2</span>
+
+                <div id="calcs" style="margin-top:10px; font-weight:bold;"></div>
+            </div>
+
+            <div id="plot" style="width:100%;height:450px;"></div>
+
+            <!-- 说明 -->
+            <div style="margin-top: 20px; background: #fff3cd; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">💡 观察要点</h3>
+                <ul>
+                    <li><strong>独立时</strong>：$P(A \cap B) = P(A) \cdot P(B)$，两个圆的交集面积自然确定</li>
+                    <li><strong>不独立时</strong>：交集面积会偏离独立情况，表示两个事件有关联</li>
+                    <li><strong>正相关</strong>：交集面积 > 独立时的面积</li>
+                    <li><strong>负相关</strong>：交集面积 < 独立时的面积</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 优化后的脚本 -->
+    <script>
+        // 等待页面和关键资源加载完成
+        window.addEventListener('load', function() {
+            // 隐藏加载动画
+            setTimeout(function() {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) overlay.classList.add('loaded');
+            }, 300);
+
+            // 初始化图表
+            if (typeof Plotly !== 'undefined') {
+                initChart();
+            } else {
+                // 如果Plotly还没加载，等待一下
+                setTimeout(initChart, 100);
+            }
+        });
+
+        // 缓存DOM元素
+        const els = {
+            pa: document.getElementById('pa'),
+            pb: document.getElementById('pb'),
+            pab: document.getElementById('pab'),
+            paVal: document.getElementById('pa-val'),
+            pbVal: document.getElementById('pb-val'),
+            pabVal: document.getElementById('pab-val'),
+            calcs: document.getElementById('calcs'),
+            plot: document.getElementById('plot')
+        };
+
+        function initChart() {
+            // 绑定事件监听器
+            els.pa.addEventListener('input', draw);
+            els.pb.addEventListener('input', draw);
+            els.pab.addEventListener('input', draw);
+
+            // 首次绘制
+            draw();
+        }
+
+        function draw() {
+            const pa = parseFloat(els.pa.value);
+            const pb = parseFloat(els.pb.value);
+
+            // 限制 P(A∩B) 最大值
+            const maxAB = Math.min(pa, pb);
+            if(parseFloat(els.pab.value) > maxAB) els.pab.value = maxAB;
+            els.pab.max = maxAB;
+
+            const pab = parseFloat(els.pab.value);
+
+            // 更新显示值
+            els.paVal.textContent = pa.toFixed(2);
+            els.pbVal.textContent = pb.toFixed(2);
+            els.pabVal.textContent = pab.toFixed(2);
+
+            // 计算独立性
+            const pabIndependent = pa * pb;
+            const isIndependent = Math.abs(pab - pabIndependent) < 0.01;
+            const correlation = pab > pabIndependent ? '正相关' : (pab < pabIndependent ? '负相关' : '独立');
+
+            // 更新计算结果（使用纯文本 + 简单的HTML，减少MathJax调用）
+            els.calcs.innerHTML = `
+                <span style="color: #333;">P(A∩B) = ${pab.toFixed(3)}</span><br>
+                ${isIndependent ?
+                    `<span style="color: #28a745;">✅ 独立：P(A∩B) ≈ P(A)·P(B) = ${pabIndependent.toFixed(3)}</span>` :
+                    `<span style="color: #dc3545;">❌ 不独立：P(A∩B) (${pab.toFixed(3)}) ${pab > pabIndependent ? '>' : '<'} P(A)·P(B) (${pabIndependent.toFixed(3)}) → ${correlation}</span>`
+                }
+            `;
+
+            // 绘制Venn图
+            const layout = {
+                title: {text: '<b>事件 A 与 B 的关系</b>', font: {size: 18}},
+                xaxis: {range: [0, 10], showgrid: false, zeroline: false, showticklabels: false},
+                yaxis: {range: [0, 10], showgrid: false, zeroline: false, showticklabels: false},
+                shapes: [
+                    {type: 'circle', xref: 'x', yref: 'y', x0: 2, y0: 2, x1: 6, y1: 6,
+                     fillcolor: 'rgba(255, 99, 71, 0.3)', line: {color: 'red', width: 3}},
+                    {type: 'circle', xref: 'x', yref: 'y', x0: 4, y0: 2, x1: 8, y1: 6,
+                     fillcolor: 'rgba(65, 105, 225, 0.3)', line: {color: 'blue', width: 3}}
+                ],
+                annotations: [
+                    {x: 3, y: 4, text: `<b>A</b><br>P(A)=${pa}`, showarrow: false, font: {size: 14, color: 'red'}},
+                    {x: 7, y: 4, text: `<b>B</b><br>P(B)=${pb}`, showarrow: false, font: {size: 14, color: 'blue'}},
+                    {x: 5, y: 4, text: `<b>A∩B</b><br>P(A∩B)=${pab}<br>${isIndependent ? '✅ 独立' : '❌ ' + correlation}`,
+                     showarrow: false, font: {size: 12, color: '#333'}}
+                ],
+                margin: {l: 0, r: 0, t: 40, b: 0}
+            };
+
+            Plotly.newPlot('plot', [], layout, {responsive: true, displayModeBar: false});
+        }
+    </script>
+</body>
+</html>

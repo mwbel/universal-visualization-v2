@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>数学期望 - 快速版</title>
+    <link rel="stylesheet" href="../css/page-navbar.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #5B8CBA; margin-bottom: 10px; }
+        .controls { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        label { display: block; font-weight: 600; margin-bottom: 8px; }
+        input[type="range"] { width: 200px; }
+        canvas { width: 100%; height: 400px; background: white; border: 1px solid #ddd; border-radius: 8px; }
+        .result { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .info-box { background: #e3f2fd; padding: 15px; border-radius: 6px; margin-top: 15px; border-left: 4px solid #2196F3; }
+    </style>
+</head>
+<body>
+    <nav class="page-navbar">
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-back" onclick="history.back()">返回上一级</button>
+            <a href="../index.html" class="nav-btn nav-btn-home">期末速通主页</a>
+        </div>
+        <div class="page-title"><h1>📊 数学期望 - 快速版</h1></div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>⚖️ 数学期望可视化</h1>
+            <p>概率分布的"重心"或"平衡点"</p>
+        </div>
+
+        <div class="controls">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                <div>
+                    <label>x₁: <input type="number" id="x1" value="2" step="0.5" style="width: 80px;"></label>
+                    <label>p₁: <input type="number" id="p1" value="0.3" step="0.05" min="0" max="1" style="width: 80px;"></label>
+                </div>
+                <div>
+                    <label>x₂: <input type="number" id="x2" value="5" step="0.5" style="width: 80px;"></label>
+                    <label>p₂: <input type="number" id="p2" value="0.5" step="0.05" min="0" max="1" style="width: 80px;"></label>
+                </div>
+                <div>
+                    <label>x₃: <input type="number" id="x3" value="8" step="0.5" style="width: 80px;"></label>
+                    <label>p₃: <input type="number" id="p3" value="0.2" step="0.05" min="0" max="1" style="width: 80px;"></label>
+                </div>
+            </div>
+            <button onclick="draw()" style="margin-top: 15px; padding: 10px 20px; background: #4285f4; color: white; border: none; border-radius: 6px; cursor: pointer;">更新图表</button>
+        </div>
+
+        <div class="result">
+            <canvas id="chart"></canvas>
+            <div id="stats" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 数学期望的意义</h3>
+            <ul>
+                <li><strong>加权平均</strong>：每个值乘以其概率再求和</li>
+                <li><strong>重心</strong>：概率分布的"平衡点"</li>
+                <li><strong>公式</strong>：E(X) = Σ xi · pi</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            draw();
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        function draw() {
+            const x1 = parseFloat(document.getElementById('x1').value);
+            const x2 = parseFloat(document.getElementById('x2').value);
+            const x3 = parseFloat(document.getElementById('x3').value);
+            let p1 = parseFloat(document.getElementById('p1').value);
+            let p2 = parseFloat(document.getElementById('p2').value);
+            let p3 = parseFloat(document.getElementById('p3').value);
+
+            const total = p1 + p2 + p3;
+            p1 /= total; p2 /= total; p3 /= total;
+
+            const E = x1 * p1 + x2 * p2 + x3 * p3;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 60;
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            const values = [x1, x2, x3];
+            const probs = [p1, p2, p3];
+            const colors = ['#4285f4', '#34a853', '#fbbc05'];
+            const barWidth = 80;
+            const maxValue = Math.max(...values) * 1.2;
+            const maxProb = Math.max(...probs) * 1.2;
+
+            function toX(val) {
+                return padding + (val / maxValue) * (width - 2 * padding);
+            }
+
+            function toY(prob) {
+                return height - padding - (prob / maxProb) * (height - 2 * padding);
+            }
+
+            // 绘制柱状图
+            values.forEach((x, i) => {
+                const barX = padding + i * (width - 2 * padding) / 3 + (width - 2 * padding) / 6;
+                const barHeight = toY(0) - toY(probs[i]);
+
+                const gradient = ctx.createLinearGradient(barX, toY(probs[i]), barX, toY(0));
+                gradient.addColorStop(0, colors[i]);
+                gradient.addColorStop(1, colors[i] + '88');
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(barX - barWidth/2, toY(probs[i]), barWidth, barHeight);
+
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(barX - barWidth/2, toY(probs[i]), barWidth, barHeight);
+
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`x${i+1}=${x}`, barX, toY(0) + 20);
+                ctx.font = '12px sans-serif';
+                ctx.fillText(`p=${probs[i].toFixed(2)}`, barX, toY(probs[i]) - 10);
+            });
+
+            // 绘制期望线
+            ctx.strokeStyle = '#dc3912';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([10, 5]);
+            ctx.beginPath();
+            ctx.moveTo(toX(E), padding);
+            ctx.lineTo(toX(E), height - padding);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#dc3912';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`E(X)=${E.toFixed(2)}`, toX(E) + 10, height / 2);
+
+            // 更新统计
+            document.getElementById('stats').innerHTML = `
+                <strong>E(X) = ${E.toFixed(3)}</strong><br>
+                = ${x1}×${p1.toFixed(2)} + ${x2}×${p2.toFixed(2)} + ${x3}×${p3.toFixed(2)}<br>
+                = ${(x1*p1).toFixed(2)} + ${(x2*p2).toFixed(2)} + ${(x3*p3).toFixed(2)}
+            `;
+        }
+
+        draw();
+    </script>
+</body>
+</html>
