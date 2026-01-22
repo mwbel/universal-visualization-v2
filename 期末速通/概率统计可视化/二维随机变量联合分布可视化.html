@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二维随机变量联合分布交互式可视化</title>
+
+    <!--
+    ==================== 离线使用说明 ====================
+    要将此页面改为离线版本，请按以下步骤操作：
+
+    1. 下载以下库文件到本地：
+       - Plotly: https://cdn.plot.ly/plotly-2.26.0.min.js
+         保存为: lib/plotly.min.js
+
+       - MathJax: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+         保存为: lib/tex-mml-chtml.js
+
+    2. 修改script标签将CDN链接改为本地路径
+
+    ==================== 离线使用说明结束 ====================
+    -->
+
+    <script src="lib/plotly.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .distribution-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .distribution-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #f0f0f0;
+            color: #333;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .distribution-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .distribution-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .control-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .control-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .control-item input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
+        }
+
+        .value-display {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 4px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .formula-box {
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .formula-box h4 {
+            color: #ff9800;
+            margin-bottom: 15px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>二维随机变量联合分布可视化</h1>
+            <p>探索二维正态分布和二维均匀分布的联合分布特性</p>
+        </div>
+
+        <div class="content">
+            <!-- 分布类型选择 -->
+            <div class="distribution-selector">
+                <button class="distribution-btn active" onclick="selectDistribution('bivariate-normal')">二维正态分布</button>
+                <button class="distribution-btn" onclick="selectDistribution('bivariate-uniform')">二维均匀分布</button>
+                <button class="distribution-btn" onclick="selectDistribution('independent')">独立性演示</button>
+            </div>
+
+            <!-- 参数控制 -->
+            <div class="controls" id="controls">
+                <!-- 动态生成控制项 -->
+            </div>
+
+            <!-- 图表 -->
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3>联合概率密度函数 (3D)</h3>
+                    <div id="joint-3d-chart"></div>
+                </div>
+                <div class="chart-box">
+                    <h3>联合概率密度函数 (等高线)</h3>
+                    <div id="joint-contour-chart"></div>
+                </div>
+            </div>
+
+            <!-- 边缘分布 -->
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3>X 的边缘分布 f_X(x)</h3>
+                    <div id="marginal-x-chart"></div>
+                </div>
+                <div class="chart-box">
+                    <h3>Y 的边缘分布 f_Y(y)</h3>
+                    <div id="marginal-y-chart"></div>
+                </div>
+            </div>
+
+            <!-- 公式说明 -->
+            <div class="formula-box" id="formula-box">
+                <!-- 动态生成公式 -->
+            </div>
+
+            <!-- 信息说明 -->
+            <div class="info-box" id="info-box">
+                <!-- 动态生成说明 -->
+            </div>
+
+            <div style="text-align: center;">
+                <a href="../index.html" class="back-link">← 返回概率统计模块</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 当前选中的分布
+        let currentDistribution = 'bivariate-normal';
+
+        // 分布配置
+        const distributions = {
+            'bivariate-normal': {
+                name: '二维正态分布',
+                params: {
+                    muX: { label: 'X的均值 μ₁', min: -5, max: 5, step: 0.1, default: 0 },
+                    muY: { label: 'Y的均值 μ₂', min: -5, max: 5, step: 0.1, default: 0 },
+                    sigmaX: { label: 'X的标准差 σ₁', min: 0.1, max: 3, step: 0.1, default: 1 },
+                    sigmaY: { label: 'Y的标准差 σ₂', min: 0.1, max: 3, step: 0.1, default: 1 },
+                    rho: { label: '相关系数 ρ', min: -0.95, max: 0.95, step: 0.05, default: 0 }
+                },
+                description: '二维正态分布是最重要的多元分布。当 ρ = 0 时，X 和 Y 相互独立。'
+            },
+            'bivariate-uniform': {
+                name: '二维均匀分布',
+                params: {
+                    a: { label: 'X的区间起点 a', min: -5, max: 0, step: 0.5, default: -2 },
+                    b: { label: 'X的区间终点 b', min: 0, max: 5, step: 0.5, default: 2 },
+                    c: { label: 'Y的区间起点 c', min: -5, max: 0, step: 0.5, default: -2 },
+                    d: { label: 'Y的区间终点 d', min: 0, max: 5, step: 0.5, default: 2 }
+                },
+                description: '二维均匀分布在矩形区域内概率密度恒定。X 和 Y 独立的充要条件是联合密度函数可分解。'
+            },
+            'independent': {
+                name: '独立性演示',
+                params: {
+                    muX: { label: 'X的均值 μ₁', min: -5, max: 5, step: 0.1, default: 0 },
+                    sigmaX: { label: 'X的标准差 σ₁', min: 0.1, max: 3, step: 0.1, default: 1 },
+                    muY: { label: 'Y的均值 μ₂', min: -5, max: 5, step: 0.1, default: 0 },
+                    sigmaY: { label: 'Y的标准差 σ₂', min: 0.1, max: 3, step: 0.1, default: 1 },
+                    rho: { label: '相关系数 ρ', min: -0.95, max: 0.95, step: 0.05, default: 0 }
+                },
+                description: '当 X 和 Y 独立时，联合密度等于边缘密度的乘积：f(x,y) = f_X(x)·f_Y(y)。观察 ρ = 0 时的情况。'
+            }
+        };
+
+        // 二维正态分布PDF
+        function bivariateNormalPDF(x, y, muX, muY, sigmaX, sigmaY, rho) {
+            const z1 = (x - muX) / sigmaX;
+            const z2 = (y - muY) / sigmaY;
+            const exponent = -1 / (2 * (1 - rho * rho)) * (z1 * z1 - 2 * rho * z1 * z2 + z2 * z2);
+            const coefficient = 1 / (2 * Math.PI * sigmaX * sigmaY * Math.sqrt(1 - rho * rho));
+            return coefficient * Math.exp(exponent);
+        }
+
+        // 二维均匀分布PDF
+        function bivariateUniformPDF(x, y, a, b, c, d) {
+            if (x >= a && x <= b && y >= c && y <= d) {
+                return 1 / ((b - a) * (d - c));
+            }
+            return 0;
+        }
+
+        // 计算边缘分布 f_X(x) = ∫ f(x,y) dy
+        function marginalX(x, params, type) {
+            const y = Array.from({ length: 200 }, (_, i) => -10 + i * 0.1);
+            let sum = 0;
+            for (const yi of y) {
+                if (type === 'bivariate-normal') {
+                    sum += bivariateNormalPDF(x, yi, params.muX, params.muY, params.sigmaX, params.sigmaY, params.rho);
+                } else if (type === 'bivariate-uniform') {
+                    sum += bivariateUniformPDF(x, yi, params.a, params.b, params.c, params.d);
+                }
+            }
+            return sum * 0.1; // dy = 0.1
+        }
+
+        // 计算边缘分布 f_Y(y) = ∫ f(x,y) dx
+        function marginalY(y, params, type) {
+            const x = Array.from({ length: 200 }, (_, i) => -10 + i * 0.1);
+            let sum = 0;
+            for (const xi of x) {
+                if (type === 'bivariate-normal') {
+                    sum += bivariateNormalPDF(xi, y, params.muX, params.muY, params.sigmaX, params.sigmaY, params.rho);
+                } else if (type === 'bivariate-uniform') {
+                    sum += bivariateUniformPDF(xi, y, params.a, params.b, params.c, params.d);
+                }
+            }
+            return sum * 0.1; // dx = 0.1
+        }
+
+        // 选择分布
+        function selectDistribution(dist) {
+            currentDistribution = dist;
+
+            // 更新按钮状态
+            document.querySelectorAll('.distribution-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 更新界面
+            updateControls();
+            updateCharts();
+            updateFormula();
+            updateInfo();
+        }
+
+        // 更新控制面板
+        function updateControls() {
+            const config = distributions[currentDistribution];
+            const controlsDiv = document.getElementById('controls');
+
+            let html = '<h3 style="margin-bottom: 20px;">参数调整</h3>';
+            html += '<div class="control-group">';
+
+            for (const [paramName, paramConfig] of Object.entries(config.params)) {
+                html += `
+                    <div class="control-item">
+                        <label>${paramConfig.label}</label>
+                        <input type="range"
+                               id="${paramName}"
+                               min="${paramConfig.min}"
+                               max="${paramConfig.max}"
+                               step="${paramConfig.step}"
+                               value="${paramConfig.default}"
+                               oninput="updateCharts()">
+                        <span class="value-display" id="${paramName}-value">${paramConfig.default}</span>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            controlsDiv.innerHTML = html;
+        }
+
+        // 获取当前参数值
+        function getParams() {
+            const config = distributions[currentDistribution];
+            const params = {};
+            for (const paramName of Object.keys(config.params)) {
+                params[paramName] = parseFloat(document.getElementById(paramName).value);
+                document.getElementById(`${paramName}-value`).textContent = params[paramName];
+            }
+            return params;
+        }
+
+        // 更新图表
+        function updateCharts() {
+            const params = getParams();
+
+            if (currentDistribution === 'bivariate-normal' || currentDistribution === 'independent') {
+                updateBivariateNormalCharts(params);
+            } else if (currentDistribution === 'bivariate-uniform') {
+                updateBivariateUniformCharts(params);
+            }
+        }
+
+        // 更新二维正态分布图表
+        function updateBivariateNormalCharts(params) {
+            const x = Array.from({ length: 50 }, (_, i) => -5 + i * 0.2);
+            const y = Array.from({ length: 50 }, (_, i) => -5 + i * 0.2);
+
+            const z = y.map(yi => x.map(xi => bivariateNormalPDF(xi, yi, params.muX, params.muY, params.sigmaX, params.sigmaY, params.rho)));
+
+            // 3D曲面图
+            const data3D = [{
+                z: z,
+                x: x,
+                y: y,
+                type: 'surface',
+                colorscale: 'Viridis',
+                colorbar: { title: '密度' }
+            }];
+
+            const layout3D = {
+                scene: {
+                    xaxis: { title: 'X' },
+                    yaxis: { title: 'Y' },
+                    zaxis: { title: 'f(x,y)' }
+                },
+                margin: { l: 0, r: 0, t: 30, b: 0 },
+                height: 400
+            };
+
+            Plotly.newPlot('joint-3d-chart', data3D, layout3D, { responsive: true });
+
+            // 等高线图
+            const dataContour = [{
+                z: z,
+                x: x,
+                y: y,
+                type: 'contour',
+                colorscale: 'Viridis',
+                colorbar: { title: '密度' }
+            }];
+
+            const layoutContour = {
+                xaxis: { title: 'X' },
+                yaxis: { title: 'Y' },
+                margin: { l: 50, r: 50, t: 30, b: 50 },
+                height: 400
+            };
+
+            Plotly.newPlot('joint-contour-chart', dataContour, layoutContour, { responsive: true });
+
+            // 边缘分布
+            updateMarginalCharts(params, 'bivariate-normal');
+        }
+
+        // 更新二维均匀分布图表
+        function updateBivariateUniformCharts(params) {
+            const x = Array.from({ length: 50 }, (_, i) => -5 + i * 0.2);
+            const y = Array.from({ length: 50 }, (_, i) => -5 + i * 0.2);
+
+            const z = y.map(yi => x.map(xi => bivariateUniformPDF(xi, yi, params.a, params.b, params.c, params.d)));
+
+            // 3D曲面图
+            const data3D = [{
+                z: z,
+                x: x,
+                y: y,
+                type: 'surface',
+                colorscale: 'Viridis'
+            }];
+
+            Plotly.newPlot('joint-3d-chart', data3D, {
+                scene: { xaxis: { title: 'X' }, yaxis: { title: 'Y' }, zaxis: { title: 'f(x,y)' } },
+                margin: { l: 0, r: 0, t: 30, b: 0 },
+                height: 400
+            }, { responsive: true });
+
+            // 等高线图
+            const dataContour = [{
+                z: z,
+                x: x,
+                y: y,
+                type: 'contour',
+                colorscale: 'Viridis'
+            }];
+
+            Plotly.newPlot('joint-contour-chart', dataContour, {
+                xaxis: { title: 'X' },
+                yaxis: { title: 'Y' },
+                margin: { l: 50, r: 50, t: 30, b: 50 },
+                height: 400
+            }, { responsive: true });
+
+            // 边缘分布
+            updateMarginalCharts(params, 'bivariate-uniform');
+        }
+
+        // 更新边缘分布图表
+        function updateMarginalCharts(params, type) {
+            const x = Array.from({ length: 200 }, (_, i) => -10 + i * 0.1);
+            const marginalXValues = x.map(xi => marginalX(xi, params, type));
+
+            const traceX = {
+                x: x,
+                y: marginalXValues,
+                type: 'scatter',
+                mode: 'lines',
+                fill: 'tozeroy',
+                line: { color: '#667eea', width: 2 }
+            };
+
+            Plotly.newPlot('marginal-x-chart', [traceX], {
+                xaxis: { title: 'x' },
+                yaxis: { title: 'f_X(x)' },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                margin: { l: 50, r: 30, t: 30, b: 50 },
+                height: 350
+            }, { responsive: true, displayModeBar: false });
+
+            const marginalYValues = x.map(xi => marginalY(xi, params, type));
+
+            const traceY = {
+                x: x,
+                y: marginalYValues,
+                type: 'scatter',
+                mode: 'lines',
+                fill: 'tozeroy',
+                line: { color: '#764ba2', width: 2 }
+            };
+
+            Plotly.newPlot('marginal-y-chart', [traceY], {
+                xaxis: { title: 'y' },
+                yaxis: { title: 'f_Y(y)' },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                margin: { l: 50, r: 30, t: 30, b: 50 },
+                height: 350
+            }, { responsive: true, displayModeBar: false });
+        }
+
+        // 更新公式
+        function updateFormula() {
+            const formulaDiv = document.getElementById('formula-box');
+
+            if (currentDistribution === 'bivariate-normal' || currentDistribution === 'independent') {
+                formulaDiv.innerHTML = `
+                    <h4>📐 二维正态分布公式</h4>
+                    <p><strong>联合概率密度函数:</strong></p>
+                    <p style="font-size: 14px; margin: 10px 0;">
+                        $$f(x,y) = \\frac{1}{2\\pi\\sigma_1\\sigma_2\\sqrt{1-\\rho^2}}\\exp\\left\\{-\\frac{1}{2(1-\\rho^2)}\\left[\\left(\\frac{x-\\mu_1}{\\sigma_1}\\right)^2-2\\rho\\left(\\frac{x-\\mu_1}{\\sigma_1}\\right)\\left(\\frac{y-\\mu_2}{\\sigma_2}\\right)+\\left(\\frac{y-\\mu_2}{\\sigma_2}\\right)^2\\right]\\right\\}$$
+                    </p>
+                    <p><strong>边缘分布:</strong></p>
+                    <p style="font-size: 14px; margin: 10px 0;">
+                        $$f_X(x) = \\frac{1}{\\sqrt{2\\pi}\\sigma_1}e^{-\\frac{(x-\\mu_1)^2}{2\\sigma_1^2}}, \\quad f_Y(y) = \\frac{1}{\\sqrt{2\\pi}\\sigma_2}e^{-\\frac{(y-\\mu_2)^2}{2\\sigma_2^2}}$$
+                    </p>
+                    <p><strong>独立性条件:</strong></p>
+                    <p style="font-size: 14px; margin: 10px 0;">
+                        X 和 Y 独立当且仅当 $\\rho = 0$，此时 $f(x,y) = f_X(x) \\cdot f_Y(y)$
+                    </p>
+                `;
+            } else {
+                formulaDiv.innerHTML = `
+                    <h4>📐 二维均匀分布公式</h4>
+                    <p><strong>联合概率密度函数:</strong></p>
+                    <p style="font-size: 14px; margin: 10px 0;">
+                        $$f(x,y) = \\begin{cases} \\frac{1}{(b-a)(d-c)}, & a \\leq x \\leq b, c \\leq y \\leq d \\\\ 0, & \\text{其他} \\end{cases}$$
+                    </p>
+                    <p><strong>边缘分布:</strong></p>
+                    <p style="font-size: 14px; margin: 10px 0;">
+                        $$f_X(x) = \\begin{cases} \\frac{1}{b-a}, & a \\leq x \\leq b \\\\ 0, & \\text{其他} \\end{cases}, \\quad f_Y(y) = \\begin{cases} \\frac{1}{d-c}, & c \\leq y \\leq d \\\\ 0, & \\text{其他} \\end{cases}$$
+                    </p>
+                `;
+            }
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([formulaDiv]);
+            }
+        }
+
+        // 更新说明信息
+        function updateInfo() {
+            const config = distributions[currentDistribution];
+            const infoDiv = document.getElementById('info-box');
+
+            infoDiv.innerHTML = `
+                <h3>ℹ️ ${config.name}</h3>
+                <p>${config.description}</p>
+            `;
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateControls();
+            updateCharts();
+            updateFormula();
+            updateInfo();
+        });
+    </script>
+</body>
+</html>

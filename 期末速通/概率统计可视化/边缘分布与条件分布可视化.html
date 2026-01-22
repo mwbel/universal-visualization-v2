@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>边缘分布与条件分布交互式可视化</title>
+
+    <!--
+    ==================== 离线使用说明 ====================
+    要将此页面改为离线版本，请下载以下库文件到本地lib目录：
+    - Plotly: https://cdn.plot.ly/plotly-2.26.0.min.js
+    - MathJax: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+    然后修改script标签将CDN链接改为本地路径
+    ==================== 离线使用说明结束 ====================
+    -->
+
+    <script src="lib/plotly.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .example-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .example-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #f0f0f0;
+            color: #333;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .example-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .control-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .control-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .control-item input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
+        }
+
+        .value-display {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 4px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .charts-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .comparison-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .comparison-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .formula-box {
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .formula-box h4 {
+            color: #ff9800;
+            margin-bottom: 15px;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>边缘分布与条件分布可视化</h1>
+            <p>深入理解二维随机变量的边缘分布和条件分布概念</p>
+        </div>
+
+        <div class="content">
+            <!-- 示例选择 -->
+            <div class="example-selector">
+                <button class="example-btn active" onclick="selectExample('discrete')">离散型：掷骰子</button>
+                <button class="example-btn" onclick="selectExample('continuous')">连续型：二维正态</button>
+            </div>
+
+            <!-- 参数控制 -->
+            <div class="controls" id="controls">
+                <!-- 动态生成控制项 -->
+            </div>
+
+            <!-- 联合分布 -->
+            <div class="charts-section">
+                <h2 class="section-title">📊 联合概率分布</h2>
+                <div class="charts-grid">
+                    <div class="chart-box">
+                        <h3 id="joint-title">联合分布表/图</h3>
+                        <div id="joint-chart"></div>
+                    </div>
+                    <div class="chart-box">
+                        <h3>3D可视化</h3>
+                        <div id="joint-3d-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 边缘分布 -->
+            <div class="charts-section">
+                <h2 class="section-title">📈 边缘分布</h2>
+                <div class="charts-grid">
+                    <div class="chart-box">
+                        <h3>X 的边缘分布 f_X(x)</h3>
+                        <div id="marginal-x-chart"></div>
+                    </div>
+                    <div class="chart-box">
+                        <h3>Y 的边缘分布 f_Y(y)</h3>
+                        <div id="marginal-y-chart"></div>
+                    </div>
+                </div>
+                <div class="comparison-box" id="marginal-explanation">
+                    <!-- 动态生成说明 -->
+                </div>
+            </div>
+
+            <!-- 条件分布 -->
+            <div class="charts-section">
+                <h2 class="section-title">🎯 条件分布</h2>
+                <div class="charts-grid">
+                    <div class="chart-box">
+                        <h3>X|Y 的条件分布</h3>
+                        <div id="conditional-x-chart"></div>
+                    </div>
+                    <div class="chart-box">
+                        <h3>Y|X 的条件分布</h3>
+                        <div id="conditional-y-chart"></div>
+                    </div>
+                </div>
+                <div class="comparison-box" id="conditional-explanation">
+                    <!-- 动态生成说明 -->
+                </div>
+            </div>
+
+            <!-- 公式说明 -->
+            <div class="formula-box" id="formula-box">
+                <!-- 动态生成公式 -->
+            </div>
+
+            <!-- 信息说明 -->
+            <div class="info-box" id="info-box">
+                <!-- 动态生成说明 -->
+            </div>
+
+            <div style="text-align: center;">
+                <a href="../index.html" class="back-link">← 返回概率统计模块</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentExample = 'discrete';
+
+        const examples = {
+            discrete: {
+                name: '掷骰子',
+                params: {
+                    n: { label: '骰子面数 n', min: 4, max: 12, step: 1, default: 6 }
+                },
+                description: '掷两个均匀骰子，X 和 Y 分别表示两个骰子的点数。由于骰子独立，联合概率等于边缘概率的乘积。'
+            },
+            continuous: {
+                name: '二维正态分布',
+                params: {
+                    rho: { label: '相关系数 ρ', min: -0.9, max: 0.9, step: 0.1, default: 0.5 }
+                },
+                description: '二维正态分布的条件分布仍然是正态分布。条件期望 E[Y|X=x] 是 X 的线性函数。'
+            }
+        };
+
+        function selectExample(example) {
+            currentExample = example;
+
+            document.querySelectorAll('.example-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            updateControls();
+            updateCharts();
+            updateFormula();
+            updateInfo();
+        }
+
+        function updateControls() {
+            const config = examples[currentExample];
+            const controlsDiv = document.getElementById('controls');
+
+            let html = '<h3 style="margin-bottom: 20px;">参数调整</h3>';
+            html += '<div class="control-group">';
+
+            for (const [paramName, paramConfig] of Object.entries(config.params)) {
+                html += `
+                    <div class="control-item">
+                        <label>${paramConfig.label}</label>
+                        <input type="range"
+                               id="${paramName}"
+                               min="${paramConfig.min}"
+                               max="${paramConfig.max}"
+                               step="${paramConfig.step}"
+                               value="${paramConfig.default}"
+                               oninput="updateCharts()">
+                        <span class="value-display" id="${paramName}-value">${paramConfig.default}</span>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            controlsDiv.innerHTML = html;
+        }
+
+        function getParams() {
+            const config = examples[currentExample];
+            const params = {};
+            for (const paramName of Object.keys(config.params)) {
+                params[paramName] = parseFloat(document.getElementById(paramName).value);
+                document.getElementById(`${paramName}-value`).textContent = params[paramName];
+            }
+            return params;
+        }
+
+        function updateCharts() {
+            if (currentExample === 'discrete') {
+                updateDiscreteCharts();
+            } else {
+                updateContinuousCharts();
+            }
+        }
+
+        function updateDiscreteCharts() {
+            const params = getParams();
+            const n = params.n;
+
+            // 创建联合概率表（独立骰子）
+            const jointProb = [];
+            for (let i = 1; i <= n; i++) {
+                for (let j = 1; j <= n; j++) {
+                    jointProb.push({
+                        x: i,
+                        y: j,
+                        prob: 1 / (n * n)
+                    });
+                }
+            }
+
+            // 热力图
+            const heatmapData = [];
+            for (let i = 1; i <= n; i++) {
+                const row = [];
+                for (let j = 1; j <= n; j++) {
+                    row.push(1 / (n * n));
+                }
+                heatmapData.push(row);
+            }
+
+            const heatmapTrace = {
+                z: heatmapData,
+                x: Array.from({ length: n }, (_, i) => i + 1),
+                y: Array.from({ length: n }, (_, i) => i + 1),
+                type: 'heatmap',
+                colorscale: 'Blues',
+                colorbar: { title: 'P(X,Y)' }
+            };
+
+            Plotly.newPlot('joint-chart', [heatmapTrace], {
+                xaxis: { title: 'X' },
+                yaxis: { title: 'Y' },
+                margin: { l: 50, r: 50, t: 30, b: 50 }
+            }, { responsive: true });
+
+            // 3D柱状图
+            const xValues = Array.from({ length: n }, (_, i) => i + 1);
+            const yValues = Array.from({ length: n }, (_, i) => i + 1);
+            const zValues = heatmapData.flat();
+
+            for (let i = 0; i < xValues.length; i++) {
+                for (let j = 0; j < yValues.length; j++) {
+                    // 简化：仅显示部分点
+                }
+            }
+
+            Plotly.newPlot('joint-3d-chart', [{
+                z: heatmapData,
+                x: xValues,
+                y: yValues,
+                type: 'surface',
+                colorscale: 'Blues'
+            }], {
+                scene: {
+                    xaxis: { title: 'X' },
+                    yaxis: { title: 'Y' },
+                    zaxis: { title: 'P(X,Y)' }
+                },
+                margin: { l: 0, r: 0, t: 30, b: 0 }
+            }, { responsive: true });
+
+            // 边缘分布
+            const marginalX = Array(n).fill(1 / n);
+            const marginalY = Array(n).fill(1 / n);
+
+            Plotly.newPlot('marginal-x-chart', [{
+                x: xValues,
+                y: marginalX,
+                type: 'bar',
+                marker: { color: '#667eea' }
+            }], {
+                xaxis: { title: 'x' },
+                yaxis: { title: 'P_X(x)' },
+                margin: { l: 50, r: 30, t: 30, b: 50 }
+            }, { responsive: true, displayModeBar: false });
+
+            Plotly.newPlot('marginal-y-chart', [{
+                x: yValues,
+                y: marginalY,
+                type: 'bar',
+                marker: { color: '#764ba2' }
+            }], {
+                xaxis: { title: 'y' },
+                yaxis: { title: 'P_Y(y)' },
+                margin: { l: 50, r: 30, t: 30, b: 50 }
+            }, { responsive: true, displayModeBar: false });
+
+            // 条件分布（对于独立情况，条件分布=边缘分布）
+            Plotly.newPlot('conditional-x-chart', [{
+                x: xValues,
+                y: marginalX,
+                type: 'bar',
+                marker: { color: '#ff6b6b' }
+            }], {
+                xaxis: { title: 'x' },
+                yaxis: { title: 'P(X|Y)' },
+                margin: { l: 50, r: 30, t: 30, b: 50 }
+            }, { responsive: true, displayModeBar: false });
+
+            Plotly.newPlot('conditional-y-chart', [{
+                x: yValues,
+                y: marginalY,
+                type: 'bar',
+                marker: { color: '#4caf50' }
+            }], {
+                xaxis: { title: 'y' },
+                yaxis: { title: 'P(Y|X)' },
+                margin: { l: 50, r: 30, t: 30, b: 50 }
+            }, { responsive: true, displayModeBar: false });
+
+            // 说明
+            document.getElementById('marginal-explanation').innerHTML = `
+                <h3>💡 边缘分布说明</h3>
+                <p>对于独立骰子，边缘分布：</p>
+                <p>P(X = x) = Σ<sub>y</sub> P(X = x, Y = y) = n × (1/n²) = 1/n</p>
+                <p>每个点数出现的概率相等，都是均匀分布。</p>
+            `;
+
+            document.getElementById('conditional-explanation').innerHTML = `
+                <h3>💡 条件分布说明</h3>
+                <p>由于骰子独立：</p>
+                <p>P(X|Y = y) = P(X) = 1/n</p>
+                <p>条件分布等于边缘分布，知道Y的值不会改变X的分布。</p>
+            `;
+        }
+
+        function updateContinuousCharts() {
+            const params = getParams();
+            const rho = params.rho;
+
+            const x = Array.from({ length: 50 }, (_, i) => -3 + i * 0.12);
+            const y = Array.from({ length: 50 }, (_, i) => -3 + i * 0.12);
+
+            // 二维正态PDF
+            function bivariateNormalPDF(xi, yi, rho) {
+                const exponent = -1 / (2 * (1 - rho * rho)) * (xi * xi - 2 * rho * xi * yi + yi * yi);
+                const coefficient = 1 / (2 * Math.PI * Math.sqrt(1 - rho * rho));
+                return coefficient * Math.exp(exponent);
+            }
+
+            const z = y.map(yi => x.map(xi => bivariateNormalPDF(xi, yi, rho)));
+
+            // 联合分布
+            Plotly.newPlot('joint-chart', [{
+                z: z,
+                x: x,
+                y: y,
+                type: 'contour',
+                colorscale: 'Viridis'
+            }], {
+                xaxis: { title: 'X' },
+                yaxis: { title: 'Y' },
+                margin: { l: 50, r: 50, t: 30, b: 50 }
+            }, { responsive: true });
+
+            Plotly.newPlot('joint-3d-chart', [{
+                z: z,
+                x: x,
+                y: y,
+                type: 'surface',
+                colorscale: 'Viridis'
+            }], {
+                scene: {
+                    xaxis: { title: 'X' },
+                    yaxis: { title: 'Y' },
+                    zaxis: { title: 'f(x,y)' }
+                },
+                margin: { l: 0, r: 0, t: 30, b: 0 }
+            }, { responsive: true });
+
+            // 边缘分布（标准正态）
+            const standardNormal = x.map(xi => (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * xi * xi));
+
+            Plotly.newPlot('marginal-x-chart', [{
+                x: x,
+                y: standardNormal,
+                type: 'scatter',
+                mode: 'lines',
+                fill: 'tozeroy',
+                line: { color: '#667eea', width: 2 }
+            }], {
+                xaxis: { title: 'x' },
+                yaxis: { title: 'f_X(x)' },
+                margin: { l: 50, r: 30, t: 30, b: 50 }
+            }, { responsive: true, displayModeBar: false });
+
+            Plotly.newPlot('marginal-y-chart', [{
+                x: y,
+                y: standardNormal,
+                type: 'scatter',
+                mode: 'lines',
+                fill: 'tozeroy',
+                line: { color: '#764ba2', width: 2 }
+            }], {
+                xaxis: { title: 'y' },
+                yaxis: { title: 'f_Y(y)' },
+                margin: { l: 50, r: 30, t: 30, b: 50 }
+            }, { responsive: true, displayModeBar: false });
+
+            // 条件分布 f(y|x=1)
+            const x0 = 1;
+            const conditionalMean = rho * x0;
+            const conditionalStd = Math.sqrt(1 - rho * rho);
+            const conditionalDist = y.map(yi => {
+                const z = (yi - conditionalMean) / conditionalStd;
+                return (1 / (conditionalStd * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
+            });
+
+            Plotly.newPlot('conditional-x-chart', [{
+                x: y,
+                y: conditionalDist,
+                type: 'scatter',
+                mode: 'lines',
+                fill: 'tozeroy',
+                line: { color: '#ff6b6b', width: 2 }
+            }], {
+                title: `f(Y|X=${x0.toFixed(1)})`,
+                xaxis: { title: 'y' },
+                yaxis: { title: 'f(y|x)' },
+                margin: { l: 50, r: 30, t: 50, b: 50 }
+            }, { responsive: true, displayModeBar: false });
+
+            // 对称的
+            const y0 = 1;
+            const conditionalMean2 = rho * y0;
+            const conditionalDist2 = x.map(xi => {
+                const z = (xi - conditionalMean2) / conditionalStd;
+                return (1 / (conditionalStd * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
+            });
+
+            Plotly.newPlot('conditional-y-chart', [{
+                x: x,
+                y: conditionalDist2,
+                type: 'scatter',
+                mode: 'lines',
+                fill: 'tozeroy',
+                line: { color: '#4caf50', width: 2 }
+            }], {
+                title: `f(X|Y=${y0.toFixed(1)})`,
+                xaxis: { title: 'x' },
+                yaxis: { title: 'f(x|y)' },
+                margin: { l: 50, r: 30, t: 50, b: 50 }
+            }, { responsive: true, displayModeBar: false });
+
+            // 说明
+            document.getElementById('marginal-explanation').innerHTML = `
+                <h3>💡 边缘分布说明</h3>
+                <p>对于标准二维正态分布：</p>
+                <p>f_X(x) = ∫ f(x,y) dy = (1/√(2π))e^(-x²/2)</p>
+                <p>边缘分布仍然是标准正态分布，无论相关系数ρ是多少。</p>
+            `;
+
+            document.getElementById('conditional-explanation').innerHTML = `
+                <h3>💡 条件分布说明</h3>
+                <p>对于二维正态分布，条件分布仍是正态的：</p>
+                <p>Y|X=x ~ N(ρx, 1-ρ²)</p>
+                <p>条件期望 E[Y|X=x] = ρx（回归函数是线性的）</p>
+                <p>条件方差 Var(Y|X=x) = 1-ρ²（当|ρ|接近1时，不确定性减小）</p>
+            `;
+        }
+
+        function updateFormula() {
+            const formulaDiv = document.getElementById('formula-box');
+
+            if (currentExample === 'discrete') {
+                formulaDiv.innerHTML = `
+                    <h4>📐 离散型公式</h4>
+                    <p><strong>边缘分布:</strong></p>
+                    <p style="font-size: 16px; margin: 10px 0;">$$P_X(x) = \\sum_y P(X=x, Y=y), \\quad P_Y(y) = \\sum_x P(X=x, Y=y)$$</p>
+                    <p><strong>条件分布:</strong></p>
+                    <p style="font-size: 16px; margin: 10px 0;">$$P(X=x|Y=y) = \\frac{P(X=x, Y=y)}{P_Y(y)}, \\quad P(Y=y|X=x) = \\frac{P(X=x, Y=y)}{P_X(x)}$$</p>
+                    <p><strong>独立性:</strong></p>
+                    <p style="font-size: 16px; margin: 10px 0;">$$P(X=x, Y=y) = P_X(x) \\cdot P_Y(y)$$</p>
+                `;
+            } else {
+                formulaDiv.innerHTML = `
+                    <h4>📐 连续型公式</h4>
+                    <p><strong>边缘分布:</strong></p>
+                    <p style="font-size: 16px; margin: 10px 0;">$$f_X(x) = \\int_{-\\infty}^{\\infty} f(x,y)dy, \\quad f_Y(y) = \\int_{-\\infty}^{\\infty} f(x,y)dx$$</p>
+                    <p><strong>条件分布:</strong></p>
+                    <p style="font-size: 16px; margin: 10px 0;">$$f(x|y) = \\frac{f(x,y)}{f_Y(y)}, \\quad f(y|x) = \\frac{f(x,y)}{f_X(x)}$$</p>
+                    <p><strong>独立性:</strong></p>
+                    <p style="font-size: 16px; margin: 10px 0;">$$f(x,y) = f_X(x) \\cdot f_Y(y) \\quad \\text{对所有 } x,y$$</p>
+                `;
+            }
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([formulaDiv]);
+            }
+        }
+
+        function updateInfo() {
+            const config = examples[currentExample];
+            const infoDiv = document.getElementById('info-box');
+
+            infoDiv.innerHTML = `
+                <h3>ℹ️ ${config.name}</h3>
+                <p>${config.description}</p>
+                <p style="margin-top: 15px;"><strong>核心概念：</strong></p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>边缘分布</strong>：通过积分（或求和）从联合分布得到单个变量的分布</li>
+                    <li><strong>条件分布</strong>：在已知一个变量值的条件下，另一个变量的分布</li>
+                    <li><strong>独立性</strong>：当且仅当联合分布等于边缘分布的乘积时，两变量独立</li>
+                </ul>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateControls();
+            updateCharts();
+            updateFormula();
+            updateInfo();
+        });
+    </script>
+</body>
+</html>

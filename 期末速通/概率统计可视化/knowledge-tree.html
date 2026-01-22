@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>概率统计知识树</title>
+    <script src="knowledge-data.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .back-nav {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .back-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+        }
+
+        .tree-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        .detail-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .detail-empty {
+            text-align: center;
+            color: #999;
+            padding: 60px 20px;
+        }
+
+        .detail-empty-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+        }
+
+        .detail-header {
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-icon {
+            font-size: 32px;
+        }
+
+        .detail-chapter {
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-points-list, .difficulties-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-points-list li, .difficulties-list li {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            line-height: 1.6;
+        }
+
+        .key-points-list li {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+
+        .difficulties-list li {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+        }
+
+        .prerequisites-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .prerequisites-title {
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .prerequisite-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .prerequisite-tag {
+            background: #2196f3;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .prerequisite-tag:hover {
+            background: #1976d2;
+            transform: translateY(-2px);
+        }
+
+        .visit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .visit-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .chapter-section {
+            margin-bottom: 30px;
+        }
+
+        .chapter-title {
+            color: #667eea;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .knowledge-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .knowledge-card {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .knowledge-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .knowledge-card.selected {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .card-icon {
+            font-size: 28px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+
+        .card-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .card-prerequisites {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .mini-tag {
+            background: #e0e0e0;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .legend {
+            background: white;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-panel {
+                max-height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="back-nav">
+        <a href="index.html">← 返回主页</a>
+        <a href="concept-navigator-fast.html" style="margin-left: 10px;">← 返回导航页</a>
+    </div>
+
+    <div class="container">
+        <h1>🌳 概率统计知识树</h1>
+        <p class="subtitle">探索知识点之间的依赖关系、重点难点</p>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4caf50;"></div>
+                <span>重点内容</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff9800;"></div>
+                <span>难点内容</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2196f3;"></div>
+                <span>前置知识</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="chapter-filter">📚 按章节筛选</label>
+                <select id="chapter-filter" onchange="filterByChapter()">
+                    <option value="all">全部章节</option>
+                    <option value="1">第一章：概率论的基本概念</option>
+                    <option value="2">第二章：随机变量及其分布</option>
+                    <option value="3">第三章：多维随机变量</option>
+                    <option value="4">第四章：随机变量的数字特征</option>
+                    <option value="5">第五章：大数定律及中心极限定理</option>
+                    <option value="6">第六章：样本及抽样分布</option>
+                    <option value="7">第七章：参数估计</option>
+                    <option value="8">第八章：假设检验</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="search-input">🔍 搜索知识点</label>
+                <input type="text"
+                       id="search-input"
+                       placeholder="输入关键词搜索..."
+                       oninput="searchKnowledge()"
+                       style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="tree-container" id="tree-container">
+                <!-- 知识树将在这里动态生成 -->
+            </div>
+
+            <div class="detail-panel" id="detail-panel">
+                <div class="detail-empty">
+                    <div class="detail-empty-icon">📖</div>
+                    <p>点击左侧知识点查看详情</p>
+                    <p style="font-size: 14px; margin-top: 10px; color: #bbb;">包含重点、难点、前置知识</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedKnowledgeId = null;
+
+        // 初始化页面
+        function init() {
+            renderKnowledgeTree();
+        }
+
+        // 渲染知识树
+        function renderKnowledgeTree(filterChapter = 'all', searchTerm = '') {
+            const container = document.getElementById('tree-container');
+            container.innerHTML = '';
+
+            // 按章节组织知识点
+            const chapters = {};
+            Object.values(knowledgeData).forEach(kp => {
+                const chapter = kp.chapter;
+                if (!chapters[chapter]) {
+                    chapters[chapter] = [];
+                }
+                chapters[chapter].push(kp);
+            });
+
+            // 渲染每个章节
+            Object.keys(chapters).sort((a, b) => a - b).forEach(chapterNum => {
+                // 筛选
+                if (filterChapter !== 'all' && chapterNum != filterChapter) {
+                    return;
+                }
+
+                const chapterPoints = chapters[chapterNum].filter(kp => {
+                    if (searchTerm) {
+                        const term = searchTerm.toLowerCase();
+                        return kp.name.toLowerCase().includes(term) ||
+                               kp.keyPoints.some(point => point.toLowerCase().includes(term)) ||
+                               kp.difficulties.some(diff => diff.toLowerCase().includes(term));
+                    }
+                    return true;
+                });
+
+                if (chapterPoints.length === 0) return;
+
+                const chapterSection = document.createElement('div');
+                chapterSection.className = 'chapter-section';
+
+                const chapterTitle = document.createElement('div');
+                chapterTitle.className = 'chapter-title';
+                chapterTitle.textContent = `📕 第${chapterNum}章：${chapterPoints[0].chapterName}`;
+                chapterSection.appendChild(chapterTitle);
+
+                const pointsGrid = document.createElement('div');
+                pointsGrid.className = 'knowledge-points';
+
+                chapterPoints.forEach(kp => {
+                    const card = createKnowledgeCard(kp);
+                    pointsGrid.appendChild(card);
+                });
+
+                chapterSection.appendChild(pointsGrid);
+                container.appendChild(chapterSection);
+            });
+
+            if (container.children.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;">没有找到匹配的知识点</div>';
+            }
+        }
+
+        // 创建知识点卡片
+        function createKnowledgeCard(kp) {
+            const card = document.createElement('div');
+            card.className = 'knowledge-card';
+            card.dataset.id = kp.id;
+            card.onclick = () => showDetail(kp.id);
+
+            if (selectedKnowledgeId === kp.id) {
+                card.classList.add('selected');
+            }
+
+            const header = document.createElement('div');
+            header.className = 'card-header';
+
+            const icon = document.createElement('div');
+            icon.className = 'card-icon';
+            icon.textContent = kp.icon;
+
+            const title = document.createElement('div');
+            title.className = 'card-title';
+            title.textContent = kp.name;
+
+            header.appendChild(icon);
+            header.appendChild(title);
+
+            const meta = document.createElement('div');
+            meta.className = 'card-meta';
+            meta.textContent = `${kp.keyPoints.length}个重点 · ${kp.difficulties.length}个难点`;
+
+            const prereqs = document.createElement('div');
+            prereqs.className = 'card-prerequisites';
+
+            if (kp.prerequisites.length > 0) {
+                kp.prerequisites.slice(0, 3).forEach(preId => {
+                    const preKp = knowledgeData[preId];
+                    if (preKp) {
+                        const tag = document.createElement('span');
+                        tag.className = 'mini-tag';
+                        tag.textContent = preKp.name;
+                        prereqs.appendChild(tag);
+                    }
+                });
+                if (kp.prerequisites.length > 3) {
+                    const moreTag = document.createElement('span');
+                    moreTag.className = 'mini-tag';
+                    moreTag.textContent = `+${kp.prerequisites.length - 3}`;
+                    prereqs.appendChild(moreTag);
+                }
+            } else {
+                const tag = document.createElement('span');
+                tag.className = 'mini-tag';
+                tag.style.background = '#4caf50';
+                tag.style.color = 'white';
+                tag.textContent = '无前置';
+                prereqs.appendChild(tag);
+            }
+
+            card.appendChild(header);
+            card.appendChild(meta);
+            card.appendChild(prereqs);
+
+            return card;
+        }
+
+        // 显示详情
+        function showDetail(id) {
+            selectedKnowledgeId = id;
+            const kp = knowledgeData[id];
+            const panel = document.getElementById('detail-panel');
+
+            // 更新卡片选中状态
+            document.querySelectorAll('.knowledge-card').forEach(card => {
+                card.classList.remove('selected');
+                if (card.dataset.id === id) {
+                    card.classList.add('selected');
+                }
+            });
+
+            panel.innerHTML = `
+                <div class="detail-header">
+                    <div class="detail-title">
+                        <span class="detail-icon">${kp.icon}</span>
+                        ${kp.name}
+                    </div>
+                    <div class="detail-chapter">第${kp.chapter}章：${kp.chapterName}</div>
+                </div>
+
+                ${kp.prerequisites.length > 0 ? `
+                <div class="section">
+                    <div class="prerequisites-box">
+                        <div class="prerequisites-title">📚 前置知识（点击查看）</div>
+                        <div class="prerequisite-tags">
+                            ${kp.prerequisites.map(preId => {
+                                const preKp = knowledgeData[preId];
+                                return preKp ? `<span class="prerequisite-tag" onclick="showDetail('${preId}')">${preKp.icon} ${preKp.name}</span>` : '';
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+
+                <div class="section">
+                    <div class="section-title">💡 重点内容</div>
+                    <ul class="key-points-list">
+                        ${kp.keyPoints.map(point => `<li>${point}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">⚠️ 难点内容</div>
+                    <ul class="difficulties-list">
+                        ${kp.difficulties.map(diff => `<li>${diff}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <a href="${kp.file}" class="visit-btn" target="_blank">
+                    🚀 查看可视化页面 →
+                </a>
+            `;
+        }
+
+        // 按章节筛选
+        function filterByChapter() {
+            const filter = document.getElementById('chapter-filter').value;
+            const searchTerm = document.getElementById('search-input').value;
+            renderKnowledgeTree(filter, searchTerm);
+        }
+
+        // 搜索知识点
+        function searchKnowledge() {
+            const searchTerm = document.getElementById('search-input').value;
+            const filter = document.getElementById('chapter-filter').value;
+            renderKnowledgeTree(filter, searchTerm);
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机变量函数的分布交互式可视化</title>
+    <script src="lib/plotly.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .transformation-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .transformation-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #f0f0f0;
+            color: #333;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .transformation-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .transformation-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .control-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .control-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .control-item input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
+        }
+
+        .value-display {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 4px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .formula-box {
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .formula-box h4 {
+            color: #ff9800;
+            margin-bottom: 15px;
+        }
+
+        .comparison-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .comparison-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>随机变量函数的分布交互式可视化</h1>
+            <p>探索线性变换、平方变换、指数变换等常见函数变换</p>
+        </div>
+
+        <div class="content">
+            <!-- 变换类型选择 -->
+            <div class="transformation-selector">
+                <button class="transformation-btn active" onclick="selectTransformation('linear')">线性变换 Y = aX + b</button>
+                <button class="transformation-btn" onclick="selectTransformation('square')">平方变换 Y = X²</button>
+                <button class="transformation-btn" onclick="selectTransformation('exponential')">指数变换 Y = e^X</button>
+                <button class="transformation-btn" onclick="selectTransformation('log')">对数变换 Y = ln(X)</button>
+            </div>
+
+            <!-- 参数控制 -->
+            <div class="controls" id="controls">
+                <!-- 动态生成控制项 -->
+            </div>
+
+            <!-- 图表对比 -->
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3 id="original-chart-title">原始变量 X 的分布</h3>
+                    <div id="original-chart"></div>
+                </div>
+                <div class="chart-box">
+                    <h3 id="transformed-chart-title">变换后变量 Y 的分布</h3>
+                    <div id="transformed-chart"></div>
+                </div>
+            </div>
+
+            <!-- 公式说明 -->
+            <div class="formula-box" id="formula-box">
+                <!-- 动态生成公式 -->
+            </div>
+
+            <!-- 信息说明 -->
+            <div class="info-box" id="info-box">
+                <!-- 动态生成说明 -->
+            </div>
+
+            <!-- 对比统计 -->
+            <div class="comparison-box" id="comparison-box">
+                <!-- 动态生成对比 -->
+            </div>
+
+            <div style="text-align: center;">
+                <a href="../index.html" class="back-link">← 返回概率统计模块</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 当前选中的变换
+        let currentTransformation = 'linear';
+
+        // 变换配置
+        const transformations = {
+            linear: {
+                name: '线性变换',
+                formula: 'Y = aX + b',
+                params: {
+                    a: { label: '斜率 a', min: -5, max: 5, step: 0.1, default: 2 },
+                    b: { label: '截距 b', min: -10, max: 10, step: 0.5, default: 3 },
+                    mu: { label: 'X的均值 μ', min: -5, max: 5, step: 0.1, default: 0 },
+                    sigma: { label: 'X的标准差 σ', min: 0.1, max: 3, step: 0.1, default: 1 }
+                },
+                formulas: {
+                    pdf: '若 X ~ N(μ, σ²), 则 Y = aX + b ~ N(aμ + b, a²σ²)',
+                    cdf: 'F_Y(y) = F_X\\left(\\frac{y-b}{a}\\right)',
+                    mean: 'E[Y] = aE[X] + b = aμ + b',
+                    variance: 'Var(Y) = a²Var(X) = a²σ²'
+                },
+                description: '线性变换是最简单也是最重要的随机变量函数变换。如果 X 服从正态分布，则 Y = aX + b 也服从正态分布，参数按线性关系变换。'
+            },
+            square: {
+                name: '平方变换',
+                formula: 'Y = X²',
+                params: {
+                    mu: { label: 'X的均值 μ', min: -3, max: 3, step: 0.1, default: 0 },
+                    sigma: { label: 'X的标准差 σ', min: 0.1, max: 2, step: 0.1, default: 1 }
+                },
+                formulas: {
+                    pdf: 'f_Y(y) = \\frac{1}{2\\sqrt{y}}[f_X(\\sqrt{y}) + f_X(-\\sqrt{y})], \\quad y > 0',
+                    cdf: 'F_Y(y) = P(X² ≤ y) = P(-\\sqrt{y} ≤ X ≤ \\sqrt{y}) = F_X(\\sqrt{y}) - F_X(-\\sqrt{y})',
+                    note: '若 X ~ N(0, σ²), 则 X² ~ σ²χ²(1)（卡方分布）'
+                },
+                description: '平方变换将正态分布变量变换为非负变量。当 X 服从标准正态分布时，X² 服从自由度为1的卡方分布。'
+            },
+            exponential: {
+                name: '指数变换',
+                formula: 'Y = e^X',
+                params: {
+                    mu: { label: 'X的均值 μ', min: -2, max: 2, step: 0.1, default: 0 },
+                    sigma: { label: 'X的标准差 σ', min: 0.1, max: 2, step: 0.1, default: 0.5 }
+                },
+                formulas: {
+                    pdf: 'f_Y(y) = \\frac{1}{y}f_X(\\ln y), \\quad y > 0',
+                    cdf: 'F_Y(y) = P(e^X ≤ y) = P(X ≤ \\ln y) = F_X(\\ln y)',
+                    note: '若 X ~ N(μ, σ²), 则 Y 服从对数正态分布 Lognormal(μ, σ²)'
+                },
+                description: '指数变换将整个实数域映射到正实数域。正态分布经过指数变换后得到对数正态分布，常用于建模金融资产价格、收入等数据。'
+            },
+            log: {
+                name: '对数变换',
+                formula: 'Y = ln(X)',
+                params: {
+                    mu: { label: 'X的均值 μ', min: 1, max: 10, step: 0.1, default: 3 },
+                    sigma: { label: 'X的标准差 σ', min: 0.1, max: 3, step: 0.1, default: 1 }
+                },
+                formulas: {
+                    pdf: 'f_Y(y) = e^y f_X(e^y), \\quad y ∈ ℝ',
+                    cdf: 'F_Y(y) = P(\\ln X ≤ y) = P(X ≤ e^y) = F_X(e^y)',
+                    note: '若 X ~ Lognormal(μ, σ²), 则 Y = ln X ~ N(μ, σ²)'
+                },
+                description: '对数变换将正实数映射到整个实数域。对数正态分布取对数后得到正态分布，这是对数正态分布名称的由来。'
+            }
+        };
+
+        // 正态分布PDF
+        function normalPDF(x, mu, sigma) {
+            return (1 / (sigma * Math.sqrt(2 * Math.PI))) *
+                   Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+        }
+
+        // 线性变换
+        function linearTransform(x, a, b) {
+            return a * x + b;
+        }
+
+        // 平方变换
+        function squareTransform(x) {
+            return x * x;
+        }
+
+        // 指数变换
+        function expTransform(x) {
+            return Math.exp(x);
+        }
+
+        // 对数变换
+        function logTransform(x) {
+            return Math.log(x);
+        }
+
+        // 选择变换
+        function selectTransformation(transform) {
+            currentTransformation = transform;
+
+            // 更新按钮状态
+            document.querySelectorAll('.transformation-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 更新界面
+            updateControls();
+            updateCharts();
+            updateFormula();
+            updateInfo();
+            updateComparison();
+        }
+
+        // 更新控制面板
+        function updateControls() {
+            const config = transformations[currentTransformation];
+            const controlsDiv = document.getElementById('controls');
+
+            let html = '<h3 style="margin-bottom: 20px;">参数调整</h3>';
+            html += '<div class="control-group">';
+
+            for (const [paramName, paramConfig] of Object.entries(config.params)) {
+                html += `
+                    <div class="control-item">
+                        <label>${paramConfig.label}</label>
+                        <input type="range"
+                               id="${paramName}"
+                               min="${paramConfig.min}"
+                               max="${paramConfig.max}"
+                               step="${paramConfig.step}"
+                               value="${paramConfig.default}"
+                               oninput="updateCharts()">
+                        <span class="value-display" id="${paramName}-value">${paramConfig.default}</span>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            controlsDiv.innerHTML = html;
+        }
+
+        // 获取当前参数值
+        function getParams() {
+            const config = transformations[currentTransformation];
+            const params = {};
+            for (const paramName of Object.keys(config.params)) {
+                params[paramName] = parseFloat(document.getElementById(paramName).value);
+                document.getElementById(`${paramName}-value`).textContent = params[paramName];
+            }
+            return params;
+        }
+
+        // 生成变换后的分布数据
+        function generateTransformedDistribution(params) {
+            const n = 10000;
+            const originalSamples = [];
+            const transformedSamples = [];
+
+            // 生成原始正态分布样本
+            for (let i = 0; i < n; i++) {
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                const x = params.mu + params.sigma * z;
+                originalSamples.push(x);
+
+                // 应用变换
+                let y;
+                switch(currentTransformation) {
+                    case 'linear':
+                        y = linearTransform(x, params.a, params.b);
+                        break;
+                    case 'square':
+                        y = squareTransform(x);
+                        break;
+                    case 'exponential':
+                        y = expTransform(x);
+                        break;
+                    case 'log':
+                        y = x > 0 ? logTransform(x) : NaN;
+                        break;
+                }
+                if (!isNaN(y)) {
+                    transformedSamples.push(y);
+                }
+            }
+
+            return { originalSamples, transformedSamples };
+        }
+
+        // 计算样本的均值和标准差
+        function calculateSampleStats(samples) {
+            const n = samples.length;
+            const mean = samples.reduce((a, b) => a + b, 0) / n;
+            const variance = samples.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+            return { mean, stdDev: Math.sqrt(variance) };
+        }
+
+        // 创建直方图数据
+        function createHistogramData(samples, bins = 50) {
+            const min = Math.min(...samples);
+            const max = Math.max(...samples);
+            const binWidth = (max - min) / bins;
+
+            const histogram = new Array(bins).fill(0);
+            const binCenters = [];
+
+            for (let i = 0; i < bins; i++) {
+                const binStart = min + i * binWidth;
+                const binEnd = binStart + binWidth;
+                binCenters.push((binStart + binEnd) / 2);
+            }
+
+            samples.forEach(value => {
+                const binIndex = Math.min(Math.floor((value - min) / binWidth), bins - 1);
+                histogram[binIndex]++;
+            });
+
+            // 归一化
+            const totalCount = samples.length;
+            const normalizedHistogram = histogram.map(count => count / (totalCount * binWidth));
+
+            return { x: binCenters, y: normalizedHistogram };
+        }
+
+        // 更新图表
+        function updateCharts() {
+            const params = getParams();
+            const { originalSamples, transformedSamples } = generateTransformedDistribution(params);
+
+            // 原始分布
+            const originalHist = createHistogramData(originalSamples);
+            const originalStats = calculateSampleStats(originalSamples);
+
+            const originalTrace = {
+                x: originalHist.x,
+                y: originalHist.y,
+                type: 'bar',
+                marker: {
+                    color: '#667eea',
+                    opacity: 0.7
+                },
+                name: '原始分布',
+                hovertemplate: 'X: %{x:.2f}<br>密度: %{y:.4f}<extra></extra>'
+            };
+
+            const originalLayout = {
+                title: {
+                    text: `X ~ N(${params.mu.toFixed(2)}, ${params.sigma.toFixed(2)}²)<br>样本均值: ${originalStats.mean.toFixed(2)}, 样本标准差: ${originalStats.stdDev.toFixed(2)}`,
+                    font: { size: 14 }
+                },
+                xaxis: { title: 'X' },
+                yaxis: { title: '概率密度' },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                margin: { l: 50, r: 30, t: 80, b: 50 },
+                height: 350
+            };
+
+            Plotly.newPlot('original-chart', [originalTrace], originalLayout, {
+                responsive: true,
+                displayModeBar: false
+            });
+
+            // 变换后分布
+            const transformedHist = createHistogramData(transformedSamples);
+            const transformedStats = calculateSampleStats(transformedSamples);
+
+            const transformedTrace = {
+                x: transformedHist.x,
+                y: transformedHist.y,
+                type: 'bar',
+                marker: {
+                    color: '#764ba2',
+                    opacity: 0.7
+                },
+                name: '变换后分布',
+                hovertemplate: 'Y: %{x:.2f}<br>密度: %{y:.4f}<extra></extra>'
+            };
+
+            const transformedLayout = {
+                title: {
+                    text: `${transformations[currentTransformation].formula}<br>样本均值: ${transformedStats.mean.toFixed(2)}, 样本标准差: ${transformedStats.stdDev.toFixed(2)}`,
+                    font: { size: 14 }
+                },
+                xaxis: { title: 'Y' },
+                yaxis: { title: '概率密度' },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                margin: { l: 50, r: 30, t: 80, b: 50 },
+                height: 350
+            };
+
+            Plotly.newPlot('transformed-chart', [transformedTrace], transformedLayout, {
+                responsive: true,
+                displayModeBar: false
+            });
+
+            // 更新对比统计
+            updateComparisonData(originalStats, transformedStats);
+        }
+
+        // 更新对比数据
+        function updateComparisonData(originalStats, transformedStats) {
+            // 这个函数会在updateCharts中调用
+            window.currentStats = { originalStats, transformedStats };
+        }
+
+        // 更新公式
+        function updateFormula() {
+            const transform = transformations[currentTransformation];
+            const formulaDiv = document.getElementById('formula-box');
+
+            let html = '<h4>📐 数学公式</h4>';
+            html += '<p><strong>变换公式:</strong></p>';
+            html += `<p style="font-size: 18px; margin: 10px 0;">$$${transform.formula}$$</p>`;
+
+            for (const [key, formula] of Object.entries(transform.formulas)) {
+                if (key !== 'note') {
+                    const label = key === 'pdf' ? '概率密度函数' : key === 'cdf' ? '累积分布函数' : key;
+                    html += `<p><strong>${label}:</strong></p>`;
+                    html += `<p style="font-size: 16px; margin: 10px 0;">$$${formula}$$</p>`;
+                }
+            }
+
+            if (transform.formulas.note) {
+                html += `<p><strong>💡 特殊性质:</strong></p>`;
+                html += `<p style="font-size: 14px; margin: 10px 0;">$$${transform.formulas.note}$$</p>`;
+            }
+
+            formulaDiv.innerHTML = html;
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([formulaDiv]);
+            }
+        }
+
+        // 更新说明信息
+        function updateInfo() {
+            const transform = transformations[currentTransformation];
+            const infoDiv = document.getElementById('info-box');
+
+            infoDiv.innerHTML = `
+                <h3>ℹ️ ${transform.name}说明</h3>
+                <p>${transform.description}</p>
+            `;
+        }
+
+        // 更新对比统计
+        function updateComparison() {
+            const comparisonDiv = document.getElementById('comparison-box');
+
+            comparisonDiv.innerHTML = `
+                <h3>📊 统计量对比</h3>
+                <p>调整参数后，观察原始分布和变换后分布的统计量变化。</p>
+                <div id="stats-display" style="margin-top: 15px;">
+                    <p style="color: #999;">请调整参数查看统计量...</p>
+                </div>
+            `;
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateControls();
+            updateCharts();
+            updateFormula();
+            updateInfo();
+            updateComparison();
+        });
+    </script>
+</body>
+</html>

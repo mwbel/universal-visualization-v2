@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap方法交互式可视化</title>
+
+    <!--
+    ==================== 离线使用说明 ====================
+    要将此页面改为离线版本，请按以下步骤操作：
+
+    1. 下载以下库文件到本地：
+       - Plotly: https://cdn.plot.ly/plotly-2.26.0.min.js
+         保存为: lib/plotly.min.js
+
+       - MathJax: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+         保存为: lib/tex-mml-chtml.js
+
+    2. 修改script标签：
+       将:
+       <script src="lib/plotly.min.js"></script>
+       改为:
+       <script src="lib/plotly.min.js"></script>
+
+       将:
+       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+       改为:
+       <script src="lib/tex-mml-chtml.js"></script>
+
+    3. 创建lib文件夹并放置下载的文件
+
+    ==================== 离线使用说明结束 ====================
+    -->
+
+    <script src="lib/plotly.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .scenario-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .scenario-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #f0f0f0;
+            color: #333;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .scenario-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .scenario-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .control-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .control-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .control-item input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
+        }
+
+        .value-display {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 4px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .formula-box {
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .formula-box h4 {
+            color: #ff9800;
+            margin-bottom: 15px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .results-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .results-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .animation-info {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Bootstrap方法交互式可视化</h1>
+            <p>探索自助法（Bootstrap）重采样技术及其在统计推断中的应用</p>
+        </div>
+
+        <div class="content">
+            <!-- 应用场景选择 -->
+            <div class="scenario-selector">
+                <button class="scenario-btn active" onclick="selectScenario('mean')">均值估计</button>
+                <button class="scenario-btn" onclick="selectScenario('median')">中位数估计</button>
+                <button class="scenario-btn" onclick="selectScenario('variance')">方差估计</button>
+                <button class="scenario-btn" onclick="selectScenario('correlation')">相关系数</button>
+            </div>
+
+            <!-- 参数控制 -->
+            <div class="controls" id="controls">
+                <!-- 动态生成控制项 -->
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="action-buttons">
+                <button class="action-btn btn-primary" onclick="runBootstrap()">🚀 运行 Bootstrap</button>
+                <button class="action-btn btn-secondary" onclick="resetData()">🔄 重置数据</button>
+            </div>
+
+            <!-- 进度条 -->
+            <div id="progress-container" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%">0%</div>
+                </div>
+            </div>
+
+            <!-- 动画信息 -->
+            <div id="animation-info" class="animation-info" style="display: none;">
+                <p id="animation-text">正在运行 Bootstrap 重采样...</p>
+            </div>
+
+            <!-- 图表 -->
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3>原始样本数据</h3>
+                    <div id="original-sample-chart"></div>
+                </div>
+                <div class="chart-box">
+                    <h3>Bootstrap 分布</h3>
+                    <div id="bootstrap-distribution-chart"></div>
+                </div>
+            </div>
+
+            <!-- 结果表格 -->
+            <div id="results-container" style="display: none;">
+                <h3 style="color: #667eea; margin-bottom: 20px;">📊 统计结果对比</h3>
+                <table class="results-table" id="results-table">
+                    <!-- 动态生成结果 -->
+                </table>
+            </div>
+
+            <!-- 公式说明 -->
+            <div class="formula-box" id="formula-box">
+                <!-- 动态生成公式 -->
+            </div>
+
+            <!-- 信息说明 -->
+            <div class="info-box" id="info-box">
+                <!-- 动态生成说明 -->
+            </div>
+
+            <div style="text-align: center;">
+                <a href="../index.html" class="back-link">← 返回概率统计模块</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 当前选中的场景
+        let currentScenario = 'mean';
+        let bootstrapResults = null;
+        let originalSample = null;
+        let bootstrapAnimationId = null;
+
+        // 场景配置
+        const scenarios = {
+            mean: {
+                name: '均值估计',
+                params: {
+                    sampleSize: { label: '样本大小 n', min: 10, max: 200, step: 5, default: 50 },
+                    populationMean: { label: '总体均值 μ', min: -10, max: 10, step: 0.5, default: 0 },
+                    populationStd: { label: '总体标准差 σ', min: 0.5, max: 5, step: 0.1, default: 2 },
+                    bootstrapReplicates: { label: 'Bootstrap 重复次数 B', min: 100, max: 10000, step: 100, default: 1000 }
+                },
+                statistic: '均值',
+                symbol: 'x̄',
+                description: 'Bootstrap 用于估计总体均值的分布。通过从原始样本中有放回地重采样，计算每次重采样的均值，构建均值的抽样分布。'
+            },
+            median: {
+                name: '中位数估计',
+                params: {
+                    sampleSize: { label: '样本大小 n', min: 10, max: 200, step: 5, default: 50 },
+                    populationMean: { label: '总体均值 μ', min: -10, max: 10, step: 0.5, default: 0 },
+                    populationStd: { label: '总体标准差 σ', min: 0.5, max: 5, step: 0.1, default: 2 },
+                    bootstrapReplicates: { label: 'Bootstrap 重复次数 B', min: 100, max: 10000, step: 100, default: 1000 }
+                },
+                statistic: '中位数',
+                symbol: 'm',
+                description: 'Bootstrap 特别适用于估计中位数等统计量的分布。中位数的标准误差在理论上难以推导，但 Bootstrap 可以通过重采样轻松估计。'
+            },
+            variance: {
+                name: '方差估计',
+                params: {
+                    sampleSize: { label: '样本大小 n', min: 10, max: 200, step: 5, default: 50 },
+                    populationMean: { label: '总体均值 μ', min: -10, max: 10, step: 0.5, default: 0 },
+                    populationStd: { label: '总体标准差 σ', min: 0.5, max: 5, step: 0.1, default: 2 },
+                    bootstrapReplicates: { label: 'Bootstrap 重复次数 B', min: 100, max: 10000, step: 100, default: 1000 }
+                },
+                statistic: '方差',
+                symbol: 's²',
+                description: 'Bootstrap 可以用来评估方差的变异性。通过重采样，我们可以获得方差的置信区间，这在传统统计方法中可能需要复杂的假设。'
+            },
+            correlation: {
+                name: '相关系数估计',
+                params: {
+                    sampleSize: { label: '样本大小 n', min: 10, max: 200, step: 5, default: 50 },
+                    trueCorrelation: { label: '真实相关系数 ρ', min: -0.9, max: 0.9, step: 0.05, default: 0.6 },
+                    bootstrapReplicates: { label: 'Bootstrap 重复次数 B', min: 100, max: 10000, step: 100, default: 1000 }
+                },
+                statistic: '相关系数',
+                symbol: 'r',
+                description: 'Bootstrap 在相关系数的推断中非常有用。它可以提供相关系数的置信区间，而不依赖于正态分布假设。'
+            }
+        };
+
+        // 生成正态分布随机样本
+        function generateNormalSample(n, mean, std) {
+            const sample = [];
+            for (let i = 0; i < n; i++) {
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                sample.push(mean + std * z);
+            }
+            return sample;
+        }
+
+        // 生成双变量正态分布
+        function generateBivariateNormalSample(n, rho) {
+            const x = generateNormalSample(n, 0, 1);
+            const y = x.map(xi => {
+                const independent = Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random());
+                return rho * xi + Math.sqrt(1 - rho * rho) * independent;
+            });
+            return { x, y };
+        }
+
+        // Bootstrap 重采样
+        function bootstrapResample(sample) {
+            const n = sample.length;
+            const resample = [];
+            for (let i = 0; i < n; i++) {
+                const randomIndex = Math.floor(Math.random() * n);
+                resample.push(sample[randomIndex]);
+            }
+            return resample;
+        }
+
+        // 计算统计量
+        function calculateStatistic(data, scenario) {
+            switch(scenario) {
+                case 'mean':
+                    return data.reduce((a, b) => a + b, 0) / data.length;
+                case 'median':
+                    const sorted = [...data].sort((a, b) => a - b);
+                    const mid = Math.floor(sorted.length / 2);
+                    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+                case 'variance':
+                    const mean = data.reduce((a, b) => a + b, 0) / data.length;
+                    return data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (data.length - 1);
+                case 'correlation':
+                    const x = data.x;
+                    const y = data.y;
+                    const n = x.length;
+                    const meanX = x.reduce((a, b) => a + b, 0) / n;
+                    const meanY = y.reduce((a, b) => a + b, 0) / n;
+                    let numerator = 0, denomX = 0, denomY = 0;
+                    for (let i = 0; i < n; i++) {
+                        numerator += (x[i] - meanX) * (y[i] - meanY);
+                        denomX += Math.pow(x[i] - meanX, 2);
+                        denomY += Math.pow(y[i] - meanY, 2);
+                    }
+                    return numerator / Math.sqrt(denomX * denomY);
+                default:
+                    return 0;
+            }
+        }
+
+        // 计算置信区间
+        function calculateConfidenceInterval(values, alpha = 0.05) {
+            const sorted = [...values].sort((a, b) => a - b);
+            const n = sorted.length;
+            const lowerIndex = Math.floor((alpha / 2) * n);
+            const upperIndex = Math.ceil((1 - alpha / 2) * n) - 1;
+            return {
+                lower: sorted[lowerIndex],
+                upper: sorted[upperIndex]
+            };
+        }
+
+        // 选择场景
+        function selectScenario(scenario) {
+            currentScenario = scenario;
+            bootstrapResults = null;
+
+            // 更新按钮状态
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 更新界面
+            updateControls();
+            resetData();
+            updateFormula();
+            updateInfo();
+        }
+
+        // 更新控制面板
+        function updateControls() {
+            const config = scenarios[currentScenario];
+            const controlsDiv = document.getElementById('controls');
+
+            let html = '<h3 style="margin-bottom: 20px;">参数设置</h3>';
+            html += '<div class="control-group">';
+
+            for (const [paramName, paramConfig] of Object.entries(config.params)) {
+                html += `
+                    <div class="control-item">
+                        <label>${paramConfig.label}</label>
+                        <input type="range"
+                               id="${paramName}"
+                               min="${paramConfig.min}"
+                               max="${paramConfig.max}"
+                               step="${paramConfig.step}"
+                               value="${paramConfig.default}"
+                               oninput="updateValueDisplay('${paramName}')">
+                        <span class="value-display" id="${paramName}-value">${paramConfig.default}</span>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            controlsDiv.innerHTML = html;
+        }
+
+        // 更新值显示
+        function updateValueDisplay(paramName) {
+            const value = document.getElementById(paramName).value;
+            document.getElementById(`${paramName}-value`).textContent = value;
+        }
+
+        // 获取当前参数值
+        function getParams() {
+            const config = scenarios[currentScenario];
+            const params = {};
+            for (const paramName of Object.keys(config.params)) {
+                params[paramName] = parseFloat(document.getElementById(paramName).value);
+            }
+            return params;
+        }
+
+        // 运行 Bootstrap
+        async function runBootstrap() {
+            const params = getParams();
+            const config = scenarios[currentScenario];
+
+            // 显示进度
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('animation-info').style.display = 'block';
+
+            // 生成原始样本
+            if (currentScenario === 'correlation') {
+                const bivariateData = generateBivariateNormalSample(params.sampleSize, params.trueCorrelation);
+                originalSample = bivariateData;
+            } else {
+                originalSample = generateNormalSample(
+                    params.sampleSize,
+                    params.populationMean,
+                    params.populationStd
+                );
+            }
+
+            // 绘制原始样本
+            plotOriginalSample();
+
+            // Bootstrap 重采样（带动画）
+            const bootstrapStatistics = [];
+            const B = params.bootstrapReplicates;
+            const batchSize = Math.max(1, Math.floor(B / 100)); // 分100批执行
+
+            for (let i = 0; i < B; i += batchSize) {
+                const currentBatchSize = Math.min(batchSize, B - i);
+                for (let j = 0; j < currentBatchSize; j++) {
+                    if (currentScenario === 'correlation') {
+                        // 对双变量数据重采样
+                        const indices = Array.from({ length: params.sampleSize }, () =>
+                            Math.floor(Math.random() * params.sampleSize)
+                        );
+                        const resample = {
+                            x: indices.map(idx => originalSample.x[idx]),
+                            y: indices.map(idx => originalSample.y[idx])
+                        };
+                        bootstrapStatistics.push(calculateStatistic(resample, currentScenario));
+                    } else {
+                        const resample = bootstrapResample(originalSample);
+                        bootstrapStatistics.push(calculateStatistic(resample, currentScenario));
+                    }
+                }
+
+                // 更新进度
+                const progress = Math.min(100, ((i + currentBatchSize) / B) * 100);
+                document.getElementById('progress-fill').style.width = progress + '%';
+                document.getElementById('progress-fill').textContent = Math.round(progress) + '%';
+                document.getElementById('animation-text').textContent =
+                    `正在运行 Bootstrap 重采样... ${Math.round(progress)}%`;
+
+                // 让浏览器有机会更新UI
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+
+            // 计算结果
+            const originalStatistic = calculateStatistic(originalSample, currentScenario);
+            const bootstrapMean = bootstrapStatistics.reduce((a, b) => a + b, 0) / bootstrapStatistics.length;
+            const bootstrapStd = Math.sqrt(
+                bootstrapStatistics.reduce((a, b) => a + Math.pow(b - bootstrapMean, 2), 0) / bootstrapStatistics.length
+            );
+            const ci = calculateConfidenceInterval(bootstrapStatistics);
+
+            bootstrapResults = {
+                originalStatistic,
+                bootstrapStatistics,
+                bootstrapMean,
+                bootstrapStd,
+                ci
+            };
+
+            // 绘制 Bootstrap 分布
+            plotBootstrapDistribution();
+
+            // 显示结果
+            displayResults();
+
+            // 隐藏进度
+            setTimeout(() => {
+                document.getElementById('progress-container').style.display = 'none';
+                document.getElementById('animation-info').style.display = 'none';
+            }, 500);
+        }
+
+        // 绘制原始样本
+        function plotOriginalSample() {
+            let trace;
+
+            if (currentScenario === 'correlation') {
+                trace = {
+                    x: originalSample.x,
+                    y: originalSample.y,
+                    mode: 'markers',
+                    type: 'scatter',
+                    marker: {
+                        size: 8,
+                        color: '#667eea',
+                        opacity: 0.6
+                    },
+                    hovertemplate: 'X: %{x:.2f}<br>Y: %{y:.2f}<extra></extra>'
+                };
+            } else {
+                trace = {
+                    x: Array.from({ length: originalSample.length }, (_, i) => i + 1),
+                    y: originalSample,
+                    mode: 'markers',
+                    type: 'scatter',
+                    marker: {
+                        size: 8,
+                        color: '#667eea',
+                        opacity: 0.6
+                    },
+                    hovertemplate: '索引: %{x}<br>值: %{y:.2f}<extra></extra>'
+                };
+            }
+
+            const layout = {
+                xaxis: { title: currentScenario === 'correlation' ? 'X' : '样本索引' },
+                yaxis: { title: currentScenario === 'correlation' ? 'Y' : '观测值' },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                margin: { l: 50, r: 30, t: 30, b: 50 },
+                height: 350
+            };
+
+            Plotly.newPlot('original-sample-chart', [trace], layout, {
+                responsive: true,
+                displayModeBar: false
+            });
+        }
+
+        // 绘制 Bootstrap 分布
+        function plotBootstrapDistribution() {
+            if (!bootstrapResults) return;
+
+            const trace = {
+                x: bootstrapResults.bootstrapStatistics,
+                type: 'histogram',
+                marker: {
+                    color: '#764ba2',
+                    opacity: 0.7
+                },
+                nbinsx: 50,
+                hovertemplate: '统计量值: %{x:.3f}<br>频数: %{y}<extra></extra>'
+            };
+
+            const originalStat = bootstrapResults.originalStatistic;
+
+            // 添加原始统计量标记线
+            const lineTrace = {
+                x: [originalStat, originalStat],
+                y: [0, Math.max(...trace.x.map((_, i) => {
+                    // 简化计算，实际应该从histogram获取
+                    return 1;
+                }))],
+                mode: 'lines',
+                type: 'scatter',
+                line: {
+                    color: '#ff6b6b',
+                    width: 3,
+                    dash: 'dash'
+                },
+                name: '原始统计量',
+                hoverinfo: 'skip'
+            };
+
+            const layout = {
+                title: {
+                    text: `${scenarios[currentScenario].statistic} = ${originalStat.toFixed(3)}`,
+                    font: { size: 14, color: '#ff6b6b' }
+                },
+                xaxis: { title: scenarios[currentScenario].symbol },
+                yaxis: { title: '频数' },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                margin: { l: 50, r: 30, t: 60, b: 50 },
+                height: 350,
+                showlegend: false
+            };
+
+            Plotly.newPlot('bootstrap-distribution-chart', [trace, lineTrace], layout, {
+                responsive: true,
+                displayModeBar: false
+            });
+        }
+
+        // 显示结果
+        function displayResults() {
+            if (!bootstrapResults) return;
+
+            document.getElementById('results-container').style.display = 'block';
+
+            const config = scenarios[currentScenario];
+            const table = document.getElementById('results-table');
+
+            table.innerHTML = `
+                <tr>
+                    <th>统计量</th>
+                    <th>值</th>
+                </tr>
+                <tr>
+                    <td>原始样本 ${config.statistic} (${config.symbol})</td>
+                    <td>${bootstrapResults.originalStatistic.toFixed(4)}</td>
+                </tr>
+                <tr>
+                    <td>Bootstrap 均值</td>
+                    <td>${bootstrapResults.bootstrapMean.toFixed(4)}</td>
+                </tr>
+                <tr>
+                    <td>Bootstrap 标准误差</td>
+                    <td>${bootstrapResults.bootstrapStd.toFixed(4)}</td>
+                </tr>
+                <tr>
+                    <td>95% 置信区间</td>
+                    <td>[${bootstrapResults.ci.lower.toFixed(4)}, ${bootstrapResults.ci.upper.toFixed(4)}]</td>
+                </tr>
+            `;
+        }
+
+        // 重置数据
+        function resetData() {
+            bootstrapResults = null;
+            originalSample = null;
+
+            document.getElementById('results-container').style.display = 'none';
+            document.getElementById('progress-container').style.display = 'none';
+            document.getElementById('animation-info').style.display = 'none';
+
+            // 清空图表
+            Plotly.purge('original-sample-chart');
+            Plotly.purge('bootstrap-distribution-chart');
+        }
+
+        // 更新公式
+        function updateFormula() {
+            const config = scenarios[currentScenario];
+            const formulaDiv = document.getElementById('formula-box');
+
+            formulaDiv.innerHTML = `
+                <h4>📐 Bootstrap 方法原理</h4>
+                <p><strong>步骤：</strong></p>
+                <ol style="margin-left: 20px; line-height: 2;">
+                    <li>从原始样本中<strong>有放回</strong>地随机抽取 n 个观测值，得到一个 Bootstrap 样本</li>
+                    <li>计算该 Bootstrap 样本的统计量（${config.symbol}*）</li>
+                    <li>重复上述步骤 B 次（通常 B = 1000 或更多）</li>
+                    <li>使用 B 个 ${config.symbol}* 值的分布来推断 ${config.symbol} 的抽样分布特性</li>
+                </ol>
+                <p style="margin-top: 15px;"><strong>置信区间（百分位法）:</strong></p>
+                <p style="font-size: 16px; margin: 10px 0;">
+                    $$CI_{1-\\alpha} = [\\dot{\\theta}_{\\alpha/2}, \\dot{\\theta}_{1-\\alpha/2}]$$
+                </p>
+                <p style="font-size: 14px; color: #666;">
+                    其中 $\\dot{\\theta}_{\\alpha/2}$ 和 $\\dot{\\theta}_{1-\\alpha/2}$ 分别是 Bootstrap 统计量的 $\\alpha/2$ 和 $1-\\alpha/2$ 分位数。
+                </p>
+            `;
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([formulaDiv]);
+            }
+        }
+
+        // 更新说明信息
+        function updateInfo() {
+            const config = scenarios[currentScenario];
+            const infoDiv = document.getElementById('info-box');
+
+            infoDiv.innerHTML = `
+                <h3>ℹ️ ${config.name}</h3>
+                <p>${config.description}</p>
+                <p style="margin-top: 15px;"><strong>Bootstrap 优势：</strong></p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>不需要对总体分布做强假设</li>
+                    <li>可以估计复杂统计量的标准误差</li>
+                    <li>特别适用于小样本情况</li>
+                    <li>可以构建非参数置信区间</li>
+                </ul>
+            `;
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateControls();
+            updateFormula();
+            updateInfo();
+        });
+    </script>
+</body>
+</html>
