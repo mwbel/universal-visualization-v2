@@ -1,8 +1,0 @@
-\contentsline {section}{\numberline {1}沪教版高中数学1数学术语中英文对照}{1}{section.1}%
-\contentsline {subsection}{\numberline {1.1}第1章 集合 (Chapter 1: Sets)}{1}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}第2章 等式与不等式 (Chapter 2: Equations and Inequalities)}{2}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}第3章 函数的概念与性质 (Chapter 3: Concepts and Properties of Functions)}{3}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}第4章 指数函数与对数函数 (Chapter 4: Exponential and Logarithmic Functions)}{4}{subsection.1.4}%
-\contentsline {subsection}{\numberline {1.5}第5章 三角比 (Chapter 5: Trigonometric Ratios)}{6}{subsection.1.5}%
-\contentsline {subsection}{\numberline {1.6}通用数学术语 (General Mathematical Terms)}{8}{subsection.1.6}%
-\contentsline {subsection}{\numberline {1.7}常用数集符号 (Common Number Sets)}{9}{subsection.1.7}%
