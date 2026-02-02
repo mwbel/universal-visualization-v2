@@ -1,0 +1,41 @@
+\section*{黎曼几何中的距离演进：从平滑性到度量性}
+
+在微分流形的框架下，答案是肯定的。黎曼几何的核心正是通过在微分流形上引入额外的结构来定义“距离”和“角度”。
+
+\subsection*{1. 为什么微分流形本身没有距离？}
+
+在 $§1.1$ 的学习中，微分流形主要关注的是“平滑性”：
+\begin{itemize}
+    \item \textbf{拓扑流形：} 仅保证了点与点之间的邻近关系，即连续性。
+    \item \textbf{微分流形：} 仅保证了每一点邻域局部同胚于欧氏空间，从而可以进行微积分运算。
+    \item \textbf{直观缺陷：} 微分流形没有规定“尺子”的大小。想象一个橡胶球面，无论如何拉伸，其微分结构保持不变，但两点间的“实际长度”却随拉伸而改变。
+\end{itemize}
+
+\subsection*{2. 黎曼度量 ($Riemannian \ Metric$) 的引入}
+
+为了在流形上定义距离，我们需要在每一点 $p$ 的切空间 $T_p M$ 上定义一个内积 $g$。其局部表示形式为：
+\begin{equation}
+ds^2 = \sum_{i,j} g_{ij} dx^i dx^j \tag{度量线元}
+\end{equation}
+这里的 $g_{ij}$ 被称为黎曼度量张量，它在流形的每一点处都提供了一把“局部标尺”。
+
+\subsection*{3. 距离的定义方式}
+
+
+
+有了度量 $g$ 之后，我们可以定义流形上曲线 $\gamma(t)$ 的长度 $L$：
+\begin{equation}
+L(\gamma) = \int_a^b \sqrt{g(\dot{\gamma}(t), \dot{\gamma}(t))} dt = \int_a^b \sqrt{g_{ij} \frac{dx^i}{dt} \frac{dx^j}{dt}} dt \tag{弧长公式}
+\end{equation}
+而流形上两点 $p, q$ 之间的\textbf{距离} $d(p, q)$，定义为连接这两点的所有可能曲线长度的下确界：
+$$ d(p, q) = \inf \{ L(\gamma) \mid \gamma(a)=p, \gamma(b)=q \} $$
+其中实现该下确界的路径称为\textbf{测地线}。
+
+\subsection*{4. 直观化解读}
+
+\begin{quote}
+\textbf{\textcolor{blue}{直观解读： “从橡皮膜到刚性空间”}}
+
+\begin{itemize}
+    \item \textbf{微分流形像什么？} 像是一张印有坐标网格的橡皮膜。你可以随意拉伸它，只要不撕破，其坐标变换（Jacobi 矩阵）依然光滑。
+    \

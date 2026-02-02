@@ -27,7 +27,7 @@ class AnimationGeneratorAgent:
                 "plus": "glm-4-plus"         # 旗舰：¥0.5/百万tokens
             },
             "api_key_env": "ZHIPU_API_KEY",
-            "default_model": "air"  # 平衡性能和成本
+            "default_model": "flash"  # 使用免费的 flash 模型
         },
         ModelProvider.DEEPSEEK: {
             "base_url": "https://api.deepseek.com",
@@ -197,9 +197,9 @@ class AnimationGeneratorAgent:
         """获取适合复杂度的模型"""
         if provider == ModelProvider.GLM:
             mapping = {
-                "low": "flash",      # 最快最便宜
-                "medium": "air",     # 平衡
-                "high": "plus"       # 最强
+                "low": "flash",      # 最快最便宜（免费额度）
+                "medium": "flash",   # 使用免费模型
+                "high": "flash"      # 使用免费模型
             }
         else:  # DEEPSEEK
             mapping = {

@@ -1,0 +1,17 @@
+# PDF 章节分割工具依赖
+
+# PDF 处理
+pymupdf>=1.23.0
+
+# OCR 支持
+mineru>=2.7.0
+
+# PyTorch (用于 torch 后端)
+# torch>=2.0.0 --index-url https://download.pytorch.org/whl/cpu
+
+# PaddlePaddle (用于 pipeline 后端，可选)
+# paddlepaddle>=2.5.0
+
+# 其他依赖
+numpy>=1.24.0
+pillow>=10.0.0

@@ -161,10 +161,10 @@ def test_from_terminology():
 
     try:
         print(f"📝 正在为术语 '{term['chinese']}' 生成动画...")
-        print(f"   使用模型: GLM-4-Air (平衡性能和成本)")
+        print(f"   使用模型: GLM-4-Flash (免费额度，速度最快)")
 
         response = client.chat.completions.create(
-            model="glm-4-air",  # 使用性能更好的模型
+            model="glm-4-flash",  # 使用免费的模型
             messages=[
                 {"role": "system", "content": "你是专业的数学动画制作专家，精通 Manim、LaTeX 和数学教学。你对中文理解优秀，请充分利用这一优势。"},
                 {"role": "user", "content": prompt}
@@ -204,7 +204,7 @@ def test_from_terminology():
 
         # 显示统计信息
         tokens_used = response.usage.total_tokens
-        estimated_cost = (tokens_used / 1_000_000) * 0.5  # GLM-4-Air 价格
+        estimated_cost = (tokens_used / 1_000_000) * 0.1  # GLM-4-Flash 价格
         print(f"\n📊 统计信息:")
         print(f"   使用的 tokens: {tokens_used:,}")
         print(f"   预估成本: ¥{estimated_cost:.6f}")

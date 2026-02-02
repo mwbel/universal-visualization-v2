@@ -1,0 +1,416 @@
+/* Google DynamicView 风格三栏布局 */
+
+/* 重置和基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+#app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 顶部导航 - 简洁风格 */
+.module-header {
+    background: #fff;
+    border-bottom: 3px solid #4285f4;
+    padding: 1rem 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.module-header h1 {
+    font-size: 1.8rem;
+    color: #4285f4;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.module-nav {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.module-nav a {
+    color: #5f6368;
+    text-decoration: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.module-nav a:hover {
+    background-color: #e8f0fe;
+    color: #4285f4;
+}
+
+.back-link {
+    background-color: #e8f0fe !important;
+    color: #4285f4 !important;
+    font-weight: 500;
+}
+
+/* 三栏布局容器 */
+.main-content {
+    display: grid;
+    grid-template-columns: 260px 1fr 280px;
+    gap: 20px;
+    max-width: 1600px;
+    margin: 20px auto;
+    padding: 0 20px;
+    width: 100%;
+    flex: 1;
+}
+
+/* 左侧栏 - 导航菜单 */
+.sidebar {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    padding: 1.2rem;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar h3 {
+    color: #202124;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #4285f4;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.nav-list {
+    list-style: none;
+}
+
+.nav-list li {
+    margin-bottom: 0.3rem;
+}
+
+.nav-list a {
+    color: #5f6368;
+    text-decoration: none;
+    display: block;
+    padding: 0.6rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+
+.nav-list a:hover {
+    background-color: #f8f9fa;
+    color: #4285f4;
+    border-left-color: #4285f4;
+    padding-left: 1rem;
+}
+
+.nav-list a.current {
+    background-color: #e8f0fe;
+    color: #4285f4;
+    border-left-color: #4285f4;
+    font-weight: 500;
+}
+
+/* 中间内容区 */
+.content-area {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    padding: 2rem;
+    min-height: 600px;
+}
+
+.welcome-section h2 {
+    color: #202124;
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.welcome-section p {
+    color: #5f6368;
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+}
+
+/* 章节区域 */
+.chapter-section {
+    margin-top: 3rem;
+}
+
+.chapter-section h2 {
+    color: #202124;
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e8f0fe;
+}
+
+/* 功能卡片网格 */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.feature-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    border-color: #4285f4;
+}
+
+.feature-card h3 {
+    color: #202124;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+}
+
+.feature-card p {
+    color: #5f6368;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* 芯片列表 */
+.chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.chip-list a {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: #e8f0fe;
+    color: #4285f4;
+    text-decoration: none;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.chip-list a:hover {
+    background: #4285f4;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* 右侧栏 - 辅助信息 */
+.right-sidebar {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    padding: 1.2rem;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.right-sidebar h3 {
+    color: #202124;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #4285f4;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 学习进度卡片 */
+.progress-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.progress-card h4 {
+    color: #202124;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+}
+
+.progress-item {
+    margin-bottom: 0.8rem;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #5f6368;
+    margin-bottom: 0.3rem;
+}
+
+.progress-bar {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4285f4, #34a853);
+    border-radius: 3px;
+    transition: width 0.3s;
+}
+
+/* 快速链接列表 */
+.quick-links {
+    list-style: none;
+}
+
+.quick-links li {
+    margin-bottom: 0.5rem;
+}
+
+.quick-links a {
+    color: #5f6368;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.quick-links a:hover {
+    background-color: #f8f9fa;
+    color: #4285f4;
+    padding-left: 0.8rem;
+}
+
+.quick-links a::before {
+    content: '→';
+    margin-right: 0.5rem;
+    color: #4285f4;
+    font-weight: bold;
+}
+
+/* 统计信息 */
+.stats-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.85rem;
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: #5f6368;
+}
+
+.stat-value {
+    color: #202124;
+    font-weight: 600;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .main-content {
+        grid-template-columns: 240px 1fr 260px;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 992px) {
+    .main-content {
+        grid-template-columns: 1fr 280px;
+    }
+
+    .sidebar {
+        position: static;
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
+    }
+
+    .sidebar,
+    .right-sidebar {
+        position: static;
+    }
+
+    .module-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Google Material Design 色彩方案 */
+:root {
+    --google-blue: #4285f4;
+    --google-red: #ea4335;
+    --google-yellow: #fbbc04;
+    --google-green: #34a853;
+    --text-primary: #202124;
+    --text-secondary: #5f6368;
+    --background: #f5f5f5;
+    --surface: #ffffff;
+    --divider: #e0e0e0;
+}
+
+/* 平滑滚动 */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 选择文本样式 */
+::selection {
+    background: #4285f4;
+    color: #fff;
+}

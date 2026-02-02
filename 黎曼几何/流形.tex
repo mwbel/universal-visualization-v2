@@ -1,0 +1,241 @@
+\chapter{ 黎曼流形}
+ \begin{introduction}
+  \item Definition of Theorem
+  \item Ask for help
+  \item Optimization Problem
+  \item Property of Cauchy Series
+  \item Angle of Corner
+\end{introduction}
+
+\section{流形 }
+流形是一种“在局部看起来像欧几里得空间”的拓扑空间。  
+\begin{definition}[流形，Manifold]
+若集合 $M$ 满足：
+\begin{itemize}
+  \item $M$ 上有一个拓扑，使其成为 Hausdorff 空间且可数基；  
+  \item 对于每个点 $p\in M$，存在一个开邻域 $U$ 与 $\mathbb{R}^n$ 中的开集 $V$ 存在同胚映射
+  $$
+    \varphi:U\;\xrightarrow{\;\sim\;}\;V,
+  $$
+  使得我们可以在 $U$ 上用坐标 $(x^1,\dots,x^n)$ 表示点,
+  \end{itemize}
+  则 $M$ 称为一个维数为 \(n\) 的流形。 
+    \end{definition}
+  
+  \begin{definition}[光滑流形，Smooth Manifold]
+设 $M$ 为流形， 若对于有重叠的坐标图 $(U,\varphi)$ 和 $(\tilde U,\tilde\varphi)$，过渡函数
+  $$
+    \tilde\varphi\circ\varphi^{-1}:
+    \varphi(U\cap\tilde U)\longrightarrow
+    \tilde\varphi(U\cap\tilde U)
+  $$
+  是光滑映射，则 $M$被称为光滑流形。
+\end{definition}
+
+黎曼流形是一种带有“度量”的光滑流形。具体来说，
+\begin{definition}[黎曼流形，Riemannian Manifold]
+
+设 $M$ 是一个维数为 \(n\) 的光滑流形，对于\(M\) 上的每一点 \(p\)，其切空间 \(T_pM\) 表示点 \(p\) 处所有可能的切向量所成的线性空间，维数与流形维数相同。  
+
+若在每一点 \(p\in M\) 的切空间 $T_pM$ 上都赋予了一个内积 
+$$g_p: T_pM\times T_pM\to\mathbb{R}$$
+满足对任意切向量 $v,w\in T_pM$，有 $g_p(v,w)=g_p(w,v)$ 且 $g_p(v,v)>0$（正定），
+且该内积随着点 $p$ 平滑变化，
+则称 \((M,g)\) 为一个黎曼流形，其中 
+$$g=(g_p)_{p\in M}$$ 
+称为黎曼度量。
+\end{definition}
+ 
+黎曼流形 $(M,g)$ 是在光滑流形\(M\) 上“增添了度量 \(g\)---一个平滑变化的内积 ”的结构，使得每个切空间都成为带内积的欧几里得空间，从而可以定义距离、长度、角度、测地线、曲率等几何概念，具备“内蕴几何”结构。
+
+\subsection*{通俗理解流形与光滑流形}
+
+\textbf{流形（Manifold）：}  
+把地球想象成一个球面，但我们要在上面画地图，就会把球面分成很多小片，每一小片都能“摊平”成一张普通的平面地图。流形就是一个“看起来像平面”的空间整体：  
+\begin{itemize}
+  \item 在每一个小区域里，都和普通的欧几里得空间（平面或更高维空间）一模一样，能用坐标 $(x^1,\dots,x^n)$ 来描述；  
+  \item 整个空间可能很弯曲、复杂，但只要你在足够小的范围内观察，就总像“平坦”的欧氏空间。  
+\end{itemize}
+
+\textbf{光滑流形（Smooth Manifold）：}  
+在流形的基础上，再要求这些“摊平”的小片之间“接缝”要非常平滑、没有折痕：  
+\begin{itemize}
+  \item 当你从一个小片走到另一个小片时，用一个小片的坐标去描述，此坐标到另一个小片坐标的转换函数，不仅是连续的，而且可以反复微分、变化很柔和；  
+  \item 换句话说，各个局部坐标图之间的过渡函数是光滑（infinitely differentiable）的，保证了你在流形上做微积分运算时不会遇到“拐角”或“尖点”。  
+\end{itemize}
+
+\textbf{黎曼流形（Riemannian manifold）}  
+想象在每个“小平面地图”上，不仅有经纬度网格（坐标），  
+还有一把“软尺”（内积）可以测量任意两条弧线的长度和夹角。  
+这把尺子在不同地方可能略有变化，但变化是平滑的，不会突然跳变。  
+因此，黎曼流形是在每个局部坐标图上都贴有一把可以测量长度和角度的尺子， 即度量张量 $g$
+用来定义测地线、曲率等几何概念。具体地，这把“软尺”在局部坐标  $(x^1,\dots,x^n)$ 下表示为  
+$$
+ds^2 \;=\; g_{ij}(x)\,dx^i\,dx^j,
+$$
+其中 $g_{ij}(x)$ 是关于坐标平滑变化的函数，保证了测量工具的连续与可微。
+描述了布在点 $x$ 处的拉伸/压缩程度，保证了测量长度、角度等几何量的准确性和连续性。
+
+\subsection*{生活化比喻：}
+\begin{itemize}
+  \item \emph{流形}：像把一个橘子皮剪成很多小片，每片都能平摊。  
+  \item \emph{光滑流形}：不仅能平摊，而且相邻小片的边缘对缝得很圆滑，没有折痕。
+  \item \emph{黎曼流形}：想象你在一块可拉伸的橡皮布上行走，这块布的每个小方格并不是均匀的，而是根据布在不同位置被拉伸或压缩的程度，格子大小会微妙变化。
+\begin{itemize}
+  \item 布面上的每个小格，就像流形上的一个“局部坐标图”；  
+  \item 当布被拉伸时，同样的步伐测出的距离会更长；当布被压缩时，距离会更短——这就相当于在每个点上贴了一把“软尺”；  
+  \item 只要布的拉伸压缩是平滑过渡的（没有突变、折痕），这块布就对应一个“光滑”的黎曼流形。  
+\end{itemize}
+ \end{itemize}
+ 
+ \section{度量张量}
+在黎曼流形 \((M,g)\) 中，度量张量（Metric Tensor）是在每一点 \(p\in M\) 处定义的双线性对称正定形式
+\[
+g_p: T_pM \times T_pM \;\longrightarrow\; \mathbb{R}
+\]
+全局来看，度量张量场（Metric Tensor Field）是一个光滑的 \((0,2)\)-张量场
+\[
+g: M \longrightarrow \bigsqcup_{p\in M}\bigl(T_p^*M\otimes T_p^*M\bigr),
+\quad
+p\mapsto g_p,
+\]
+它将每个点 \(p\) 映射到该点的度量双线性形式 \(g_p\)，并且这些形式随 \(p\) 平滑变化。
+因此，\emph{$g$ 是整个流形上的度量张量场，而 $g_p$ 则是该场在点 $p$ 处的具体双线性形式。}
+
+两者的关系体现在局部坐标下的分量表达上。
+
+在局部坐标 \((u^1,\dots,u^n)\)下，使用坐标 1-形式 \(du^i\) 表示，则度量张量场~$g$可以写作
+\[
+g \;=\; g_{ij}(u)\,du^i \otimes du^j\]
+其中
+\begin{equation}\label{度量局部分量函数}
+g_{ij}: U\subset\mathbb{R}^n \longrightarrow \mathbb{R},
+\qquad
+u\mapsto g_{ij}(u)
+\end{equation}
+是度量张量场的局部分量函数（关于坐标 \(u\) 光滑）。
+
+当我们要得到度量张量场在特定点 \(p\) 处的取值 \(g_p\) 时，只需将坐标变量 \(u\) 取为该点的坐标~\(u(p)\)。于是
+\[
+(g_p)_{ij}
+\;=\;
+g_{ij}\bigl(u(p)\bigr),
+\]
+表示度量张量 \(g_p\) 在基 \(\{\partial_i|_p\}\) 下的第 \(i,j\) 分量。
+
+注意，虽然 \(g_p\) 是度量张量场在点 \(p\) 处的取值——一个抽象的双线性映射
+\[
+g_p: T_pM \times T_pM \;\longrightarrow\; \mathbb{R},
+\]
+但要“计算”或“表示”这个映射，就需要选择一个基。
+
+\bigskip
+
+\noindent
+\textbf{选基与分量定义：}\\
+设 \(\{e_i\}_{i=1}^n\) 是点 \(p\) 处切空间 \(T_pM\) 的一组基，则可以定义
+\[
+(g_p)_{ij} \;=\; g_p(e_i,e_j)
+\quad (i,j=1,\dots,n).
+\]
+这组实数 \(\{(g_p)_{ij}\}\) 就是度量张量 \(g_p\) 在该基下的\emph{分量}。  
+
+\medskip
+
+\noindent
+\textbf{坐标基的情形：}\\
+将坐标矢量场 \(\{\partial_i\}\) 作为基，即
+\(\partial_i = \frac{\partial}{\partial u^i}\big|_p\)，
+分量变为
+\[
+(g_p)_{ij}
+= g_p\bigl(\partial_i,\partial_j\bigr)
+= g_{ij}\bigl(u(p)\bigr).
+\]
+这正对应之前的
+\[
+g = g_{ij}(u)\,du^i\otimes du^j,
+\]
+中在点 \(p\) 处的数值。
+
+\section{第一基本形式：曲面上的度量}
+
+对于嵌入于 \(\mathbb{R}^3\) 的参数曲面
+\[
+\mathbf r(u,v) = \bigl(x(u,v),\,y(u,v),\,z(u,v)\bigr)
+\]
+如~\eqref{度量局部分量函数} 所示，度量张量在 \((u,v)\) 坐标下的局部分量分别为
+\begin{equation}\label{曲面局部分量}
+g_{11} = \mathbf r_u\cdot\mathbf r_u,\quad
+g_{12} = \mathbf r_u\cdot\mathbf r_v,\quad
+g_{22} = \mathbf r_v\cdot\mathbf r_v
+\end{equation}
+设
+\[
+E = \mathbf r_u\cdot\mathbf r_u,\quad
+F = \mathbf r_u\cdot\mathbf r_v,\quad
+G = \mathbf r_v\cdot\mathbf r_v,
+\]
+则
+\[
+I = ds^2\big|_S
+= E\,du^2 + 2F\,du\,dv + G\,dv^2,
+\]
+其中 \(I\) 就是第一基本形式，它与度量张量分量~\eqref{曲面局部分量} 的对应关系为
+\[
+E = g_{11},\quad F = g_{12},\quad G = g_{22}.
+\]
+也就是说，
+
+\begin{definition}[第一基本形式，First Fundamental Form]
+对于嵌入于 \(\mathbb{R}^3\) 的参数曲面 
+\[
+\mathbf r(u,v) = \bigl(x(u,v),\,y(u,v),\,z(u,v)\bigr)
+\]
+其第一基本形式定义为
+$$
+I = \; ds^2\big|_S=d\mathbf{r}\cdot d\mathbf{r}
+= E\,du^2 + 2F\,du\,dv + G\,dv^2,
+$$
+其中
+$$
+E= \mathbf{r}_u\cdot\mathbf{r}_u=g_{11},\quad
+F = \mathbf{r}_u\cdot\mathbf{r}_v = g_{12},\quad
+G =\mathbf{r}_v\cdot\mathbf{r}_v=g_{22}.
+$$
+\end{definition}
+
+第一基本形式就是曲面上“内蕴”度量张量 $g$ 在 \((u,v)\) 坐标下的局部表达，刻画了曲面上两点之间的内蕴距离与角度度量，它完全决定了曲面上任意曲线的弧长、两条曲线的夹角以及面积元。
+
+\section{高斯曲率及优异定理}
+\begin{theorem}[高斯优异定理]
+\textbf{高斯优异定理（Theorema Egregium）}\\
+高斯优异定理指出，曲面的\emph{高斯曲率} $K$ 完全由第一基本形式的系数 $E,F,G$ 及其一阶、二阶导数决定，与曲面如何嵌入 $\mathbb{R}^3$ 无关，即
+$$
+K\;\text{是一个内蕴不变量}
+$$
+因此，任何等距变换（isometry）都保持 $K$ 不变。
+\end{theorem}
+
+尽管高斯曲率也可写作
+$$
+K =\frac{\det(\text{第二基本形式})}{\det(\text{第一基本形式})}= \frac{\left | \begin{array}{cc} L & M \\ N & M\end{array}\right |} {\left | \begin{array}{cc} E & F \\ F& G\end{array}\right |} =\frac{L\,N - M^2}{E\,G - F^2},
+$$
+其中 $L,M,N$ 是第二基本形式的系数，但更深刻的是存在只含 $E,F,G$ 及其导数的表达：
+$$
+K = -\frac{1}{2\sqrt{EG - F^2}}
+\left[
+\frac{\partial}{\partial v}\!\Bigl(\frac{E_v - F_u}{\sqrt{EG - F^2}}\Bigr)
+- \frac{\partial}{\partial u}\!\Bigl(\frac{F_v - G_u}{\sqrt{EG - F^2}}\Bigr)
+\right].
+$$
+高斯优异定理说明，测地圆的曲率、角和、面积变化等所有内蕴几何量
+（仅依赖曲面内部度量）都与曲面如何嵌入到 $\mathbb{R}^3$ 无关。
+这意味着只要知道第一基本形式，就能完全恢复曲面的高斯曲率，体现了曲面“自身”的几何性质。
+
+\subsection*{直观例子}
+\begin{itemize}
+  \item \textbf{圆柱面 vs.\ 平面}：圆柱面可等距地由平面“卷”成管状，内蕴几何完全相同（测地线与内蕴曲率均相同），尽管在外形上一个平直一个弯曲。
+  \item \textbf{地图投影}：球面高斯曲率 $K=\tfrac1{R^2}\neq0$，平面 $K=0$，因此无法无扭曲地等距展开，任何地图投影都必须在长度、面积或角度上引入变形。
+\end{itemize}
+

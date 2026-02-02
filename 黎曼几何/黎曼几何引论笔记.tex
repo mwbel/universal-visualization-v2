@@ -1,0 +1,138 @@
+\documentclass[a4paper,lang=cn,scheme=chinese,12pt, bibtex]{elegantbook}
+%\usepackage[pass]{geometry}
+\title{《黎曼几何引论》（上册）第二版 北京大学数学教学系列丛书}
+\subtitle{几何直观与物理直觉}
+\author{陈维桓、李兴校 }
+%\institute{}
+\date{2025}
+%\version{4.3}e
+%\bioinfo{自定义}{信息}
+
+%\extrainfo{不要以为抹消过去，重新来过，即可发生什么改变。—— 比企谷八幡}
+\setcounter{tocdepth}{3}
+%\logo{logo-blue.png}
+\cover{cover.jpg}
+
+% 本文档命令
+\usepackage{array}
+\newcommand{\ccr}[1]{\makecell{{\color{#1}\rule{1cm}{1cm}}}}
+\usepackage{graphicx}
+\usepackage{amsmath}  % 确保加载了 amsmath 包
+\usepackage{amssymb}
+\usepackage{hyperref} % 可选：使得 \eqref 的引用带有链接功能
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{stackengine}
+\usepackage{scalerel}
+
+\usepackage{titlesec} 
+\usepackage{subcaption}
+\usepackage{pgfplots}
+ 
+ \usepackage{xeCJK}
+
+\newcommand{\chapterwithsubtitle}[2]{ \chapter{#1\\ \textit{#2}}  }
+
+% 示例一：蓝色+粗体+斜体
+\newcommand{\highlight}[1]{\textcolor{blue}{\textbf{\textit{#1}}}}
+
+% 示例二：红色+粗体+斜体
+\newcommand{\con}[1]{\textcolor{red}{\textbf{\textit{#1}}}}
+
+% 示例三：注释--紫色+粗体+斜体
+\usepackage{xcolor}
+\usepackage{fontspec}
+\newcommand{\notetxt}[1]{%
+  \noindent\textcolor{purple}{\textbf{注：}}%
+  {\fontspec{Arial}\color{purple}\itshape#1}%
+}
+%gray!30!black
+
+% 自定义最终相等符号（上右括号、下左括号）
+\newcommand{\finaleq}{
+  \mathrel{
+    \stackon[0pt]   % 控制垂直叠加的间距
+    {\rotatebox{90}{\scalebox{1}[1]{)}}}  % 上面：逆时针旋转90度的右括号
+    {\rotatebox{90}{\scalebox{1}[1]{(}}}   % 下面：逆时针旋转90度的左括号
+  }
+}
+
+%\rotatebox{90}{...}：将符号逆时针旋转 90 度；
+%\stackon[...]{上}{下}：将两个旋转后的括号上下叠加；
+%\mathrel：表示该符号作为“关系符号”使用，能正确对齐上下文中的 a \finaleq b；
+%\scalebox{1}[1]{...}：控制水平与垂直缩放比例，这里保留原始大小。
+
+\usepackage{longtable}
+\usepackage{booktabs}   % 必须：用于三线表
+\tcbuselibrary{breakable} % 必须加载跨页库
+%
+%\usepackage{tabularx}   % 推荐：用于自动调整宽度的表格
+%\usepackage{caption}        % 关键：用于在盒子内添加标题
+%\usepackage[most]{tcolorbox}
+%
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, bending, shapes.geometric} % 增强箭头和曲线控制
+\usepackage{xcolor} % 提供 blue!10 这种颜色混合功能
+
+
+% --- 定义个人笔记/Remark环境 ---
+\newtcolorbox{myremark}[1][]{
+    enhanced,
+    breakable,
+    colback=blue!5,                      % 浅蓝色背景
+    colframe=blue!75!black,              % 深蓝色边框
+    fonttitle=\bfseries,
+    title=注释,
+    arc=2mm,                             % 圆角
+    drop shadow                          % 阴影效果
+}
+
+% 定义一个专门用于长表格的笔记环境
+\newtcolorbox{myremarktable}[1][]{
+    enhanced,
+    breakable,
+    colback=white,
+    colframe=blue!75!black,
+    fonttitle=\bfseries,
+    title={\ifstrempty{#1}{}{：#1}},
+    arc=2mm,
+    before skip=10pt,
+    after skip=10pt
+}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\Cinf}{C^\infty}
+\newcommand{\diff}{\mathrm{d}}
+
+
+\begin{document}
+
+\maketitle
+\frontmatter
+
+%\tableofcontents
+
+\mainmatter
+
+\include{微分几何与黎曼几何}
+
+\include{introduction}
+
+
+%\include{度量}
+%\include{曲率}
+
+\include{微分流形}
+
+%\include{黎曼几何引论1-58}
+
+
+%\part{曲率}
+%\part{平行移动}
+
+%\part{形式}
+
+
+\end{document}

@@ -1,6 +1,5 @@
 ```python
 from manim import *
-import numpy as np
 
 class CircleAnimation(Scene):
     def construct(self):
@@ -11,5 +10,5 @@ class CircleAnimation(Scene):
         self.add(circle)
         
         # 设置动画时长为3秒
-        self.play(Write(circle), run_time=3)
+        self.play(circle.animate.scale(1.1).fade(0.1), run_time=3)
 ```

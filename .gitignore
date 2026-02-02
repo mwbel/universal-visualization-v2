@@ -196,3 +196,15 @@ cleanup_paths.txt
 **/dist/
 **/__pycache__/
 **/*.pyc
+
+# PDF 章节分割工具输出
+output/test_split/
+output/**/metadata.json
+
+# OCR 生成的图片和文本
+书籍/**/images/
+书籍/**/*.md
+书籍/**/full.md
+
+# PDF 文件相关
+**/*.pdf

@@ -1,0 +1,12 @@
+# Textbook Processor Requirements
+
+# PDF 处理核心库
+pymupdf>=1.24.0         # PDF 读取和切分
+pdfplumber>=0.11.0      # 文本、表格提取
+
+# 可选依赖（用于增强功能）
+# pdf2image>=1.17.0     # PDF 转图片（已安装）
+# Pillow>=10.0.0        # 图像处理（已安装）
+
+# 注意：MinerU (magic-pdf) 安装较复杂，暂时不作为强制依赖
+# 如需使用，请参考：https://github.com/opendatalab/MinerU

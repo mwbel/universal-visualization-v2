@@ -1,0 +1,849 @@
+
+\chapter{微分流形}
+
+
+微分流形是20世纪数学有代表性的基本概念，当代数学的许多重要结构和研究对象都以微分流形为载体。
+
+黎曼几何学就是在光滑流形上给定了一个黎曼结构的几何学。%在本章我们要回顾有关微分流形的一些基本概念，包括光滑流形，光滑函数，光滑切向量场，外微分式，切丛等等。这方面的详细内容，可参看参考文献[3]。
+
+\section{微分流形}
+
+%\section{微分流形（带直觉解读）}
+
+微分流形的概念是从平直的欧氏空间脱胎而来的，而欧氏空间则是微分流形中最简单的例子和模型。所谓的 $n$ 维欧氏空间，简记为 $\R^n$，是有序的 $n$ 元实数组的集合，并赋予标准的距离 $d$ 所构成的空间，其元素称为“点”。$\R^n$ 中任意两点 $a=(a_1,\dots,a_n)$，$b=(b_1,\dots,b_n)$ 之间的距离定义为：
+$$
+d (a, b) = \sqrt {\sum_{i = 1}^{n} (b^{i} - a^{i})^{2}}.
+$$
+%\begin{quote}
+%\textbf{\textcolor{blue}{直观解读：}}
+%$\mathbb{R}^n$ 是我们研究所有几何对象的“标准模具”。距离公式 $d(a,b)$ 是勾股定理在高维的延伸，它赋予了空间“刚性”，
+使得我们可以测量长度和角度。
+%\end{quote}
+
+设 $U$ 是 $\R^n$ 的一个开集，$r$ 为正数。如果 $U$ 上的实函数 $f: U \to \R$ 具有直到 $r$ 阶的各阶连续偏导数，则称 $f$ 为 $U$ 上的一个 {\bf $r$ 次可微函数}。
+
+$U$ 上 $r$ 次可微函数的集合记为 $C^r(U)$。依此记法，$U$ 上{\bf 连续函数的集合记作 $C^0(U)$}。
+
+给定函数 $f: U \to \R$，如果对于任意的非负整数 $r$，都有 $f \in C^r(U)$，则称 $f$ 是 $U$ 上的一个{\bf 光滑函数}。$U$ 上{\bf 光滑函数的集合记作 $C^\infty(U)$}。
+
+如果函数 $f: U \to \R$ 在 $U$ 中每一点的某个邻域内都能展开为收敛的幂级数，则称 $f$ 为 $U$ 上的{\bf 实解析函数}。$U$ 上的{\bf 实解析函数的集合记作 $C^\omega(U)$}。
+
+以后，在记号 $C^r(U)$ 中，总是认为 $r$ 是非负整数、$\infty$ 或 $\omega$。为了方便起见，把 $C^r(U)$ 中的函数称为 ($U$ 上的) $C^r$ 函数。
+
+\begin{quote}
+\textbf{\textcolor{blue}{直观解读：}}
+可微性 $C^r$ 描述了函数图像的“光滑程度”。
+\begin{itemize}
+    \item $C^0$ 表示函数是连贯的，没有断裂；
+    \item $C^1$ 表示函数不仅连贯，且没有尖角（切线连续变化）；
+    \item $C^\infty$ 则意味着你可以无限次地对它进行“磨光”操作。
+\end{itemize}
+
+这些集合之间存在严格的包含关系，反映了函数性质的逐步增强：
+\[ C^\omega(U) \subset C^\infty(U) \subset \dots \subset C^r(U) \subset \dots \subset C^1(U) \subset C^0(U) \]
+
+\paragraph*{注：}
+$C^\infty$ 并不等同于 $C^\omega$。例如著名的函数：
+\[ f(x) = 
+\begin{cases} 
+e^{-1/x^2} & x \neq 0 \\
+0 & x = 0 
+\end{cases} 
+\]
+它是 $C^\infty$ 的，但由于它在原点处的各阶导数均为 $0$，其泰勒级数恒为 $0$，无法在原点邻域内展开，因此它不是 $C^\omega$ 的。
+
+\end{quote}
+
+%\begin{myremark}
+%这段文字描述了数学分析中\textbf{函数平滑性（Smoothness）}的分级体系。这种分类方式基于函数导数的存在性与连续性，构成了函数空间研究的基础。
+%
+%\subsubsection*{基础定义：$C^r$ 函数空间}
+%对于定义在开集 $U \subseteq \mathbb{R}^n$ 上的函数 $f$，其平滑程度由 $r$ 决定：
+%
+%\begin{itemize}
+%    \item \textbf{$C^r$ 函数（$r$ 阶连续可微）：} \\
+%    如果 $f$ 在 $U$ 上具有直到 $r$ 阶的所有连续偏导数，则记为：
+%    \[ f \in C^r(U) \]
+%    这里的 $r$ 是一个正整数。
+%
+%    \item \textbf{$C^0$ 函数（连续函数）：} \\
+%    如果 $f$ 在 $U$ 上仅满足连续性（不一定可导），则记为：
+%    \[ f \in C^0(U) \]
+%\end{itemize}
+%
+%\subsubsection*{高阶平滑性：$C^\infty$ 与 $C^\omega$}
+%随着对可微性要求的增加，我们进入了更高级别的函数类：
+%
+%\begin{itemize}
+%    \item \textbf{$C^\infty$ 函数（光滑函数）：} \\
+%    如果 $f$ 具有任意阶的连续偏导数，即对于所有的非负整数 $r \in \mathbb{N}$，都有 $f \in C^r(U)$，则称其为\textbf{光滑函数}：
+%    \[ C^\infty(U) = \bigcap_{r=0}^{\infty} C^r(U) \]
+%
+%    \item \textbf{$C^\omega$ 函数（实解析函数）：} \\
+%    如果函数 $f: U \to \mathbb{R}$ 在 $U$ 中每一点的某个邻域内都能展开为收敛的幂级数，则称 $f$ 为\textbf{实解析函数}：
+%    \[ f \in C^\omega(U) \]
+%\end{itemize}
+
+%这些集合之间存在严格的包含关系，反映了函数性质的逐步增强：
+%\[ C^\omega(U) \subset C^\infty(U) \subset \dots \subset C^r(U) \subset \dots \subset C^1(U) \subset C^0(U) \]
+%
+%\paragraph*{注：}
+%$C^\infty$ 并不等同于 $C^\omega$。例如著名的函数：
+%\[ f(x) = 
+%\begin{cases} 
+%e^{-1/x^2} & x \neq 0 \\
+%0 & x = 0 
+%\end{cases} 
+%\]
+%它是 $C^\infty$ 的，但由于它在原点处的各阶导数均为 $0$，其泰勒级数恒为 $0$，无法在原点邻域内展开，因此它不是 $C^\omega$ 的。
+%
+%\subsubsection*{核心术语总结}
+%
+%\begin{myremarktable}[]
+%    \begin{longtable}{l p{10cm}} % p{10cm} 允许单元格内换行
+%        \toprule
+%        \textbf{符号} & \textbf{详细定义与描述} \\
+%        \midrule
+%        \endfirsthead % 第一页表头
+%        \toprule
+%        \textbf{符号} & \textbf{详细定义与描述（续）} \\
+%        \midrule
+%        \endhead     % 后续页表头
+%        \bottomrule
+%        \endfoot     % 每页页脚
+%        
+%        $C^0$ & 连续函数，这是平滑性的起点。 \\ \midrule
+%        $C^1$ & 一阶导数存在且连续。 \\ \midrule
+%        $C^r$ & 直到 $r$ 阶的偏导数均存在且连续。 \\ \midrule
+%        % ... 此处放置大量行 ...
+%        $C^\infty$ & 任意阶偏导数均存在且连续。 \\ \midrule
+%        $C^\omega$ & 局部可展开为收敛的泰勒级数。 \\ 
+%        \bottomrule
+%    \end{longtable}
+%\end{myremarktable}
+%
+%\end{myremark}
+
+上述概念可以推广到两个欧氏空间之间的映射。设 $U$ 是 $\R^n$ 的一个开子集，$f: U \to \R^k$ 是从 $U$ 到 $k$ 维欧氏空间 $\R^k$ 的映射。显然，映射 $f$ 可以用 $U$ 上的 $k$ 个实函数 
+$f_\alpha (1 \le \alpha \le k)$ 表示为 
+$$f(x) = (f_1(x), \dots, f_k(x))$$
+其中的$f_\alpha (1 \le \alpha \le k)$ 称为映射 $f$ 的分量。
+
+如果对于每一个~$\alpha (1 \le \alpha \le k)$, ~$f_\alpha $ 都是$U$上的~$C^{r}$ 函数，则称映射~$f$为从~$U$ 到~$\R^k$ 的{\bf $C^{r}$映射}。
+类似地，可以引入光滑映射和实解析映射等等。
+特别地，如果  $U$  是  $\mathbb{R}$  的一个开区间，则  $C^\infty$  映射  $f:U\to \mathbb{R}^{k}$  又称为  $\mathbb{R}^k$  中的一条{\bf 光滑曲线}。
+
+\begin{quote}
+\textbf{\textcolor{blue}{直观解读：}}
+映射 $f: U \to \mathbb{R}^k$ 可以想象成一种“空间变形”。当 $n=1$ 时，它就像是一个质点随时间在 $k$ 维空间中滑过的轨迹，光滑性保证了这辆“车”在行驶过程中速度和加速度都不会发生突变。
+\end{quote}
+
+\begin{definition}[拓扑流形]
+    设 $M$ 是一个非空的 Hausdorff 空间。如果对于每一点 $p \in M$，都存在 $p$ 点的开邻域 $U \subset M$，以及从 $U$ 到 $m$ 维欧氏空间 $\R^m$ 的某个开集上的同胚 $\varphi: U \to \R^m$，则称 $M$ 为一个 $m$ 维拓扑流形。
+\end{definition}
+
+上述定义中的$(U, \varphi)$ 称为 $M$ 的一个{\bf 坐标卡}; 此时, 开集  $U$  称为点  $p \in U$  的{\bf 坐标邻域},  $\varphi$  称为{\bf 坐标映射}. 于是, 所谓的拓扑流形实际上就是在局部上同胚于  $m$  维欧氏空间的 Hausdorff 空间, 即它的每一点都有同胚于  $\mathbb{R}^m$  中某个开集的坐标邻域.
+
+\begin{myremark}
+
+%\subsubsection*{宏观理解：流形的“哲理”}
+
+流形的本质是：\textbf{局部}看起来像 $\mathbb{R}^m$，但\textbf{整体}可能很复杂。
+就像古代人认为大地是平的（局部欧氏空间），但实际上地球是一个球体（整体流形）。
+
+这份定义是进入现代几何学的门户。我们可以将它拆解为三个核心支柱：Hausdorff 空间、局部欧氏性（同胚）以及坐标卡。
+
+%\subsubsection*{底层基石：拓扑空间 (Topological Space)}
+在定义流形之前，必须先有拓扑结构。拓扑空间是抛弃了距离、只保留“邻近”概念的集合。
+\begin{itemize}
+    \item \textbf{定义：} 集合 $X$ 及其开集族 $\tau$ 满足空集与全集在内、任意并、有限交仍为开集。
+    \item \textbf{核心思想：} 它是“橡皮几何”，允许拉伸但不允许撕裂。它赋予了空间谈论“连续性”的资格。
+\end{itemize}
+
+\subsubsection*{核心概念拆解}
+\paragraph*{A. $M$ 是一个 Hausdorff 空间}
+这是拓扑学中的一个“分离公理”，记作 $T_2$。
+\begin{itemize}
+\item \textbf{直观定义：} 空间中任意两个不同的点 $p$ 和 $q$，都可以被两个\textbf{互不相交}的开集包裹起来。
+\item \textbf{数学表示：}
+$$ \forall p, q \in M, p \neq q \implies \exists U, V \subset M \text{ s.t. } p \in U, q \in V, U \cap V = \emptyset $$
+
+\item \textbf{为什么要这个：} 为了排除一些“病态”的空间（如分叉直线）。在 Hausdorff 空间中，序列的极限是唯一的，这保证了我们在流形上谈论“点”的位置时不会产生歧义。
+\end{itemize}
+
+\paragraph*{B. 局部同胚性 (Local Homeomorphism)}
+这是流形定义中最关键的一句：“存在从 $U$ 到 $\mathbb{R}^m$ 开集的同胚 $\varphi$”。
+\begin{itemize}
+\item \textbf{同胚 ($\cong$)：} 指的是映射 $\varphi: U \to \varphi(U) \subset \mathbb{R}^m$ 是\textbf{双射}、\textbf{连续}且其逆映射 $\varphi^{-1}$ 也\textbf{连续}。
+\item \textbf{物理意义：} 这种映射就像是某种“拉伸”或“弯曲”，但不允许“撕裂”或“粘合”。它保证了 $M$ 上的开集 $U$ 在拓扑性质上与 $\mathbb{R}^m$ 中的开块完全一致。
+\end{itemize}
+
+同胚映射 $\varphi$ 可以看作是将流形上的一个弯曲“小片”拉平并贴在平面地图上的过程。虽然整体形状可能扭曲，但在拓扑上它们是等价的。
+
+\paragraph*{C. 坐标卡 (Coordinate Chart)}
+这里的 $(U, \varphi)$ 被称为一个\textbf{坐标卡}。
+\begin{itemize}
+\item $U$ 是流形上的一个区域（地理上的“一张地图”）。
+\item $\varphi(p) = (x^1, x^2, \dots, x^m) \in \mathbb{R}^m$ 给了流形上的点一个“数值地址”。
+\item 流形的维度 $m$ 由这个欧氏空间的维度决定。
+\end{itemize}
+
+\subsubsection*{包含关系与结构层次}
+几何结构的演进可以概括为性质的逐步叠加：
+\begin{myremarktable}[]
+    \begin{longtable}{l p{10cm}} % p{10cm} 允许单元格内换行
+        \toprule
+	\textbf{结构层次} & \textbf{核心贡献} \\
+        \midrule
+        拓扑空间 & 定义了“连续性”与“邻域”。 \\
+        \textbf{拓扑流形} & \textbf{局部欧氏性，空间可坐标化。} \\
+        微分流形 & 定义了“平滑性”，可进行微积分。 \\
+        黎曼流形 & 引入度量，定义了“距离”、“角度”与“曲率”。 \\
+        \bottomrule
+    \end{longtable}
+\end{myremarktable}
+
+$$ \text{拓扑空间} \xrightarrow{+ \text{Hausdorff} + \text{第二可数}} \text{拓扑流形} \xrightarrow{+ \text{坐标变换光滑}} \text{微分流形} (C^\infty) $$
+
+\subsubsection*{为什么定义里强调“开集”？}
+这是一个常见的疑惑。定义要求 $\varphi(U)$ 是 $\mathbb{R}^m$ 中的开集，是因为：
+\begin{enumerate}
+\item \textbf{分析的需求：} 我们要定义切向量或导数。
+\item \textbf{邻域的存在性：} 在欧氏空间中，只有在点周围有一个“开邻域”时，我们才能定义极限 $\lim_{h \to 0}$。如果点在边界上，某些方向的趋近就无法实现，从而无法定义完整的微积分结构。
+\end{enumerate}
+
+\subsubsection*{拓扑流形的直观理解}
+
+拓扑流形的核心思想是“局部简单化”：流形 $\approx$ 近看是平的 (Euclidean) $+$ 远看是弯的 (Topology)。这正如古代人认为大地是平的（局部观察），但现代人知道地球是圆的（整体观察）。
+
+拓扑流形定义了空间的“局部样貌”。
+
+\begin{itemize}
+\item \textbf{Hausdorff} 保证了点是可以被“分辨”的。
+\item \textbf{同胚} 保证了我们可以用 $\mathbb{R}^m$ 里的坐标来描述 $M$ 里的点。
+\item \textbf{维度 $m$} 决定了我们需要多少个独立的数字来确定一个点的位置。
+\end{itemize}
+例如，圆圈 $S^1$ 是 $1$ 维流形，因为任何一段弧都同胚于 $\mathbb{R}^1$ 的一段开区间。
+
+\begin{center}
+\begin{tikzpicture}[scale=1.2]
+    % 左侧：弯曲流形 M
+    \draw[thick, fill=blue!10] plot [smooth cycle] coordinates {(0,0) (1,2) (3,1.5) (4,0) (2,-1)};
+    \node at (0.5, 1.5) {$M$};
+    
+    % 流形上的开集 U
+    \begin{scope}
+        \clip plot [smooth cycle] coordinates {(0,0) (1,2) (3,1.5) (4,0) (2,-1)};
+        \draw[fill=blue!30, opacity=0.6] (2.5,0.5) circle (0.8);
+    \end{scope}
+    \node at (2.2, 0.5) {$U$};
+    \filldraw (2.1, 0.4) circle (1.5pt) node[below] {$p$};
+    
+    % 右侧：欧氏空间 R^m
+    \draw[->] (6,-1) -- (9.5,-1) node[right] {$x^1$};
+    \draw[->] (6.5,-1.5) -- (6.5,2) node[above] {$x^2$};
+    \node at (9.2, 1.7) {$\mathbb{R}^m$};
+    
+    % R^m 中的开集 phi(U)
+    \draw[fill=green!20, opacity=0.7] (8,0.5) circle (0.7);
+    \node at (8, 0.5) {$\varphi(U)$};
+    \filldraw (8, 0.5) circle (1.5pt) node[below] {$\varphi(p)$};
+    
+    % 映射箭头
+    \draw[->, bend left=30, thick] (3.5, 1.0) to node[above] {$\varphi$ (同胚)} (7.2, 1.0);
+    \draw[<-, bend right=30, thick] (3.5, 0.0) to node[below] {$\varphi^{-1}$ (连续)} (7.2, 0.0);
+    
+    % 标注直观意义
+    \node[align=center, font=\small\itshape] at (4.7,-2) {流形上的点 $p$ \\ 通过“拉平”映射 $\varphi$ \\ 获得数值坐标 $(x^1, x^2)$};
+\end{tikzpicture}
+\end{center}
+\end{myremark}
+
+\begin{definition}[$C^r$ 相关]
+设 $M$  是一个  $m$  维拓扑流形,  $(U,\varphi)$  与  $(V,\psi)$  是  $M$  的两个坐标卡. 如果  $U\cap V = \emptyset$ , 或者, 当  $U\cap V\neq \emptyset$  时, 映射
+   \[ \psi \circ \varphi^{-1}: \varphi(U \cap V) \to \psi(U \cap V) \quad \text{与} \quad \varphi \circ \psi^{-1}: \psi(U \cap V) \to \varphi(U \cap V) \]
+    都是 $C^r$ 映射，则称坐标卡 $(U, \varphi)$ 与 $(V, \psi)$ 是 $C^r$ 相关的。
+\end{definition}
+
+显然, 拓扑流形  $M$  的任意两个坐标卡必定是  $C^0$  相关的.
+
+\begin{myremark}
+
+%\subsection*{关于坐标卡 $C^0$ 相关性的说明}
+
+\textbf{命题：} 设 $M$ 是一个 $m$ 维拓扑流形，则 $M$ 的任意两个坐标卡 $(U, \varphi)$ 与 $(V, \psi)$ 必定是 $C^0$ 相关的。
+
+{\bf 1. 证明}
+
+设 $U \cap V \neq \emptyset$。根据拓扑流形的定义，坐标映射 $\varphi$ 和 $\psi$ 满足：
+\begin{enumerate}
+    \item $\varphi: U \to \varphi(U) \subset \mathbb{R}^m$ 是同胚映射，即 $\varphi$ 连续且其逆映射 $\varphi^{-1}$ 亦连续。
+    \item $\psi: V \to \psi(V) \subset \mathbb{R}^m$ 是同胚映射，即 $\psi$ 连续且其逆映射 $\psi^{-1}$ 亦连续。
+\end{enumerate}
+
+考虑重叠区域上的坐标变换映射（转移函数）：
+$$
+\psi \circ \varphi^{-1}: \varphi(U \cap V) \to \psi(U \cap V)
+$$
+由于：
+$$
+\varphi(U \cap V) \xrightarrow{\varphi^{-1}} U \cap V \xrightarrow{\psi} \psi(U \cap V)
+$$
+其中 $\varphi^{-1}$ 作为同胚映射的一部分，在 $\varphi(U \cap V)$ 上是连续的；而 $\psi$ 作为同胚映射，在 $U \cap V$ 上也是连续的。根据拓扑学基本定理：\textbf{两个连续映射的复合映射仍然是连续映射}。
+
+因此，$\psi \circ \varphi^{-1}$ 是连续映射。在分析学记号中，连续映射即等价于 $C^0$ 级映射。同理可证 $\varphi \circ \psi^{-1}$ 也是 $C^0$ 的。故任意两个坐标卡必定 $C^0$ 相关。
+
+{\bf 2. 直观化解读}
+
+拓扑流形的本质是要求它在局部上“长得像”欧氏空间。所谓的 $C^0$ 相关，其实是在保证\textbf{“空间的连贯性”}。
+
+想象你手里有两张描绘同一块地表的地图（坐标卡 $U$ 和 $V$）。如果你在第一张地图上看到两个点挨得很近，那么通过坐标变换映射到第二张地图上时，这两个点也必须挨得很近，不能发生“撕裂”或“跳跃”。
+
+另一种理解，当两张地图（坐标卡）重叠时，重叠部分的换算必须是平滑的。$\psi \circ \varphi^{-1}$ 是从地图A到地图B的“翻译”。这保证了我们在不同坐标系下讨论“速度”或“导数”时，其结论是协调一致的。
+
+\begin{itemize}
+    \item \textbf{为什么“必定”？} 因为坐标卡定义中的“同胚”已经从底层逻辑上排除了任何断裂或不连续的可能性。
+    \item \textbf{为什么只提到 $C^0$？} 因为拓扑流形只关心“连贯”，不关心“平滑”。在没有引入额外的微分结构之前，我们无法保证变换函数是否可微（即具有切平面），但只要它们是合格的地图，就一定不会把空间弄碎。
+\end{itemize}
+\end{myremark}
+
+\begin{definition}[微分结构]
+    设 $M$ 是一个拓扑流形，$\mathcal{A}  = \{(U_\alpha, \varphi_\alpha); \alpha \in I\}$是 $M$ 的若干坐标卡构成的集合，$I$ 为指标集。如果~$\mathcal{A} $ 满足下列三个条件：
+    \begin{enumerate}[(1)]
+        \item $\{U_\alpha; \alpha \in I\}$ 是 $M$ 的一个开覆盖；
+        \item $\forall \alpha, \beta \in I, (U_{\alpha}, \varphi_{\alpha})$  与  $(U_{\beta}, \varphi_{\beta})$  是  $C^r$  相关的; （转换是足够光滑的） 
+         \item  $\mathcal{A}$  是极大的, 换句话说, 对于  $M$  的任意一个坐标卡  $(U, \varphi)$ , 如果它和  $\mathcal{A}$  中的每一个成员都是  $C^r$  相关的, 则它一定属于  $\mathcal{A}$ .
+    \end{enumerate}
+    则称 $\mathcal{A} $ 为 拓扑流形 $M$ 的一个 $C^r$ 微分结构。% $(M, \mathcal{A} )$ 称为 $m$ 维 $C^r$ 微分流形。
+\end{definition}
+
+$C^\infty$  微分结构称为光滑结构；  $C^\omega$  结构称为实解析结构。
+特别地,  $C^\infty$  微分流形和  $C^\omega$  微分流形分别称为光滑流形和实解析流形。
+在不会引起混淆的情况下，也用  $M$  表示一个  $C^r$  微分流形  $(M, \mathcal{A})$.
+
+\begin{definition}[容许坐标卡]
+设  $M$  是一个  $m$  维拓扑流形,  $\mathcal{A}$  是  $M$  的一个  $C^r$  微分结构, 则称  $(M, \mathcal{A})$  是一个  $m$  维  $C^r$  微分流形. 此时,  $\mathcal{A}$  中的坐标卡称为  $C^r$  微分流形  $(M, \mathcal{A})$  的容许坐标卡.
+
+\begin{quote}
+ $C^r$  足够光滑
+\end{quote}
+\end{definition}
+
+\begin{myremark}
+\textbf{\textcolor{blue}{直观解读：}}
+“微分结构”就像是给流形贴了一层“光滑的皮肤”。有了这层皮肤，我们就可以在流形上像在欧氏空间一样进行微积分运算。极大性是为了确保这套“参考系”是最完备的。
+\end{myremark}
+
+{\bf 注记 1.1} 对于  $r \geqslant 1$ ，并非每一个拓扑流形都有  $C^r$  的微分结构。
+
+{\bf 注记 1.2} 任意一个  $C^r$  微分结构  $\mathcal{A}$  都可以由  $M$  的一个  $C^r$  相关的坐标覆盖  $\mathcal{A}_0$  唯一确定。这里所谓的  $C^r$  相关的坐标覆盖  $\mathcal{A}_0$  是指流形  $M$  上满足定义1.3中前两个条件的坐标卡集。事实上， $\mathcal{A}$  由  $\mathcal{A}_0$  通过下面的方式确定：
+$$
+\begin{array}{l} \mathcal {A} = \{(U, \varphi); (U, \varphi) \text {是} M   \text {的 坐 标 卡},   \text {且}   \forall (V, \psi) \in \mathcal {A} _ {0}, \\ (U, \varphi) \text {与} (V, \psi) \text {是} C ^ {r} \text {相 关 的} \}. 
+\\ \end{array}
+$$
+
+\begin{myremark}
+ 对于 $r \ge 1$，并非每一个拓扑流形都有 $C^r$ 微分结构。同时，一个拓扑流形上可以有多个不相容的微分结构。
+
+%\subsection*{关于微分结构存在性与唯一性的深层理解}
+
+\subsubsection*{1. 存在性障碍：并非每个拓扑流形都能“顺滑化”}
+
+\textbf{结论：} 存在拓扑流形，其上不存在任何 $C^r (r \ge 1)$ 微分结构。
+
+\textbf{\textcolor{blue}{直观解读：}}
+拓扑流形仅保证了“连贯性”（$C^0$）。想象一个由拼布缝合的复杂几何体，虽然每一块布料本身是平滑的，但受限于整体的拓扑纽结方式，可能存在某些“死结”，导致在接缝处无论如何定义坐标变换，都无法消除斜率的突变。
+
+\subsubsection*{2. 唯一性失效：同质异构的微分世界}
+
+\textbf{结论：} 同一个拓扑流形上可以定义多个互不相容的微分结构 $\mathcal{A}_1, \mathcal{A}_2$。
+
+\textbf{\textcolor{blue}{直观解读：}}
+这意味着虽然底层空间 $M$ 的点集和开集完全相同，但对于“什么是光滑函数”的判定标准不同。
+
+以 $7$ 维球面 $S^7$ 为例（Milnor, 1956）：
+\begin{itemize}
+    \item 我们可以在 $S^7$ 上定义标准的微分结构 $\mathcal{A}_{std}$。
+    \item 也可以定义出另外 $27$ 种“奇异”微分结构。在这些奇异结构中，原本在标准结构下看似光滑的函数，可能会变得处处不可导。
+\end{itemize}
+这说明{\bf “光滑”并非空间的固有属性，而是我们人为赋予的一套相互兼容的测量规则（坐标卡集）}。
+
+\subsection*{微分结构的构造示例：$\mathbb{R}$ 上的不相容结构}
+
+设 $M = \mathbb{R}$ 为拓扑流形。我们构造两个不同的 $C^\infty$ 相关的坐标覆盖：
+\begin{itemize}
+    \item \textbf{标准坐标卡：} $(U, \varphi)$，其中 $\varphi(x) = x, \forall x \in \mathbb{R}$。
+    \item \textbf{怪异坐标卡：} $(V, \psi)$，其中 $\psi(x) = x^3, \forall x \in \mathbb{R}$。
+\end{itemize}
+
+为了判断这两个坐标卡是否属于同一个微分结构，我们需要计算它们的转移映射：
+$$
+\tau = \varphi \circ \psi^{-1} : \psi(U \cap V) \to \varphi(U \cap V)
+$$
+代入具体定义：
+$$
+\tau(y) = \varphi(\psi^{-1}(y)) = \varphi(y^{1/3}) = y^{1/3}
+$$
+显然，函数 $\tau(y) = \sqrt[3]{y}$ 在 $y=0$ 处不可微（导数趋于无穷）。
+
+{\bf  结论与意义}
+
+\begin{enumerate}
+    \item 由于转移映射不是 $C^1$ 的，坐标卡 $(U, \varphi)$ 与 $(V, \psi)$ \textbf{不相容}。
+    \item 它们分别生成的极大坐标卡集 $\mathcal{A}_1$ 和 $\mathcal{A}_2$ 是 $\mathbb{R}$ 上两个不同的微分结构。
+\end{enumerate}
+
+\textbf{\textcolor{blue}{直观解读：}}
+虽然作为“拓扑空间”，这两个流形是一模一样的（都是一根无限长的线）；但作为“微分流形”，它们是两个不同的世界。
+
+在 $\mathcal{A}_2$ 的世界里，函数 $f(x) = x$ 居然\textbf{不是}光滑函数。因为在 $\mathcal{A}_2$ 的局部坐标 $\xi = x^3$ 下表达时，该函数变成了 $f(\xi) = \xi^{1/3}$，它在原点处有一个“尖角”（斜率无穷大）。
+
+这告诉我们：\textbf{光滑性不是点集本身的属性，而是坐标卡赋予的属性。}
+
+\subsubsection*{3. 例外与奇迹：$\mathbb{R}^4$ 的特殊性}
+
+\begin{itemize}
+    \item 对于 $n \neq 4$ 的欧氏空间 $\mathbb{R}^n$，其微分结构在微分同胚意义下是唯一的。
+    \item 对于 $\mathbb{R}^4$，存在无穷多个互不相容的微分结构（称为 Fake $\mathbb{R}^4$）。\textcolor{red}{\bf 这暗示了四维空间在几何与物理上具有极其独特的数学地位。}
+\end{itemize}
+\end{myremark}
+
+{\bf 注记 1.3}  设  $(U, \varphi)$  是  $m$  维微分流形  $M$  的一个容许坐标卡，则对于  $\forall p \in U$，把  $x = \varphi(p)$  在  $\mathbb{R}^m$  中的坐标  $(x^1(p), \dots, x^m(p))$  称为点  $p$  的{\bf 局部坐标}。以这样的方式在  $U$  上确定了一个坐标系，称为  $M$  在  $p$  点的一个（由局部坐标卡  $(U, \varphi)$  给出的）{\bf 局部坐标系}，记为  $(U, \varphi; x^i)$  或  $(U; x^i)$；其中，定义在  $U$  上的  $m$  个函数  $x^i: U \to \mathbb{R}$ $(i = 1, \dots, m)$  称为{\bf（局部）坐标函数}。
+
+对于  $M$  的任意两个  $C^r$-相关的局部坐标系  $(U, \varphi; x^i)$  和  $(V, \psi; y^i)$，如果  $U \cap V \neq \emptyset$ ，则称映射
+$$
+\psi \circ \varphi^ {- 1}: \varphi (U \cap V) \rightarrow \psi (U \cap V)
+$$
+为从  $(U,\varphi ;x^i)$  到  $(V,\psi ;y^{i})$  的{\bf (局部)坐标变换}，它可以表示为
+$$
+y^{i} = (\psi \circ \varphi^ {- 1}) ^ {i} = y ^ {i} (x ^ {1}, \dots , x ^ {m}), \quad 1 \leqslant i \leqslant m.
+$$
+由此所得到的  $m$  阶方阵
+$$
+J_{x; y} = \left(\frac {\partial y ^ {i}}{\partial x ^ {j}}\right)
+$$
+称为局部坐标变换  $\psi \circ \varphi^{-1}$  的{\bf Jacobi矩阵}，相应的行列式称为  $\psi \circ \varphi^{-1}$  的{\bf Jacobi行列式}，并定义
+$$
+\frac {\partial \left(y ^ {1} , \cdots , y ^ {m}\right)}{\partial \left(x ^ {1} , \cdots , x ^ {m}\right)} := \det  \left(\frac {\partial y ^ {i}}{\partial x ^ {j}}\right).
+$$
+
+由于局部坐标变换是可逆的，利用求偏导数的链式法则容易看出，局部坐标变换的 Jacobi 矩阵都是非退化的，即相应的 Jacobi 行列式恒不为零.
+
+%\begin{definition}[局部坐标变换]
+%    设 $(U, \varphi; x^i)$ 和 $(V, \psi; y^i)$ 是两个相关的坐标系，$U \cap V \ne \emptyset$。映射 $\psi \circ \varphi^{-1}$ 称为坐标变换：
+%    \[ y^\alpha = y^\alpha(x^1, \dots, x^m), \quad 1 \le \alpha \le m \]
+%    其 Jacobi 矩阵 $\left( \frac{\partial y^\alpha}{\partial x^i} \right)$ 是非退化的。
+%\end{definition}
+
+\begin{myremark}
+这一部分内容探讨了流形上不同坐标系之间如何“对话”。 Jacobi 矩阵是连接不同局部观察者的桥梁。
+
+\subsubsection*{1. 坐标变换的直观含义}
+
+设 $(U, \varphi; x^i)$ 和 $(V, \psi; y^i)$ 是流形 $M$ 上两个重叠的坐标卡。变换映射：
+$$
+\psi \circ \varphi^{-1}: \mathbb{R}^m \to \mathbb{R}^m, \quad (x^1, \dots, x^m) \mapsto (y^1, \dots, y^m)
+$$
+被称为\textbf{坐标变换}。
+
+\textbf{\textcolor{blue}{直观解读：}}
+这本质上是两种“描述方式”的切换。流形上的点 $p$ 是客观存在的实体，而 $x^i(p)$ 和 $y^i(p)$ 只是两组不同的标签。坐标变换就是研究这两组标签之间的函数关系。
+
+想象流形 $M$ 是一块起伏的山地，而坐标卡 $(U, \varphi)$ 和 $(V, \psi)$ 是两本由不同测量队绘制的地图。
+\begin{itemize}
+\item \textbf{坐标变换} $\psi \circ \varphi^{-1}$ 就像是一个“翻译器”。它告诉我们：如果在第一张地图上某个点的坐标是 $(x^1, \dots, x^m)$，那么在第二张地图上它对应的坐标 $(y^1, \dots, y^m)$ 是多少。
+\item 这种变换必须是光滑的，否则我们在第一张地图上研究的“平滑曲线”，在第二张地图上看起来就会有断裂或尖角。
+\end{itemize}
+
+为了刻画变换的光滑性，引入 Jacobi矩阵。 
+
+对于坐标变换 $y^i = y^i(x^1, \dots, x^m)$，其 Jacobi 矩阵定义为：
+$$
+J_{x;y} = \begin{pmatrix}
+\frac{\partial y^1}{\partial x^1} & \cdots & \frac{\partial y^1}{\partial x^m} \\
+\vdots & \ddots & \vdots \\
+\frac{\partial y^m}{\partial x^1} & \cdots & \frac{\partial y^m}{\partial x^m}
+\end{pmatrix}
+$$
+
+\begin{quote}
+\textbf{\textcolor{blue}{直观解读：}}
+Jacobi 矩阵 $J_{x;y}$ 的本质是\textbf{坐标网格的变形指南}。
+\end{quote}
+
+Jacobi 矩阵里的每一个分量 $\frac{\partial y^i}{\partial x^j}$ 描述了：当你在第一张地图上沿第 $j$ 条坐标线走一小步时，在第二张地图上的第 $i$ 个坐标分量变化了多少。
+虽然坐标变换本身可能是复杂的非线性函数，但在极小的局部范围内，它看起来就像是一个线性变换---局部线性化。
+
+\subsubsection*{ \textbf{2. 为什么 Jacobi 行列式恒不为零？}}
+
+考虑流形上的点 $p \in U \cap V$。我们有两组局部坐标 $(x^1, \dots, x^m)$ 和 $(y^1, \dots, y^m)$。坐标变换关系为：
+$$ y^i = y^i(x^1, \dots, x^m), \quad x^j = x^j(y^1, \dots, y^m) $$
+
+利用复合函数求导法则，对 $x^k$ 关于自身求偏导：
+$$ \frac{\partial x^k}{\partial x^j} = \sum_{i=1}^m \frac{\partial x^k}{\partial y^i} \frac{\partial y^i}{\partial x^j} $$
+由于 $\frac{\partial x^k}{\partial x^j} = \delta_j^k$ (克罗尼克符号，即当且仅当 $k=j$ 时为 $1$，否则为 $0$），上式写成矩阵形式即为：
+$$ I = J_{y;x} \cdot J_{x;y} $$
+
+对矩阵等式两边取行列式：
+$$ \det(I) = \det(J_{y;x} \cdot J_{x;y}) $$
+利用行列式的乘法公式 $\det(AB) = \det(A)\det(B)$：
+\begin{equation}\label{eq:eq1}
+ 1 = \det(J_{y;x}) \cdot \det(J_{x;y}) 
+ \end{equation}
+
+公式~\eqref{eq:eq1}揭示了Jacob 矩阵的\textbf{非退化性：} 因为乘积为 $1$，所以 $\det(J_{x;y})$ 绝不为零。这保证了几个重要的几何事实：
+    \begin{itemize}
+   \item Jacobi矩阵描述了坐标网格在变换过程中的“拉伸”和“扭曲”。$\det J \neq 0$ 意味着这种扭曲是可逆的，网格没有被压扁或折叠。
+   \item \textbf{局部坐标系之间的转换不会丢失空间的维数信息}， 即流形在任何坐标系下都是 $m$ 维的。
+   \item $\det J \neq 0$ 保证了这种变换不会把空间“压扁”。它确保了如果你在第一张地图上能分辨出两个不同的方向，那么在第二张地图上它们依然是不同的方向。
+   \end{itemize}
+\end{myremark}
+
+此外，根据公式~\eqref{eq:eq1}可以得到 \textbf{定向一致性：} 在同一个坐标变换中，$\det(J_{x;y})$ 和 $\det(J_{y;x})$ 的符号必须相同。这为我们判断流形是否“可定向”提供了数学基础——如果符号始终为正，说明两套坐标系对“左右”的定义是一致的。
+
+利用局部坐标变换的 Jacobi 行列式, 容易引入可定向流形及有向流形的概念.
+
+\begin{definition}[可定向性]\label{def:可定向性}
+  设  $M$  是一个微分流形。如果 $M$ 上存在一族容许的局部坐标系  $\mathcal{U} = \{(U_{\alpha}; x_{\alpha}^{i}); \alpha \in I\}$， 满足以下两个条件：
+\begin{enumerate}
+\item [(1)]   $\bigcup_{\alpha \in I} U_{\alpha} = M;$
+\item [(2)]  使得所有相交坐标卡的坐标变换 Jacobi 行列式均大于零，即 $\forall \alpha, \beta \in I$， 或者  $U_{\alpha} \cap U_{\beta} = \emptyset$， 或者当  $U_{\alpha} \cap U_{\beta} \neq \emptyset$  时， 在  $U_{\alpha} \cap U_{\beta}$  上必有
+\begin{equation*}
+\frac {\partial \left(x _ {\alpha} ^ {1} , \cdots , x _ {\alpha} ^ {m}\right)}{\partial \left(x _ {\beta} ^ {1} , \cdots , x _ {\beta} ^ {m}\right)} > 0, \tag {1.1}
+\end{equation*}
+\end{enumerate}
+则称  $M$  是\textbf{可定向}的微分流形。
+\end{definition}
+
+\begin{myremark}
+%\begin{quote}
+\textbf{\textcolor{blue}{直观解读：}}
+Jacobi 行列式的\textbf{符号}具有极高的几何价值。可定向性意味着我们可以始终如一地定义“左右”和“内外”。若行列式恒正，意味着变换保持了空间的“手性”（如右手系）。
+\begin{itemize}
+    \item $\det J > 0$：两套坐标系的“手性”一致（同为右手系或左手系）。
+    \item $\det J < 0$：其中一套坐标系相对于另一套发生了“镜像翻转”。
+\end{itemize}
+如果一个流形上所有坐标卡都能调整到彼此变换的 $\det J > 0$，这个流形就是\textbf{可定向}的。
+莫比乌斯带就是典型的不可定向流形。
+%\end{quote}
+\end{myremark}
+
+\begin{definition}[定向]
+设  $M$  是可定向的  $m$  维微分流形，如果
+$$
+\mathscr {U} = \left\{\left(U _ {\alpha}; x _ {\alpha} ^ {i}\right); \alpha \in I \right\}
+$$
+是使定义~\ref{def:可定向性} 中条件 (1) 和 (2) 成立的一族局部坐标系，并且满足条件：
+
+(3)  $\mathcal{U}$  是极大的，即对于任意的容许局部坐标系  $(U; x^i)$，只要对于任意的  $\alpha \in I$， $(U; x^i)$  和  $(U_\alpha; x_\alpha^i)$  都是定向相符的，便有  $(U; x^i) \in \mathcal{U}$，
+
+则称  $\mathcal{U}$  是  $M$  的一个定向。
+\end{definition}
+
+具有指定定向的微分流形称为有向的微分流形. 关于有向微分流形的其他等价定义以及相应的详细讨论可参看参考文献 [3]。
+
+现在给出一些常见的微分流形的例子。
+
+{\bf 例 1.1} 设  $M$  是  $\mathbb{R}^m$  的任意一个开子集，令  $U = M$ ,  $\varphi: U \to \mathbb{R}^m$  为包含映射. 则对于任意的  $r$  (正整数、 $\infty$  或  $\omega$ )， $\mathcal{A}_0 = \{(U, \varphi)\}$  是  $M$  的一个  $C^r$  坐标覆盖. 于是  $\mathcal{A}_0$  在  $M$  上确定了一个  $C^r$  微分结构  $\mathcal{A}$，使  $M$  成为  $m$  维的  $C^r$  微分流形.
+
+\begin{myremark}
+这个例子是理解微分流形最基础、也是最重要的“原型”。它告诉我们：欧氏空间本身（以及它的开子集）就是最自然的微分流形。
+
+\subsubsection*{1. 构造过程}
+\begin{itemize}
+    \item \textbf{空间 $M$：} 取 $\mathbb{R}^m$ 中的一个开子集。流形要求局部同胚于欧氏开集，而 $M$ 作为开集，“天生”符合此拓扑条件。
+    \item \textbf{坐标映射 $\varphi$：} 采用“包含映射”（Inclusion Map），即 $\varphi(p) = p$。这允许我们直接用欧氏坐标描述 $M$ 中的点。
+    \item \textbf{坐标覆盖 $\mathcal{A}_0$：} 仅需一个坐标卡 $(U, \varphi)$ 即可覆盖整个 $M$，故 $\mathcal{A}_0 = \{(U, \varphi)\}$ 构成其坐标覆盖。
+    \item \textbf{微分相关性：} 单一坐标卡不存在重叠转换冲突。其转移映射为恒等映射：
+    $$ \tau = \varphi \circ \varphi^{-1} = id_{\mathbb{R}^m} \text{} $$
+    
+\end{itemize}
+
+下证， 恒等映射是实解析的（$C^\omega$），它自动满足任何阶 $C^r$ 微分结构的要求。
+
+事实上， “解析”$C^\omega$ 是比 “光滑性”$C^\infty$ 更苛刻的条件，要求函数在每点邻域内均可展开为收敛幂级数。“解析”意味着函数的未来可以通过它现在的导数信息完全预测。
+
+对于恒等映射 $f(x) = x$，其分量函数 $f^i(x) = x^i$ 为线性函数。在任意点 $a$ 处的泰勒级数展开为：
+$$ x^i = a^i + \sum_{j=1}^m \frac{\partial x^i}{\partial x^j}\Big|_a (x^j - a^j) + \frac{1}{2!} \sum_{j,k=1}^m \frac{\partial^2 x^i}{\partial x^j \partial x^k}\Big|_a (x^j - a^j)(x^k - a^k) + \dots $$
+利用线性函数的性质：
+\begin{itemize}
+    \item \textbf{一阶导数：} $\frac{\partial x^i}{\partial x^j} = \delta_j^i$（克罗内克符号）。
+    \item \textbf{高阶导数：} 对于所有 $k \ge 2$，$\frac{\partial^k x^i}{\partial x^{j_1} \dots \partial x^{j_k}} \equiv 0$。
+\end{itemize}
+级数简化为：
+$$ x^i = a^i + (x^i - a^i) + 0 + 0 + \dots $$
+恒等映射的幂级数展开只有前两项是有意义的（常数项和线性项）。恒等映射 $y=x$ 的斜率永远是 $1$，且没有任何弯曲（高阶导数为 $0$）。这种极致的简单性意味着它在任何地方的表现都是一致且可预测的。
+该级数在全空间收敛且等于函数值本身，故是解析 $C^\omega$ 的。
+
+微分流形定义 1.2 要求转换映射$\psi \circ \varphi^{-1}$ 必为 $C^r$ 映射。已知恒等映射 $id \in C^\omega$，且存在包含关系：
+$$ C^\omega \subset C^\infty \subset \dots \subset C^r \subset \dots \subset C^0 \text{} $$
+因此，$id$ 自动具备任意阶 $C^r$ 的平滑性，满足微分结构的相容性要求。这意味着作为流形的欧氏空间 $\mathbb{R}^m$ 不仅仅是一个光滑流形，它实际上是一个实解析流形。这为我们在上面定义复杂的几何对象（如李群）提供了最坚实的数学底座。
+
+本例确立了流形理论的“逻辑起点”与“样板房”。
+\begin{enumerate}
+      \item \textbf{完美的透明度：} 恒等映射如同绝对纯净的玻璃，不涉及任何非线性扭曲。在微分流形的框架下，我们利用恒等映射的这种优良性质，将欧氏空间的开子集直接赋予了最高等级的微分结构。
+       \item \textbf{自包含性：} 流形的本意是“局部看起来像欧氏空间”。流形是欧氏空间的推广，因此欧氏空间本身必须首先是合法的微分流形。如果一个空间本身就是欧氏空间的一个开子集，那它不仅是“局部像”，而是“全身都像”。
+    \item \textbf{平凡性：} 直接以点本身作为坐标是最自然的结构，无需复杂的投影或变形。这是最自然的微分结构。
+    \item \textbf{开集的重要性：} 确保每点都有充足的邻域空间以毫无阻碍地定义偏导数。
+%    \item \textbf{数学上的“祖父权”：} 恒等映射是定义的基石。若标准无法兼容恒等映射，则微分流形概念将失去意义。
+\end{enumerate}
+
+\end{myremark}
+
+{\bf 例 1.2}  $\mathbb{R}^n$  到其自身的所有可逆线性变换关于复合运算构成一个群  $\operatorname {GL}(n,\mathbb{R})$，称为  $n$  阶的一般线性群.  $\operatorname {GL}(n,\mathbb{R})$  可等同于全体非奇异的  $n$  阶实方阵所构成的乘法群. 由于每一个  $n$  阶实方阵  $A = (a_{ij})$  都可以看作  $\mathbb{R}^{n^2}$  中的一个点， $\operatorname {GL}(n,\mathbb{R})$  可表示为
+$$
+\operatorname {G L} (n, \mathbb {R}) = \{A \in \mathbb {R} ^ {n^2}; \det  A \neq 0 \}.
+$$
+由此可见,  $\operatorname{GL}(n, \mathbb{R})$  是欧氏空间  $\mathbb{R}^{n\times n}$  的开子集，因而是一个  $n^2$  维的  $C^r$  微分流形.
+
+\begin{myremark}
+\subsection*{例 1.2 的直观解读：代数对象的几何化}
+
+这个例子将代数中的群论与几何中的流形结合，是\textbf{李群（Lie Group）}理论的基石，展示了如何将抽象代数对象（可逆矩阵）看做高维空间的几何属性（开集）。
+
+\begin{itemize}
+    \item \textbf{空间转换：} 一个 $n \times n$ 矩阵 $A = (a_{ij})$ 有 $n^2$ 个分量，可看作 $\mathbb{R}^{n^2}$ 中的一个点。
+    $$ A \mapsto (a_{11}, a_{12}, \dots, a_{nn}) \in \mathbb{R}^{n^2} \text{} $$
+    \item \textbf{非奇异性条件：} 矩阵 $A$ 可逆（即 $A \in \operatorname{GL}(n, \mathbb{R})$）的充要条件是 $\det A \neq 0$。
+    \item \textbf{“ $\operatorname{GL}(n, \mathbb{R})$  是欧氏空间  $\mathbb{R}^{n\times n}$  的开子集”的证明：} 
+    \begin{itemize}
+        \item 行列式函数 $\det: \mathbb{R}^{n^2} \to \mathbb{R}$ 是关于分量 $a_{ij}$ 的多项式，因而是连续函数。这意味着，如果矩阵的分量发生微小变化，其行列式的值也只会发生微小的偏移，而不会出现跳跃。
+        \item 在拓扑学中，连续函数具有一个关键性质：闭集的原像仍然是闭集。考虑实数集 $\mathbb{R}$ 中的单点集 $\{0\}$。由于它包含其所有的极限点，所以 $\{0\}$ 是一个闭集，其原像 $\det^{-1}(0)$（奇异矩阵集）在 $\mathbb{R}^{n^2}$ 中是闭集。
+        \item 因此其补集 $\operatorname{GL}(n, \mathbb{R}) = \{A \in \mathbb{R}^{n^2}; \det A \neq 0\}$ 必为 $\mathbb{R}^{n^2}$ 中的开集。
+        \item 根据例 1.1，欧氏空间的任何开子集都是微分流形。故 $\operatorname{GL}(n, \mathbb{R})$ 是一个 $n^2$ 维的 $C^r$ 微分流形。
+    \end{itemize}
+\end{itemize}
+
+%\textbf{\textcolor{blue}{直观解读： “矩阵空间里的‘有孔’大世界”}}
+\begin{itemize}
+\item \textbf{鲁棒性：} 开集性质保证了矩阵的可逆性对微小扰动是鲁棒的。 这意味着，若矩阵 $A$ 可逆，即使其分量因测量误差或数值计算进行了极微小的扰动，结果仍保持可逆，存在“空间余量”。这在物理建模和数值计算中至关重要。这种“空间余量”是我们在流形上定义坐标、进行微分运算的前提条件。
+\item \textbf{超曲面的“刀刃”：} 奇异矩阵集是 $n^2$ 维空间中一张极薄的“超曲面”。由于它是闭集，说明这把“刀”是锋利且边界明确的。将 $\operatorname{GL}(n, \mathbb{R})$ 想象为一个广阔的海洋，而奇异矩阵则是由方程 $\det A = 0$ 划定的一系列极薄的、不占据体积的“暗礁区”。
+
+ %\item \textbf{不连通性：} 由于 $\det A > 0$ 和 $\det A < 0$ 的区域被 $\det A = 0$ 隔开，该流形由两个不相连的“片区”组成。
+   % \item \textbf{维数直观：} $2 \times 2$ 矩阵构成的流形是 $4$ 维的，其复杂度远超三维视觉直观。
+\item \textbf{桥梁作用：}  $\operatorname{GL}(n, \mathbb{R}) $ 既有群运算（乘法），又是光滑空间（坐标），是研究连续对称性的核心工具。
+\end{itemize}
+
+%\subsection*{3. 核心意义：李群的先声}
+%
+% \textbf{\textcolor{blue}{深度洞察：}}
+% \begin{enumerate}
+%    \item \textbf{局部平坦性：} 在任何可逆矩阵附近，空间看起来都像是在 $n^2$ 维欧氏空间中滑行。
+%    \item \textbf{不连通性：} 由于 $\det A > 0$ 和 $\det A < 0$ 的区域被 $\det A = 0$ 隔开，该流形由两个不相连的“片区”组成。
+%    \item \textbf{维数直观：} $2 \times 2$ 矩阵构成的流形是 $4$ 维的，其复杂度远超三维视觉直观。
+%\end{enumerate}
+
+
+\end{myremark}
+
+{\bf 例 1.3} 设  $M = \mathbb{R}, r$  为正整数、 $\infty$  或  $\omega$ . 例1.1已经给出了  $M$  上的一个  $C^r$  微分结构  $\mathcal{A}$. 现令  $V = M$莫比乌斯带就是典型的不可定向流形。映射  $\psi : V \to \mathbb{R}$  由  $\psi(x) = x^3$  ( $\forall x \in V$ ) 确定. 易见  $\psi$  和  $\psi^{-1}$  均为连续映射，所以  $\psi$  是同胚，即  $(V, \psi)$  是  $M$  的一个坐标卡. 由坐标覆盖  $\{(V, \psi)\}$  在  $M$  上确定的  $C^r$  微分结构记为  $\mathcal{A}_1$. 于是  $(M, \mathcal{A}_1)$  也是一个  $C^r$  的微分流形.
+
+注意到坐标变换  $\varphi \circ \psi^{-1}(x) = \sqrt[3]{x}$  在  $x = 0$  处是不可微的，于是这两个坐标卡  $(U, \varphi)$  和  $(V, \psi)$  不是  $C^1$  相关的。所以， $(M, \mathcal{A})$  与  $(M, \mathcal{A}_1)$  是两个不同的一维  $C^r$  微分流形.
+
+{\bf 例 1.4} 设  $f$  是定义在  $\mathbb{R}^{n+1}$  上的实值  $C^r$  函数， $r \geqslant 1$. 如果  $f$  的梯度
+$$
+\operatorname {g r a d} f = \left(\frac {\partial f}{\partial x ^ {1}}, \dots , \frac {\partial f}{\partial x ^ {n + 1}}\right)
+$$
+在  $f$  的一个水平集
+$$
+M _ {c} = \{p \in \mathbb {R} ^ {n + 1}; f (p) = c \}
+$$
+(c为常数)上恒不为零，则  $M_{c}$  是一个  $_{n}$  维的  $C^r$  微分流形。
+
+\begin{quote}
+\textbf{\textcolor{blue}{直观解读：}}
+隐函数定理告诉我们：如果一个方程 $f(x)=c$ 的梯度不为零，那么它的解集在局部上看起来就像是被“压平”后的欧氏空间。比如球面 $S^n$。
+\end{quote}
+
+证明如下：
+
+对于任意的  $p = (x_0^1,\dots ,x_0^{n + 1})\in M_c$，不妨设
+$$
+\frac {\partial f}{\partial x ^ {n + 1}} (p) \neq 0.
+$$
+根据隐函数定理，存在点  $(x_0^1,\dots ,x_0^n)$  在  $\mathbb{R}^n$  中的邻域  $\tilde{U}$， 以及定义在  $\tilde{U}$  上的  $C^r$  函数  $x^{n + 1} = h(x^{1},\dots ,x^{n})$，使得
+$$
+x _ {0} ^ {n + 1} = h \left(x _ {0} ^ {1}, \dots , x _ {0} ^ {n}\right),
+$$
+并且在  $\tilde{U}$  上有恒等式
+$$
+f (x ^ {1}, \dots , x ^ {n}, h (x ^ {1}, \dots , x ^ {n})) \equiv c.
+$$
+由此可见，从点  $p$  在  $M_{c}$  中的一个邻域  $U$  到坐标平面  $x^{n + 1} = 0$  上的投影  $j: U \to \tilde{U}$  是一一对应，其逆映射  $j^{-1}$  由
+$$
+(x ^ {1}, \dots , x ^ {n}) \longmapsto (x ^ {1}, \dots , x ^ {n}, h (x ^ {1}, \dots , x ^ {n}))
+$$
+确定. 易知， $j$  与  $j^{-1}$  都是连续的. 因此， $(U,j)$  是  $M_{c}$  在  $p$  点的一个坐标卡. 可以验证，对于所有的  $p \in M_{c}$，由上述方法得到的坐标卡彼此都是  $C^{r}$  相关的，并构成了  $M_{c}$  的一个  $C^{r}$  相关的坐标覆盖，它在  $M_{c}$  上确定了一个  $C^{r}$  微分结构  $\mathcal{A}$，使  $M_{c}$  成为一个  $n$  维的  $C^{r}$  微分流形.
+
+例1.4说明，欧氏空间  $\mathbb{R}^{n + 1}$  中的正则超曲面都是微分流形，其中包括许多最常见的例子。例如：设  $r > 0$，并设
+$$
+f = \sum_ {i = 1} ^ {n + 1} (x ^ {i}) ^ {2}, \quad \forall (x ^ {1}, \dots , x ^ {n + 1}) \in \mathbb {R} ^ {n + 1},
+$$
+则以原点为心、  $r$  为半径的  $n$  维球面
+$$
+S^{n} (r) = \{x \in \mathbb {R} ^ {n + 1}; f (x) = r^{2} \}
+$$
+是  $f$  的一个水平集，并且  $\operatorname{grad} f$  在  $S^n(r)$  上处处不为零，因此它是一个  $n$  维  $C^r$  微分流形. 为了简便起见， 以后记  $S^n = S^n(1)$.
+
+\textbf{例1.4} 设 $f$ 是定义在 $\mathbb{R}^{n+1}$ 上的实值 $C^r$ 函数，如果 $\text{grad} f \neq 0$ 在水平集 $M_c = \{f=c\}$ 上成立，则 $M_c$ 是 $n$ 维微分流形。
+
+{\bf 例 1.5 开子流形}
+
+设  $M$  为  $m$  维光滑流形，其光滑结构记为
+$$
+\mathcal {A} = \left\{\left(U _ {\alpha}, \varphi_ {\alpha}\right); \alpha \in I \right\};
+$$
+
+又设  $U$  是  $M$  的一个非空开子集，令
+$$
+V _ {\alpha} = U \cap U _ {\alpha}, \quad \psi_ {\alpha} = \varphi_ {\alpha} | _ {V _ {\alpha}},
+$$
+则  $\tilde{\mathcal{A}} = \{(V_{\alpha},\psi_{\alpha});\alpha \in I,V_{\alpha}\neq \emptyset \}$  给出了  $U$  的一个光滑结构，使得 $(U,\tilde{\mathcal{A}})$  成为一个  $m$  维光滑流形，称为  $M$  的开子流形
+
+{\bf 例 1.6}  $n$  维实射影空间  $\mathbb{R}P^n$
+
+用  $\mathbb{R}P^n$  表示  $\mathbb{R}^{n + 1}$  中经过原点  $O = (0,\dots ,0)$  的直线的集合. 若把  $\mathbb{R}^{n + 1}$  视为  $n + 1$  维的实向量空间，则  $\mathbb{R}P^n$  就是  $\mathbb{R}^{n + 1}$  的所有一维子空间的集合. 下面要在  $\mathbb{R}P^n$  上引入一个“标准”的微分结构， 使之成为  $n$  维光滑流形.
+
+为此，先在  $\mathbb{R}_{*}^{n + 1} = \mathbb{R}^{n + 1}\backslash \{0\}$  上定义一种等价关系  $\sim$  如下：
+$$
+\forall x = \left(x ^ {1}, \dots , x ^ {n + 1}\right), \quad y = \left(y ^ {1}, \dots , y ^ {n + 1}\right) \in \mathbb {R} _ {*} ^ {n + 1},
+$$
+
+$x \sim y$  当且仅当存在非零实数  $\lambda$，使得  $y = \lambda x$， 即  $y^{\alpha} = \lambda x^{\alpha} (1 \leqslant \alpha \leqslant n + 1)$ . 不难知道，$\mathbb{R}P^{n}$  可以等同于  $\mathbb{R}_{*}^{n + 1}$  关于等价关系  $\sim$  的商空间，即有
+$$
+\mathbb {R} P ^ {n} = \mathbb {R} _ {*} ^ {n + 1} / \sim .
+$$
+
+为方便起见， 用  $[x] = [(x^{1},\dots ,x^{n + 1})]$  表示  $\mathbb{R}_*^{n + 1}$  中的元素  $x = (x^{1},\dots ,$ $x^{n + 1})$  所在的等价类， 于是有
+$$
+\mathbb {R} P ^ {n} = \{[ x ] = [ (x ^ {1}, \dots , x ^ {n + 1}) ]; x = (x ^ {1}, \dots , x ^ {n + 1}) \in \mathbb {R} _ {*} ^ {n + 1} \}.
+$$
+把对应  $x \in \mathbb{R}_*^{n+1} \mapsto [x] \in \mathbb{R}P^n$  记为  $\pi$ .  $\mathbb{R}P^n$  上的拓扑结构定义如下:  $U \subset \mathbb{R}P^n$  是开集当且仅当  $\pi^{-1}(U)$  是  $\mathbb{R}_*^{n+1}$  的开子集. 由此可见，  $\pi: \mathbb{R}_*^{n+1} \to \mathbb{R}P^n$  是连续映射，并且  $\mathbb{R}P^n$  是Hausdorff空间. 通常把  $x$  的坐标  $(x^1, \dots, x^{n+1})$  称为  $\mathbb{R}P^n$  中的点  $[x]$  的齐次坐标. 显然，一个点的齐次坐标不是唯一的，并且当  $x^\alpha \neq 0$  时，总有
+$$
+[ (x ^ {1}, \dots , x ^ {n + 1}) ] = \left[ \left(\frac {x ^ {1}}{x ^ {\alpha}}, \dots , \frac {x ^ {\alpha - 1}}{x ^ {\alpha}}, 1, \frac {x ^ {\alpha + 1}}{x ^ {\alpha}}, \dots , \frac {x ^ {n + 1}}{x ^ {\alpha}}\right) \right].
+$$
+
+定义  $\mathbb{R}P^n$  的  $n + 1$  个开子集如下：
+$$
+V _ {\alpha} = \left\{\left[ \left(x ^ {1}, \dots , x ^ {n + 1}\right) \right] \in \mathbb {R} P ^ {n}; x ^ {\alpha} \neq 0 \right\}, \quad \alpha = 1, \dots , n + 1.
+$$
+
+从直观上讲,  $V_{\alpha}$  是  $\mathbb{R}^{n + 1}$  中全体通过原点但不落在超平面  $x^{\alpha} = 0$  之中的直线所构成的集合. 再引入映射
+$$
+\varphi_ {\alpha}: V _ {\alpha} \rightarrow \mathbb {R} ^ {n}, \quad 1 \leqslant \alpha \leqslant n + 1,
+$$
+其定义如下：
+$$
+\begin{array}{l} (\xi^ {1}, \dots , \xi^ {n}) = \varphi_ {\alpha} ([ (x ^ {1}, \dots , x ^ {n + 1}) ]) \\ = \left(\frac {x ^ {1}}{x ^ {\alpha}}, \dots , \frac {x ^ {\alpha - 1}}{x ^ {\alpha}}, \frac {x ^ {\alpha + 1}}{x ^ {\alpha}}, \dots , \frac {x ^ {n + 1}}{x ^ {\alpha}}\right), \\ \forall [ (x ^ {1}, \dots , x ^ {n + 1}) ] \in V _ {\alpha}. \\ \end{array}
+$$
+
+容易看出， $\varphi_{\alpha}$  完全确定，并且是从  $V_{\alpha}$  到  $\mathbb{R}^{n}$  的同胚. 故  $(V_{\alpha}, \varphi_{\alpha})$  是  $\mathbb{R}P^{n}$  的一个坐标卡， 相应的局部坐标  $(\xi^{1}, \dots, \xi^{n})$  通常称为  $\mathbb{R}P^{n}$  中的点的非齐次坐标. 当  $V_{\alpha} \cap V_{\beta} \neq \emptyset$  时 (不妨设  $\alpha > \beta$ )，局部坐标变换
+$$
+(\eta^ {1}, \dots , \eta^ {n}) = \varphi_ {\beta} \circ \varphi_ {\alpha} ^ {- 1} (\xi^ {1}, \dots , \xi^ {n}), \quad \xi^ {\beta} \neq 0
+$$
+由下式确定：
+$$
+\begin{array}{l} \eta^ {1} = \frac {\xi^ {1}}{\xi^ {\beta}}, \quad \dots , \quad \eta^ {\beta - 1} = \frac {\xi^ {\beta - 1}}{\xi^ {\beta}}, \quad \eta^ {\beta} = \frac {\xi^ {\beta + 1}}{\xi^ {\beta}}, \quad \dots , \\ \eta^ {\alpha - 2} = \frac {\xi^ {\alpha - 1}}{\xi^ {\beta}}, \quad \eta^ {\alpha - 1} = \frac {1}{\xi^ {\beta}}, \quad \eta^ {\alpha} = \frac {\xi^ {\alpha}}{\xi^ {\beta}}, \quad \dots , \quad \eta^ {n} = \frac {\xi^ {n}}{\xi^ {\beta}}. \\ \end{array}
+$$
+
+它们都是  $(\xi^{1},\dots ,\xi^{n})$  的光滑函数，因而
+$$
+\varphi_ {\beta} \circ \varphi_ {\alpha} ^ {- 1}: \varphi_ {\alpha} (V _ {\alpha} \cap V _ {\beta}) \rightarrow \varphi_ {\beta} (V _ {\alpha} \cap V _ {\beta})
+$$
+是光滑映射. 所以  $\{(V_{\alpha}, \varphi_{\alpha}); 1 \leqslant \alpha \leqslant n + 1\}$  确定了  $\mathbb{R}P^{n}$  上的一个光滑结构，使得  $\mathbb{R}P^{n}$  成为  $n$  维光滑流形，称为  $n$  维实射影空间.
+
+\begin{quote}
+\textbf{\textcolor{blue}{直观解读：}}
+$\mathbb{R}P^n$ 描述的是“方向”的集合。想象你站在原点，每一条穿过你的直线都是流形上的一个“点”。
+\end{quote}
+
+\endinput
+\begin{example}[实射影空间 $\R P^n$]
+    $\R P^n$ 是 $\R^{n+1} \setminus \{0\}$ 关于等价关系 $x \sim \lambda x$ ($\lambda \ne 0$) 的商空间。其上的齐次坐标记为 $[x^1 : \dots : x^{n+1}]$。定义开集 $V_\alpha = \{[x] \mid x^\alpha \ne 0\}$ 及坐标映射：
+    \[ \varphi_\alpha([x]) = \left( \frac{x^1}{x^\alpha}, \dots, \widehat{\frac{x^\alpha}{x^\alpha}}, \dots, \frac{x^{n+1}}{x^\alpha} \right) \in \R^n \]
+    这构成 $\R P^n$ 的一个光滑结构。
+\end{example}
+
+\section{光滑映射}
+
+\begin{definition}[光滑函数]
+    设 $M$ 是光滑流形，$f: M \to \R$。如果对于 $M$ 的任意坐标卡 $(U, \varphi)$，$f \circ \varphi^{-1}$ 是 $\R^m$ 上的光滑函数，则称 $f$ 是 $M$ 上的光滑函数。全体光滑函数的集合记为 $C^\infty(M)$。
+\end{definition}
+
+\begin{definition}[光滑映射]
+    设 $f: M \to N$ 是流形间的映射。如果对于 $p \in M$，存在坐标卡 $(U, \varphi)$ 和 $(V, \psi)$，使得 $\psi \circ f \circ \varphi^{-1}$ 是光滑映射，则称 $f$ 是光滑映射。若 $f$ 是同胚且 $f, f^{-1}$ 均光滑，则称其为微分同胚。
+\end{definition}
+
+\begin{theorem}[映射秩定理]
+    如果光滑映射 $f: M \to N$ 在 $p$ 点附近具有常秩 $r$，则存在局部坐标系使得 $f$ 的表示为：
+    \[ y^1 = x^1, \dots, y^r = x^r, y^{r+1} = 0, \dots, y^n = 0 \]
+\end{theorem}
+
+\section{单位分解定理}
+
+单位分解是处理流形上“局部”到“整体”过渡的核心工具。
+\begin{definition}[单位分解]
+    从属于开覆盖 $\{U_\alpha\}$ 的单位分解是一族光滑函数 $\{f_\alpha\}$，满足：
+    \begin{enumerate}[(1)]
+        \item $0 \le f_\alpha \le 1$；
+        \item $\mathrm{Supp}(f_\alpha) \subset U_\alpha$ 且支撑集局部有限；
+        \item $\sum f_\alpha \equiv 1$。
+    \end{enumerate}
+\end{definition}
+
+\section{切向量和切空间}
+
+\begin{definition}[切向量]
+    光滑流形 $M$ 在点 $p$ 的一个切向量 $v$ 是一个映射 $v: C_p^\infty \to \R$，满足：
+    \begin{enumerate}[(1)]
+        \item 线性性：$v(f + \lambda g) = v(f) + \lambda v(g)$；
+        \item Leibniz 法则（导数性质）：$v(fg) = v(f)g(p) + f(p)v(g)$。
+    \end{enumerate}
+    点 $p$ 处全体切向量构成切空间 $T_p M$。
+\end{definition}
+
+\begin{theorem}
+    设 $(U; x^i)$ 是 $p$ 点附近的坐标系，则 $\{ \frac{\partial}{\partial x^i}|_p \}$ 构成 $T_p M$ 的一个基底，$\dim T_p M = m$。
+\end{theorem}
+
+\begin{definition}[余切空间]
+    $T_p M$ 的对偶空间称为余切空间 $T_p^* M$。函数 $f$ 的微分 $df|_p$ 是一个余切向量，定义为 $df(v) = v(f)$。坐标基底为 $\{ dx^i|_p \}$。
+\end{definition}
+
+\section{光滑切向量场}
+
+切向量场 $X$ 为每一点 $p$ 指派一个切向量 $X(p) \in T_p M$。在坐标系下可表为 $X = \sum X^i \frac{\partial}{\partial x^i}$。
+\begin{definition}[Poisson 括号]
+    设 $X, Y$ 是光滑向量场，定义 $[X, Y]f = X(Yf) - Y(Xf)$。$[X, Y]$ 仍是一个光滑向量场，满足 Jacobi 恒等式：
+    \[ [X, [Y, Z]] + [Y, [Z, X]] + [Z, [X, Y]] = 0 \]
+\end{definition}
+
+\section{光滑张量场}
+
+$(r, s)$ 型张量场是 $r$ 个余切向量和 $s$ 个切向量的多重线性映射。
+\begin{example}
+    $f$ 的微分 $df$ 是 $(0, 1)$ 型张量场。黎曼度量 $g$ 是一个对称正定的 $(0, 2)$ 型张量场。
+\end{example}
+
+\section{外微分式}
+
+$r$ 次外微分式是 $r$ 阶完全反对称的协变张量场，集合记为 $A^r(M)$。
+\begin{theorem}[外微分算子]
+    存在唯一的 $d: A^r(M) \to A^{r+1}(M)$ 满足：
+    \begin{enumerate}[(1)]
+        \item $d$ 是线性的；
+        \item $d(\omega \wedge \eta) = d\omega \wedge \eta + (-1)^r \omega \wedge d\eta$；
+        \item $d^2 = 0$。
+    \end{enumerate}
+\end{theorem}
+
+\section{外微分式的积分和 Stokes 定理}
+
+\begin{theorem}[Stokes 定理]
+    设 $M$ 是 $m$ 维有向光滑流形，$D$ 是带边区域，$\omega$ 是 $m-1$ 次紧支撑外形式，则：
+    \[ \int_D \diff\omega = \int_{\partial D} \omega \]
+\end{theorem}
+
+\section{切丛和向量丛}
+
+切丛 $TM = \bigcup_{p \in M} T_p M$ 作为一个集合，可以通过坐标卡诱导出的拓扑和微分结构成为一个 $2m$ 维的光滑流形。向量丛是这一结构的推广。
