@@ -1,0 +1,13 @@
+# PDF 教材处理 Skills 依赖
+# 安装: pip3 install -r requirements-skills.txt
+
+# 核心依赖（必需）
+pymupdf>=1.23.0         # PDF 处理
+requests>=2.31.0        # HTTP 请求（调用 MinerU API）
+
+# 可选依赖（推荐）
+aiohttp>=3.9.0          # 异步 HTTP 支持
+
+# 开发依赖（可选）
+pytest>=7.4.0           # 测试
+black>=23.0.0           # 代码格式化

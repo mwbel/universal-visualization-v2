@@ -89,7 +89,7 @@ class OpenAIClient(CustomLLMClient):
                 else:
                     raise Exception(f"OpenAI API错误: {response.status}")
 
-        except:
+        except Exception as e:
             return False
 
 class GoogleGenAIClient(CustomLLMClient):
@@ -137,7 +137,7 @@ class GoogleGenAIClient(CustomLLMClient):
             async with aiohttp.ClientSession() as session:
                 async with session.post(url, json=payload, timeout=10) as response:
                     return response.status == 200
-        except:
+        except Exception as e:
             return False
 
 class AnthropicClient(CustomLLMClient):
@@ -174,7 +174,7 @@ class AnthropicClient(CustomLLMClient):
             async with aiohttp.ClientSession(headers=headers) as session:
                 async with session.get(f"{self.config.base_url}/v1/models") as response:
                     return response.status == 200
-        except:
+        except Exception as e:
             return False
 
 class LocalLLMClient(CustomLLMClient):
@@ -208,7 +208,7 @@ class LocalLLMClient(CustomLLMClient):
             async with aiohttp.ClientSession() as session:
                 async with session.get(f"{self.config.base_url}/api/tags") as response:
                     return response.status == 200
-        except:
+        except Exception as e:
             return False
 
 # 预定义的常用配置
