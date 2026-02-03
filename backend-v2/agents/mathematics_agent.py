@@ -8,33 +8,62 @@ import json
 import math
 import datetime
 import numpy as np
-from .base_agent import BaseVisualizationAgent, VisualizationError, RequirementParseError
+from .base_agent import (
+    BaseVisualizationAgent,
+    VisualizationError,
+    RequirementParseError,
+)
+
 
 class MathematicsAgent(BaseVisualizationAgent):
     """数学学科可视化Agent"""
 
     def __init__(self):
-        super().__init__("mathematics", {
-            "supported_distributions": [
-                "normal", "binomial", "poisson", "uniform",
-                "exponential", "chi_square", "t"
-            ],
-            "supported_fields": [
-                "probability", "statistics", "linear_algebra",
-                "calculus", "geometry", "algebra"
-            ],
-            "supported_concepts": {
-                "linear_algebra": [
-                    "二阶行列式", "三阶行列式", "向量投影", "向量空间",
-                    "旋转矩阵", "正交分解", "特征值分解", "矩阵运算",
-                    "高斯消元法", "线性变换"
+        super().__init__(
+            "mathematics",
+            {
+                "supported_distributions": [
+                    "normal",
+                    "binomial",
+                    "poisson",
+                    "uniform",
+                    "exponential",
+                    "chi_square",
+                    "t",
                 ],
-                "probability": [
-                    "正态分布", "二项分布", "泊松分布", "均匀分布",
-                    "指数分布", "卡方分布", "t分布"
-                ]
-            }
-        })
+                "supported_fields": [
+                    "probability",
+                    "statistics",
+                    "linear_algebra",
+                    "calculus",
+                    "geometry",
+                    "algebra",
+                ],
+                "supported_concepts": {
+                    "linear_algebra": [
+                        "二阶行列式",
+                        "三阶行列式",
+                        "向量投影",
+                        "向量空间",
+                        "旋转矩阵",
+                        "正交分解",
+                        "特征值分解",
+                        "矩阵运算",
+                        "高斯消元法",
+                        "线性变换",
+                    ],
+                    "probability": [
+                        "正态分布",
+                        "二项分布",
+                        "泊松分布",
+                        "均匀分布",
+                        "指数分布",
+                        "卡方分布",
+                        "t分布",
+                    ],
+                },
+            },
+        )
 
     async def parse_requirement(self, prompt: str) -> Dict[str, Any]:
         """
@@ -55,7 +84,7 @@ class MathematicsAgent(BaseVisualizationAgent):
                 "concept_type": None,
                 "parameters": {},
                 "numbers": [],
-                "raw_text": prompt
+                "raw_text": prompt,
             }
 
             # 1. 识别数学领域
@@ -64,7 +93,7 @@ class MathematicsAgent(BaseVisualizationAgent):
                 "linear_algebra": ["矩阵", "向量", "行列式", "线性", "变换", "特征值"],
                 "calculus": ["导数", "积分", "极限", "微分", "函数", "曲线"],
                 "geometry": ["几何", "图形", "角度", "长度", "面积", "体积"],
-                "algebra": ["方程", "代数", "多项式", "根", "系数", "变量"]
+                "algebra": ["方程", "代数", "多项式", "根", "系数", "变量"],
             }
 
             for field, patterns in field_patterns.items():
@@ -93,7 +122,7 @@ class MathematicsAgent(BaseVisualizationAgent):
                     "卡方": "chi_square",
                     "t分布": "t",
                     "t分布": "t",
-                    "t": "t"
+                    "t": "t",
                 }
 
                 for pattern, dist_type in distribution_patterns.items():
@@ -123,14 +152,16 @@ class MathematicsAgent(BaseVisualizationAgent):
                     "正交分解": "orthogonal_decomposition",
                     "高斯消元法": "gaussian_elimination",
                     "旋转矩阵": "rotation_matrix",
-                    "旋转": "rotation_matrix"
+                    "旋转": "rotation_matrix",
                 }
 
                 # 精确匹配
                 for concept in la_concepts:
                     if concept in prompt:
                         requirement["concept_type"] = "linear_algebra"
-                        requirement["template_id"] = concept_mapping.get(concept, concept)
+                        requirement["template_id"] = concept_mapping.get(
+                            concept, concept
+                        )
                         requirement["la_concept"] = concept
                         break
 
@@ -160,7 +191,9 @@ class MathematicsAgent(BaseVisualizationAgent):
                     elif requirement["distribution_type"] == "binomial":
                         if len(numbers) >= 2:
                             requirement["parameters"]["n"] = int(abs(numbers[0]))
-                            requirement["parameters"]["p"] = min(1.0, max(0.0, numbers[1]))
+                            requirement["parameters"]["p"] = min(
+                                1.0, max(0.0, numbers[1])
+                            )
                         elif len(numbers) == 1:
                             requirement["parameters"]["n"] = int(abs(numbers[0]))
                             requirement["parameters"]["p"] = 0.5
@@ -176,7 +209,9 @@ class MathematicsAgent(BaseVisualizationAgent):
         except Exception as e:
             raise RequirementParseError(f"数学需求解析失败: {str(e)}")
 
-    async def match_template(self, requirement: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def match_template(
+        self, requirement: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         匹配数学模板
 
@@ -188,20 +223,24 @@ class MathematicsAgent(BaseVisualizationAgent):
         """
         try:
             # 使用模板引擎进行匹配
-            if hasattr(self, 'template_engine') and self.template_engine:
+            if hasattr(self, "template_engine") and self.template_engine:
                 # 搜索匹配的模板
                 search_query = requirement.get("original", "")
                 dist_type = requirement.get("distribution_type")
 
                 # 如果识别了分布类型，优先匹配
                 if dist_type:
-                    subject_templates = await self.template_engine.get_subject_templates("mathematics")
+                    subject_templates = (
+                        await self.template_engine.get_subject_templates("mathematics")
+                    )
                     for template in subject_templates:
                         if template.get("id") == f"{dist_type}_distribution":
                             return template
 
                 # 通用搜索
-                matched_templates = await self.template_engine.search_templates(search_query, "mathematics")
+                matched_templates = await self.template_engine.search_templates(
+                    search_query, "mathematics"
+                )
                 if matched_templates:
                     return matched_templates[0]
 
@@ -211,7 +250,9 @@ class MathematicsAgent(BaseVisualizationAgent):
         except Exception as e:
             raise VisualizationError(f"模板匹配失败: {str(e)}")
 
-    async def _match_builtin_template(self, requirement: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def _match_builtin_template(
+        self, requirement: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         回退到内置模板匹配
 
@@ -231,9 +272,35 @@ class MathematicsAgent(BaseVisualizationAgent):
             # 2. 线性代数模板匹配
             elif requirement.get("concept_type") == "linear_algebra":
                 concept = requirement.get("la_concept")
-                template_key = f"la_{concept}"
+                # 优先使用 template_id 如果存在
+                if requirement.get("template_id"):
+                    template_key = f"la_{requirement.get('template_id')}"
+                else:
+                    template_key = f"la_{concept}"
+
+                # 特殊处理：如果concept_mapping映射了中文名到英文id，这里需要正确查找
+                # 在 _load_templates 中，键是 "la_二阶行列式" 还是 "la_determinant_2x2"？
+                # 检查 _load_templates 定义，键是 "la_向量投影" (中文) 和 "la_二阶行列式" (中文 - 刚才添加的)
+                # 但 parse_requirement 中映射到了 "determinant_2x2"
+
+                # 修正：为了匹配 _load_templates 中的键，我们需要反向查找或者标准化键名
+                # 简单起见，我们直接检查两种可能
+
                 if template_key in self.templates:
                     return self.templates[template_key]
+
+                # 尝试用原始中文名查找
+                chinese_key = f"la_{concept}"
+                if chinese_key in self.templates:
+                    return self.templates[chinese_key]
+
+                # 尝试查找映射后的名称
+                if (
+                    requirement.get("la_concept") == "二阶行列式"
+                    or requirement.get("la_concept") == "行列式"
+                ):
+                    if "la_二阶行列式" in self.templates:
+                        return self.templates["la_二阶行列式"]
 
             # 3. 默认数学模板
             else:
@@ -242,7 +309,12 @@ class MathematicsAgent(BaseVisualizationAgent):
         except Exception as e:
             raise VisualizationError(f"内置模板匹配失败: {str(e)}")
 
-    async def generate_config(self, requirement: Dict[str, Any], template: Dict[str, Any], user_preferences: Dict[str, Any]) -> Dict[str, Any]:
+    async def generate_config(
+        self,
+        requirement: Dict[str, Any],
+        template: Dict[str, Any],
+        user_preferences: Dict[str, Any],
+    ) -> Dict[str, Any]:
         """
         生成数学可视化配置
 
@@ -256,7 +328,8 @@ class MathematicsAgent(BaseVisualizationAgent):
         """
         try:
             config = {
-                "title": user_preferences.get("title") or self._generate_default_title(requirement),
+                "title": user_preferences.get("title")
+                or self._generate_default_title(requirement),
                 "subject": "mathematics",
                 "field": requirement.get("field", "general"),
                 "concept_type": requirement.get("concept_type"),
@@ -265,25 +338,34 @@ class MathematicsAgent(BaseVisualizationAgent):
                 "numbers": requirement.get("numbers", []),
                 "user_preferences": user_preferences,
                 "interactive": True,
-                "responsive": True
+                "responsive": True,
             }
 
             # 根据不同概念类型添加特定配置
             if requirement.get("distribution_type"):
-                config.update({
-                    "chart_type": "line",
-                    "x_range": [-5, 5] if requirement["distribution_type"] == "normal" else [0, 20],
-                    "show_statistics": True,
-                    "show_probability": True
-                })
+                config.update(
+                    {
+                        "chart_type": "line",
+                        "x_range": (
+                            [-5, 5]
+                            if requirement["distribution_type"] == "normal"
+                            else [0, 20]
+                        ),
+                        "show_statistics": True,
+                        "show_probability": True,
+                    }
+                )
 
             elif requirement.get("la_concept"):
-                config.update({
-                    "chart_type": "geometric",
-                    "show_matrix": True,
-                    "show_vectors": True,
-                    "3d_enabled": requirement.get("la_concept") in ["向量空间", "特征值分解"]
-                })
+                config.update(
+                    {
+                        "chart_type": "geometric",
+                        "show_matrix": True,
+                        "show_vectors": True,
+                        "3d_enabled": requirement.get("la_concept")
+                        in ["向量空间", "特征值分解"],
+                    }
+                )
 
             return config
 
@@ -302,7 +384,7 @@ class MathematicsAgent(BaseVisualizationAgent):
         """
         try:
             # 使用统一模板引擎
-            if hasattr(self, 'template_engine') and self.template_engine:
+            if hasattr(self, "template_engine") and self.template_engine:
                 template_id = self.get_template_id(config)
                 return await self.template_engine.render_template(template_id, config)
             else:
@@ -310,6 +392,7 @@ class MathematicsAgent(BaseVisualizationAgent):
                 return self._generate_fallback_html(config)
         except Exception as e:
             raise VisualizationError(f"可视化生成失败: {str(e)}")
+
     def _load_templates(self) -> Dict[str, Any]:
         """加载数学模板"""
         return {
@@ -318,22 +401,29 @@ class MathematicsAgent(BaseVisualizationAgent):
                 "name": "正态分布可视化",
                 "description": "交互式正态分布概率密度函数",
                 "parameters": ["mu", "sigma"],
-                "html_template": "default_math_template"
+                "html_template": "default_math_template",
             },
             "binomial": {
                 "id": "binomial",
                 "name": "二项分布可视化",
                 "description": "二项分布概率质量函数",
                 "parameters": ["n", "p"],
-                "html_template": "default_math_template"
+                "html_template": "default_math_template",
             },
             "la_向量投影": {
                 "id": "la_vector_projection",
                 "name": "向量投影可视化",
                 "description": "展示向量在其他向量上的投影",
                 "parameters": ["vector1", "vector2"],
-                "html_template": "default_math_template"
-            }
+                "html_template": "default_math_template",
+            },
+            "la_二阶行列式": {
+                "id": "la_determinant_2x2",
+                "name": "二阶行列式几何意义",
+                "description": "展示二阶行列式的几何意义（平行四边形面积）",
+                "parameters": ["a", "b", "c", "d"],
+                "html_template": "default_math_template",
+            },
         }
 
     def get_supported_topics(self) -> List[str]:
@@ -359,7 +449,7 @@ class MathematicsAgent(BaseVisualizationAgent):
             "数论",
             "抽象代数",
             "拓扑学",
-            "几何学"
+            "几何学",
         ]
 
     def get_template_id(self, config: Dict[str, Any]) -> str:
@@ -381,6 +471,8 @@ class MathematicsAgent(BaseVisualizationAgent):
             return "poisson_distribution"
         elif "vector" in str(viz_type) or "向量" in str(requirement):
             return "vector_projection"
+        elif "determinant" in str(viz_type) or "行列式" in str(requirement):
+            return "determinant_2x2"
         else:
             return "probability_statistics_default"
 

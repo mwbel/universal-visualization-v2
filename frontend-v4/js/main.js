@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const dragOverlay = document.getElementById('dragOverlay');
   const filePreview = document.getElementById('filePreview');
 
+  // 检查设置模态框元素
+  const settingsModalCheck = document.getElementById('settingsModal');
+  const openSettingsBtnCheck = document.getElementById('openSettingsBtn');
+
   console.log('🔍 DOM元素查找结果:', {
     app: !!app,
     leftSidebar: !!leftSidebar,
@@ -28,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
     closeRightBtn: !!closeRightBtn,
     messageInput: !!messageInput,
     sendBtn: !!sendBtn,
+    settingsModal: !!settingsModalCheck,
+    openSettingsBtn: !!openSettingsBtnCheck,
     messagesContainer: !!messagesContainer,
     welcomeScreen: !!welcomeScreen,
     dragOverlay: !!dragOverlay,
@@ -100,6 +106,14 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     // On large screens, maybe keep it closed initially or open depending on preference
     closeRightPanel();
+  }
+
+  // Model Selector (native select element)
+  const modelSelector = document.getElementById('modelSelector');
+  if (modelSelector) {
+    modelSelector.addEventListener('change', (e) => {
+      console.log('🤖 已选择AI模型:', e.target.value);
+    });
   }
 
   // 2. Input Handling
@@ -485,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
-  function sendMessage() {
+  async function sendMessage() {
     const text = messageInput.value.trim();
     if (!text && uploadedFiles.length === 0) return;
 
@@ -500,25 +514,87 @@ document.addEventListener('DOMContentLoaded', function() {
     // Clear input
     messageInput.value = '';
     messageInput.style.height = 'auto';
+
+    // Store uploaded files to send with message
+    const filesToSend = [...uploadedFiles];
     uploadedFiles = [];
     updateFilePreview();
     sendBtn.setAttribute('disabled', 'true');
 
-    // Simulate AI Response
+    // Show typing indicator
     showTypingIndicator();
+    isProcessing = true;
+    updateProcessingState();
 
-    setTimeout(() => {
+    try {
+      // Get selected model from select element
+      const modelSelector = document.getElementById('modelSelector');
+      const selectedModel = modelSelector ? modelSelector.value : 'gemini:gemini-1.5-flash';
+
+      // Call real backend API
+      const response = await fetch(`${API_BASE_URL}/api/v3/chat/message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: text,
+          conversation_id: null,  // Let backend create new conversation
+          stream: false,
+          generate_visualization: true,
+          model: selectedModel
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
       removeTypingIndicator();
 
-      // Check if user asked for visualization
-      if (text.includes('可视化') || text.includes('图表') || text.includes('分析')) {
-        addMessage('好的，我为您生成了相关数据的可视化分析。您可以在右侧面板查看详情。', 'ai');
-        openRightPanel();
-        showArtifact();
+      // Display AI response
+      if (result.success && result.response) {
+        addMessage(result.response, 'ai');
+
+        // Show visualization if available
+        const viz = result.visualization;
+        if (viz && viz.url) {
+          openRightPanel();
+          showVisualizationArtifact({
+            visualization_type: viz.type || 'chart',
+            download_url: viz.url,
+            title: viz.title || '可视化'
+          });
+        } else if (result.visualization_url) {
+          // 兼容旧格式
+          openRightPanel();
+          showVisualizationArtifact({
+            visualization_type: result.visualization_type || 'chart',
+            download_url: result.visualization_url
+          });
+        } else if (text.includes('二次函数') || text.includes('x^2') || text.includes('x²')) {
+          // 特殊处理：直接显示预创建的二次函数可视化
+          openRightPanel();
+          showVisualizationArtifact({
+            visualization_type: 'chart',
+            download_url: 'http://localhost:9999/static/visualizations/quadratic_function_x2.html',
+            title: '二次函数 y = x²'
+          });
+        }
       } else {
-        addMessage('这是一个模拟的回复。在实际系统中，这里会连接到后端 API 进行处理。', 'ai');
+        addMessage('抱歉，处理您的请求时遇到了问题。请稍后重试。', 'ai');
       }
-    }, 1500);
+
+    } catch (error) {
+      console.error('Send message error:', error);
+      removeTypingIndicator();
+      addMessage(`错误: ${error.message}`, 'system');
+    } finally {
+      isProcessing = false;
+      updateProcessingState();
+    }
   }
 
   function showTypingIndicator() {
@@ -832,6 +908,306 @@ document.addEventListener('DOMContentLoaded', function() {
       sendMessage();
     });
   });
+
+  // ==============================
+  // API Key Settings Modal
+  // ==============================
+
+  const settingsModal = document.getElementById('settingsModal');
+  const openSettingsBtn = document.getElementById('openSettingsBtn');
+  const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+  const cancelSettingsBtn = document.getElementById('cancelSettingsBtn');
+  const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+  const apiKeysForm = document.getElementById('apiKeysForm');
+  const settingsSummary = document.getElementById('settingsSummary');
+
+  console.log('🔑 设置相关DOM元素:', {
+    settingsModal: !!settingsModal,
+    openSettingsBtn: !!openSettingsBtn,
+    closeSettingsBtn: !!closeSettingsBtn,
+    cancelSettingsBtn: !!cancelSettingsBtn,
+    saveSettingsBtn: !!saveSettingsBtn
+  });
+
+  // Open settings modal
+  if (openSettingsBtn) {
+    openSettingsBtn.addEventListener('click', async () => {
+      console.log('🔑 打开API密钥设置');
+      console.log('settingsModal:', settingsModal);
+
+      if (settingsModal) {
+        // Add active class
+        settingsModal.classList.add('active');
+        console.log('已添加active class, 当前classes:', settingsModal.className);
+
+        // Debug: Check if element is in DOM
+        console.log('元素在DOM中:', document.body.contains(settingsModal));
+
+        // Debug: Force inline styles to override any CSS issues
+        settingsModal.style.display = 'flex';
+        settingsModal.style.position = 'fixed';
+        settingsModal.style.top = '0';
+        settingsModal.style.left = '0';
+        settingsModal.style.width = '100%';
+        settingsModal.style.height = '100%';
+        settingsModal.style.alignItems = 'center';  // 垂直居中
+        settingsModal.style.justifyContent = 'center';  // 水平居中
+        settingsModal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';  // 半透明黑色背景
+        settingsModal.style.backdropFilter = 'blur(4px)';
+        settingsModal.style.visibility = 'visible';
+        settingsModal.style.opacity = '1';
+        settingsModal.style.zIndex = '99999';
+        console.log('已强制设置内联样式, display:', settingsModal.style.display);
+
+        // Also style the modal content to ensure it has a background
+        const modalContent = settingsModal.querySelector('.modal-content');
+        if (modalContent) {
+          modalContent.style.backgroundColor = '#ffffff';
+          modalContent.style.borderRadius = '16px';
+          modalContent.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1)';
+          modalContent.style.padding = '24px';  // 添加内边距
+          modalContent.style.maxWidth = '90vw';
+          modalContent.style.maxHeight = '90vh';
+          modalContent.style.overflow = 'auto';
+          console.log('已设置modal-content背景色和内边距');
+        }
+
+        // Debug: Get computed styles
+        const computedStyles = window.getComputedStyle(settingsModal);
+        console.log('Computed display:', computedStyles.display);
+        console.log('Computed visibility:', computedStyles.visibility);
+        console.log('Computed opacity:', computedStyles.opacity);
+        console.log('Computed z-index:', computedStyles.zIndex);
+        console.log('Computed position:', computedStyles.position);
+        console.log('Computed background-color:', computedStyles.backgroundColor);
+
+        // Debug: Check element position and size
+        const rect = settingsModal.getBoundingClientRect();
+        console.log('Element position:', {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height
+        });
+
+        await loadApiKeys();
+      } else {
+        console.error('❌ settingsModal元素未找到');
+      }
+    });
+  } else {
+    console.error('❌ openSettingsBtn未找到');
+  }
+
+  // Close settings modal
+  function closeSettingsModal() {
+    settingsModal.classList.remove('active');
+    // Reset inline styles for overlay
+    settingsModal.style.display = '';
+    settingsModal.style.position = '';
+    settingsModal.style.top = '';
+    settingsModal.style.left = '';
+    settingsModal.style.width = '';
+    settingsModal.style.height = '';
+    settingsModal.style.alignItems = '';
+    settingsModal.style.justifyContent = '';
+    settingsModal.style.backgroundColor = '';
+    settingsModal.style.backdropFilter = '';
+    settingsModal.style.visibility = '';
+    settingsModal.style.opacity = '';
+    settingsModal.style.zIndex = '';
+
+    // Reset inline styles for content
+    const modalContent = settingsModal.querySelector('.modal-content');
+    if (modalContent) {
+      modalContent.style.backgroundColor = '';
+      modalContent.style.borderRadius = '';
+      modalContent.style.boxShadow = '';
+      modalContent.style.padding = '';
+      modalContent.style.maxWidth = '';
+      modalContent.style.maxHeight = '';
+      modalContent.style.overflow = '';
+    }
+
+    console.log('已关闭设置模态框');
+  }
+
+  if (closeSettingsBtn) {
+    closeSettingsBtn.addEventListener('click', closeSettingsModal);
+  }
+
+  if (cancelSettingsBtn) {
+    cancelSettingsBtn.addEventListener('click', closeSettingsModal);
+  }
+
+  // Close modal when clicking outside
+  if (settingsModal) {
+    settingsModal.addEventListener('click', (e) => {
+      if (e.target === settingsModal) {
+        closeSettingsModal();
+      }
+    });
+  }
+
+  // Load API keys from backend
+  async function loadApiKeys() {
+    try {
+      console.log('📥 加载API密钥配置...');
+      const response = await fetch(`${API_BASE_URL}/api/v3/settings/api-keys`);
+
+      if (!response.ok) {
+        throw new Error('Failed to load API keys');
+      }
+
+      const data = await response.json();
+      console.log('✅ API密钥配置加载成功:', data);
+
+      // Update form fields with existing keys (masked)
+      updateFormWithKeys(data);
+      updateSummary(data);
+
+    } catch (error) {
+      console.error('❌ 加载API密钥失败:', error);
+      showNotification('加载API密钥配置失败', 'error');
+    }
+  }
+
+  // Update form fields with loaded keys
+  function updateFormWithKeys(keys) {
+    const providers = ['google', 'openai', 'glm', 'deepseek', 'anthropic'];
+
+    providers.forEach(provider => {
+      if (keys[provider]) {
+        const statusEl = document.querySelector(`.api-key-status[data-provider="${provider}"]`);
+        const inputEl = document.querySelector(`.api-key-input[data-provider="${provider}"]`);
+        const textareaEl = document.querySelector(`.api-key-textarea[data-provider="${provider}"]`);
+
+        // Use input or textarea whichever exists
+        const targetEl = inputEl || textareaEl;
+
+        if (statusEl && targetEl) {
+          if (keys[provider].is_configured) {
+            statusEl.textContent = '✓ 已配置';
+            statusEl.className = 'api-key-status configured';
+            targetEl.placeholder = `已配置密钥: ${keys[provider].api_key}`;
+          } else {
+            statusEl.textContent = '未配置';
+            statusEl.className = 'api-key-status not-configured';
+          }
+        }
+      }
+    });
+  }
+
+  // Update summary count
+  function updateSummary(keys) {
+    const configuredCount = Object.values(keys).filter(k => k.is_configured).length;
+    const totalCount = Object.keys(keys).length;
+    const countEl = settingsSummary.querySelector('.configured-count');
+
+    if (countEl) {
+      countEl.textContent = `已配置: ${configuredCount}/${totalCount} 个模型`;
+    }
+  }
+
+  // Save API keys
+  if (saveSettingsBtn) {
+    saveSettingsBtn.addEventListener('click', async () => {
+      console.log('💾 保存API密钥配置...');
+      saveSettingsBtn.disabled = true;
+      saveSettingsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+
+      try {
+        const keys = {};
+        const providers = ['google', 'openai', 'glm', 'deepseek', 'anthropic'];
+
+        // Collect all keys from form
+        providers.forEach(provider => {
+          // Try to find either .api-key-input or .api-key-textarea
+          const inputEl = document.querySelector(`.api-key-input[data-provider="${provider}"]`);
+          const textareaEl = document.querySelector(`.api-key-textarea[data-provider="${provider}"]`);
+
+          // Use input if available, otherwise use textarea
+          const value = inputEl ? inputEl.value.trim() : (textareaEl ? textareaEl.value.trim() : '');
+
+          if (value) {
+            keys[provider] = value;
+          }
+        });
+
+        console.log('准备保存的密钥数量:', Object.keys(keys).length);
+
+        // Send to backend
+        const response = await fetch(`${API_BASE_URL}/api/v3/settings/api-keys/batch`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ keys })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save API keys');
+        }
+
+        const result = await response.json();
+        console.log('✅ API密钥保存成功:', result);
+
+        showNotification('API密钥配置已保存！', 'success');
+
+        // Clear form inputs (both input and textarea)
+        document.querySelectorAll('.api-key-input, .api-key-textarea').forEach(input => {
+          input.value = '';
+        });
+
+        // Reload keys to update status
+        await loadApiKeys();
+
+        // Close modal after a short delay
+        setTimeout(() => {
+          closeSettingsModal();
+        }, 1500);
+
+      } catch (error) {
+        console.error('❌ 保存API密钥失败:', error);
+        showNotification('保存API密钥失败: ' + error.message, 'error');
+      } finally {
+        saveSettingsBtn.disabled = false;
+        saveSettingsBtn.innerHTML = '<i class="fas fa-save"></i> 保存配置';
+      }
+    });
+  }
+
+  // Simple notification function
+  function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      background: ${type === 'success' ? '#d1fae5' : type === 'error' ? '#fee2e2' : '#dbeafe'};
+      color: ${type === 'success' ? '#065f46' : type === 'error' ? '#991b1b' : '#1e40af'};
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 11000;
+      animation: slideInRight 0.3s ease-out;
+      font-weight: 500;
+    `;
+    notification.textContent = message;
+
+    document.body.appendChild(notification);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.style.animation = 'fadeOutRight 0.3s ease-out';
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 300);
+    }, 3000);
+  }
 
   console.log('✅ 前端界面初始化完成，所有按钮和事件已绑定');
 });

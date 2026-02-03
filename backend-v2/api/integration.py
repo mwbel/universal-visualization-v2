@@ -7,16 +7,21 @@ from fastapi import HTTPException
 from typing import Dict, Any, Tuple, Optional
 import json
 import asyncio
+import os
+import uuid
 from datetime import datetime
 
 # 导入现有的路由系统
 from agents.router_manager import VisualizationRouter
 from agents.template_engine import UnifiedTemplateEngine
 
+
 class ChatIntegration:
     """聊天API集成管理器"""
 
-    def __init__(self, router: VisualizationRouter, template_engine: UnifiedTemplateEngine):
+    def __init__(
+        self, router: VisualizationRouter, template_engine: UnifiedTemplateEngine
+    ):
         self.router = router
         self.template_engine = template_engine
 
@@ -24,7 +29,7 @@ class ChatIntegration:
         self,
         message: str,
         user_preferences: Dict[str, Any] = None,
-        generate_visualization: bool = True
+        generate_visualization: bool = True,
     ) -> Tuple[str, Optional[Dict[str, Any]]]:
         """
         处理聊天消息，集成现有路由系统
@@ -56,7 +61,9 @@ class ChatIntegration:
                     text_response += f"\n\n注：可视化生成暂时遇到问题，您可以稍后再试。错误：{str(e)}"
 
             # 4. 添加学科特定的指导信息
-            text_response = await self._add_subject_guidance(text_response, subject, message)
+            text_response = await self._add_subject_guidance(
+                text_response, subject, message
+            )
 
             return text_response, visualization
 
@@ -68,11 +75,15 @@ class ChatIntegration:
         """生成基础文本响应"""
 
         # 问候语处理
-        if any(greeting in message.lower() for greeting in ["你好", "hello", "hi", "您好"]):
+        if any(
+            greeting in message.lower() for greeting in ["你好", "hello", "hi", "您好"]
+        ):
             return self._get_greeting_response(subject)
 
         # 帮助请求处理
-        if any(help_word in message for help_word in ["帮助", "help", "怎么用", "功能"]):
+        if any(
+            help_word in message for help_word in ["帮助", "help", "怎么用", "功能"]
+        ):
             return self._get_help_response(subject)
 
         # 学科特定响应
@@ -81,7 +92,7 @@ class ChatIntegration:
             "astronomy": self._get_astronomy_response(message),
             "physics": self._get_physics_response(message),
             "chemistry": self._get_chemistry_response(message),
-            "biology": self._get_biology_response(message)
+            "biology": self._get_biology_response(message),
         }
 
         return subject_responses.get(subject, self._get_general_response(message))
@@ -93,7 +104,7 @@ class ChatIntegration:
             "astronomy": "天文",
             "physics": "物理",
             "chemistry": "化学",
-            "biology": "生物"
+            "biology": "生物",
         }
 
         subject_name = subject_names.get(subject, "多学科")
@@ -204,7 +215,9 @@ class ChatIntegration:
 
 请更详细地描述你的需求！"""
 
-    async def _add_subject_guidance(self, response: str, subject: str, original_message: str) -> str:
+    async def _add_subject_guidance(
+        self, response: str, subject: str, original_message: str
+    ) -> str:
         """添加学科指导信息"""
 
         guidance_tips = {
@@ -212,7 +225,7 @@ class ChatIntegration:
             "astronomy": "\n\n🌌 天文提示：你可以要求展示特定时间、特定视角的天文现象，或者比较不同天体的特征。",
             "physics": "\n⚡ 物理提示：你可以设置初始条件、物理参数，要求公式推导或者实验演示。",
             "chemistry": "\n🧪 化学提示：你可以指定反应条件、分子参数，要求反应机理或者性质分析。",
-            "biology": "\n🧬 生物提示：你可以要求展示不同层次的生物学结构，从分子到生态系统。"
+            "biology": "\n🧬 生物提示：你可以要求展示不同层次的生物学结构，从分子到生态系统。",
         }
 
         guidance = guidance_tips.get(subject, "")
@@ -225,7 +238,7 @@ class ChatIntegration:
                 "astronomy": "• 模拟行星运动\n• 展示星座关系\n• 演示天文现象",
                 "physics": "• 模拟力学实验\n• 展示电磁场\n• 演示波动现象",
                 "chemistry": "• 展示分子结构\n• 模拟化学反应\n• 分析元素性质",
-                "biology": "• 展示细胞结构\n• 模拟生态过程\n• 演示遗传规律"
+                "biology": "• 展示细胞结构\n• 模拟生态过程\n• 演示遗传规律",
             }
             guidance += subject_examples.get(subject, "• 探索更多相关内容")
 
@@ -236,24 +249,50 @@ class ChatIntegration:
 
         # 明确要求可视化的关键词
         viz_keywords = [
-            "图", "图像", "图表", "可视化", "展示", "演示", "模拟",
-            "画", "绘制", "生成", "创建", "显示", "动画",
-            "graph", "chart", "plot", "visualization", "diagram"
+            "图",
+            "图像",
+            "图表",
+            "可视化",
+            "展示",
+            "演示",
+            "模拟",
+            "画",
+            "绘制",
+            "生成",
+            "创建",
+            "显示",
+            "动画",
+            "几何",
+            "结构",
+            "graph",
+            "chart",
+            "plot",
+            "visualization",
+            "diagram",
         ]
 
         message_lower = message.lower()
         return any(keyword in message_lower for keyword in viz_keywords)
 
     async def _generate_visualization(
-        self,
-        message: str,
-        subject: str,
-        user_preferences: Dict[str, Any]
+        self, message: str, subject: str, user_preferences: Dict[str, Any]
     ) -> Dict[str, Any]:
         """调用现有路由系统生成可视化"""
 
         try:
-            # 调用现有的路由系统
+            print(
+                f"🔍 [DEBUG] _generate_visualization 被调用: message={message}, subject={subject}"
+            )
+
+            # 1. 首先尝试从数据库缓存中获取
+            cached_viz = await self._get_cached_visualization(message, subject)
+            if cached_viz:
+                print(f"✅ [DEBUG] 找到缓存可视化: {cached_viz.get('url')}")
+                return cached_viz
+            else:
+                print(f"⚠️ [DEBUG] 未找到缓存可视化")
+
+            # 2. 调用现有的路由系统
             result = await self.router.route_request(message, user_preferences)
 
             if not result.get("success"):
@@ -261,9 +300,11 @@ class ChatIntegration:
 
             # 构建可视化数据
             visualization = {
-                "type": result.get("requirement", {}).get("visualization_type", "chart"),
+                "type": result.get("requirement", {}).get(
+                    "visualization_type", "chart"
+                ),
                 "title": result.get("template", {}).get("name", "可视化"),
-                "subject": subject,
+                "subject": result.get("subject", subject),
                 "html_content": result.get("html_content", ""),
                 "config": result.get("config", {}),
                 "metadata": {
@@ -271,9 +312,37 @@ class ChatIntegration:
                     "template_id": result.get("template", {}).get("id"),
                     "agent_info": result.get("agent_info", {}),
                     "routing_info": result.get("routing_info", {}),
-                    "created_at": datetime.now().isoformat()
-                }
+                    "created_at": datetime.now().isoformat(),
+                },
             }
+
+            # 如果有 HTML 内容但没有 URL，生成静态文件并提供 URL
+            if visualization.get("html_content") and not visualization.get("url"):
+                try:
+                    # 确保保存目录存在
+                    save_dir = os.path.join("static", "visualizations", "generated")
+                    os.makedirs(save_dir, exist_ok=True)
+
+                    # 生成唯一文件名
+                    filename = f"gen_{uuid.uuid4()}.html"
+                    file_path = os.path.join(save_dir, filename)
+
+                    # 保存内容
+                    with open(file_path, "w", encoding="utf-8") as f:
+                        f.write(visualization["html_content"])
+
+                    # 添加 URL 到可视化对象 (假设静态文件挂载在 /static)
+                    # 注意：这里假设前端和后端在同一域或已配置好代理，或者使用相对路径
+                    # 为了更稳健，我们使用相对路径，前端通常会拼接 API_BASE_URL
+                    visualization["url"] = (
+                        f"/static/visualizations/generated/{filename}"
+                    )
+                    print(
+                        f"✅ [DEBUG] Generated static file for visualization: {visualization['url']}"
+                    )
+
+                except Exception as e:
+                    print(f"❌ [DEBUG] Failed to save visualization to file: {str(e)}")
 
             return visualization
 
@@ -281,44 +350,158 @@ class ChatIntegration:
             # 如果路由系统失败，尝试生成简单的可视化
             return await self._generate_fallback_visualization(message, subject)
 
-    async def _generate_fallback_visualization(self, message: str, subject: str) -> Dict[str, Any]:
+    async def _get_cached_visualization(
+        self, message: str, subject: str
+    ) -> Optional[Dict[str, Any]]:
+        """从数据库获取缓存的可视化"""
+        try:
+            import sqlite3
+            from pathlib import Path
+
+            # 数据库路径
+            db_path = Path(__file__).parent.parent / "data" / "visualization_cache.db"
+            print(f"🗂️ [DEBUG] 数据库路径: {db_path}, 存在: {db_path.exists()}")
+
+            if not db_path.exists():
+                return None
+
+            conn = sqlite3.connect(str(db_path))
+            cursor = conn.cursor()
+
+            # 查询精确匹配
+            query = """
+                SELECT html_content, template_id, usage_count, cache_hit
+                FROM visualization_records
+                WHERE prompt = ? AND subject = ? AND html_content IS NOT NULL
+                LIMIT 1
+            """
+            print(f"🔍 [DEBUG] 执行查询: prompt={message}, subject={subject}")
+            cursor.execute(query, (message, subject))
+
+            result = cursor.fetchone()
+            print(f"📊 [DEBUG] 查询结果: {result}")
+            conn.close()
+
+            if result and result[0]:
+                # 找到缓存的可视化
+                html_content, template_id, usage_count, cache_hit = result
+
+                # 如果是静态文件路径，构建完整URL
+                if html_content.startswith("/static/"):
+                    visualization_url = f"http://localhost:9999{html_content}"
+                    print(f"✅ [DEBUG] 构建可视化URL: {visualization_url}")
+                    return {
+                        "type": "cached",
+                        "title": f"{subject}可视化",
+                        "subject": subject,
+                        "url": visualization_url,
+                        "html_path": html_content,
+                        "metadata": {
+                            "template_id": template_id,
+                            "cache_hit": True,
+                            "usage_count": usage_count,
+                            "source": "database_cache",
+                        },
+                    }
+            else:
+                print(f"❌ [DEBUG] 数据库未找到匹配记录")
+
+        except Exception as e:
+            # 数据库查询失败，继续使用路由系统
+            print(f"⚠️ [DEBUG] 数据库查询失败: {str(e)}")
+
+        return None
+
+    async def _generate_fallback_visualization(
+        self, message: str, subject: str
+    ) -> Dict[str, Any]:
         """生成备用可视化"""
 
         # 简单的HTML可视化模板
         fallback_html = f"""
-        <div class="visualization-container" style="padding: 20px; text-align: center;">
-            <h3>📊 {subject}学科可视化</h3>
-            <div class="visualization-content" style="background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-                        color: white; padding: 40px; border-radius: 10px; margin: 20px 0;">
-                <h4>主题：{message}</h4>
-                <p>这是一个{subject}学科的示例可视化</p>
-                <div style="font-size: 48px; margin: 20px 0;">
-                    {self._get_subject_emoji(subject)}
-                </div>
-                <p>系统正在为你的请求生成详细的可视化内容...</p>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>可视化生成中</title>
+            <style>
+                body {{
+                    margin: 0;
+                    padding: 0;
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                    background-color: #f8f9fa;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                }}
+                .visualization-container {{
+                    background: white;
+                    padding: 30px;
+                    border-radius: 16px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    text-align: center;
+                    max-width: 90%;
+                    width: 400px;
+                }}
+                .emoji {{
+                    font-size: 64px;
+                    margin: 20px 0;
+                }}
+                h3 {{
+                    margin: 0 0 10px 0;
+                    color: #2d3748;
+                }}
+                p {{
+                    color: #718096;
+                    margin: 0;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="visualization-container">
+                <h3>{subject}可视化</h3>
+                <div class="emoji">{self._get_subject_emoji(subject)}</div>
+                <p>主题：{message}</p>
+                <p style="margin-top: 20px; font-size: 0.9em; color: #a0aec0;">
+                    AI 正在努力生成中...<br>
+                    (如果是静态显示，说明生成可能遇到了临时问题)
+                </p>
             </div>
-            <div class="visualization-info" style="text-align: left; margin-top: 20px;">
-                <h4>相关信息：</h4>
-                <ul>
-                    <li>学科领域：{subject}</li>
-                    <li>查询内容：{message}</li>
-                    <li>生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</li>
-                </ul>
-            </div>
-        </div>
+        </body>
+        </html>
         """
 
-        return {
+        visualization = {
             "type": "fallback",
             "title": f"{subject}可视化示例",
             "subject": subject,
             "html_content": fallback_html,
             "config": {"simple": True},
-            "metadata": {
-                "fallback": True,
-                "created_at": datetime.now().isoformat()
-            }
+            "metadata": {"fallback": True, "created_at": datetime.now().isoformat()},
         }
+
+        # 同样需要为 fallback 生成静态文件 URL
+        try:
+            save_dir = os.path.join("static", "visualizations", "generated")
+            os.makedirs(save_dir, exist_ok=True)
+
+            filename = f"fallback_{uuid.uuid4()}.html"
+            file_path = os.path.join(save_dir, filename)
+
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(fallback_html)
+
+            visualization["url"] = f"/static/visualizations/generated/{filename}"
+            print(
+                f"✅ [DEBUG] Generated static file for fallback visualization: {visualization['url']}"
+            )
+
+        except Exception as e:
+            print(f"❌ [DEBUG] Failed to save fallback visualization to file: {str(e)}")
+
+        return visualization
 
     def _get_subject_emoji(self, subject: str) -> str:
         """获取学科表情符号"""
@@ -327,7 +510,7 @@ class ChatIntegration:
             "astronomy": "🌟",
             "physics": "⚛️",
             "chemistry": "🧪",
-            "biology": "🧬"
+            "biology": "🧬",
         }
         return emojis.get(subject, "📊")
 
@@ -344,77 +527,77 @@ class ChatIntegration:
                         "id": "math_function",
                         "title": "数学函数图像",
                         "description": "绘制各种数学函数的图像",
-                        "template": "画出函数 y = x² 的图像"
+                        "template": "画出函数 y = x² 的图像",
                     },
                     {
                         "id": "math_geometry",
                         "title": "几何图形展示",
                         "description": "展示几何图形和变换",
-                        "template": "展示一个正三角形的三维旋转"
-                    }
+                        "template": "展示一个正三角形的三维旋转",
+                    },
                 ],
                 "astronomy": [
                     {
                         "id": "astro_solar",
                         "title": "太阳系模型",
                         "description": "展示太阳系行星运动",
-                        "template": "展示太阳系八大行星的运行轨道"
+                        "template": "展示太阳系八大行星的运行轨道",
                     },
                     {
                         "id": "astro_orbit",
                         "title": "天体轨道模拟",
                         "description": "模拟天体运动规律",
-                        "template": "模拟地球绕太阳的椭圆轨道运动"
-                    }
+                        "template": "模拟地球绕太阳的椭圆轨道运动",
+                    },
                 ],
                 "physics": [
                     {
                         "id": "phys_mechanics",
                         "title": "力学模拟",
                         "description": "模拟经典力学现象",
-                        "template": "模拟牛顿摆的运动过程"
+                        "template": "模拟牛顿摆的运动过程",
                     },
                     {
                         "id": "phys_waves",
                         "title": "波动现象",
                         "description": "展示波的传播和干涉",
-                        "template": "展示水波的干涉现象"
-                    }
+                        "template": "展示水波的干涉现象",
+                    },
                 ],
                 "chemistry": [
                     {
                         "id": "chem_molecule",
                         "title": "分子结构",
                         "description": "展示化学分子结构",
-                        "template": "展示水分子的三维结构"
+                        "template": "展示水分子的三维结构",
                     },
                     {
                         "id": "chem_reaction",
                         "title": "化学反应",
                         "description": "模拟化学反应过程",
-                        "template": "演示氢气和氧气反应生成水的过程"
-                    }
+                        "template": "演示氢气和氧气反应生成水的过程",
+                    },
                 ],
                 "biology": [
                     {
                         "id": "bio_cell",
                         "title": "细胞结构",
                         "description": "展示生物细胞结构",
-                        "template": "展示动物细胞的主要结构"
+                        "template": "展示动物细胞的主要结构",
                     },
                     {
                         "id": "bio_dna",
                         "title": "DNA结构",
                         "description": "展示DNA双螺旋结构",
-                        "template": "展示DNA分子的双螺旋结构"
-                    }
-                ]
+                        "template": "展示DNA分子的双螺旋结构",
+                    },
+                ],
             }
 
             return {
                 "actions": quick_actions,
                 "total_templates": len(templates),
-                "subjects": list(quick_actions.keys())
+                "subjects": list(quick_actions.keys()),
             }
 
         except Exception as e:
@@ -426,10 +609,10 @@ class ChatIntegration:
                             "id": "general_chart",
                             "title": "创建图表",
                             "description": "生成数据可视化图表",
-                            "template": "创建一个柱状图显示数据"
+                            "template": "创建一个柱状图显示数据",
                         }
                     ]
                 },
                 "total_templates": 0,
-                "subjects": ["general"]
+                "subjects": ["general"],
             }

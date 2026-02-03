@@ -63,6 +63,7 @@ class SendMessageRequest(BaseModel):
     stream: bool = Field(default=False, description="是否使用流式响应")
     user_preferences: Dict[str, Any] = Field(default_factory=dict)
     generate_visualization: bool = Field(default=True, description="是否生成可视化")
+    model: Optional[str] = Field(default="gemini-pro", description="AI模型选择")
 
 class SendMessageResponse(BaseModel):
     """发送消息响应"""
@@ -311,7 +312,8 @@ async def send_message(request: SendMessageRequest, background_tasks: Background
             content=request.message,
             metadata={
                 "generate_visualization": request.generate_visualization,
-                "user_preferences": request.user_preferences
+                "user_preferences": request.user_preferences,
+                "model": request.model
             }
         )
 
@@ -327,7 +329,8 @@ async def send_message(request: SendMessageRequest, background_tasks: Background
         ai_response_content, visualization = await generate_ai_response(
             request.message,
             request.user_preferences,
-            request.generate_visualization
+            request.generate_visualization,
+            request.model
         )
 
         # 创建AI响应消息
@@ -414,12 +417,19 @@ async def stream_message(
 async def generate_ai_response(
     message: str,
     user_preferences: Dict[str, Any],
-    generate_visualization: bool
+    generate_visualization: bool,
+    model: Optional[str] = None
 ) -> tuple[str, Optional[Dict[str, Any]]]:
     """生成AI响应 - 集成现有路由系统"""
     try:
         # 使用聊天集成器处理消息
         integration = get_chat_integration()
+
+        # 将model添加到user_preferences中
+        if model:
+            user_preferences = user_preferences.copy()
+            user_preferences['model'] = model
+
         response, visualization = await integration.process_chat_message(
             message, user_preferences, generate_visualization
         )

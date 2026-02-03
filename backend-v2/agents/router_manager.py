@@ -277,6 +277,8 @@ class VisualizationRouter:
                 if subject != "general" and "general" in self.agents:
                     agent = self.agents["general"]
                     print(f"🔄 切换至 GeneralAgent 处理: {prompt[:30]}...")
+                    # 切换学科为 general，以确保前端正确渲染 HTML
+                    subject = "general"
                     # 重新解析需求（通用Agent通过解析获取原始prompt）
                     requirement = await agent.parse_requirement(prompt)
                     template = await agent.match_template(requirement)
