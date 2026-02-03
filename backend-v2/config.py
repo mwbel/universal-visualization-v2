@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from typing import Dict, Any, List
 
+
 # 基础配置
 class Settings:
     """应用配置类"""
@@ -49,6 +50,7 @@ class Settings:
 
     # 日志配置
     LOG_LEVEL = "INFO"
+    LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     LOG_FILE = BASE_DIR / "logs" / "app.log"
 
     # 缓存配置
@@ -70,8 +72,8 @@ class Settings:
             "filename": "visualization",
             "height": 600,
             "width": 1000,
-            "scale": 1
-        }
+            "scale": 1,
+        },
     }
 
     # 学科配置
@@ -81,7 +83,7 @@ class Settings:
         "astronomy": "天文学",
         "physics": "物理学",
         "chemistry": "化学",
-        "biology": "生物学"
+        "biology": "生物学",
     }
 
     # 模板配置
@@ -89,7 +91,7 @@ class Settings:
         "responsive": True,
         "interactive": True,
         "export_enabled": True,
-        "share_enabled": True
+        "share_enabled": True,
     }
 
     @property
@@ -100,24 +102,26 @@ class Settings:
                 "name": "数学",
                 "description": "数学概念可视化",
                 "topics": ["概率统计", "线性代数", "微积分", "几何学"],
-                "color": "#3498db"
+                "color": "#3498db",
             },
             "astronomy": {
                 "name": "天文学",
                 "description": "天文现象和天体运动可视化",
                 "topics": ["行星轨道", "星座", "日月食", "天球坐标"],
-                "color": "#f39c12"
+                "color": "#f39c12",
             },
             "physics": {
                 "name": "物理学",
                 "description": "物理现象和规律可视化",
                 "topics": ["力学", "电磁学", "波动", "热力学", "量子物理"],
-                "color": "#e74c3c"
-            }
+                "color": "#e74c3c",
+            },
         }
+
 
 # 创建全局配置实例
 settings = Settings()
+
 
 # 确保必要的目录存在
 def ensure_directories():
@@ -127,11 +131,12 @@ def ensure_directories():
         settings.STATIC_DIR,
         settings.TEMPLATES_DIR,
         settings.OUTPUT_DIR,
-        settings.BASE_DIR / "data"
+        settings.BASE_DIR / "data",
     ]
 
     for directory in directories:
         directory.mkdir(parents=True, exist_ok=True)
+
 
 # 在导入时创建目录
 ensure_directories()

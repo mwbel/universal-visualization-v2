@@ -245,13 +245,31 @@ async def get_api_keys():
 
     for provider, default_config in providers.items():
         if provider in keys_data and keys_data[provider]:
-            api_key = keys_data[provider].get("api_key", "")
+            # 支持两种格式：旧格式(api_key) 和 新格式(api_keys数组)
+            provider_data = keys_data[provider]
+
+            # 新格式：api_keys 数组（支持轮值）
+            if "api_keys" in provider_data:
+                current_index = provider_data.get("current_index", 0)
+                api_keys_list = provider_data["api_keys"]
+
+                if api_keys_list and 0 <= current_index < len(api_keys_list):
+                    current_key = api_keys_list[current_index]
+                    is_configured = True
+                else:
+                    current_key = ""
+                    is_configured = False
+            # 旧格式：单个 api_key
+            else:
+                current_key = provider_data.get("api_key", "")
+                is_configured = bool(current_key and not current_key.startswith("your-"))
+
             result[provider] = APIKeyResponse(
                 provider=provider,
-                api_key=mask_api_key(api_key) if api_key else "",
-                model_name=keys_data[provider].get("model_name", default_config["model_name"]),
-                is_configured=bool(api_key and not api_key.startswith("your-")),
-                updated_at=keys_data[provider].get("updated_at")
+                api_key=mask_api_key(current_key) if current_key else "",
+                model_name=provider_data.get("model_name", default_config["model_name"]),
+                is_configured=is_configured,
+                updated_at=provider_data.get("updated_at")
             )
         else:
             result[provider] = APIKeyResponse(

@@ -263,6 +263,18 @@ class MathematicsAgent(BaseVisualizationAgent):
             Dict: 匹配的模板配置
         """
         try:
+            # 优先使用模板引擎中的模板（文件系统加载的模板）
+            if hasattr(self, "template_engine") and self.template_engine:
+                template_id = requirement.get("template_id", "")
+
+                # 尝试从模板引擎获取模板
+                if template_id:
+                    template = await self.template_engine.get_template(template_id)
+                    if template and "html_template" in template and len(template["html_template"]) > 100:
+                        # 确保模板有实际的HTML内容（不只是占位符字符串）
+                        print(f"✅ 使用模板引擎中的模板: {template_id}")
+                        return template
+
             # 1. 概率分布模板匹配
             if requirement.get("concept_type") == "distribution":
                 dist_type = requirement.get("distribution_type")
@@ -339,6 +351,9 @@ class MathematicsAgent(BaseVisualizationAgent):
                 "user_preferences": user_preferences,
                 "interactive": True,
                 "responsive": True,
+                # 添加这些字段供 get_template_id 使用
+                "viz_type": requirement.get("concept_type", ""),
+                "requirement": requirement,
             }
 
             # 根据不同概念类型添加特定配置
@@ -465,16 +480,24 @@ class MathematicsAgent(BaseVisualizationAgent):
         viz_type = config.get("viz_type", "")
         requirement = config.get("requirement", {})
 
+        # 添加调试日志
+        print(f"🔍 [DEBUG] get_template_id: viz_type={viz_type}, requirement={str(requirement)[:100]}")
+
         if viz_type == "distribution" or "distribution" in str(viz_type):
-            return "normal_distribution"
+            result = "normal_distribution"
         elif "poisson" in str(viz_type) or "poisson" in str(requirement):
-            return "poisson_distribution"
+            result = "poisson_distribution"
         elif "vector" in str(viz_type) or "向量" in str(requirement):
-            return "vector_projection"
+            result = "vector_projection"
+        elif "三阶行列式" in str(viz_type) or "三阶行列式" in str(requirement) or "3x3" in str(viz_type) or "3x3" in str(requirement):
+            result = "determinant_3x3"
         elif "determinant" in str(viz_type) or "行列式" in str(requirement):
-            return "determinant_2x2"
+            result = "determinant_2x2"  # 默认二阶
         else:
-            return "probability_statistics_default"
+            result = "probability_statistics_default"
+
+        print(f"🔍 [DEBUG] get_template_id 返回: {result}")
+        return result
 
     def _generate_fallback_html(self, config: Dict[str, Any]) -> str:
         """

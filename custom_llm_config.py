@@ -370,7 +370,13 @@ def load_api_keys_from_settings(settings_path: str = None) -> Dict[str, str]:
         from pathlib import Path
 
         current_dir = Path(__file__).parent
-        settings_path = current_dir / "backend-v2" / "data" / "api_keys.json"
+
+        # 检查是否在 backend-v2 目录中
+        if current_dir.name == "backend-v2":
+            settings_path = current_dir / "data" / "api_keys.json"
+        else:
+            # 在项目根目录，需要进入 backend-v2
+            settings_path = current_dir / "backend-v2" / "data" / "api_keys.json"
 
     try:
         if not Path(settings_path).exists():
@@ -462,8 +468,8 @@ def update_llm_configurations_with_api_keys():
             "base_url": "https://api.openai.com/v1",
         },
         "glm": {
-            "config_name": "glm-4",
-            "model_name": "glm-4",
+            "config_name": "glm-4-flash",
+            "model_name": "glm-4-flash",
             "base_url": "https://open.bigmodel.cn/api/paas/v4",
         },
         "deepseek": {

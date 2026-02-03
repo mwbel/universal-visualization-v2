@@ -54,6 +54,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/frontend-v2", StaticFiles(directory="../frontend-v2", html=True), name="frontend")
 app.mount("/main-app", StaticFiles(directory="../main-app", html=True), name="main-app")
 app.mount("/frontend-v3", StaticFiles(directory="../frontend-v3", html=True), name="frontend-v3")
+app.mount("/frontend-v4", StaticFiles(directory="../frontend-v4", html=True), name="frontend-v4")
 
 # 注册新的聊天API路由
 app.include_router(api_router)

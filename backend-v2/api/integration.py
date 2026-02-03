@@ -271,8 +271,35 @@ class ChatIntegration:
             "diagram",
         ]
 
+        # 学科相关概念词（当用户提到这些概念时，自动生成可视化）
+        concept_keywords = [
+            # 数学概念
+            "行列式", "矩阵", "向量", "函数", "导数", "积分", "微分",
+            "正弦", "余弦", "正切", "指数", "对数", "二次", "一次",
+            "分布", "概率", "统计", "几何", "图形",
+            # 物理概念
+            "运动", "力学", "电磁", "波动", "光学", "电路",
+            # 化学概念
+            "分子", "原子", "反应", "元素", "化学键",
+            # 生物概念
+            "细胞", "生态", "遗传", "dna", "基因",
+            # 天文概念
+            "行星", "恒星", "星系", "宇宙", "轨道",
+        ]
+
         message_lower = message.lower()
-        return any(keyword in message_lower for keyword in viz_keywords)
+
+        # 检查是否包含可视化关键词
+        if any(keyword in message_lower for keyword in viz_keywords):
+            return True
+
+        # 检查是否包含学科概念（概念词+长度判断，避免误判）
+        # 如果消息较短且包含概念词，很可能是想要可视化
+        if len(message) <= 20:  # 短消息
+            if any(keyword in message for keyword in concept_keywords):
+                return True
+
+        return False
 
     async def _generate_visualization(
         self, message: str, subject: str, user_preferences: Dict[str, Any]
@@ -344,11 +371,68 @@ class ChatIntegration:
                 except Exception as e:
                     print(f"❌ [DEBUG] Failed to save visualization to file: {str(e)}")
 
+            # 3. 存入数据库缓存
+            try:
+                await self._cache_visualization(message, subject, visualization)
+            except Exception as e:
+                print(f"⚠️ [DEBUG] Failed to cache visualization: {str(e)}")
+
             return visualization
 
         except Exception as e:
             # 如果路由系统失败，尝试生成简单的可视化
             return await self._generate_fallback_visualization(message, subject)
+
+    async def _cache_visualization(
+        self, message: str, subject: str, visualization: Dict[str, Any]
+    ) -> None:
+        """将生成的可视化存入数据库缓存"""
+        try:
+            import sqlite3
+            from pathlib import Path
+
+            # 数据库路径
+            db_path = Path(__file__).parent.parent / "data" / "visualization_cache.db"
+            
+            if not db_path.exists():
+                print(f"⚠️ [DEBUG] Database not found at {db_path}, skipping cache")
+                return
+
+            conn = sqlite3.connect(str(db_path))
+            cursor = conn.cursor()
+
+            # 准备数据
+            viz_id = str(uuid.uuid4())
+            html_content = visualization.get("url") or visualization.get("html_content")
+            template_id = visualization.get("metadata", {}).get("template_id")
+            source = "llm_generated"
+            
+            # 插入数据
+            query = """
+                INSERT INTO visualization_records 
+                (id, prompt, subject, html_content, generation_source, template_id, created_at, updated_at, cache_hit)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """
+            
+            cursor.execute(query, (
+                viz_id,
+                message,
+                subject,
+                html_content,
+                source,
+                template_id,
+                datetime.now(),
+                datetime.now(),
+                True # 标记为可用缓存
+            ))
+            
+            conn.commit()
+            conn.close()
+            print(f"💾 [DEBUG] Successfully cached visualization for prompt: {message}")
+            
+        except Exception as e:
+            print(f"❌ [DEBUG] Database cache write error: {str(e)}")
+            raise e
 
     async def _get_cached_visualization(
         self, message: str, subject: str

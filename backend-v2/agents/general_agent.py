@@ -161,7 +161,17 @@ User Request:
 
         try:
             print(f"🤖 GeneralAgent: 调用LLM生成代码... (Prompt: {prompt[:50]}...)")
+            print(f"🔧 [DEBUG] LLM Config: provider={llm_config.provider}, model={llm_config.model_name}")
+            print(f"📏 [DEBUG] Full prompt length: {len(full_prompt)} characters")
+
+            import time
+            start_time = time.time()
+
             response = await client.generate_response(full_prompt)
+
+            end_time = time.time()
+            print(f"⏱️ [DEBUG] LLM响应时间: {end_time - start_time:.2f}秒")
+            print(f"📊 [DEBUG] 响应长度: {len(response)} 字符")
 
             # 清理响应 (移除可能存在的Markdown标记)
             cleaned_html = self._clean_llm_response(response)
@@ -169,14 +179,34 @@ User Request:
             # 简单验证
             if "<!DOCTYPE html>" not in cleaned_html and "<html" not in cleaned_html:
                 # 尝试修复，如果LLM只返回了代码片段
+                print(f"⚠️ [DEBUG] 响应不包含HTML标签，尝试修复...")
                 cleaned_html = (
                     f"<!DOCTYPE html><html><body>{cleaned_html}</body></html>"
                 )
 
+            print(f"✅ [DEBUG] HTML生成成功，长度: {len(cleaned_html)} 字符")
             return cleaned_html
 
         except Exception as e:
-            raise VisualizationError(f"LLM生成失败: {str(e)}")
+            import traceback
+            error_details = {
+                "error_type": type(e).__name__,
+                "error_message": str(e),
+                "traceback": traceback.format_exc(),
+                "llm_provider": llm_config.provider if llm_config else None,
+                "llm_model": llm_config.model_name if llm_config else None,
+            }
+
+            print(f"❌ [DEBUG] LLM生成失败详情:")
+            print(f"   错误类型: {error_details['error_type']}")
+            print(f"   错误消息: {error_details['error_message']}")
+            print(f"   LLM提供商: {error_details['llm_provider']}")
+            print(f"   LLM模型: {error_details['llm_model']}")
+            print(f"   堆栈跟踪:\n{error_details['traceback']}")
+
+            raise VisualizationError(
+                f"LLM生成失败 [{error_details['error_type']}]: {error_details['error_message']}"
+            )
 
     def _generate_mock_html(self, prompt: str) -> str:
         """生成模拟的HTML响应"""
