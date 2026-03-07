@@ -1,0 +1,5888 @@
+{
+  "themeName": "Aha",
+  "knowledge_nodes": [
+    {
+      "id": "math.C01.S01.P01",
+      "subject": "数学",
+      "chapter": "集合和命题",
+      "section": "概览",
+      "label": "1",
+      "title": "集合中元素的性质：",
+      "details": "①确定性；②互异性；③无序性。",
+      "viz": {
+        "viz_id": "set_properties_lab",
+        "viz_desc": "交互式集合性质实验台",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "集合和命题",
+          "概览"
+        ],
+        "default_view_id": "venn",
+        "search_keywords": [
+          "集合中元素的性质",
+          "确定性",
+          "互异性",
+          "无序性"
+        ]
+      }
+    },
+    {
+      "id": "math.C01.S01.P02",
+      "subject": "数学",
+      "chapter": "集合和命题",
+      "section": "概览",
+      "label": "2",
+      "title": "集合子集的个数：",
+      "details": "含n个元素的集合的所有子集的个数是2n，所有真子集的个数是2n -1，非空真子集数为 2n -2．",
+      "viz": {
+        "viz_id": "subset_generator",
+        "viz_desc": "子集生成器 (Binary Switch)",
+        "tech": [
+          "HTML",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "集合和命题",
+          "概览"
+        ],
+        "default_view_id": "venn",
+        "search_keywords": [
+          "集合子集的个数",
+          "n",
+          "个元素的集合的所有子集的个数是",
+          "所有真子集的个数是",
+          "非空真子集数为"
+        ]
+      }
+    },
+    {
+      "id": "math.C01.S01.P03",
+      "subject": "数学",
+      "chapter": "集合和命题",
+      "section": "概览",
+      "label": "3",
+      "title": "交集运算：集合交(∩)并(∪)补( )",
+      "details": "常见运算与结论 U ∁ 交集：①A∩ A= A；②A∩∅=∅；③A∩B⊆ A；④A⊆ B⇔ A∩B= A； 并集：①A∪ A= A；②A∪∅= A；③A∪B⊇ A；④A⊆ B⇔ A∪B= B ； 补集：①C U =∅；②C ∅=U ； ③C (C A) = A； ④A∪C A=U ； U U U U U ⑤A∩C A=∅；⑥C A∪C B =C (A∩B)； ⑦C A∩C B =C (A∪B) U U U U U U U 命题 四种命题形式 原命题、逆命题、否命题、逆否命题 → 互为逆否的命题同真或同假 充要条件 若α⇒β，β⇒/ α则称α是β的充分非必要条件 若β⇒α，α⇒/ β则称α是β的必要非充分条件 若α⇒β，β⇒α则称α是β的充要条件 若α⇒/ β，β⇒/ α则称α是β的既非充分又非必要条件",
+      "viz": {
+        "viz_id": "venn_logic_lab",
+        "viz_desc": "维恩逻辑实验室",
+        "tech": [
+          "SVG",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "集合和命题",
+          "概览"
+        ],
+        "default_view_id": "venn",
+        "search_keywords": [
+          "交集运算",
+          "集合交",
+          "常见运算与结论",
+          "U",
+          "交集",
+          "A",
+          "B",
+          "并集",
+          "补集",
+          "C",
+          "命题",
+          "四种命题形式",
+          "原命题",
+          "逆命题"
+        ]
+      }
+    },
+    {
+      "id": "math.C02.S01.P01",
+      "subject": "数学",
+      "chapter": "不等式",
+      "section": "概览",
+      "label": "1",
+      "title": "不等式的基本性质",
+      "details": "（1）a>b⇔b<a；（对称性） （2）a>b，b>c⇒a>c；（传递性） （3）a>b⇒c∈R，都有a+c>b+c；（可加性） a >b{ （4）}⇒a+c>b+d （a-d >b-c）；（同向可加性） c>d} {c∈R+ ⇒ac>bc （5）a >b⇒ { ；（可乘性） }c∈R- ⇒ac<bc a >b>0{ a b （6）}⇒ac>bd （ > ）；（同向可乘性） c>d >0} d c a >b { 1 1 （7）}⇒ < ；（可倒性） ab>0} a b { | an >bn （8）a >b>0⇒ { ( n∈N·) .（开方乘方性） |} n a > n b ( n³ 2 ) b b+c （9）糖水不等式：a >b>0,c>0, < a a+c",
+      "viz": {
+        "viz_id": "inequality_properties_lab",
+        "viz_desc": "不等式性质实验台 (9 Properties)",
+        "tech": [
+          "HTML/CSS",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "不等式",
+          "概览"
+        ],
+        "default_view_id": "number_line",
+        "search_keywords": [
+          "不等式的基本性质",
+          "a",
+          "b",
+          "对称性",
+          "c",
+          "传递性",
+          "R",
+          "都有",
+          "可加性",
+          "d",
+          "同向可加性",
+          "ac",
+          "bc",
+          "可乘性"
+        ]
+      }
+    },
+    {
+      "id": "math.C02.S01.P02",
+      "subject": "数学",
+      "chapter": "不等式",
+      "section": "概览",
+      "label": "2",
+      "title": "解不等式",
+      "details": "1) 一元二次不等式的解法 ①将不等式的右边化为零，左边化为二次项系数大于零的不等式ax2＋bx＋c＞0(a＞0)或ax2 ＋bx＋c＜0(a＞0)． ②求出相应的一元二次方程的根． ③利用二次函数的图象与x轴的交点确定一元二次不等式的解集． 2) 一元二次方程根的分布*（知识补充） 一元二次方程ax2+bx+c =0 (a,b,c∈R，a >0)两实根为x ,x ⇔函数 1 2 f(x)=ax2 +bx+c 与x轴交点为( x ,0 ) , ( x ,0 ) 1 2 { { Δ³ 0 | Δ³0 | | | b b c （1）x >0,x >0⇔ {x +x >0⇔ {- >0，Δ=b2-4ac,x +x =- ,x ×x = 1 2 1 2 2a 1 2 a 1 2 a | | x·x >0 | } 1 2 | }f(0)>0 { { Δ³ 0 | Δ³0 | | | b （2）x <0,x <0⇔ {x +x <0⇔ {- <0 1 2 1 2 2a | | x·x >0 | } 1 2 | }f(0)>0 { Δ>0 （3）x >0,x <0⇔ { ⇔ f(0)<0 1 2 }x ×x <0 1 2 { { Δ³0 | Δ³0 | | （4）x >m,x >m⇔ { ( x -m )+( x -m )>0⇔ {f (m)>0 1 2 1 2 |( x -m )×( x -m )> 0 | b } 1 2 |- > m } 2a { Δ>0 （5）x <m< x ⇔ { ⇔ f (m)< 0 1 2 ( x -m )( x -m )< 0 } 1 2 { | Δ³0 | | b （6）x ,x ∈(m,n)⇔ {m<- <n 1 2 2a | | f(m)>0 | } f(n)>0 3) 分式不等式的求解: 一般我们通过去分母，将分式不等式化为整式不等式求解。 f(x) f(x) {|f ( x )×g ( x )≤0 > 0 ⇔ f ( x )×g ( x )>0； ≤0⇔ { 。 g(x) g(x) |} g ( x )≠0 4) 含绝对值不等式的求解： （1）| f(x)|<a(a >0) ⇔ -a< f(x)<a；| f(x)|³a(a >0) ⇔ f(x)≤-a或f(x)³a； ( ) { g x ³0 （2）| f(x)|≤ g(x)⇔ { ； ( ) ( ) ( ) }-g x ≤ f x ≤ g x ( ) { g x ³0 ( ) | f(x)|> g(x)⇔ g x <0；或{ ； ( ) ( ) ( ) ( ) }f x > g x , f x <-g x （3）f(x) ≤ g(x) ⇔[f(x)]2 ≤[g(x)]2； ( ) （4）f(x) + g(x) <a a>0 {f(x)+g(x)<a {f(x)-g(x)<a {- f(x)+g(x)<a | | | ⇔ {f(x)³0 或{f(x)³0 或{f(x)≤0 | | | }g(x)³0 }g(x)≤0 }g(x)³0 解绝对值不等式的思想：去绝对值 （补充）5) 无理不等式的解法*： {f(x)³0{ | }⇒定义域 ① f(x) > g(x) ⇔ {g(x)³0} | }f(x)> g(x) {f(x)³0 | {f(x)³0 ② f(x) > g(x)⇔ {g(x)³0 或{ | }g(x)<0 }f(x)>[g(x)]2 { f (x) ³ 0 | ③ f (x) < g(x) ⇔ {g(x) > 0 | } f (x) < [g(x)]2 （补充）6) 高次不等式的解法*： 一元高次不等式 f(x) > 0（或 f(x)< 0），一般用数轴标根法求解，其步骤是： （1）将 f(x)的最高次项的系数化为正数； （2）将 f(x)分解为若干个一次因式的积； （3）将每一个一次因式的根标在数轴上，从右上方依次通过每一点画曲线； （4）根据曲线显现出 f(x)值的符号变化规律，写出不等式的解集。 如：若a <a <a <...<a ，则不等式(x-a)(x-a)...(x-a)>0 1 2 3 n 1 2 n 或(x-a )(x-a )...(x-a )<0的解法如下图（即“数轴标根法”）： 1 2 n",
+      "viz": {
+        "viz_id": "inequality_solver_lab",
+        "viz_desc": "全景不等式求解器",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "不等式",
+          "概览"
+        ],
+        "default_view_id": "number_line",
+        "search_keywords": [
+          "解不等式",
+          "一元二次不等式的解法",
+          "将不等式的右边化为零",
+          "左边化为二次项系数大于零的不等式",
+          "ax",
+          "bx",
+          "c",
+          "a",
+          "求出相应的一元二次方程的根",
+          "利用二次函数的图象与",
+          "x",
+          "轴的交点确定一元二次不等式的解集",
+          "一元二次方程根的分布",
+          "知识补充"
+        ]
+      }
+    },
+    {
+      "id": "math.C02.S01.P03",
+      "subject": "数学",
+      "chapter": "不等式",
+      "section": "概览",
+      "label": "3",
+      "title": "基本不等式",
+      "details": "① 基本不等式1：a2 +b2 ³ 2ab，a,b∈R（当且仅当a =b时取等号“=”）. a+b ② 基本不等式2： ³ ab ，a>0,b>0（当且仅当a =b时取等号“=”）. 2 【知识拓展】当0<a≤b时， 2 a+b a2+b2 a≤ ≤ ab ≤ ≤ ≤b 1 1 2 2 + a b a +a +...+a 推广： a ,a ,a ,...,a 是 n 个正数，则 1 2 n ³ n a ×a ×...×a ，当且仅当 1 2 3 n n 1 2 n a =a =...=a 时等号成立. 1 2 n 利用基本不等式求最值问题：注意“一正、二定、三相等” （1）“积定和最小”：a+b³2 ab ⇔ 如果积ab是定值P，那么当a=b时，和a+b有 最小值2 P； （2）“和定积最大”： ab≤∩ a+b ∪  2 ⇔ 如果和a+b是定值S ，那么当a=b时，积ab有 ∪ 2 ∪ 1 最大值 S2. 4",
+      "viz": {
+        "viz_id": "inequality_basic_lab",
+        "viz_desc": "基本不等式与均值链",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "不等式",
+          "概览"
+        ],
+        "default_view_id": "number_line",
+        "search_keywords": [
+          "基本不等式",
+          "a",
+          "b",
+          "ab",
+          "R",
+          "当且仅当",
+          "时取等号",
+          "知识拓展",
+          "推广",
+          "n",
+          "个正数",
+          "时等号成立",
+          "利用基本不等式求最值问题",
+          "注意"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S02.P01",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的概念",
+      "label": "1",
+      "title": "函数的三要素分别指函数的 定义域 、 值域 、 对应法则 ；",
+      "details": null,
+      "viz": {
+        "viz_id": "function_concept_lab",
+        "viz_desc": "函数定义/映射演示",
+        "tech": [
+          "HTML/HTML5 Canvas",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的概念"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "函数的三要素分别指函数的",
+          "定义域",
+          "值域",
+          "对应法则"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S02.P02",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的概念",
+      "label": "2",
+      "title": "函数的运算：",
+      "details": "( )( ) ( )( ) 对于两个函数 y = f x x∈D ， y = g x x∈D ，设D=D ∩D ≠∅ 1 2 1 2 ( ) ( )( ) ( )( ) ( )( ) 把函数 f x + g x x∈D 叫做函数 y = f x x∈D 与 y = g x x∈D 的和函数 1 2 ( ) ( )( ) ( )( ) ( )( ) 把函数 f x g x x∈D 叫做函数 y = f x x∈D 与y = g x x∈D 的积函数 1 2",
+      "viz": {
+        "viz_id": "function_operations_lab",
+        "viz_desc": "函数与法则实验台",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的概念"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "函数的运算",
+          "对于两个函数",
+          "y",
+          "f",
+          "x",
+          "D",
+          "g",
+          "把函数",
+          "叫做函数",
+          "的和函数",
+          "的积函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S02.P03",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的概念",
+      "label": "3",
+      "title": "复合函数：",
+      "details": "( ( )) ( )( ) ( )( ) 函数 y = f g x 叫做函数 y = f x x∈D ，y = g x x∈D 的复合函数，x是复合函 1 2 ( ( )) ( ) ( ) 数 y = f g x 的自变量，定义域为D，g x 叫做内函数， f x 叫做外函数.",
+      "viz": {
+        "viz_id": "function_composite_lab",
+        "viz_desc": "复合函数流水线",
+        "tech": [
+          "HTML/SVG",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的概念"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "复合函数",
+          "函数",
+          "y",
+          "f",
+          "g",
+          "x",
+          "叫做函数",
+          "D",
+          "的复合函数",
+          "是复合函",
+          "的自变量",
+          "定义域为",
+          "叫做内函数",
+          "叫做外函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S02.P04",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的概念",
+      "label": "4",
+      "title": "函数定义域的求法",
+      "details": "求定义域时注意： （1）分式的分母不为零(≠0)； （2）偶次根式的被开方数大于等于零(≥0)； （3）零次幂的底数不为零(≠0)； （4）对数的真数大于零(>0)； （5）实际意义中的取整问题等.",
+      "viz": {
+        "viz_id": "function_domain_range_lab",
+        "viz_desc": "定义域/求值域实验台",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的概念"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "函数定义域的求法",
+          "求定义域时注意",
+          "分式的分母不为零",
+          "偶次根式的被开方数大于等于零",
+          "零次幂的底数不为零",
+          "对数的真数大于零",
+          "实际意义中的取整问题等"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S02.P05",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的概念",
+      "label": "5",
+      "title": "求函数值域的各种方法",
+      "details": "以下为总结的常用函数值域的求解方法： （1）直接法：利用常见函数的值域来求 一次函数 y =ax+b(a ≠ 0)的定义域为R，值域为R； k 反比例函数 y = (k ≠ 0)的定义域为{x|x ≠0}，值域为{y| y ≠0}； x 二次函数 f(x)=ax2 +bx+c(a≠0)的定义域为R， 当a >0时，值域为{ y|y³ (4ac-b2)}；当a<0时，值域为{ y|y≤ (4ac-b2)}. 4a 4a （2）配方法：转化为二次函数，利用二次函数的特征来求值；常转化为型如： f(x) = ax2 +bx+c,x∈(m,n)的形式； （3）分离常数法 （4）换元法：通过变量代换转化为能求值域的函数，化归思想； k （5）基本不等式法：转化成型如： y = x+ (k > 0)，利用平均值不等式公式来求值域； x （6）数形结合：根据函数的几何图形，利用数型结合的方法来求值域； （7）根的判别式法 （8）奇偶性、单调性法",
+      "viz": {
+        "viz_id": "function_domain_range_lab",
+        "viz_desc": "定义域/求值域实验台",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的概念"
+        ],
+        "default_view_id": "number_line",
+        "search_keywords": [
+          "求函数值域的各种方法",
+          "以下为总结的常用函数值域的求解方法",
+          "直接法",
+          "利用常见函数的值域来求",
+          "一次函数",
+          "y",
+          "ax",
+          "b",
+          "a",
+          "的定义域为",
+          "R",
+          "值域为",
+          "k",
+          "反比例函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S02.P06",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的概念",
+      "label": "6",
+      "title": "求函数解析式的题型有：",
+      "details": "（1）已知函数类型，求函数的解析式：待定系数法； （2）已知 f(x)求 f[g(x)]或已知 f[g(x)]求 f(x)：换元法、配凑法； （3）已知函数图像，求函数解析式； （4）f(x)满足某个等式，这个等式除 f(x)外还有其他未知量，需构造另个等式：解方程 组法； （5）应用题求函数解析式常用方法有待定系数法等.",
+      "viz": {
+        "viz_id": "function_expression_lab",
+        "viz_desc": "解析式求解工作台",
+        "tech": [
+          "HTML/Katex",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的概念"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "求函数解析式的题型有",
+          "已知函数类型",
+          "求函数的解析式",
+          "待定系数法",
+          "已知",
+          "f",
+          "x",
+          "g",
+          "或已知",
+          "换元法",
+          "配凑法",
+          "已知函数图像",
+          "求函数解析式",
+          "满足某个等式"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S03.P01",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的奇偶性",
+      "label": "1",
+      "title": "函数奇偶性的定义",
+      "details": "偶函数：如果对于函数 y = f(x)定义域D内的任意实数x，都有 f(-x)= f(x)， 那么就把函数 y = f(x)叫做偶函数． 奇函数：如果对于函数 y = f(x)定义域D内的任意实数x，都有 f(-x)=-f(x)， 那么就把函数 y = f(x)叫做奇函数．",
+      "viz": {
+        "viz_id": "function_parity_lab",
+        "viz_desc": "函数奇偶性实验台",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的奇偶性"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "函数奇偶性的定义",
+          "偶函数",
+          "如果对于函数",
+          "y",
+          "f",
+          "x",
+          "定义域",
+          "D",
+          "内的任意实数",
+          "都有",
+          "那么就把函数",
+          "叫做偶函数",
+          "奇函数",
+          "叫做奇函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S03.P02",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的奇偶性",
+      "label": "2",
+      "title": "证明（判断）函数奇偶性的一般步骤",
+      "details": "验证函数 y = f(x)的定义域是否关于原点对称？否！函数是非奇非偶函数．是！继续考查 f(-x)=±f(x)成立与否？若 f(-x)=-f(x)恒成立， f(x)是奇函数；若 f(-x)= f(x) 恒成立，f(x)是偶函数；若 f(-x)= f(x)且 f(-x)=-f(x)都成立，f(x)是即奇又偶函 数；存在x使 f(-x)= f(x)且 f(-x)=-f(x)都不成立， f(x)是非奇非偶函数．",
+      "viz": {
+        "viz_id": "function_parity_lab",
+        "viz_desc": "函数奇偶性实验台",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的奇偶性"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "证明",
+          "判断",
+          "函数奇偶性的一般步骤",
+          "验证函数",
+          "y",
+          "f",
+          "x",
+          "的定义域是否关于原点对称",
+          "函数是非奇非偶函数",
+          "继续考查",
+          "成立与否",
+          "恒成立",
+          "是奇函数",
+          "是偶函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S03.P03",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的奇偶性",
+      "label": "3",
+      "title": "函数奇偶性的应用",
+      "details": "关于函数奇偶性的几个重要结论 （1）具有奇偶性的函数，其定义域关于原点对称（函数具有奇偶性的必要不充分条件）． （2）函数 f(x)是奇函数⇔曲线 y = f(x)关于原点对称； 函数 f(x)是偶函数⇔曲线 y = f(x)关于 y轴对称． （3）若 f(x)的定义域关于原点对称，则F(x)= f(x)+ f(-x)是偶函数， G(x)= f(x)- f(-x)是奇函数． （4）若函数 f(x)的定义域关于原点对称，则 f(x)可以表示成一个偶函数与一个奇函数的 和． 1 1 1 f(x)= [f(x)+ f(-x)]+ [f(x)- f(-x)]：y = [f(x)+ f(-x)]为偶函数， 2 2 2 1 y = [f(x)- f(-x)]为奇函数． 2 （5）f(x)、g(x)是定义域为D 、D 的奇函数，那么在D ∩D 上， f(x)+g(x)是奇函 1 2 1 2 数， f(x)×g(x)是偶函数． 一般情况下类似的有：“奇±奇＝奇”，“奇×奇＝偶”，“偶±偶＝偶”，“偶×偶＝偶”， “奇×偶＝奇”，“奇±偶＝非奇非偶”． （6）f(x)既是奇函数又是偶函数⇔ f(x)=0（定义域关于原点对称）． （7）若奇函数 y = f(x)在x=0处有定义，则 f(0)=0． （8）对于多项式函数 f(x)=a xn +a xn-1+...+a x2+a x+a n n-1 2 1 0 若 f(x)是奇函数⇔ f(x)偶次项的系数全为零；若 f(x)是偶函数⇔ f(x)奇次项的系数 全为零．",
+      "viz": {
+        "viz_id": "function_parity_lab",
+        "viz_desc": "函数奇偶性实验台",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的奇偶性"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "函数奇偶性的应用",
+          "关于函数奇偶性的几个重要结论",
+          "具有奇偶性的函数",
+          "其定义域关于原点对称",
+          "函数具有奇偶性的必要不充分条件",
+          "函数",
+          "f",
+          "x",
+          "是奇函数",
+          "曲线",
+          "y",
+          "关于原点对称",
+          "是偶函数",
+          "关于"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S04.P01",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数单调性的定义",
+      "label": "1",
+      "title": "单调性的定义",
+      "details": "对于函数 f(x)定义域I 内某个区间D上的任意两个自变量x ,x , 1 2 当x <x 时，都有 f(x )< f(x ), 那么就说函数 f(x)在区间D上是增函数， 1 2 1 2 区间D也叫作函数 f(x)的一个单调递增区间； 当x <x 时，都有 f(x )> f(x ), 那么就说函数 f(x)在区间D上是减函数， 1 2 1 2 区间D也叫作函数 f(x)的一个单调递减区间；",
+      "viz": {
+        "viz_id": "function_monotonicity_lab",
+        "viz_desc": "函数单调性定义演示",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数单调性的定义"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "单调性的定义",
+          "对于函数",
+          "f",
+          "x",
+          "定义域",
+          "I",
+          "内某个区间",
+          "D",
+          "上的任意两个自变量",
+          "都有",
+          "那么就说函数",
+          "在区间",
+          "上是增函数",
+          "区间"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S04.P02",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数单调性的定义",
+      "label": "2",
+      "title": "单调性多种表现形式",
+      "details": "[ ] 设任意x ,x ∈ a,b 且x < x ，那么 1 2 1 2 ①对于任意的a>0，都有 f(x+a)> f(x)，表示 f(x)单调递增. 对于任意的a>0，都有 f(x+a)< f(x)，表示 f(x)单调递减. ②对于任意的x ≠ x ，都有 f(x 1 )- f(x 2 ) >0，或者 ( x -x )[ f ( x ) - f ( x )] >0⇔ f ( x ) 1 2 x -x 1 2 1 2 1 2 在[a,b]上是增函数. 对于任意的x ≠ x ，都有 f(x 1 )- f(x 2 ) <0，或者 ( x -x )[ f ( x ) - f ( x )] <0⇔ f ( x ) 1 2 x -x 1 2 1 2 1 2 在[a，b]上是减函数．",
+      "viz": {
+        "viz_id": "function_monotonicity_lab",
+        "viz_desc": "函数单调性等价表现演示",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数单调性的定义"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "单调性多种表现形式",
+          "设任意",
+          "x",
+          "a",
+          "b",
+          "那么",
+          "对于任意的",
+          "都有",
+          "f",
+          "表示",
+          "单调递增",
+          "单调递减",
+          "或者",
+          "上是增函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S04.P03",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数单调性的定义",
+      "label": "3",
+      "title": "单调性的判定方法和一些性质：",
+      "details": "( ) （1）定义法：利用定义证明函数 f x 在给定的区间D上的单调性的一般步骤： ①任取x ,x ∈D，且x < x . 1 2 1 2 ( ) ( ) ②作差 f x - f x （有时也可以作商）. 1 2 ③变形（通常是因式分解和配方）. ( ) ( ) ④定号（即判断差 f x - f x 的正负）. 1 2 ( ) ⑤下结论（即指出函数 f x 在给定的区间D上的单调性）． （2）应用已知函数的单调性．（一次函数、反比例函数、二次函数、“耐克”函数） k ①一次函数 f (x) = ax+b(a ≠ 0) ②反比例函数 f (x) = (k ≠ 0) x b ③二次函数 f (x) = ax2 +bx+c(a ≠ 0) ④“耐克”函数 f (x) = ax+ (ab >0) x （3）和函数的单调性及一些重要结论： ①若 f(x)，g(x)均为增函数，则 f(x)+g(x)仍为增函数. 若 f(x)，g(x)均为减函数，则 f(x)+g(x)仍为减函数． ②函数 y = f (x)与函数y = f (x)+k(k ≠0)具有相同的单调性和单调区间. ③函数 y = f (x)与函数y =kf (x)(k >0)在相同区间上具有相同单调性，函数 y = f (x)与 函数 y =kf (x)(k <0)在相同区间上具有相反的单调性. （4）复合函数：遵循“同增异减”的规律 设 y = f(u),u =j(x)且当x∈A时，u∈B，则复合函数 y = f[j(x)](x∈A)的单调性与 内、外层函数的单调性关系为下表所示． （5）图象法：利用图象研究函数的单调性． a （6）在研究形如 y = x+ 的函数的单调性时，需分两种情况讨论：①当a≤0，在(-∞,0) x 和(0,+∞)上是增函数.②当a>0时，在(0, a]和[- a,0)上是减函数，在[ a,+∞)和 (-∞,- a]上是增函数． （7）关于分段函数的单调性： {|g(x), x∈[ a,b ] , 若函数 f(x)={ ( a<b<c<d )，g(x)在区间x∈[a,b]上是增函数， |} h(x), x∈[ c,d ] , h(x)在区间x∈ [ c,d ] 上是增函数，则 f(x)在区间[a,b] ∪ [c,d]上不一定是增函数，若使 得 f(x)在区间[a,b] ∪ [c,d]上一定是增函数，需补充条件：g(b)<h(c)． （8）奇偶性与单调性的联系： 若 f(x)是具有奇偶性的单调函数，则奇（偶）函数在正负对称区间上的单调性是相同（反） 的．",
+      "viz": {
+        "viz_id": "function_monotonicity_lab",
+        "viz_desc": "函数单调性判定与性质",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数单调性的定义"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "单调性的判定方法和一些性质",
+          "定义法",
+          "利用定义证明函数",
+          "f",
+          "x",
+          "在给定的区间",
+          "D",
+          "上的单调性的一般步骤",
+          "任取",
+          "作差",
+          "有时也可以作商",
+          "变形",
+          "通常是因式分解和配方",
+          "定号"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S05.P01",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的最值",
+      "label": "1",
+      "title": "设函数 y= f ( x )定义域为A，",
+      "details": "当x∈A时，总有 f ( x )≤ f ( x )=M ，则称当x= x 时 f ( x )取最大值M . 0 0 当x∈A时，总有 f ( x )³ f ( x )= N，则称当x= x 时 f ( x )取最小值N . 1 1",
+      "viz": {
+        "viz_id": "function_extrema_lab",
+        "viz_desc": "函数最值可视化实验台",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的最值"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "设函数",
+          "y",
+          "f",
+          "x",
+          "定义域为",
+          "A",
+          "总有",
+          "M",
+          "则称当",
+          "取最大值",
+          "N",
+          "取最小值"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S05.P02",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的最值",
+      "label": "2",
+      "title": "求函数的值域问题可以转化化归为求函数的最值问题.",
+      "details": null,
+      "viz": {
+        "viz_id": "function_extrema_lab",
+        "viz_desc": "函数最值可视化实验台",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的最值"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "求函数的值域问题可以转化化归为求函数的最值问题"
+        ]
+      }
+    },
+    {
+      "id": "math.C03.S05.P03",
+      "subject": "数学",
+      "chapter": "函数的基本性质",
+      "section": "函数的最值",
+      "label": "3",
+      "title": "闭区间的连续函数必有最值.",
+      "details": null,
+      "viz": {
+        "viz_id": "function_extrema_lab",
+        "viz_desc": "函数最值可视化实验台",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "函数的基本性质",
+          "函数的最值"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "闭区间的连续函数必有最值"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S02.P01",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "二次函数",
+      "label": "1",
+      "title": "一般式： f ( x )=ax2 +bx+c ( a≠0 )",
+      "details": null,
+      "viz": {
+        "viz_id": "function_quadratic_lab",
+        "viz_desc": "二次函数全景实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "二次函数"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "一般式",
+          "f",
+          "x",
+          "ax",
+          "bx",
+          "c",
+          "a"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S02.P02",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "二次函数",
+      "label": "2",
+      "title": "顶点式： f ( x )=a ( x-h )2 +k ( a ≠0 )，其中k = f ( h ) , ( h,k )为抛物线的顶点坐标.",
+      "details": null,
+      "viz": {
+        "viz_id": "function_quadratic_lab",
+        "viz_desc": "二次函数全景实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "二次函数"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "顶点式",
+          "f",
+          "x",
+          "a",
+          "h",
+          "k",
+          "其中",
+          "为抛物线的顶点坐标"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S02.P03",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "二次函数",
+      "label": "3",
+      "title": "交点式（零点式）：f ( x )=a ( x-x )( x-x )( a≠0 )，(x ,0)和(x ,0) 为抛物线与x轴",
+      "details": "1 2 1 2 的交点坐标.",
+      "viz": {
+        "viz_id": "function_quadratic_lab",
+        "viz_desc": "二次函数全景实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "二次函数"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "交点式",
+          "零点式",
+          "f",
+          "x",
+          "a",
+          "为抛物线与",
+          "的交点坐标"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S02.P04",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "二次函数",
+      "label": "4",
+      "title": "二次函数的图象及性质:",
+      "details": "b 二次函数 y = ax2 +bx+c的图象的对称轴方程是x = - ，顶点坐标是 2a  b 4ac-b2  ∩- ， ∪. ∩ ∪ ∪ 2a 4a ∪ ∈ b   b ∈ 当a >0时，函数在 - ,+∞∪上是增函数，在∩-∞,- 上是减函数； ⊆ ⊆ ⊇ 2a ∪ ∪ 2a⊇  b ∈ ∈ b  当a<0时，函数在∩-∞,- 上是增函数，在 - ,+∞∪上是减函数. ⊆ ⊆ ∪ 2a⊇ ⊇ 2a ∪",
+      "viz": {
+        "viz_id": "function_quadratic_lab",
+        "viz_desc": "二次函数全景实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "二次函数"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "二次函数的图象及性质",
+          "b",
+          "二次函数",
+          "y",
+          "ax",
+          "bx",
+          "c",
+          "的图象的对称轴方程是",
+          "x",
+          "顶点坐标是",
+          "a",
+          "ac",
+          "函数在",
+          "上是增函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S02.P05",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "二次函数",
+      "label": "5",
+      "title": "根与系数关系：设 f ( x ) =ax2 +bx+c=0 ( a≠0 ) 的两根为x ,x ，",
+      "details": "1 2 b c Δ 则有x + x = - ,x x = , x -x = (x + x )2 -4x x = 1 2 a 1 2 a 1 2 1 2 1 2 a",
+      "viz": {
+        "viz_id": "function_quadratic_lab",
+        "viz_desc": "二次函数全景实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "二次函数"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "根与系数关系",
+          "f",
+          "x",
+          "ax",
+          "bx",
+          "c",
+          "a",
+          "的两根为",
+          "b",
+          "则有"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S02.P06",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "二次函数",
+      "label": "6",
+      "title": "二次函数的最值：",
+      "details": "1 [ ] 当a >0, f(x)在区间 p,q 上的最大值M ，最小值m,令x = (p+q)． 0 2 b 若- < p,则 f(p)=m, f(q)= M; 2a b b 若 p≤- < x ,则 f(- )=m, f(q)= M ； 2a 0 2a b b 若x ≤- <q,则 f(- )=m, f(p)= M; 0 2a 2a b 若- ³q,,则 f(p)= M, f(q)=m. 2a",
+      "viz": {
+        "viz_id": "function_quadratic_lab",
+        "viz_desc": "二次函数全景实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "二次函数"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "二次函数的最值",
+          "a",
+          "f",
+          "x",
+          "在区间",
+          "p",
+          "q",
+          "上的最大值",
+          "M",
+          "最小值",
+          "m",
+          "b"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S02.P07",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "二次函数",
+      "label": "7",
+      "title": "二次函数、一元二次方程及一元二次不等式之间的关系：",
+      "details": "设 f ( x )=ax2 +bx+c ( a>0 ) ① Δ<0 ⇔ 函数y= f(x)的图像与x轴无交点⇔ 方程 f(x)=0无实根 ⇔ 不等式 f(x)>0的解为一切实数⇔ 不等式 f(x)≤0时无解； ② Δ=0 ⇔ 函数y= f(x)的图像与x轴相切⇔方程 f(x)=0有两个相等的实根 b ⇔ 不等式 f(x) > 0的解为x≠ - 2a ③ Δ>0 ⇔ 函数y= f(x)的图像与x轴有两个不同的交点⇔方程 f(x)=0有两个不等的 实根：α，β(设α<β）⇔ 不等式 f(x)>0的解为x <α或x > β ⇔ 不等式 f(x)<0的 解为α< x <β．",
+      "viz": {
+        "viz_id": "function_quadratic_lab",
+        "viz_desc": "二次函数全景实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "二次函数"
+        ],
+        "default_view_id": "number_line",
+        "search_keywords": [
+          "二次函数",
+          "一元二次方程及一元二次不等式之间的关系",
+          "f",
+          "x",
+          "ax",
+          "bx",
+          "c",
+          "a",
+          "函数",
+          "y",
+          "的图像与",
+          "轴无交点",
+          "方程",
+          "无实根"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S02.P08",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "二次函数",
+      "label": "8",
+      "title": "二次不等式转化策略：",
+      "details": "（1）当a >0时，二次不等式 f(x)>0在[p,q]恒成立 { b { b |- < p, p≤- <q, { b ⇔ { 2a 或 | | { 2a 或 | { - 2a ³ p; | }f (p)>0, | f(- b )>0, | }f(q)³0; | } 2a {a>0, {a=b=0, {a<0, {a=b=0 （2）f(x)>0恒成立⇔{ 或{ f(x)<0恒成立⇔{ 或{ }Δ<0, }c>0; }Δ<0, }c<0.",
+      "viz": {
+        "viz_id": "function_quadratic_lab",
+        "viz_desc": "二次函数全景实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "二次函数"
+        ],
+        "default_view_id": "number_line",
+        "search_keywords": [
+          "二次不等式转化策略",
+          "a",
+          "二次不等式",
+          "f",
+          "x",
+          "p",
+          "q",
+          "恒成立",
+          "b",
+          "c"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S02.P09",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "二次函数",
+      "label": "9",
+      "title": "设方程ax2+bx+c=0 ( a≠0 )的不等两根为x ,x 且x < x ，相应的二次函数",
+      "details": "1 2 1 2 f ( x )=ax2 +bx+c=0时，方程的根即为二次函数图像与x轴的交点，现对以下情况进行 具体讨论（默认开口向上）： { { |Δ ³ 0 |Δ ³ 0 | | | b | b 1）x > 0,x > 0 ⇔ {- > 0 2）x < 0,x < 0 ⇔ {- < 0 1 2 a 1 2 a | | |c |c > 0 > 0 | | }a }a {Δ > 0 | c | b 3）x < 0,x > 0 ⇔ < 0 ⇔ f(0)< 0 4）x < x < m ⇔ {- < m 1 2 a 1 2 2a | |f(m) > 0 } {Δ > 0 | | b 5）m < x < x ⇔ {- > m 6）x < m< x ⇔ f(m)<0 1 2 2a 1 2 | |f(m) > 0 } {Δ > 0 | b {f(m)< 0 | |m < - < n 7）x < m < n < x ⇔ { 8）m < x < x < n ⇔ { 2a 1 2 }f(n)< 0 1 2 | f(m) > 0 | | }f(n) > 0 {f(m)<0 {f(m)>0 9）x <m< x <n⇔ { 10）m< x <n< x ⇔ { 1 2 }f(n)>0 1 2 }f(n)<0 11） f ( x )=ax2 +bx+c=0在(m,n)内恰有一解⇔ f(m)× f(n)<0或 f(m)=0（检验另 一根在(m,n)内）或 f(n)=0（检验另一根在(m,n)内） {f(m)>0 | |f(n)<0 12）m< x <n< p< x <q ⇔ { 1 2 f(p)<0 | | }f(q)>0 讨论二次函数的区间根的分布情况一般需从三方面考虑：①判别式；②端点的函数值的符 号；③对称轴与取值范围的相对位置。",
+      "viz": {
+        "viz_id": "function_quadratic_lab",
+        "viz_desc": "二次函数全景实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "二次函数"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "设方程",
+          "ax",
+          "bx",
+          "c",
+          "a",
+          "的不等两根为",
+          "x",
+          "相应的二次函数",
+          "f",
+          "方程的根即为二次函数图像与",
+          "轴的交点",
+          "现对以下情况进行",
+          "具体讨论",
+          "默认开口向上"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S03.P01",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "分式函数：",
+      "label": "1",
+      "title": "分式函数y = (c≠0,a,b,c,d∈R)的图像与性质",
+      "details": "cx+d d （1）定义域：{x|x ≠ - } ； c a （2）值域：{y| y ≠ }； c d d （3）单调性：单调区间为(-∞,- ),(- ,+∞)； c c d a d a （4）渐近线及对称中心：渐近线为直线x=- ,y = ，对称中心为点(- , )； c c c c （5）奇偶性：当a=d =0时为奇函数； （6）图象：如右图所示 y y O x O x b",
+      "viz": {
+        "viz_id": "function_fractional_lab",
+        "viz_desc": "分式函数可视化教学系统",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "分式函数："
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "分式函数",
+          "y",
+          "c",
+          "a",
+          "b",
+          "d",
+          "R",
+          "的图像与性质",
+          "cx",
+          "定义域",
+          "x",
+          "值域",
+          "单调性",
+          "单调区间为"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S03.P02",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "分式函数：",
+      "label": "2",
+      "title": "分式函数y =ax+ (a,b>0)的图像与性质：",
+      "details": "x （1）定义域：{x|x≠0}； （2）值域：{y| y³2 ab,或y≤-2 ab}； （3）奇偶性：奇函数； b b b b （4）单调性：在区间(-∞,- ]∪[ ,+∞) 上是增函数，在区间(0, ],[- ,0) 上为 a a a a 减函数； （5）渐近线：以 y轴和直线 y =ax为渐近线； （6）图象：如右图所示 b y =ax+ (a,b∈R,ab≠ 0)的图像如下： x y y = ax 2 ab b a b O x - a -2 ab b b （1）y =ax+ (a >0,b>0) （2）y =ax+ (a >0,b<0) x x y y y = ax y = ax O x O x b b （3）y =ax+ (a<0,b>0) （4）y =ax+ (a<0,b<0) x x y y y = ax y = ax O x O x b 故 y =ax+ (a,b∈R,ab≠ 0)的单调性、值域、奇偶性等，可以结合函数的图像研究。 x",
+      "viz": {
+        "viz_id": "function_fractional_lab",
+        "viz_desc": "分式函数可视化教学系统",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "分式函数："
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "分式函数",
+          "y",
+          "ax",
+          "a",
+          "b",
+          "的图像与性质",
+          "x",
+          "定义域",
+          "值域",
+          "ab",
+          "奇偶性",
+          "奇函数",
+          "单调性",
+          "在区间"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S04.P01",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "幂函数",
+      "label": "1",
+      "title": "幂的有关概念：",
+      "details": "1 正整数指数幂：an =a×a××××a（n∈N*)； 负整数指数幂：a-p = (a ≠0, p∈N*) 1442443 ap n个 零指数幂：a0 =1(a ≠0) m 分数指数幂：an =n am(a>0,m,n∈N*且n>1) - m 1 1 a n = = (a > 0,m,n∈N*,n >1) m n am an",
+      "viz": {
+        "viz_id": "function_power_lab",
+        "viz_desc": "幂函数实验室",
+        "tech": [
+          "HTML",
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "幂函数"
+        ],
+        "default_view_id": "info_card",
+        "search_keywords": [
+          "幂的有关概念",
+          "正整数指数幂",
+          "an",
+          "a",
+          "n",
+          "N",
+          "负整数指数幂",
+          "p",
+          "ap",
+          "零指数幂",
+          "m",
+          "分数指数幂",
+          "am"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S04.P02",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "幂函数",
+      "label": "2",
+      "title": "幂函数的定义：",
+      "details": "形如 y = xa的函数叫幂函数. 注意：幂函数的底数是变量x，系数是1. 例如函数 f(x)=k×xa是幂函数，求 f(x)的表达式，就应由定义知必有k =1，即 f(x)= xa．",
+      "viz": {
+        "viz_id": "cartesian_plot",
+        "viz_desc": "函数图像+交互滑块",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "幂函数"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "幂函数的定义",
+          "形如",
+          "y",
+          "xa",
+          "的函数叫幂函数",
+          "注意",
+          "幂函数的底数是变量",
+          "x",
+          "系数是",
+          "例如函数",
+          "f",
+          "k",
+          "是幂函数",
+          "的表达式"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S04.P03",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "幂函数",
+      "label": "3",
+      "title": "幂函数的图象.",
+      "details": "①考纲要求要掌握的部分幂函数其图像如下：",
+      "viz": {
+        "viz_id": "cartesian_plot",
+        "viz_desc": "函数图像+交互滑块",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "幂函数"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "幂函数的图象",
+          "考纲要求要掌握的部分幂函数其图像如下"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S04.P04",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "幂函数",
+      "label": "4",
+      "title": "幂函数的性质",
+      "details": "所有的幂函数在 ( 0，+∞ ) 都有定义，并且函数图像都通过点 ( 1,1 ) y y = xk(k >1) y y = xk(k <0) y = xk(0<k <1) O x O x A图 B图 · k >0时：（图A） ( ) ( ) （1）图象都通过 0,0 , 1,1 ； （2）在第一象限内，函数值随x的增大而增大（增函数）. · k <0时；（图B） （1）图象都通过点(1,1)； （2）在第一象限内，函数值随x的增大而减小（减函数）； （3）在第一象限内，图象向上与 y轴无限地接近，向右与x轴无限地接近.",
+      "viz": {
+        "viz_id": "function_power_lab",
+        "viz_desc": "幂函数实验室",
+        "tech": [
+          "HTML",
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "幂函数"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "幂函数的性质",
+          "所有的幂函数在",
+          "都有定义",
+          "并且函数图像都通过点",
+          "y",
+          "xk",
+          "k",
+          "O",
+          "x",
+          "A",
+          "B",
+          "图象都通过",
+          "在第一象限内",
+          "函数值随"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S05.P01",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "指数与指数函数",
+      "label": "1",
+      "title": "根式的运算性质：(1)当n为任意正整数时，(n a )n=a",
+      "details": "{a(a ³0) (2)当n为奇数时，n an =a；当n为偶数时，n an =|a|={ }-a(a <0) (3)根式的基本性质：np amp = n am ，（a³0） \u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000源源hh头头特特ttttpp王ww王:://// xxww新新学学 cc级级ww kk新新ttww @@..xx 11疆疆子子教教jj 22kk 66敞敞ttyy ..ccgg oo小..小师师cc mmoomm//屋屋wwxxcc// am ×an = am+n(m,n∈Q)",
+      "viz": {
+        "viz_id": "cartesian_plot",
+        "viz_desc": "平面直角坐标系函数图",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "指数与指数函数"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "根式的运算性质",
+          "n",
+          "为任意正整数时",
+          "a",
+          "为奇数时",
+          "an",
+          "为偶数时",
+          "根式的基本性质",
+          "np",
+          "amp",
+          "am",
+          "源源",
+          "hh",
+          "头头特特"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S05.P02",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "指数与指数函数",
+      "label": "2",
+      "title": "分数指数幂的运算性质：(am)n = amn(m,n∈Q)",
+      "details": "(ab)n = an ×bn(n∈Q)",
+      "viz": {
+        "viz_id": "info_card",
+        "viz_desc": "概念卡片/步骤推导",
+        "tech": [
+          "Markdown",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "指数与指数函数"
+        ],
+        "default_view_id": "info_card",
+        "search_keywords": [
+          "分数指数幂的运算性质",
+          "am",
+          "n",
+          "amn",
+          "m",
+          "Q",
+          "ab",
+          "an",
+          "bn"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S05.P03",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "指数与指数函数",
+      "label": "3",
+      "title": "指数函数",
+      "details": null,
+      "viz": {
+        "viz_id": "function_exponential_lab",
+        "viz_desc": "指数函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "指数与指数函数"
+        ],
+        "default_view_id": "function_exponential_lab",
+        "search_keywords": [
+          "指数函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S06.P01",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "对数与对数函数",
+      "label": "1",
+      "title": "指数式与对数式的互化：ab = N ⇔ log N =b；",
+      "details": "a",
+      "viz": {
+        "viz_id": "function_log_lab",
+        "viz_desc": "对数与对数函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "对数与对数函数"
+        ],
+        "default_view_id": "function_log_lab",
+        "search_keywords": [
+          "指数式与对数式的互化",
+          "ab",
+          "N",
+          "log",
+          "b",
+          "a"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S06.P02",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "对数与对数函数",
+      "label": "2",
+      "title": "对数运算",
+      "details": "M ①log (MN) =log M +log N ；log =log M -log N ；log Mn =nlog M； a a a a N a a a a log N 1 ②换底公式：log N = m ；log b= ；log b×log c=log c； a log a a log a a b a m b m ③log a=1；log 1=0；alogaN =N ；log aN =N ；log bm = log b； a a a an n a",
+      "viz": {
+        "viz_id": "function_log_lab",
+        "viz_desc": "对数与对数函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "对数与对数函数"
+        ],
+        "default_view_id": "function_log_lab",
+        "search_keywords": [
+          "对数运算",
+          "M",
+          "log",
+          "MN",
+          "N",
+          "Mn",
+          "nlog",
+          "a",
+          "换底公式",
+          "m",
+          "b",
+          "c",
+          "alogaN",
+          "aN"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S06.P03",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "对数与对数函数",
+      "label": "3",
+      "title": "两种特殊的对数",
+      "details": "①通常将以10为底的对数叫做常用对数。N 的常用对数记作lgN 。 ②另外在科学技术中，常使用无理数e=2.71828...为底的对数，以e为底的对数叫做自然对 数。记为lnN 。",
+      "viz": {
+        "viz_id": "function_log_lab",
+        "viz_desc": "对数与对数函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "对数与对数函数"
+        ],
+        "default_view_id": "function_log_lab",
+        "search_keywords": [
+          "两种特殊的对数",
+          "通常将以",
+          "为底的对数叫做常用对数",
+          "N",
+          "的常用对数记作",
+          "lgN",
+          "另外在科学技术中",
+          "常使用无理数",
+          "e",
+          "为底的对数",
+          "为底的对数叫做自然对",
+          "记为",
+          "lnN"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S06.P04",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "对数与对数函数",
+      "label": "4",
+      "title": "对数函数",
+      "details": null,
+      "viz": {
+        "viz_id": "function_log_lab",
+        "viz_desc": "对数与对数函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "对数与对数函数"
+        ],
+        "default_view_id": "function_log_lab",
+        "search_keywords": [
+          "对数函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S06.P05",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "对数与对数函数",
+      "label": "5",
+      "title": "函数y=log x的图像与y=log x的图像关于x轴对称.",
+      "details": "a a-1",
+      "viz": {
+        "viz_id": "function_log_lab",
+        "viz_desc": "对数与对数函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "对数与对数函数"
+        ],
+        "default_view_id": "function_log_lab",
+        "search_keywords": [
+          "函数",
+          "y",
+          "log",
+          "x",
+          "的图像与",
+          "的图像关于",
+          "轴对称",
+          "a"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S06.P06",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "对数与对数函数",
+      "label": "6",
+      "title": "因为y=log x是ay =x的解，所以说对数运算是指数运算的一种逆运算.作为函数，称",
+      "details": "a 对数函数y=log x是指数函数y=ax的反函数 a",
+      "viz": {
+        "viz_id": "function_log_lab",
+        "viz_desc": "对数与对数函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "对数与对数函数"
+        ],
+        "default_view_id": "function_log_lab",
+        "search_keywords": [
+          "因为",
+          "y",
+          "log",
+          "x",
+          "ay",
+          "的解",
+          "所以说对数运算是指数运算的一种逆运算",
+          "作为函数",
+          "a",
+          "对数函数",
+          "是指数函数",
+          "ax",
+          "的反函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S06.P07",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "对数与对数函数",
+      "label": "7",
+      "title": "指数函数y=ax的图像与其反函数y=log x的图像关于直线 y=x 对称",
+      "details": "a 原函数过点(a,b)，反函数过点(b,a)",
+      "viz": {
+        "viz_id": "function_log_lab",
+        "viz_desc": "对数与对数函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "对数与对数函数"
+        ],
+        "default_view_id": "function_log_lab",
+        "search_keywords": [
+          "指数函数",
+          "y",
+          "ax",
+          "的图像与其反函数",
+          "log",
+          "x",
+          "的图像关于直线",
+          "对称",
+          "a",
+          "原函数过点",
+          "b",
+          "反函数过点"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S07.P01",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "对数方程与不等式",
+      "label": "1",
+      "title": "对数方程：对数符号中含有未知数的方程叫做对数方程",
+      "details": null,
+      "viz": {
+        "viz_id": "function_log_eq_ineq_lab",
+        "viz_desc": "对数方程与不等式实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "对数方程与不等式"
+        ],
+        "default_view_id": "function_log_eq_ineq_lab",
+        "search_keywords": [
+          "对数方程",
+          "对数符号中含有未知数的方程叫做对数方程"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S07.P02",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "对数方程与不等式",
+      "label": "2",
+      "title": "对数方程的基本类型：（1）log x=b(a>0,a≠1),其解为x=ab；",
+      "details": "a {f(x)=g(x) | （2）log f(x)=log g(x)(a>0,a≠1)，转化为{ f(x)>0 求解； a a | } g(x)>0 （3）F(log x)=0(a>0,a≠0)，用换元法先求方程F(y)=0的解，再解对数方程log x= y． a a",
+      "viz": {
+        "viz_id": "function_log_eq_ineq_lab",
+        "viz_desc": "对数方程与不等式实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "对数方程与不等式"
+        ],
+        "default_view_id": "function_log_eq_ineq_lab",
+        "search_keywords": [
+          "对数方程的基本类型",
+          "log",
+          "x",
+          "b",
+          "a",
+          "其解为",
+          "ab",
+          "f",
+          "g",
+          "转化为",
+          "求解",
+          "F",
+          "用换元法先求方程",
+          "y"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S07.P03",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "对数方程与不等式",
+      "label": "3",
+      "title": "对数不等式 类型Ⅰ：log f (x)>log g(x) (a>0,a≠1)；",
+      "details": "a a {f (x)>0 | 当a>1时，以上不等式同解于不等式：{g(x)>0 ； | }f (x)>g(x) {f (x)>0 | 当0<a<1时，以上不等式同解于不等式：{g(x)>0 ； | }f (x)<g(x) 类型Ⅱ： f(logx)>0型不等式——换元法求解. a",
+      "viz": {
+        "viz_id": "function_log_eq_ineq_lab",
+        "viz_desc": "对数方程与不等式实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "对数方程与不等式"
+        ],
+        "default_view_id": "function_log_eq_ineq_lab",
+        "search_keywords": [
+          "对数不等式",
+          "类型",
+          "log",
+          "f",
+          "x",
+          "g",
+          "a",
+          "以上不等式同解于不等式",
+          "logx",
+          "型不等式",
+          "换元法求解"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S08.P01",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "反函数",
+      "label": "1",
+      "title": "反函数的概念：",
+      "details": "自变量常用x表示，而函数常用 y表示，所以把它改写为 y = f -1(x)(x∈A)。",
+      "viz": {
+        "viz_id": "function_inverse_lab",
+        "viz_desc": "反函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "反函数"
+        ],
+        "default_view_id": "function_inverse_lab",
+        "search_keywords": [
+          "反函数的概念",
+          "自变量常用",
+          "x",
+          "表示",
+          "而函数常用",
+          "y",
+          "所以把它改写为",
+          "f",
+          "A"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S08.P02",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "反函数",
+      "label": "2",
+      "title": "说明：",
+      "details": "①并非所有函数都有反函数，只有x,y 一一对应的函数才有反函数。 ②如果函数 y = f (x)有反函数 y = f -1(x)，那么函数y = f -1(x)的反函数就是 y = f (x)。 这就是说，函数 y = f (x)与函数y = f -1(x)互为反函数。 ③函数 y = f (x)的定义域是它的反函数 y = f -1(x)的值域；函数 y = f (x)的值域是它的反 函数 y = f -1(x)的定义域。 ④求反函数时一定要写定义域。",
+      "viz": {
+        "viz_id": "function_inverse_lab",
+        "viz_desc": "反函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "反函数"
+        ],
+        "default_view_id": "function_inverse_lab",
+        "search_keywords": [
+          "说明",
+          "并非所有函数都有反函数",
+          "只有",
+          "x",
+          "y",
+          "一一对应的函数才有反函数",
+          "如果函数",
+          "f",
+          "有反函数",
+          "那么函数",
+          "的反函数就是",
+          "这就是说",
+          "函数",
+          "与函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S08.P03",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "反函数",
+      "label": "3",
+      "title": "总结：求函数反函数的步骤：",
+      "details": "（1）将函数 y = f (x)看作为关于变量x的方程，解出x= f -1(y)； （2）对调x与 y，得到 y = f -1(x)； （3）确定出反函数的定义域（注意：反函数的定义域是原函数的值域）。",
+      "viz": {
+        "viz_id": "function_inverse_lab",
+        "viz_desc": "反函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "反函数"
+        ],
+        "default_view_id": "function_inverse_lab",
+        "search_keywords": [
+          "总结",
+          "求函数反函数的步骤",
+          "将函数",
+          "y",
+          "f",
+          "x",
+          "看作为关于变量",
+          "的方程",
+          "解出",
+          "对调",
+          "得到",
+          "确定出反函数的定义域",
+          "注意",
+          "反函数的定义域是原函数的值域"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S08.P04",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "反函数",
+      "label": "4",
+      "title": "互为反函数的两个函数图像间的关系：",
+      "details": "（1）函数 y = f (x)的图像与其反函数 y = f -1(x)的图像关于直线 y = x对称； （2）若函数 y = f (x)的图像与函数 y = g(x)的图像关于直线 y = x对称，则函数 y = f (x) 与函数 y = g(x)是互为反函数。",
+      "viz": {
+        "viz_id": "function_inverse_lab",
+        "viz_desc": "反函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "反函数"
+        ],
+        "default_view_id": "function_inverse_lab",
+        "search_keywords": [
+          "互为反函数的两个函数图像间的关系",
+          "函数",
+          "y",
+          "f",
+          "x",
+          "的图像与其反函数",
+          "的图像关于直线",
+          "对称",
+          "若函数",
+          "的图像与函数",
+          "g",
+          "则函数",
+          "与函数",
+          "是互为反函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C04.S08.P05",
+      "subject": "数学",
+      "chapter": "常用函数的运用",
+      "section": "反函数",
+      "label": "5",
+      "title": "原函数与反函数的性质关系：",
+      "details": "①单调性关系： 函数 y = f (x)的定义域是D，值域是A，反函数为 y = f -1(x)。若 y = f (x)是D上的增函 数，则 y = f -1(x)是A上的增函数。 ②奇偶性关系： 若原函数 y = f (x)是奇函数，则其反函数 y = f -1(x)也是奇函数。 思考：偶函数是否存在反函数？说明理由。 注意：一般情况下，偶函数是不存在反函数的。但对于定义域仅为集合{0}这样的偶函数是 存在反函数的。如 f(x)=1(x =0)是偶函数，它的反函数是 f -1(x)=0(x =1)。 ③函数图像关系： 原函数和反函数图像关于 y = x对称； ④点关系： 若M ( a,b ) 在y = f ( x ) 图像上，则M'( b,a ) 必在 y = f -1(x)图像上； ⑤值域与定义域的转化： 反函数的x即为原函数的 y，所以：若 y = f ( x ) ，求 f -1( a ) ，可利用 f ( x ) =a，从中求出 x，即是： f -1(a).",
+      "viz": {
+        "viz_id": "function_inverse_lab",
+        "viz_desc": "反函数实验室",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "常用函数的运用",
+          "反函数"
+        ],
+        "default_view_id": "function_inverse_lab",
+        "search_keywords": [
+          "原函数与反函数的性质关系",
+          "单调性关系",
+          "函数",
+          "y",
+          "f",
+          "x",
+          "的定义域是",
+          "D",
+          "值域是",
+          "A",
+          "反函数为",
+          "上的增函",
+          "上的增函数",
+          "奇偶性关系"
+        ]
+      }
+    },
+    {
+      "id": "math.C05.S03.P01",
+      "subject": "数学",
+      "chapter": "三角比",
+      "section": "三角比可视化实验",
+      "label": "1",
+      "title": "模块一：建立弧度制和单位圆的直观理解",
+      "details": "y x y x r r 则sinα= ,cosα= ,tanα= ,cotα= ,secα= ,cscα= 。 r r x y x y",
+      "viz": {
+        "viz_id": "trig_ratio_lab",
+        "viz_desc": "三角比可视化实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角比",
+          "三角比可视化实验"
+        ],
+        "default_view_id": "trig_ratio_lab",
+        "search_keywords": [
+          "终边上任意一点坐标为",
+          "P",
+          "x",
+          "y",
+          "这点到原点的距离为",
+          "r",
+          "sin",
+          "cos",
+          "tan",
+          "cot",
+          "sec",
+          "csc"
+        ]
+      }
+    },
+    {
+      "id": "math.C05.S03.P02",
+      "subject": "数学",
+      "chapter": "三角比",
+      "section": "三角比可视化实验",
+      "label": "2",
+      "title": "模块二：深入理解六大三角比的几何意义",
+      "details": "设角α终边上任意一点P(x,y)，它到原点的距离r=√(x²+y²)，则sinα=y/r, cosα=x/r, tanα=y/x。",
+      "viz": {
+        "viz_id": "trig_ratio_lab",
+        "viz_desc": "三角比可视化实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角比",
+          "三角比可视化实验"
+        ],
+        "default_view_id": "trig_ratio_lab",
+        "search_keywords": [
+          "任意角三角比定义",
+          "终边",
+          "坐标",
+          "r",
+          "x",
+          "y",
+          "sin",
+          "cos",
+          "tan"
+        ]
+      }
+    },
+    {
+      "id": "math.C05.S03.P03",
+      "subject": "数学",
+      "chapter": "三角比",
+      "section": "三角比可视化实验",
+      "label": "3",
+      "title": "模块三：掌握同角三角比的基本关系",
+      "details": "平方关系：sin²α+cos²α=1；商数关系：tanα=sinα/cosα；倒数关系：sinαcscα=1, cosαsecα=1, tanαcotα=1。",
+      "viz": {
+        "viz_id": "trig_ratio_lab",
+        "viz_desc": "三角比可视化实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角比",
+          "三角比可视化实验"
+        ],
+        "default_view_id": "trig_ratio_lab",
+        "search_keywords": [
+          "同角三角比关系",
+          "平方关系",
+          "商数关系",
+          "倒数关系",
+          "sin",
+          "cos",
+          "tan"
+        ]
+      }
+    },
+    {
+      "id": "math.C05.S03.P04",
+      "subject": "数学",
+      "chapter": "三角比",
+      "section": "三角比可视化实验",
+      "label": "4",
+      "title": "模块四：学习和差倍半公式及其几何解释",
+      "details": "两角和差公式(sin(α±β), cos(α±β), tan(α±β))；二倍角公式(sin2α, cos2α, tan2α)；半角公式(sin(α/2), cos(α/2), tan(α/2))。",
+      "viz": {
+        "viz_id": "trig_ratio_lab",
+        "viz_desc": "三角比可视化实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角比",
+          "三角比可视化实验"
+        ],
+        "default_view_id": "trig_ratio_lab",
+        "search_keywords": [
+          "和差倍半公式",
+          "两角和差",
+          "二倍角",
+          "半角",
+          "sin",
+          "cos",
+          "tan"
+        ]
+      }
+    },
+    {
+      "id": "math.C05.S03.P05",
+      "subject": "数学",
+      "chapter": "三角比",
+      "section": "三角比可视化实验",
+      "label": "5",
+      "title": "模块五：掌握诱导公式的记忆和应用方法",
+      "details": "诱导公式口诀：奇变偶不变，符号看象限。涉及2kπ+α, π+α, -α, π-α, π/2-α等角的三角函数值。",
+      "viz": {
+        "viz_id": "trig_ratio_lab",
+        "viz_desc": "三角比可视化实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角比",
+          "三角比可视化实验"
+        ],
+        "default_view_id": "trig_ratio_lab",
+        "search_keywords": [
+          "诱导公式",
+          "奇变偶不变",
+          "符号看象限",
+          "sin",
+          "cos",
+          "tan"
+        ]
+      }
+    },
+    {
+      "id": "math.C05.S03.P06",
+      "subject": "数学",
+      "chapter": "三角比",
+      "section": "三角比可视化实验",
+      "label": "6",
+      "title": "模块六：应用三角比解决三角形问题",
+      "details": "正弦定理：a/sinA = b/sinB = c/sinC = 2R；余弦定理：a²=b²+c²-2bccosA；面积公式：S=1/2absinC。",
+      "viz": {
+        "viz_id": "trig_ratio_lab",
+        "viz_desc": "三角比可视化实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角比",
+          "三角比可视化实验"
+        ],
+        "default_view_id": "trig_ratio_lab",
+        "search_keywords": [
+          "正余弦定理",
+          "正弦定理",
+          "余弦定理",
+          "面积公式",
+          "三角形",
+          "R"
+        ]
+      }
+    },
+    {
+      "id": "math.C05.S03.P07",
+      "subject": "数学",
+      "chapter": "三角比",
+      "section": "三角比可视化实验",
+      "label": "7",
+      "title": "模块七：探索三角形中的三角比性质",
+      "details": "三角形中的性质：大边对大角；射影定理；内角和定理；锐角/直角/钝角三角形的判定。",
+      "viz": {
+        "viz_id": "trig_ratio_lab",
+        "viz_desc": "三角比可视化实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角比",
+          "三角比可视化实验"
+        ],
+        "default_view_id": "trig_ratio_lab",
+        "search_keywords": [
+          "三角形性质",
+          "大边对大角",
+          "射影定理",
+          "内角和",
+          "判定"
+        ]
+      }
+    },
+    {
+      "id": "math.C05.S03.P08",
+      "subject": "数学",
+      "chapter": "三角比",
+      "section": "三角比可视化实验",
+      "label": "8",
+      "title": "模块八：综合应用三角比解决实际问题",
+      "details": "综合应用：辅助角公式可视化(y=asinx+bcosx)；波形合成原理；三角函数在实际问题中的应用。",
+      "viz": {
+        "viz_id": "trig_ratio_lab",
+        "viz_desc": "三角比可视化实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角比",
+          "三角比可视化实验"
+        ],
+        "default_view_id": "trig_ratio_lab",
+        "search_keywords": [
+          "综合应用",
+          "辅助角公式",
+          "波形合成",
+          "asinx+bcosx",
+          "y"
+        ]
+      }
+    },
+    {
+      "id": "math.C06.S02.P01",
+      "subject": "数学",
+      "chapter": "三角函数",
+      "section": "三角函数的图像与性质",
+      "label": "1",
+      "title": "三角函数的基本图像与性质",
+      "details": "正弦、余弦、正切函数的图像绘制；定义域、值域、周期性、奇偶性、单调性等基本性质；零点、最值点、对称轴、对称中心等关键特征。",
+      "viz": {
+        "viz_id": "trig_function_lab",
+        "viz_desc": "三角函数全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角函数",
+          "三角函数的图像与性质"
+        ],
+        "default_view_id": "trig_function_lab",
+        "search_keywords": [
+          "三角函数",
+          "图像",
+          "性质",
+          "正弦",
+          "余弦",
+          "正切"
+        ]
+      }
+    },
+    {
+      "id": "math.C06.S02.P02",
+      "subject": "数学",
+      "chapter": "三角函数",
+      "section": "三角函数的图像与性质",
+      "label": "2",
+      "title": "三角函数图像的变换",
+      "details": "振幅、周期、相位、垂直平移对图像的影响；变换顺序：先平移后伸缩 vs 先伸缩后平移；复合变换的分解与合成。",
+      "viz": {
+        "viz_id": "trig_function_lab",
+        "viz_desc": "三角函数全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角函数",
+          "三角函数的图像与性质"
+        ],
+        "default_view_id": "trig_function_lab",
+        "search_keywords": [
+          "图像变换",
+          "振幅",
+          "周期",
+          "相位",
+          "平移",
+          "伸缩"
+        ]
+      }
+    },
+    {
+      "id": "math.C06.S02.P03",
+      "subject": "数学",
+      "chapter": "三角函数",
+      "section": "三角函数的图像与性质",
+      "label": "3",
+      "title": "反三角函数的图像与性质",
+      "details": "反正弦、反余弦、反正切函数的定义与图像；反函数与原函数的对称关系；反三角函数的性质与恒等式。",
+      "viz": {
+        "viz_id": "trig_function_lab",
+        "viz_desc": "三角函数全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角函数",
+          "三角函数的图像与性质"
+        ],
+        "default_view_id": "trig_function_lab",
+        "search_keywords": [
+          "反三角函数",
+          "反正弦",
+          "反余弦",
+          "反正切",
+          "反函数"
+        ]
+      }
+    },
+    {
+      "id": "math.C06.S02.P04",
+      "subject": "数学",
+      "chapter": "三角函数",
+      "section": "三角函数的图像与性质",
+      "label": "4",
+      "title": "三角函数的物理意义",
+      "details": "简谐振动模型与三角函数的关系；振幅、周期、频率、相位的物理意义；实际物理问题的数学建模。",
+      "viz": {
+        "viz_id": "trig_function_lab",
+        "viz_desc": "三角函数全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角函数",
+          "三角函数的图像与性质"
+        ],
+        "default_view_id": "trig_function_lab",
+        "search_keywords": [
+          "物理意义",
+          "简谐振动",
+          "振幅",
+          "频率",
+          "相位"
+        ]
+      }
+    },
+    {
+      "id": "math.C06.S02.P05",
+      "subject": "数学",
+      "chapter": "三角函数",
+      "section": "三角函数的图像与性质",
+      "label": "5",
+      "title": "参数对三角函数图像的影响",
+      "details": "各参数的独立影响分析；多参数组合影响的系统分析；参数变化与图像变化的对应关系。",
+      "viz": {
+        "viz_id": "trig_function_lab",
+        "viz_desc": "三角函数全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角函数",
+          "三角函数的图像与性质"
+        ],
+        "default_view_id": "trig_function_lab",
+        "search_keywords": [
+          "参数影响",
+          "A",
+          "ω",
+          "φ",
+          "k",
+          "图像变化"
+        ]
+      }
+    },
+    {
+      "id": "math.C06.S02.P06",
+      "subject": "数学",
+      "chapter": "三角函数",
+      "section": "三角函数的图像与性质",
+      "label": "6",
+      "title": "最简三角方程的解集",
+      "details": "正弦、余弦、正切方程的解法；图像解法与代数解法的对比；解集公式的推导与应用。",
+      "viz": {
+        "viz_id": "trig_function_lab",
+        "viz_desc": "三角函数全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角函数",
+          "三角函数的图像与性质"
+        ],
+        "default_view_id": "trig_function_lab",
+        "search_keywords": [
+          "三角方程",
+          "解集",
+          "正弦方程",
+          "余弦方程",
+          "正切方程"
+        ]
+      }
+    },
+    {
+      "id": "math.C06.S02.P07",
+      "subject": "数学",
+      "chapter": "三角函数",
+      "section": "三角函数的图像与性质",
+      "label": "7",
+      "title": "三角函数的奇偶性、周期性、对称性",
+      "details": "奇偶性的定义与验证；周期性的理解与应用；对称性的分析与证明。",
+      "viz": {
+        "viz_id": "trig_function_lab",
+        "viz_desc": "三角函数全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角函数",
+          "三角函数的图像与性质"
+        ],
+        "default_view_id": "trig_function_lab",
+        "search_keywords": [
+          "奇偶性",
+          "周期性",
+          "对称性",
+          "性质验证"
+        ]
+      }
+    },
+    {
+      "id": "math.C06.S02.P08",
+      "subject": "数学",
+      "chapter": "三角函数",
+      "section": "三角函数的图像与性质",
+      "label": "8",
+      "title": "三角函数的综合应用",
+      "details": "多函数合成与波形分析；实际应用问题建模与求解；复杂问题的综合解决策略。",
+      "viz": {
+        "viz_id": "trig_function_lab",
+        "viz_desc": "三角函数全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "三角函数",
+          "三角函数的图像与性质"
+        ],
+        "default_view_id": "trig_function_lab",
+        "search_keywords": [
+          "综合应用",
+          "波形合成",
+          "建模",
+          "问题解决"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S02.P01",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "等差数列等比数列：",
+      "label": "2",
+      "title": "a与b的等差中项 ；a与b的等比中项± ab 。",
+      "details": "2 {S (n =1)",
+      "viz": {
+        "viz_id": "sequence_lab",
+        "viz_args": {"module": "def"},
+        "viz_desc": "数列全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "等差数列等比数列："
+        ],
+        "default_view_id": "sequence_lab",
+        "search_keywords": [
+          "a",
+          "b",
+          "的等差中项",
+          "的等比中项",
+          "ab",
+          "S",
+          "n"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S02.P02",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "等差数列等比数列：",
+      "label": "3",
+      "title": "数列的通项公式与前n项和的关系：a = { 1 。",
+      "details": "n }S -S (n ³ 2,n∈N*) n n-1 4 、 a = ka +b （ k≠0,k≠1,b≠0 ） ， 求 通 项 时 ， 将 该 式 变 形 n n-1 a + b = k(a + b )(n³2,n∈N*)。 n k -1 n-1 k -1",
+      "viz": {
+        "viz_id": "sequence_lab",
+        "viz_args": {"module": "mean"},
+        "viz_desc": "数列全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "等差数列等比数列："
+        ],
+        "default_view_id": "sequence_lab",
+        "search_keywords": [
+          "数列的通项公式与前",
+          "n",
+          "项和的关系",
+          "a",
+          "S",
+          "N",
+          "ka",
+          "b",
+          "k"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S02.P03",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "等差数列等比数列：",
+      "label": "5",
+      "title": "已知{a }为等差数列，{b }为等比数列，则",
+      "details": "n n （1）求数列{a +b }前n项和用分组求和法；（2）求数列{a ×b }前n项和用错位相减法； n n n n 1 （3）求数列{ }前n项和用裂项相消法。 a a n n+1",
+      "viz": {
+        "viz_id": "sequence_lab",
+        "viz_args": {"module": "sum"},
+        "viz_desc": "数列全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "等差数列等比数列："
+        ],
+        "default_view_id": "sequence_lab",
+        "search_keywords": [
+          "已知",
+          "a",
+          "为等差数列",
+          "b",
+          "为等比数列",
+          "n",
+          "求数列",
+          "项和用分组求和法",
+          "项和用错位相减法",
+          "项和用裂项相消法"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S02.P04",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "等差数列等比数列：",
+      "label": "6",
+      "title": "在等差数列{a }中，若a >0,d <0，则S 有最大值；若a <0,d >0，则S 有最小值；",
+      "details": "n 1 n 1 n S",
+      "viz": {
+        "viz_id": "sequence_lab",
+        "viz_args": {"module": "extr"},
+        "viz_desc": "数列全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "等差数列等比数列："
+        ],
+        "default_view_id": "sequence_lab",
+        "search_keywords": [
+          "在等差数列",
+          "a",
+          "d",
+          "S",
+          "有最大值",
+          "有最小值",
+          "n"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S02.P05",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "等差数列等比数列：",
+      "label": "7",
+      "title": "已知{a }等差数列，则{ n}成等差数列；",
+      "details": "n n a S",
+      "viz": {
+        "viz_id": "sequence_lab",
+        "viz_args": {"module": "prop"},
+        "viz_desc": "数列全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "等差数列等比数列："
+        ],
+        "default_view_id": "sequence_lab",
+        "search_keywords": [
+          "已知",
+          "a",
+          "等差数列",
+          "n",
+          "成等差数列",
+          "S"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S02.P06",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "等差数列等比数列：",
+      "label": "8",
+      "title": "已知S ,T 分别是等差数列{a },{b }的前n项的和，则 n = 2n-1 ；",
+      "details": "n n n n b T n 2n-1",
+      "viz": {
+        "viz_id": "sequence_lab",
+        "viz_args": {"module": "prop"},
+        "viz_desc": "数列全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "等差数列等比数列："
+        ],
+        "default_view_id": "sequence_lab",
+        "search_keywords": [
+          "已知",
+          "S",
+          "T",
+          "分别是等差数列",
+          "a",
+          "b",
+          "的前",
+          "n",
+          "项的和"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S02.P07",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "等差数列等比数列：",
+      "label": "9",
+      "title": "求数列前n项和：",
+      "details": "①公式法求和 n(a +a ) n(n-1) 等差数列求和公式：S = 1 n =na + d n 2 1 2 { na (q =1) | 1 等比数列求和公式：S = {a (1-qn) a -a q n 1 = 1 n (q ≠1) | } 1-q 1-q 公式法求和注意事项：（1）弄准求和项数n的值； （2）等比数列公比q未知时，运用前n项和公式要分类. ②分组求和法 分组求和有两种情况，一种是将数列适当拆开，可分为几个等差、等比或常见的数列， 然后分别求和，再将其合并即可；另一种是将数列相邻的两项(或若干项)并成一项(或一组) 得到一个新数列(容易求和). ③倒序相加法 这是推导等差数列的前n项和公式时所用的方法，就是将一个数列倒过来排列（倒序）， 再把它与原数列相加，就可以得到n个(a +a ). 1 n ④裂项相消法 裂项法的实质是将数列中的每项（通项）分解，然后重新组合，使之能消去一些项，最 终达到求和的目的，如： （1）a = f(n+1)- f(n) n 1 1 1 1 11 1  （2）a = = - ·推··广→ = ∩ - ∪ n n(n+1) n n+1 n(n+k) k ∪n n+k ∪ （3）1 = n+1- n ·推··广→ 1 = 1( n+k - n ) n+1+ n n+k + n k an 1  1 1  （4）= ∩ - ∪ (an -b)(an+1 -b) a-1∪an -b an+1 -b∪ (2n)2 1 1 1 （5）a = =1+ ( - ) n (2n-1)(2n+1) 2 2n-1 2n+1 1 1 1 1 （6）a = = [ - ] n n(n-1)(n+2) 2 n(n+1) (n+1)(n+2) n+2 1 2(n+1)-n 1 1 1 1 （7）a = × = × = - ,则S =1- n n(n+1) 2n n(n+1) 2n n×2n-1 (n+1)2n n (n+1)2n sin1ο （8）=tan(n+1)ο -tannο cosnοcos(n+1)ο n 1 1 （9）= - (n+1)! n! (n+1)! 1 1( ) 用裂项相消法求和时，要对通项进行变换，如： = n+k - n ， n+k + n k 1 11 1  = ∩ - ∪裂项后可以产生连续可以相互抵消的项．抵消后并不一定只剩下第一项 n(n+k) k∪n n+k∪ 和最后一项，也有可能前面剩两项，后面也剩两项． ⑤错位相减法 这种方法是在推导等比数列的前n项和公式时所用的方法，这种方法主要用于求数列 {a ×b }的前n项和，其中{a }、{b }分别是等差数列和等比数列. n n n n 用错位相减法求和时，应注意： (1)要善于识别题目类型，特别是等比数列公比为负数的情形； (2)在写出“S ”与“qS ”的表达式时应特别注意将两式“错项对齐”以便下一步准确写出“S － n n n qS ”的表达式； n (3)在应用错位相减法求和时，若等比数列的公比为参数，应分公比等于1和不等于1两种 情况求解．",
+      "viz": {
+        "viz_id": "sequence_lab",
+        "viz_args": {"module": "sum"},
+        "viz_desc": "数列全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "等差数列等比数列："
+        ],
+        "default_view_id": "sequence_lab",
+        "search_keywords": [
+          "求数列前",
+          "n",
+          "项和",
+          "公式法求和",
+          "a",
+          "等差数列求和公式",
+          "S",
+          "na",
+          "d",
+          "q",
+          "等比数列求和公式",
+          "qn",
+          "公式法求和注意事项",
+          "弄准求和项数"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S04.P01",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "数列的极限",
+      "label": "1",
+      "title": "lim =0；limC=C；（其中C为常数），limqn ={ 1 q =1",
+      "details": "n→∞n n→∞ n→∞ | } 不存在 |q|>1或q =-1",
+      "viz": {
+        "viz_id": "info_card",
+        "viz_desc": "概念卡片/步骤推导",
+        "tech": [
+          "Markdown",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "数列的极限"
+        ],
+        "default_view_id": "info_card",
+        "search_keywords": [
+          "lim",
+          "limC",
+          "C",
+          "其中",
+          "为常数",
+          "limqn",
+          "q",
+          "n",
+          "不存在"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S04.P02",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "数列的极限",
+      "label": "2",
+      "title": "几个常见的极限：",
+      "details": "{1，a > b | ank +b a an -bn |-1，a < b （1）lim = ；（2）lim ={ ． n→∞ cnk +d c n→∞an +bn |0，a=b | } 不存在，a=-b",
+      "viz": {
+        "viz_id": "sequence_lab",
+        "viz_args": {"module": "limit"},
+        "viz_desc": "数列全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "数列的极限"
+        ],
+        "default_view_id": "sequence_lab",
+        "search_keywords": [
+          "几个常见的极限",
+          "a",
+          "b",
+          "ank",
+          "an",
+          "bn",
+          "lim",
+          "n",
+          "cnk",
+          "d",
+          "c",
+          "不存在"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S04.P03",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "数列的极限",
+      "label": "3",
+      "title": "已知lima = A，limb = B，则lim(a ±b ) = A± B；",
+      "details": "n n n n n→∞ n→∞ n→∞ a A lim(a ×b ) = A×B；lim n = (b ≠ 0,B ≠ 0) n→∞ n n n→∞ b B n n a",
+      "viz": {
+        "viz_id": "info_card",
+        "viz_desc": "概念卡片/步骤推导",
+        "tech": [
+          "Markdown",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "数列的极限"
+        ],
+        "default_view_id": "info_card",
+        "search_keywords": [
+          "已知",
+          "lima",
+          "A",
+          "limb",
+          "B",
+          "lim",
+          "a",
+          "b",
+          "n"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S04.P04",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "数列的极限",
+      "label": "4",
+      "title": "无穷等比数列各项和：S = limS = 1 ，其中公比q的取值范围为|q|<1,q ≠ 0",
+      "details": "n→∞ n 1-q",
+      "viz": {
+        "viz_id": "sequence_lab",
+        "viz_args": {"module": "limit"},
+        "viz_args": {
+          "module": "limit"
+        },
+        "viz_desc": "数列全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "数列的极限"
+        ],
+        "default_view_id": "sequence_lab",
+        "search_keywords": [
+          "无穷等比数列各项和",
+          "S",
+          "limS",
+          "其中公比",
+          "q",
+          "的取值范围为",
+          "n"
+        ]
+      }
+    },
+    {
+      "id": "math.C07.S03.P01",
+      "subject": "数学",
+      "chapter": "数列",
+      "section": "数学归纳法",
+      "label": "1",
+      "title": "数学归纳法",
+      "details": "数学归纳法证明步骤：1. 奠基（n=n0）；2. 归纳假设（n=k）；3. 归纳递推（n=k+1）。",
+      "viz": {
+        "viz_id": "sequence_lab",
+        "viz_args": {"module": "induc"},
+        "viz_desc": "数列全景实验室 (8 Modules)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "数列",
+          "数学归纳法"
+        ],
+        "default_view_id": "sequence_lab",
+        "search_keywords": [
+          "数学归纳法",
+          "归纳法",
+          "奠基",
+          "归纳假设",
+          "归纳递推"
+        ]
+      }
+    },
+    {
+      "id": "math.C08.S02.P01",
+      "subject": "数学",
+      "chapter": "向量",
+      "section": "平面向量及坐标运算",
+      "label": "1",
+      "title": "平面向量",
+      "details": "名称 定义 备注 既有大小又有方向的量；向量的大小叫 向量 平面向量是自由向量 做向量的长度(或称模)  零向量 长度为零的向量；其方向是任意的 记作0   a 单位向量 长度等于1个单位的向量 非零向量a共线的单位向量为±  |a| 平行向量 方向相同或相反的非零向量  方向相同或相反的非零向量又叫做共线 0与任一向量平行或共线 共线向量 向量 相等向量 长度相等且方向相同的向量 两向量只有相等或不等，不能比较大小   相反向量 长度相等且方向相反的向量 0的相反向量为0",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_args": {
+          "module": "concept"
+        },
+        "viz_desc": "向量拖拽/投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "向量",
+          "平面向量及坐标运算"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "平面向量",
+          "名称",
+          "定义",
+          "备注",
+          "既有大小又有方向的量",
+          "向量的大小叫",
+          "向量",
+          "平面向量是自由向量",
+          "做向量的长度",
+          "或称模",
+          "零向量",
+          "长度为零的向量",
+          "其方向是任意的",
+          "记作"
+        ]
+      }
+    },
+    {
+      "id": "math.C08.S02.P02",
+      "subject": "数学",
+      "chapter": "向量",
+      "section": "平面向量及坐标运算",
+      "label": "2",
+      "title": "平面向量的坐标运算",
+      "details": "(1)向量加法、减法、数乘向量及向量的模   设λ是一个实数，a =(x ,y ),b =(x ,y )，则   1 1   2 2 ①a+b =(x +x ,y + y )；a-b =(x -x ,y - y )； 1 2 1 2 1 2 1 2     {x = x ②λa =λ(x,y )=(λx,λy )；③ a = x2+ y2 ；④a =b ⇔ { 1 2 1 1 1 1 1 1 }y = y 1 2 (2)向量坐标的求法 ①若向量的起点是坐标原点，则终点坐标即为向量的坐标． → → ②设A(x ，y )，B(x ，y )，则AB＝(x －x ，y －y )，|AB|＝ (x -x )2 +(y -y )2 . 1 1 2 2 2 1 2 1 1 2 1 2",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_args": {
+          "module": "linear"
+        },
+        "viz_desc": "向量拖拽/投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "向量",
+          "平面向量及坐标运算"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "平面向量的坐标运算",
+          "向量加法",
+          "减法",
+          "数乘向量及向量的模",
+          "是一个实数",
+          "a",
+          "x",
+          "y",
+          "b",
+          "向量坐标的求法",
+          "若向量的起点是坐标原点",
+          "则终点坐标即为向量的坐标",
+          "A",
+          "B"
+        ]
+      }
+    },
+    {
+      "id": "math.C08.S02.P03",
+      "subject": "数学",
+      "chapter": "向量",
+      "section": "平面向量及坐标运算",
+      "label": "3",
+      "title": "平面向量共线(平行)",
+      "details": "    ①向量b 与非零向量a共线⇔有且只有一个实数λ，使得b =λa；     ②若a =(x ,y ),b =(x ,y )，则a∥b ⇔ x y -x y =0． 1 1 2 2 1 2 2 1 注：共线向量推论：对 AB 直线外任一点 O，点 P 在直线 AB 上⇔ 存在实数λ，使 → → → OP=(1-λ)OA+λOB． 1 → 1 → → 特别的：线段AB的中点公式（即点P是AB的中点）当λ= 时， OP= (OA+OB) ． 2 2",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_args": {
+          "module": "collinear"
+        },
+        "viz_desc": "向量拖拽/投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "向量",
+          "平面向量及坐标运算"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "平面向量共线",
+          "平行",
+          "向量",
+          "b",
+          "与非零向量",
+          "a",
+          "共线",
+          "有且只有一个实数",
+          "使得",
+          "x",
+          "y",
+          "共线向量推论",
+          "AB",
+          "直线外任一点"
+        ]
+      }
+    },
+    {
+      "id": "math.C08.S03.P01",
+      "subject": "数学",
+      "chapter": "向量",
+      "section": "平面向量数量积",
+      "label": "1",
+      "title": "向量数量积的定义：",
+      "details": "            2 ① a×b，即a×b=|a||b|cosθ。特别地，a =|a|2，a×0=0×a =0。   ② a×b= x x + y y 1 2 1 2    a×b",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_args": {
+          "module": "dotprod"
+        },
+        "viz_desc": "向量拖拽/投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "向量",
+          "平面向量数量积"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "向量数量积的定义",
+          "a",
+          "b",
+          "cos",
+          "特别地",
+          "x",
+          "y"
+        ]
+      }
+    },
+    {
+      "id": "math.C08.S03.P02",
+      "subject": "数学",
+      "chapter": "向量",
+      "section": "平面向量数量积",
+      "label": "2",
+      "title": "向量投影的定义：|b|cosθ=  . 注意哪个向量在哪个向量上的投影.",
+      "details": "|a|   a×b x x + y y",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_args": {
+          "module": "dotprod"
+        },
+        "viz_desc": "向量拖拽/投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "向量",
+          "平面向量数量积"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "向量投影的定义",
+          "b",
+          "cos",
+          "注意哪个向量在哪个向量上的投影",
+          "a",
+          "x",
+          "y"
+        ]
+      }
+    },
+    {
+      "id": "math.C08.S03.P03",
+      "subject": "数学",
+      "chapter": "向量",
+      "section": "平面向量数量积",
+      "label": "3",
+      "title": "两向量夹角公式：cosθ=   ；cosθ= 1 2 1 2",
+      "details": "|a||b| x2 + y2 x 2 + y 2 1 1 2 2",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_args": {
+          "module": "prop"
+        },
+        "viz_desc": "向量拖拽/投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "向量",
+          "平面向量数量积"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "两向量夹角公式",
+          "cos",
+          "a",
+          "b",
+          "x",
+          "y"
+        ]
+      }
+    },
+    {
+      "id": "math.C08.S03.P04",
+      "subject": "数学",
+      "chapter": "向量",
+      "section": "平面向量数量积",
+      "label": "4",
+      "title": "常见问题处理:",
+      "details": "        ① 两向量平行(共线)：a×b=|a||b|(同向)或a×b=-|a||b|(反向)   a//b的充要条件是x y = x y ； 1 2 2 1   ② a ⊥b的充要条件是x x + y y =0； 1 2 1 2       {xx + y y >0 ③ 夹角为锐角：a×b>0,且a×b≠|a||b|；{ 1 2 1 2 }x y ≠x y 1 2 2 1       {xx + y y <0 ④ 夹角为钝角：a×b<0,且a×b≠-|a||b|；{ 1 2 1 2 }x y ≠x y 1 2 2 1 (夹角为锐角、钝角，解答时要注意细节。)       ⑤ -|a||b|≤a×b≤|a||b|",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_args": {
+          "module": "prop"
+        },
+        "viz_desc": "向量拖拽/投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "向量",
+          "平面向量数量积"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "常见问题处理",
+          "两向量平行",
+          "共线",
+          "a",
+          "b",
+          "同向",
+          "反向",
+          "的充要条件是",
+          "x",
+          "y",
+          "xx",
+          "夹角为锐角",
+          "夹角为钝角",
+          "钝角"
+        ]
+      }
+    },
+    {
+      "id": "math.C08.S04.P01",
+      "subject": "数学",
+      "chapter": "向量",
+      "section": "平面向量分解",
+      "label": "1",
+      "title": "三点共线定理",
+      "details": "μμμ μμμ μμμ μμμ μμμ 设OA、OB不平行，点P在AB上⇔存在实数λ,μ使得OP=λOA+μOB 且λ+μ=1(λ,μ∈R) μμμ μμμ μμμ μμμ μμμ μμμ μμμ 证明：如图，设向量AP=μAB,PB=λAB, ∵ AP+PB= AB⇒λ+μ=1, μμμ μμμ μμμ μμμ μμμ μμμ μμμ μμμ 又OP=OA+AP=OA+μAB=OA+μ(OB-OA) μμμ μμμ μμμ μμμ =(1-μ)OA+μOB=λOA+μOB. [λ,μ的正负可以给学生讲一下] A P B O",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_args": {"module": "decomp"},
+        "viz_desc": "向量拖拽/投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "向量",
+          "平面向量分解"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "三点共线定理",
+          "OA",
+          "OB",
+          "不平行",
+          "P",
+          "AB",
+          "存在实数",
+          "使得",
+          "OP",
+          "R",
+          "证明",
+          "如图",
+          "设向量",
+          "AP"
+        ]
+      }
+    },
+    {
+      "id": "math.C08.S04.P02",
+      "subject": "数学",
+      "chapter": "向量",
+      "section": "平面向量分解",
+      "label": "2",
+      "title": "四心与向量的结合",
+      "details": "（1）OA+OB+OC = 0 ⇔ O是ΔABC的重心. （2）OA×OB =OB×OC =OC×OA⇔ O为ΔABC的垂心. （3）aOA+bOB+cOC = 0 ⇔ O为ΔABC的内心.(a,b,c是三角形的三条边长) （4）|O μμ A μ |=|O μμ B μ |=|O μμ C μ | ⇔ O为ΔABC的外心。重要公式： μ A μ O μ × μ A μ B μ = 1μ A μ B μ 2 2",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_args": {"module": "decomp"},
+        "viz_desc": "向量拖拽/投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "向量",
+          "平面向量分解"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "四心与向量的结合",
+          "OA",
+          "OB",
+          "OC",
+          "O",
+          "ABC",
+          "的重心",
+          "的垂心",
+          "aOA",
+          "bOB",
+          "cOC",
+          "的内心",
+          "a",
+          "b"
+        ]
+      }
+    },
+    {
+      "id": "math.C09.S01.P01",
+      "subject": "数学",
+      "chapter": "矩阵行列式",
+      "section": "概览",
+      "label": "1",
+      "title": "通过对线性方程组增广矩阵的变换可以得到线性方程组的解，这里所用的矩阵变换有下",
+      "details": "列三种： （1）互换矩阵的两行； （2）把某一行同乘（除）以一个非零的数； （3）某一行乘以一个数加到另一行。 通过上述三种矩阵变换，使线性方程组系数矩阵变成单位矩阵时，其增广矩阵的最后一个列 向量给出了方程的解。",
+      "viz": {
+        "viz_id": "matrix_view",
+        "viz_desc": "矩阵表格+行列式计算/几何意义",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls",
+          "Plotly"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "矩阵行列式",
+          "概览"
+        ],
+        "default_view_id": "matrix_view",
+        "search_keywords": [
+          "通过对线性方程组增广矩阵的变换可以得到线性方程组的解",
+          "这里所用的矩阵变换有下",
+          "列三种",
+          "互换矩阵的两行",
+          "把某一行同乘",
+          "以一个非零的数",
+          "某一行乘以一个数加到另一行",
+          "通过上述三种矩阵变换",
+          "使线性方程组系数矩阵变成单位矩阵时",
+          "其增广矩阵的最后一个列",
+          "向量给出了方程的解"
+        ]
+      }
+    },
+    {
+      "id": "math.C09.S01.P02",
+      "subject": "数学",
+      "chapter": "矩阵行列式",
+      "section": "概览",
+      "label": "2",
+      "title": "已知矩阵A ，矩阵B ，矩阵C ，如果矩阵C中第i行，第j列的元素c 为A的",
+      "details": "n×k k×m n×m ij 第i个行向量与B的第j个列向量的数量积，i =1,2,...n, j =1,2,...n ，那么C=AB。 （1）只有当A的列数和B的行数相等时,矩阵之积AB才有意义； （2）一般的，AB≠ BA。 4 4 8 12 ∩ ∪ ∩ ∪ 例如：若A=( 1 2 3 )，B = 5 ，则AB= ( 32 )， BA= 5 10 15 。 ∩ ∪ ∩ ∪ ∩ ∪ ∩ ∪ ∪6∪ ∪6 12 18∪ x a b x'",
+      "viz": {
+        "viz_id": "matrix_view",
+        "viz_desc": "矩阵表格+行列式计算/几何意义",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls",
+          "Plotly"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "矩阵行列式",
+          "概览"
+        ],
+        "default_view_id": "matrix_view",
+        "search_keywords": [
+          "已知矩阵",
+          "A",
+          "矩阵",
+          "B",
+          "C",
+          "如果矩阵",
+          "中第",
+          "i",
+          "j",
+          "列的元素",
+          "c",
+          "n",
+          "k",
+          "m"
+        ]
+      }
+    },
+    {
+      "id": "math.C09.S01.P03",
+      "subject": "数学",
+      "chapter": "矩阵行列式",
+      "section": "概览",
+      "label": "3",
+      "title": "矩阵变换：向量∩ ∪的左边乘一个2阶方阵∩ ∪，就可以得到另一个向量∩ ∪，即",
+      "details": "∪y∪ ∪c d∪ ∪y'∪ x' a bx ∩ ∪ = ∩ ∪∩ ∪，这个矩阵变换把向量( x y )变换成向量( x' y' )。 ∪y'∪ ∪c d∪∪y∪ a b c 1 1 1",
+      "viz": {
+        "viz_id": "matrix_view",
+        "viz_desc": "矩阵表格+行列式计算/几何意义",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls",
+          "Plotly"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "矩阵行列式",
+          "概览"
+        ],
+        "default_view_id": "matrix_view",
+        "search_keywords": [
+          "矩阵变换",
+          "向量",
+          "的左边乘一个",
+          "阶方阵",
+          "就可以得到另一个向量",
+          "y",
+          "c",
+          "d",
+          "x",
+          "a",
+          "b",
+          "这个矩阵变换把向量",
+          "变换成向量"
+        ]
+      }
+    },
+    {
+      "id": "math.C09.S01.P04",
+      "subject": "数学",
+      "chapter": "矩阵行列式",
+      "section": "概览",
+      "label": "4",
+      "title": "a b c 按对角线法则展开ab c +a bc +a bc -a b c -a bc -abc",
+      "details": "2 2 2 1 2 3 2 3 1 3 1 2 3 2 1 2 1 3 1 3 2 a b c 3 3 3 b c a c a b 按第一行展开a 2 2 -b 2 2 +c 2 2 ， 1 b c 1 a c 1 a b 3 3 3 3 3 3 a b c 的代数余子式是- 1 1 2 a b 3 3 {a x+b y =c a b c b a c",
+      "viz": {
+        "viz_id": "matrix_view",
+        "viz_desc": "矩阵表格+行列式计算/几何意义",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls",
+          "Plotly"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "矩阵行列式",
+          "概览"
+        ],
+        "default_view_id": "matrix_view",
+        "search_keywords": [
+          "a",
+          "b",
+          "c",
+          "按对角线法则展开",
+          "ab",
+          "bc",
+          "abc",
+          "按第一行展开",
+          "的代数余子式是",
+          "x",
+          "y"
+        ]
+      }
+    },
+    {
+      "id": "math.C09.S01.P05",
+      "subject": "数学",
+      "chapter": "矩阵行列式",
+      "section": "概览",
+      "label": "5",
+      "title": "二元一次方程{ 1 1 1 ，记D= 1 1 ，Dx= 1 1 ，Dy= 1 1",
+      "details": "}a x+b y =c a b c b a c 2 2 2 2 2 2 2 2 2 { D x= x | | D 当D ≠0时，方程组有唯一解，其解为{ ；当D =0,且D ≠0或D ≠0时，方程组 D x y | y = y |} D 无解；当D = D = D = 0时，方程组有无数多解。 x y {a x+b y+c z =d 1 1 1 1 |",
+      "viz": {
+        "viz_id": "matrix_view",
+        "viz_desc": "矩阵表格+行列式计算/几何意义",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls",
+          "Plotly"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "矩阵行列式",
+          "概览"
+        ],
+        "default_view_id": "matrix_view",
+        "search_keywords": [
+          "二元一次方程",
+          "D",
+          "Dx",
+          "Dy",
+          "a",
+          "x",
+          "b",
+          "y",
+          "c",
+          "方程组有唯一解",
+          "其解为",
+          "方程组",
+          "无解",
+          "方程组有无数多解"
+        ]
+      }
+    },
+    {
+      "id": "math.C09.S01.P06",
+      "subject": "数学",
+      "chapter": "矩阵行列式",
+      "section": "概览",
+      "label": "6",
+      "title": "三元一次方程{a x+b y+c z =d",
+      "details": "2 2 2 2 | }a x+b y+c z =d 3 3 3 3 a b c d b c a d c a b d 1 1 1 1 1 1 1 1 1 1 1 1 记D= a b c ，Dx= d b c ，Dy= a d c ，Dz= a b d 2 2 2 2 2 2 2 2 2 2 2 2 a b c d b c a d c a b d 3 3 3 3 3 3 3 3 3 3 3 3 { D x= x | D | | D 当D ≠0时，方程组有唯一解，其解为{y = y ； D | | D z = z | } D 当D =0时，方程组无解或有无穷多解。",
+      "viz": {
+        "viz_id": "matrix_view",
+        "viz_desc": "矩阵表格+行列式计算/几何意义",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls",
+          "Plotly"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "矩阵行列式",
+          "概览"
+        ],
+        "default_view_id": "matrix_view",
+        "search_keywords": [
+          "三元一次方程",
+          "a",
+          "x",
+          "b",
+          "y",
+          "c",
+          "z",
+          "d",
+          "D",
+          "Dx",
+          "Dy",
+          "Dz",
+          "方程组有唯一解",
+          "其解为"
+        ]
+      }
+    },
+    {
+      "id": "math.C10.S01.P01",
+      "subject": "数学",
+      "chapter": "复数",
+      "section": "概览",
+      "label": "1",
+      "title": "复数z =a+bi,(a,b∈R)，则|z|= a2 +b2 ；z是纯虚数⇔ a =0,b≠0。",
+      "details": null,
+      "viz": {
+        "viz_id": "function_complex_lab",
+        "viz_desc": "复数综合实验台 (模/纯虚数)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "复数",
+          "概览"
+        ],
+        "default_view_id": "function_complex_lab",
+        "search_keywords": [
+          "复数",
+          "z",
+          "a",
+          "bi",
+          "b",
+          "R",
+          "是纯虚数"
+        ]
+      }
+    },
+    {
+      "id": "math.C10.S01.P02",
+      "subject": "数学",
+      "chapter": "复数",
+      "section": "概览",
+      "label": "2",
+      "title": "|z -z |的几何意义是：Z ,Z 两点间的距离。",
+      "details": "1 2 1 2    2 2",
+      "viz": {
+        "viz_id": "function_complex_lab",
+        "viz_desc": "复数综合实验台 (差的模/距离)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "复数",
+          "概览"
+        ],
+        "default_view_id": "function_complex_lab",
+        "search_keywords": [
+          "z",
+          "的几何意义是",
+          "Z",
+          "两点间的距离"
+        ]
+      }
+    },
+    {
+      "id": "math.C10.S01.P03",
+      "subject": "数学",
+      "chapter": "复数",
+      "section": "概览",
+      "label": "3",
+      "title": "|z2 | =|z|2 ≠ z2；|a | =|a|2 = a （填写=,≠）",
+      "details": null,
+      "viz": {
+        "viz_id": "function_complex_lab",
+        "viz_desc": "复数综合实验台 (模平方/复数平方)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "复数",
+          "概览"
+        ],
+        "default_view_id": "function_complex_lab",
+        "search_keywords": [
+          "z",
+          "a",
+          "填写"
+        ]
+      }
+    },
+    {
+      "id": "math.C10.S01.P04",
+      "subject": "数学",
+      "chapter": "复数",
+      "section": "概览",
+      "label": "4",
+      "title": "z∈R ⇔ z = z。",
+      "details": null,
+      "viz": {
+        "viz_id": "function_complex_lab",
+        "viz_desc": "复数综合实验台 (实数/共轭)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "复数",
+          "概览"
+        ],
+        "default_view_id": "function_complex_lab",
+        "search_keywords": [
+          "z",
+          "R"
+        ]
+      }
+    },
+    {
+      "id": "math.C10.S01.P05",
+      "subject": "数学",
+      "chapter": "复数",
+      "section": "概览",
+      "label": "5",
+      "title": "负实数a的平方根是± -a×i。",
+      "details": "-1± 3i",
+      "viz": {
+        "viz_id": "function_complex_lab",
+        "viz_desc": "复数综合实验台 (负实数平方根)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "复数",
+          "概览"
+        ],
+        "default_view_id": "function_complex_lab",
+        "search_keywords": [
+          "负实数",
+          "a",
+          "的平方根是",
+          "i"
+        ]
+      }
+    },
+    {
+      "id": "math.C10.S01.P06",
+      "subject": "数学",
+      "chapter": "复数",
+      "section": "概览",
+      "label": "6",
+      "title": "实数a的立方根是3 a , ×3 a 。",
+      "details": "2 { -b± b2-4ac | Δ>0 | 2a | b",
+      "viz": {
+        "viz_id": "function_complex_lab",
+        "viz_desc": "复数综合实验台 (实数立方根)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "复数",
+          "概览"
+        ],
+        "default_view_id": "function_complex_lab",
+        "search_keywords": [
+          "实数",
+          "a",
+          "的立方根是",
+          "b",
+          "ac"
+        ]
+      }
+    },
+    {
+      "id": "math.C10.S01.P07",
+      "subject": "数学",
+      "chapter": "复数",
+      "section": "概览",
+      "label": "7",
+      "title": "实系数一元二次方程ax2 +bx+c =0的解x={ - Δ=0",
+      "details": "2a | | -b± 4ac-b2 ×i | Δ<0 } 2a",
+      "viz": {
+        "viz_id": "function_complex_lab",
+        "viz_desc": "复数综合实验台 (实系数方程求根)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "复数",
+          "概览"
+        ],
+        "default_view_id": "function_complex_lab",
+        "search_keywords": [
+          "实系数一元二次方程",
+          "ax",
+          "bx",
+          "c",
+          "的解",
+          "x",
+          "a",
+          "b",
+          "ac",
+          "i"
+        ]
+      }
+    },
+    {
+      "id": "math.C10.S01.P08",
+      "subject": "数学",
+      "chapter": "复数",
+      "section": "概览",
+      "label": "8",
+      "title": "一元二次方程两根之差的模",
+      "details": "8 、 实 系 数 一 元 二 次 方 程 ax2 +bx+c =0 的 两 根 为 x ,x ， 则 1 2 {| (x +x )2 -4x x Δ³0 |x -x |={ 1 2 1 2 。 1 2 |} |2b| Δ<0",
+      "viz": {
+        "viz_id": "function_complex_lab",
+        "viz_desc": "复数综合实验台 (两根之差模)",
+        "tech": [
+          "Plotly",
+          "CustomControls",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "复数",
+          "概览"
+        ],
+        "default_view_id": "function_complex_lab",
+        "search_keywords": [
+          "一元二次方程",
+          "两根之差",
+          "模",
+          "x",
+          "Delta"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P01",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "1",
+      "title": "已知A(x ,y )，B(x ,y )，则k = 1 2 (x ≠ x )",
+      "details": "1 1 2 2 AB x - x 1 2 1 2 1 | AB|= (x -x )2 +(y - y )2 = 1+k2 |x -x |= 1+ | y - y | 1 2 1 2 1 2 k2 1 2",
+      "viz": {
+        "viz_id": "info_card",
+        "viz_desc": "概念卡片/步骤推导",
+        "tech": [
+          "Markdown",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "info_card",
+        "search_keywords": [
+          "已知",
+          "A",
+          "x",
+          "y",
+          "B",
+          "k",
+          "AB"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P02",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "2",
+      "title": "直线的方程：（应用以上直线方程时应考虑其存在的条件）",
+      "details": "x-x y- y （1）点方向式： 0 = 0 （过P(x ,y ),一个方向向量为(u,v)，uv≠0） u v 0 0 当u =0时，该直线方程为x= x ；当v=0时，该直线方程为 y = y 0 0 （2）点法向式：a(x- x )+b(y- y ) = 0（过P(x ,y )，一个法向量为(a,b)） 0 0 0 0 （3）点斜式： y- y = k(x- x ) （过P(x ,y )，斜率为k） 0 0 0 0 当斜率不存在时，该直线方程为x= x 0 （4）一般式：Ax+ By+C = 0（A、B不同时为零） （5）斜截式： y = kx+b（斜率为k，在y轴上的截距为b） 当斜率不存在时，该直线方程为x=0 {x= x +ut （6）*参数方程：{ 0 （过P(x ,y ),一个方向向量为(u,v)） }y = y +vt 0 0 0 {x= x +tcosα （7）*参数方程：{ 0 （过P(x ,y ),倾斜角为α） }y = y +tsinα 0 0 0",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_desc": "向量拖拽+投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "直线的方程",
+          "应用以上直线方程时应考虑其存在的条件",
+          "x",
+          "y",
+          "点方向式",
+          "P",
+          "一个方向向量为",
+          "u",
+          "v",
+          "uv",
+          "该直线方程为",
+          "点法向式",
+          "a",
+          "b"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P03",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "3",
+      "title": "直线斜率k 和倾斜角α的关系：",
+      "details": "{arctank (k >0) π π |π k = tanα,α∈[0, )∪( ,π)； α={ (k不存在) 2 2 2 | π+arctank(k <0) }  μ a",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "直线斜率",
+          "k",
+          "和倾斜角",
+          "的关系",
+          "arctank",
+          "tan",
+          "不存在",
+          "a"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P04",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "4",
+      "title": "已知直线的法向量为n=(a,b)，则该直线的方向向量为d = (b,-a)，斜率为k = -",
+      "details": "b （b≠0）",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_desc": "向量拖拽+投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "已知直线的法向量为",
+          "n",
+          "a",
+          "b",
+          "则该直线的方向向量为",
+          "d",
+          "斜率为",
+          "k"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P05",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "5",
+      "title": "两条直线的平行和垂直",
+      "details": "（1）若l :y =k x+b ，l :y =k x+b 1 1 1 2 2 2 {k =k |b -b | l //l ⇔ { 1 2 ；此时两平行直线l，l 间的距离d = 1 2 ； 1 2 }b ≠b 1 2 1+k2 1 2 l ⊥l ⇔ k k = -1,或一个为零另一个不存在。 1 2 1 2 （2）若l : A x+ B y+C = 0，l : A x+ B y+C = 0 1 1 1 1 2 2 2 2 { A B | 1 1 =0即AB = A B | A B 1 2 2 1 |C -C | l //l ⇔ { 2 2 ；此时两平行直线l，l 间的距离d = 1 2 ； 1 2 1 2 | A C A2 + B2 1 1 ≠0即AC ≠ AC | } A C 1 2 2 1 2 2 l ⊥l ⇔ A A +B B =0。 1 2 1 2 1 2",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "两条直线的平行和垂直",
+          "l",
+          "y",
+          "k",
+          "x",
+          "b",
+          "此时两平行直线",
+          "间的距离",
+          "d",
+          "或一个为零另一个不存在",
+          "A",
+          "B",
+          "C",
+          "AB"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P06",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "6",
+      "title": "两直线夹角公式：",
+      "details": "k -k （1）tanθ=| 2 1 |（l :y =k x+b ，l :y =k x+b ） 1+k k 1 1 1 2 2 2 1 2 | A A +B B | （2）cosθ= 1 2 1 2 （l : A x+ B y+C = 0，l : A x+ B y+C = 0） 1 1 1 1 2 2 2 2 A2 +B2 A 2 +B 2 1 1 2 2",
+      "viz": {
+        "viz_id": "vector_lab",
+        "viz_desc": "向量拖拽+投影/夹角/面积",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "vector_lab",
+        "search_keywords": [
+          "两直线夹角公式",
+          "k",
+          "tan",
+          "l",
+          "y",
+          "x",
+          "b",
+          "A",
+          "B",
+          "cos",
+          "C"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P07",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "7",
+      "title": "常见的直线系方程：",
+      "details": "（1）定点直线系方程：经过定点P(x ,y )的直线系方程为 y- y = k(x- x ) （除直线 0 0 0 0 x= x ），其中k是待定的系数。 0 （2）共点直线系方程：经过两直线l : A x+ B y+C = 0，l : A x+ B y+C = 0的交 1 1 1 1 2 2 2 2 点的直线系方程为A x+ B y+C +λ(A x+ B y+C ) = 0（除l ），其中λ是待定的系 1 1 1 2 2 2 2 数。 （ 3 ） 平 行 直 线 系 方 程 ： 与 直 线 Ax+By+C =0 平 行 的 直 线 系 方 程 为 Ax+By+C' = 0(C' ≠C)。 （4）垂直直线系方程：与直线Ax+By+C = 0垂直的直线系方程为Bx-Ay+C' = 0。 | Ax +By +C|",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "常见的直线系方程",
+          "定点直线系方程",
+          "经过定点",
+          "P",
+          "x",
+          "y",
+          "的直线系方程为",
+          "k",
+          "除直线",
+          "其中",
+          "是待定的系数",
+          "共点直线系方程",
+          "经过两直线",
+          "l"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P08",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "8",
+      "title": "点P(x ,y )到直线Ax+By+C =0的距离d= 0 0 。",
+      "details": "0 0 A2 +B2 ax +by +c",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "P",
+          "x",
+          "y",
+          "到直线",
+          "Ax",
+          "By",
+          "C",
+          "的距离",
+          "d",
+          "A",
+          "B",
+          "ax",
+          "by",
+          "c"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P09",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "9",
+      "title": "δ= 0 0 的符号确定了点P(x ,y )关于直线l:ax+by+c =0的相对位置。在",
+      "details": "0 0 a2 +b2 直线同侧的所有点，δ的符号是相同的，在直线异侧的所有点，δ的符号是相反的。（填 写“相同”或“相反”）",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "的符号确定了点",
+          "P",
+          "x",
+          "y",
+          "关于直线",
+          "l",
+          "ax",
+          "by",
+          "c",
+          "的相对位置",
+          "a",
+          "b",
+          "直线同侧的所有点",
+          "的符号是相同的"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P10",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "10",
+      "title": "点A(x ,y )，B(x ,y )在直线Ax+By+C = 0异侧",
+      "details": "1 1 2 2 ⇔ (Ax + By +C)(Ax + By +C)< 0。 1 1 2 2",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "A",
+          "x",
+          "y",
+          "B",
+          "在直线",
+          "Ax",
+          "By",
+          "C",
+          "异侧"
+        ]
+      }
+    },
+    {
+      "id": "math.C11.S01.P11",
+      "subject": "数学",
+      "chapter": "直线公式",
+      "section": "概览",
+      "label": "11",
+      "title": "点A(x ,y )，B(x ,y )在直线Ax+By+C =0同侧",
+      "details": "1 1 2 2 ⇔ (Ax +By +C)(Ax +By +C)>0 1 1 2 2",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "直线公式",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "A",
+          "x",
+          "y",
+          "B",
+          "在直线",
+          "Ax",
+          "By",
+          "C",
+          "同侧"
+        ]
+      }
+    },
+    {
+      "id": "math.C12.S01.P01",
+      "subject": "数学",
+      "chapter": "曲线方程与圆",
+      "section": "概览",
+      "label": "1",
+      "title": "对于曲线C和方程F(x,y) = 0，满足：（1）曲线C上的点的坐标都是方程F(x,y) = 0",
+      "details": "的解；（2）以方程F(x,y) = 0的解为坐标的点都是曲线C上的点，我们就把方程F(x,y) = 0 叫做曲线C的方程，曲线C叫做方程F(x,y) = 0的曲线。",
+      "viz": {
+        "viz_id": "info_card",
+        "viz_desc": "概念卡片/步骤推导",
+        "tech": [
+          "Markdown",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "曲线方程与圆",
+          "概览"
+        ],
+        "default_view_id": "info_card",
+        "search_keywords": [
+          "对于曲线",
+          "C",
+          "和方程",
+          "F",
+          "x",
+          "y",
+          "满足",
+          "曲线",
+          "上的点的坐标都是方程",
+          "的解",
+          "以方程",
+          "的解为坐标的点都是曲线",
+          "上的点",
+          "我们就把方程"
+        ]
+      }
+    },
+    {
+      "id": "math.C12.S01.P02",
+      "subject": "数学",
+      "chapter": "曲线方程与圆",
+      "section": "概览",
+      "label": "2",
+      "title": "圆的方程：",
+      "details": "（1）圆的标准方程：(x-a)2 +(y-b)2 = r2。 （2）圆的一般方程：x2 + y2 + Dx+ Ey+ F = 0 (D2 +E2 -4F >0)。 {x=a+rcosα （3）圆的参数方程：{ α∈[0,2π)，α是参数。 }y =b+rsinα （4）圆的复数方程：|z-z |=r 0",
+      "viz": {
+        "viz_id": "complex_plane",
+        "viz_desc": "复平面(模/辐角/共轭)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "曲线方程与圆",
+          "概览"
+        ],
+        "default_view_id": "complex_plane",
+        "search_keywords": [
+          "圆的方程",
+          "圆的标准方程",
+          "x",
+          "a",
+          "y",
+          "b",
+          "r",
+          "圆的一般方程",
+          "Dx",
+          "Ey",
+          "F",
+          "D",
+          "E",
+          "rcos"
+        ]
+      }
+    },
+    {
+      "id": "math.C12.S01.P03",
+      "subject": "数学",
+      "chapter": "曲线方程与圆",
+      "section": "概览",
+      "label": "3",
+      "title": "已知点M(x ,y )，圆C：(x-a)2 +(y-b)2 = r2。",
+      "details": "0 0 点在圆外⇔ |CM |>r ⇔(x -a)2 +(y -b)2 >r2； 0 0 点在圆上⇔ |CM |=r ⇔(x -a)2 +(y -b)2 =r2； 0 0 点在圆内⇔ |CM |< r ⇔ (x -a)2 +(y -b)2 < r2。 0 0",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+曲线/轨迹",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "曲线方程与圆",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "已知点",
+          "M",
+          "x",
+          "y",
+          "C",
+          "a",
+          "b",
+          "r",
+          "点在圆外",
+          "CM",
+          "点在圆上",
+          "点在圆内"
+        ]
+      }
+    },
+    {
+      "id": "math.C12.S01.P04",
+      "subject": "数学",
+      "chapter": "曲线方程与圆",
+      "section": "概览",
+      "label": "4",
+      "title": "直线l：Ax+ By+C = 0与圆C：(x-a)2 +(y-b)2 = r2",
+      "details": "| Aa+Bb+Cc| | Aa+Bb+Cc| 相交⇔ d = <r ；相切⇔ d = =r ； a2 +b2 a2 +b2 | Aa+Bb+Cc| 相离⇔ d = >r 。 a2 +b2",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "曲线方程与圆",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "直线",
+          "l",
+          "Ax",
+          "By",
+          "C",
+          "与圆",
+          "x",
+          "a",
+          "y",
+          "b",
+          "r",
+          "Aa",
+          "Bb",
+          "Cc"
+        ]
+      }
+    },
+    {
+      "id": "math.C12.S01.P05",
+      "subject": "数学",
+      "chapter": "曲线方程与圆",
+      "section": "概览",
+      "label": "5",
+      "title": "圆C 与圆C 位置关系：",
+      "details": "1 2 外离⇔|C C |> r +r ；外切⇔|C C |= r +r ；相交⇔|r -r |<|C C |< r +r ； 1 2 1 2 1 2 1 2 1 2 1 2 1 2 内切⇔|C C |=|r -r |(r ≠ r )；内含⇔|C C |<|r -r |(r ≠ r )。 1 2 1 2 1 2 1 2 1 2 1 2",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+曲线/轨迹",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "曲线方程与圆",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "C",
+          "与圆",
+          "位置关系",
+          "外离",
+          "r",
+          "外切",
+          "相交",
+          "内切",
+          "内含"
+        ]
+      }
+    },
+    {
+      "id": "math.C12.S01.P06",
+      "subject": "数学",
+      "chapter": "曲线方程与圆",
+      "section": "概览",
+      "label": "6",
+      "title": "圆的切线方程：",
+      "details": "（1）过圆C：x2 + y2 = r2上一点M(x ,y )的圆的切线方程为x x+ y y = r2。 0 0 0 0 （2）过圆C：(x-a)2 +(y-b)2 = r2上一点M(x ,y )的圆的切线方程为 0 0 (x -a)(x-a)+(y -b)(y-b)2 = r2。 0 0 （3）过圆C：x2 + y2 + Dx+ Ey+ F = 0(D2 + E2 -4F > 0)上一点M(x ,y )的圆的切 0 0 x + x y + y 线方程为x x+ y y+ D 0 + E 0 + F = 0。 0 0 2 2 （4）斜率为k的圆C：x2 + y2 = r2的切线方程为 y =kx±r k2+1。",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "曲线方程与圆",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "圆的切线方程",
+          "过圆",
+          "C",
+          "x",
+          "y",
+          "r",
+          "上一点",
+          "M",
+          "的圆的切线方程为",
+          "a",
+          "b",
+          "Dx",
+          "Ey",
+          "F"
+        ]
+      }
+    },
+    {
+      "id": "math.C12.S01.P07",
+      "subject": "数学",
+      "chapter": "曲线方程与圆",
+      "section": "概览",
+      "label": "7",
+      "title": "圆的弦AB的长度=2 R2 -d2 （圆半径为R，圆心到AB距离为d）",
+      "details": null,
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "曲线方程与圆",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "圆的弦",
+          "AB",
+          "的长度",
+          "R",
+          "d",
+          "圆半径为",
+          "圆心到",
+          "距离为"
+        ]
+      }
+    },
+    {
+      "id": "math.C13.S01.P01",
+      "subject": "数学",
+      "chapter": "圆锥曲线",
+      "section": "概览",
+      "label": "1",
+      "title": "椭圆的定义是平面内到两个定点F，F 的距离之和等于常数2a（2a大于|F F |）的点的",
+      "details": "1 2 1 2 x2 y2 轨迹。焦点在x轴的椭圆标准方程为 + =1(a >b > 0)，长轴长为2a，短轴长为2b， a2 b2 焦点坐标为(± a2 -b2 ,0)，对称轴为x轴、y轴，对称中心为(0,0)。 x2 y2 {x=acosα",
+      "viz": {
+        "viz_id": "cartesian_plot",
+        "viz_desc": "平面直角坐标系函数图",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "圆锥曲线",
+          "概览"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "椭圆的定义是平面内到两个定点",
+          "F",
+          "的距离之和等于常数",
+          "a",
+          "大于",
+          "的点的",
+          "x",
+          "y",
+          "轨迹",
+          "焦点在",
+          "轴的椭圆标准方程为",
+          "b",
+          "长轴长为",
+          "短轴长为"
+        ]
+      }
+    },
+    {
+      "id": "math.C13.S01.P02",
+      "subject": "数学",
+      "chapter": "圆锥曲线",
+      "section": "概览",
+      "label": "2",
+      "title": "椭圆 + =1(a >b > 0)的参数方程是{ α∈[0,2π),α是参数；",
+      "details": "a2 b2 }y =bsinα 复数方程是|z-z |+|z-z |=2a,2a >|Z Z |。 1 2 1 2 x2 y2 x 2 y 2",
+      "viz": {
+        "viz_id": "complex_plane",
+        "viz_desc": "复平面(模/辐角/共轭)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "圆锥曲线",
+          "概览"
+        ],
+        "default_view_id": "complex_plane",
+        "search_keywords": [
+          "椭圆",
+          "a",
+          "b",
+          "的参数方程是",
+          "是参数",
+          "y",
+          "bsin",
+          "复数方程是",
+          "z",
+          "Z",
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "math.C13.S01.P03",
+      "subject": "数学",
+      "chapter": "圆锥曲线",
+      "section": "概览",
+      "label": "3",
+      "title": "点M(x ,y )在椭圆 + =1(a >b > 0)内部⇔ 0 + 0 <1。",
+      "details": "0 0 a2 b2 a2 b2",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+曲线/轨迹",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "圆锥曲线",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "M",
+          "x",
+          "y",
+          "在椭圆",
+          "a",
+          "b",
+          "内部"
+        ]
+      }
+    },
+    {
+      "id": "math.C13.S01.P04",
+      "subject": "数学",
+      "chapter": "圆锥曲线",
+      "section": "概览",
+      "label": "4",
+      "title": "双曲线的定义是平面内到两个定点F ，F 的距离之差等于常数2a（2a小于|F F |）的点",
+      "details": "1 2 1 2 x2 y2 的轨迹。焦点在x轴的双曲线标准方程为 - =1(a > 0,b > 0)，实轴长为2a，虚轴长 a2 b2 为2b，焦点坐标为(± a2 +b2 ,0)，对称轴为x轴、y轴，对称中心为(0,0)。 x2 y2 {x=asecα",
+      "viz": {
+        "viz_id": "cartesian_plot",
+        "viz_desc": "平面直角坐标系函数图",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "圆锥曲线",
+          "概览"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "双曲线的定义是平面内到两个定点",
+          "F",
+          "的距离之差等于常数",
+          "a",
+          "小于",
+          "的点",
+          "x",
+          "y",
+          "的轨迹",
+          "焦点在",
+          "轴的双曲线标准方程为",
+          "b",
+          "实轴长为",
+          "虚轴长"
+        ]
+      }
+    },
+    {
+      "id": "math.C13.S01.P05",
+      "subject": "数学",
+      "chapter": "圆锥曲线",
+      "section": "概览",
+      "label": "5",
+      "title": "双曲线 - =1(a > 0,b > 0)的参数方程是{ α∈[0,2π),α是参数；",
+      "details": "a2 b2 }y =btanα 复数方程是||z-z |-|z-z ||=2a,2a<|Z Z | 。 1 2 1 2 x2 y2 b",
+      "viz": {
+        "viz_id": "complex_plane",
+        "viz_desc": "复平面(模/辐角/共轭)",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "圆锥曲线",
+          "概览"
+        ],
+        "default_view_id": "complex_plane",
+        "search_keywords": [
+          "双曲线",
+          "a",
+          "b",
+          "的参数方程是",
+          "是参数",
+          "y",
+          "btan",
+          "复数方程是",
+          "z",
+          "Z",
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "math.C13.S01.P06",
+      "subject": "数学",
+      "chapter": "圆锥曲线",
+      "section": "概览",
+      "label": "6",
+      "title": "（1）双曲线 - =1(a > 0,b > 0)的渐进线方程为 y =± x。",
+      "details": "a2 b2 a x y x2 y2 （2）渐进线为 ± =0的双曲线方程可设为 - =λ，λ≠ 0。 a b a2 b2",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+曲线/轨迹",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "圆锥曲线",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "双曲线",
+          "a",
+          "b",
+          "的渐进线方程为",
+          "y",
+          "x",
+          "渐进线为",
+          "的双曲线方程可设为"
+        ]
+      }
+    },
+    {
+      "id": "math.C13.S01.P07",
+      "subject": "数学",
+      "chapter": "圆锥曲线",
+      "section": "概览",
+      "label": "7",
+      "title": "抛物线的定义是平面内到一个定点F和到一条定直线l（F不在l上）距离相等的点的轨",
+      "details": "迹。 p p",
+      "viz": {
+        "viz_id": "cartesian_plot",
+        "viz_desc": "平面直角坐标系函数图",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "圆锥曲线",
+          "概览"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "抛物线的定义是平面内到一个定点",
+          "F",
+          "和到一条定直线",
+          "l",
+          "不在",
+          "距离相等的点的轨",
+          "p"
+        ]
+      }
+    },
+    {
+      "id": "math.C13.S01.P08",
+      "subject": "数学",
+      "chapter": "圆锥曲线",
+      "section": "概览",
+      "label": "8",
+      "title": "抛物线 y2 =2px(p >0)，焦点坐标为( ,0)，准线方程为x = - ， p的几何意义是",
+      "details": "2 2 焦点到准线的距离。",
+      "viz": {
+        "viz_id": "cartesian_plot",
+        "viz_desc": "平面直角坐标系函数图",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "圆锥曲线",
+          "概览"
+        ],
+        "default_view_id": "cartesian_plot",
+        "search_keywords": [
+          "抛物线",
+          "y",
+          "px",
+          "p",
+          "焦点坐标为",
+          "准线方程为",
+          "x",
+          "的几何意义是",
+          "焦点到准线的距离"
+        ]
+      }
+    },
+    {
+      "id": "math.C13.S01.P09",
+      "subject": "数学",
+      "chapter": "圆锥曲线",
+      "section": "概览",
+      "label": "9",
+      "title": "（1）曲线F(x,y)=0关于点M(x ,y )成中心对称的曲线是F(2x -x,2y -y)=0 。",
+      "details": "0 0 0 0 （2）曲线F(x,y)=0关于直线x+ y+C =0成轴对称的曲线是F(-y-c,-x-c)=0。 *****（3）曲线F(x,y)=0关于直线Ax+By+C =0成轴对称的点是 2A(Ax+By+C) 2B(Ax+By+C) F(x- ,y- ) 。 A2 +B2 A2 +B2",
+      "viz": {
+        "viz_id": "coordinate_geometry",
+        "viz_desc": "坐标系+直线交互",
+        "tech": [
+          "Plotly",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "圆锥曲线",
+          "概览"
+        ],
+        "default_view_id": "coordinate_geometry",
+        "search_keywords": [
+          "曲线",
+          "F",
+          "x",
+          "y",
+          "关于点",
+          "M",
+          "成中心对称的曲线是",
+          "关于直线",
+          "C",
+          "成轴对称的曲线是",
+          "c",
+          "Ax",
+          "By",
+          "成轴对称的点是"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P01",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "1",
+      "title": "排列数公式：Pm = __n(n-1)...(n-m+1)__ = __ ___(n,m∈N *,m≤n)",
+      "details": "n (n-m)! n(n-1)...(n-m+1) n!",
+      "viz": {
+        "viz_id": "combinatorics",
+        "viz_desc": "树状图/表格/杨辉三角",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "combinatorics",
+        "search_keywords": [
+          "排列数公式",
+          "Pm",
+          "n",
+          "m",
+          "N"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P02",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "2",
+      "title": "组合数公式：Cm = __ __ = _ _(n∈N *,m∈N,m≤n)",
+      "details": "n m! m!(n-m)!",
+      "viz": {
+        "viz_id": "combinatorics",
+        "viz_desc": "树状图/表格/杨辉三角",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "combinatorics",
+        "search_keywords": [
+          "组合数公式",
+          "Cm",
+          "n",
+          "N",
+          "m"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P03",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "3",
+      "title": "组合数性质：Cm = _Cn-m _；Cm +Cm-1= Cm 。",
+      "details": "n n n n n+1",
+      "viz": {
+        "viz_id": "combinatorics",
+        "viz_desc": "树状图/表格/杨辉三角",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "combinatorics",
+        "search_keywords": [
+          "组合数性质",
+          "Cm",
+          "Cn",
+          "m",
+          "n"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P04",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "4",
+      "title": "组合数恒等式：",
+      "details": "（1）Cr +Cr +Cr +...+Cr =Cr+1；（2）C0 +C1 +C2 +...+Cn=2n； r r+1 r+2 n n+1 n n n n （3）C0 +C2 +C4 +...=2n-1=C1 +C3 +C5 +...。 n n n n n n n （4）nPk-1 = _Pk _; Cm-1 = _Cm _. n-1 n m n-1 n",
+      "viz": {
+        "viz_id": "combinatorics",
+        "viz_desc": "树状图/表格/杨辉三角",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "combinatorics",
+        "search_keywords": [
+          "组合数恒等式",
+          "Cr",
+          "C",
+          "Cn",
+          "n",
+          "r",
+          "nPk",
+          "Pk",
+          "Cm",
+          "m"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P05",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "5",
+      "title": "排列数与组合数的关系：Pm = _Pm _Cm",
+      "details": "n m n",
+      "viz": {
+        "viz_id": "combinatorics",
+        "viz_desc": "树状图/表格/杨辉三角",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "combinatorics",
+        "search_keywords": [
+          "排列数与组合数的关系",
+          "Pm",
+          "Cm",
+          "n",
+          "m"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P06",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "6",
+      "title": "二项式定理(a+b)n=C0an +C1an-1b+...+Cran-rbr +...+Cnbn(n∈N·)，",
+      "details": "n n n n 其中通项公式T =Cran-rbr。 r+1 n n",
+      "viz": {
+        "viz_id": "combinatorics",
+        "viz_desc": "树状图/表格/杨辉三角",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "combinatorics",
+        "search_keywords": [
+          "二项式定理",
+          "a",
+          "b",
+          "n",
+          "C",
+          "an",
+          "Cran",
+          "rbr",
+          "Cnbn",
+          "N",
+          "其中通项公式",
+          "T",
+          "r"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P07",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "7",
+      "title": "二项式系数，当 n 是偶数时，中间一项C2 取得最大值，当 n 是奇数时，中间两项",
+      "details": "n n-1 n+1 C 2 =C 2 取得最大值。 n n",
+      "viz": {
+        "viz_id": "combinatorics",
+        "viz_desc": "树状图/表格/杨辉三角",
+        "tech": [
+          "HTMLTable",
+          "MathJax",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "combinatorics",
+        "search_keywords": [
+          "二项式系数",
+          "n",
+          "是偶数时",
+          "中间一项",
+          "C",
+          "取得最大值",
+          "是奇数时",
+          "中间两项"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P08",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "8",
+      "title": "记必然事件为Ω，不可能事件为Φ，随机事件为A",
+      "details": "P(Ω)= _1__;P(Φ)= _0__;P(A)∈__[0,1]___ 设E、F是两个随机事件（填写独立、对立、互斥） （1）满足E∪F =Ω且E∩F =Φ的E和F叫做对立事件； （2）（理）E、F不可能同时出现，则E和F叫做互斥事件；此时P(E∪F)=P(E)+P(F) （3）（理）E、F互相之间没有影响，则E和F是互相独立事件；此时P(EF)=P(E)P(F)",
+      "viz": {
+        "viz_id": "info_card",
+        "viz_desc": "概念卡片/步骤推导",
+        "tech": [
+          "Markdown",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "info_card",
+        "search_keywords": [
+          "记必然事件为",
+          "不可能事件为",
+          "随机事件为",
+          "A",
+          "P",
+          "E",
+          "F",
+          "是两个随机事件",
+          "填写独立",
+          "对立",
+          "互斥",
+          "满足",
+          "叫做对立事件",
+          "不可能同时出现"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P09",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "9",
+      "title": "*概率加法公式：P(A∪B)= P(A)+P(B)-P(AB)。",
+      "details": null,
+      "viz": {
+        "viz_id": "stats_viz",
+        "viz_desc": "柱状图/折线/模拟分布",
+        "tech": [
+          "Plotly",
+          "NumPy",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "stats_viz",
+        "search_keywords": [
+          "概率加法公式",
+          "P",
+          "A",
+          "B",
+          "AB"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P10",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "10",
+      "title": "设总体有N个个体，它们分别是x ,x ,x ,...x ，且它们的平均数为μ",
+      "details": "1 2 3 N 1 则总体方差σ2= [(x -μ)2 +(x -μ)2 +...+(x -μ)2] N 1 2 n σ叫做总体标准差，反映总体中各个个体之间的差别的大小。",
+      "viz": {
+        "viz_id": "stats_viz",
+        "viz_desc": "柱状图/折线/模拟分布",
+        "tech": [
+          "Plotly",
+          "NumPy",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "stats_viz",
+        "search_keywords": [
+          "设总体有",
+          "N",
+          "个个体",
+          "它们分别是",
+          "x",
+          "且它们的平均数为",
+          "则总体方差",
+          "n",
+          "叫做总体标准差",
+          "反映总体中各个个体之间的差别的大小"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P11",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "11",
+      "title": "抽样方法：",
+      "details": "（1）随机抽样：抽样过程中能使总体中的每一个个体都有同样的可能性被选入样本。（抽 签、利用随机数抽样等） （2）系统抽样：把总体的每一个个体编号，按某种相等的间隔抽取样本的方法。 （3）分层抽样：把总体分成若干个部分，然后再每个部分进行随机抽样的方法。 将总体个数N分成k层，每层的个体数分别记作N ,N ,N ,...N ， 1 2 3 k 在每层中分别随机抽取n ,n ,n ,...n 个个体组成容量为n的样本。 1 2 3 k n n n n n 1 = 2 = 3 =...= k = N N N N N 1 2 3 k",
+      "viz": {
+        "viz_id": "stats_viz",
+        "viz_desc": "柱状图/折线/模拟分布",
+        "tech": [
+          "Plotly",
+          "NumPy",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "stats_viz",
+        "search_keywords": [
+          "抽样方法",
+          "随机抽样",
+          "抽样过程中能使总体中的每一个个体都有同样的可能性被选入样本",
+          "利用随机数抽样等",
+          "系统抽样",
+          "把总体的每一个个体编号",
+          "按某种相等的间隔抽取样本的方法",
+          "分层抽样",
+          "把总体分成若干个部分",
+          "然后再每个部分进行随机抽样的方法",
+          "将总体个数",
+          "N",
+          "分成",
+          "k"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P12",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "12",
+      "title": "样本为x ,x ,x ,...x ，样本容量为n，则",
+      "details": "1 2 3 n x +x +x +...+x 总体均值的点估计值为x= 1 2 3 n n 1 总体标准差的点估计值为s = [(x -x)2 +(x -x)2 +...+(x -x)2] n-1 1 2 n 均值的σ估计区间为[x-σ, x+σ]。",
+      "viz": {
+        "viz_id": "info_card",
+        "viz_desc": "概念卡片/步骤推导",
+        "tech": [
+          "Markdown",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "info_card",
+        "search_keywords": [
+          "样本为",
+          "x",
+          "样本容量为",
+          "n",
+          "总体均值的点估计值为",
+          "总体标准差的点估计值为",
+          "s",
+          "均值的",
+          "估计区间为"
+        ]
+      }
+    },
+    {
+      "id": "math.C14.S01.P13",
+      "subject": "数学",
+      "chapter": "排列组合与二项式",
+      "section": "概览",
+      "label": "13",
+      "title": "（理）取离散值的随机变量叫做离散型随机变量，其取值概率可用下表给出",
+      "details": "x x x …… x i 1 2 n P(ξ= x ) p p …… p k 1 2 n 随机变量所有的取值x ,x ,...,x 对应的概率所成的数列 p ,p ,...,p 叫做随机变量的概率 1 2 n 1 2 n 分布律。 随机变量ξ的数学期望为Eξ=x p +x p +...+x p 1 1 2 2 n n 随机变量ξ的方差Dξ=(x -Eξ)2p +(x -Eξ)2p +...+(x -Eξ)2p 1 1 2 2 n n 数学期望是随机变量的加权平均数，表示随机变量取值的平均水平，因此也叫做随机变量的 均值；随机变量的方差或标准差刻画了随机变量取值的离散程度。",
+      "viz": {
+        "viz_id": "info_card",
+        "viz_desc": "概念卡片/步骤推导",
+        "tech": [
+          "Markdown",
+          "MathJax"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "排列组合与二项式",
+          "概览"
+        ],
+        "default_view_id": "info_card",
+        "search_keywords": [
+          "取离散值的随机变量叫做离散型随机变量",
+          "其取值概率可用下表给出",
+          "x",
+          "i",
+          "n",
+          "P",
+          "p",
+          "k",
+          "随机变量所有的取值",
+          "对应的概率所成的数列",
+          "叫做随机变量的概率",
+          "分布律",
+          "随机变量",
+          "的数学期望为"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P01",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "1",
+      "title": "如果直线l上有两个点在平面α上，那么直线l与平面α的关系是直线l在平面α上；",
+      "details": "如果平面α与平面β相交，那么它们所有的交点构成的图形是直线 确定平面的条件：①不在同一直线上的三点确定一个平面；②直线和直线外一点确定一个平 面；③两条相交直线确定一个平面；④两条平行直线确定一个平面。 平行与同一直线的两条直线平行。 如果一个角的两边分别与另一个角的两边平行，那么这两个角相等或互补。",
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "如果直线",
+          "l",
+          "上有两个点在平面",
+          "那么直线",
+          "与平面",
+          "的关系是直线",
+          "在平面",
+          "如果平面",
+          "相交",
+          "那么它们所有的交点构成的图形是直线",
+          "确定平面的条件",
+          "不在同一直线上的三点确定一个平面",
+          "直线和直线外一点确定一个平",
+          "两条相交直线确定一个平面"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P02",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "2",
+      "title": "空间直线l 与直线l 所成角是指在直线l 上任取一点M，过M作l 的平行线l ，l 与l 的",
+      "details": "1 2 1 2 3 1 3 π 夹角就是直线l 与直线l 所成角，范围是[0, ]。 1 2 2 空间直线l与平面α所成角是指当直线l与平面α不垂直时，直线l与平面α所成角是指直 π 线l与其在平面上α的投影l'所成的角，范围是[0, ]。 2 空间平面α与平面α 所成角是指在两平面的交线l上任取一点O，过点O分别在两平面上 1 2 作垂线OM、ON，∠MON 就是平面α与平面α 所成角，范围是[0,π)。 1 2",
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "空间直线",
+          "l",
+          "与直线",
+          "所成角是指在直线",
+          "上任取一点",
+          "M",
+          "的平行线",
+          "夹角就是直线",
+          "所成角",
+          "范围是",
+          "与平面",
+          "所成角是指当直线",
+          "不垂直时",
+          "直线"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P03",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "3",
+      "title": "与平面上任何直线都垂直的直线叫做平面的垂线。如果一条直线与平面上的两条相交直",
+      "details": "线垂直，那么它与平面上的任意直线都垂直。",
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "与平面上任何直线都垂直的直线叫做平面的垂线",
+          "如果一条直线与平面上的两条相交直",
+          "线垂直",
+          "那么它与平面上的任意直线都垂直"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P04",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "4",
+      "title": "已知平面α与平面β互相平行，平面γ与它们的交线分别为直线a，b，那么直线a，b",
+      "details": "的位置关系是a//b。 已知直线l平行于平面α，平面β经过l且与平面α相交于直线l'，那么直线l与l'的位置 关系是l//l'。",
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "已知平面",
+          "与平面",
+          "互相平行",
+          "平面",
+          "与它们的交线分别为直线",
+          "a",
+          "b",
+          "那么直线",
+          "的位置关系是",
+          "已知直线",
+          "l",
+          "平行于平面",
+          "经过",
+          "且与平面"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P05",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "5",
+      "title": "斜二测法规定在x轴方向上线段的长度是其表示的真实长度的一半，在y轴和z轴方向",
+      "details": "上线段的长度与其表示的真实长度相等。 2 斜二测画法中原图形和直观图的面积比为1: 。 4",
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "斜二测法规定在",
+          "x",
+          "轴方向上线段的长度是其表示的真实长度的一半",
+          "y",
+          "轴和",
+          "z",
+          "轴方向",
+          "上线段的长度与其表示的真实长度相等",
+          "斜二测画法中原图形和直观图的面积比为"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P06",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "6",
+      "title": "祖暅原理是：体积可以看成是由面积叠加而成，用一组平行平面截两个空间图形，若在",
+      "details": "任意等高处的截面面积都对应相等，则两空间图形的体积相等。",
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "祖暅原理是",
+          "体积可以看成是由面积叠加而成",
+          "用一组平行平面截两个空间图形",
+          "若在",
+          "任意等高处的截面面积都对应相等",
+          "则两空间图形的体积相等"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P07",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "7",
+      "title": "圆柱是由长方形绕其一条边所在直线旋转形成的，圆锥是由直角三角形绕其一条直角边",
+      "details": "所在直线旋转形成的，球是由半圆绕其直径所在直线旋转形成的。",
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "圆柱是由长方形绕其一条边所在直线旋转形成的",
+          "圆锥是由直角三角形绕其一条直角边",
+          "所在直线旋转形成的",
+          "球是由半圆绕其直径所在直线旋转形成的"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P08",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "8",
+      "title": "设几何体的底面周长为C，母线或斜高长为h'，则圆柱或直棱柱的侧面积为Ch'；圆锥",
+      "details": "1 或正棱锥的侧面积为 Ch'；半径为R的球的表面积为4πR2。 2 1 4",
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "设几何体的底面周长为",
+          "C",
+          "母线或斜高长为",
+          "h",
+          "则圆柱或直棱柱的侧面积为",
+          "Ch",
+          "圆锥",
+          "或正棱锥的侧面积为",
+          "半径为",
+          "R",
+          "的球的表面积为"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P09",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "9",
+      "title": "柱体体积公式为Sh，锥体体积公式为 Sh，半径为R的球的体积为 πR3。",
+      "details": "3 3",
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "柱体体积公式为",
+          "Sh",
+          "锥体体积公式为",
+          "半径为",
+          "R",
+          "的球的体积为"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P10",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "10",
+      "title": "半径为R的球的小圆半径为r= R2 -d2 （球心到小圆所在平面距离为d）",
+      "details": null,
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "半径为",
+          "R",
+          "的球的小圆半径为",
+          "r",
+          "d",
+          "球心到小圆所在平面距离为"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P11",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "11",
+      "title": "球面距离是指联结球面上两点的路径中，通过该两点的大圆劣弧的长度。",
+      "details": null,
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "球面距离是指联结球面上两点的路径中",
+          "通过该两点的大圆劣弧的长度"
+        ]
+      }
+    },
+    {
+      "id": "math.C15.S01.P12",
+      "subject": "数学",
+      "chapter": "立体几何",
+      "section": "概览",
+      "label": "12",
+      "title": "已知空间中，直线l ，l 方向向量分别为d ，d ，平面α、β分别法向量为n ，n ，",
+      "details": "1 2 1 2 1 2 则 μμ μμ d ×d 直线l 与l 所成角θ满足：cosθ=| μμ1 μμ2 | 1 2 |d ||d | 1 2 μμ μ d ×n 直线l 与平面α所成角θ满足：sinθ=| μμ1 μ1 | 1 |d ||n | 1 1 μ μμ μ μμ n ×n n ×n 平面α与平面β所成二面角θ满足：cosθ= μ1 μμ2 或cosθ= μ1 μμ2 |n ||n | |n ||n | 1 2 1 2 μμμμ μ AM ×n 点A到平面α的距离d=| μ 1 | |n | 1",
+      "viz": {
+        "viz_id": "3d_geometry",
+        "viz_desc": "3D几何(线面角/二面角/投影)",
+        "tech": [
+          "Plotly-3D",
+          "CustomControls"
+        ]
+      },
+      "ui_binding": {
+        "project_path": [
+          "数学",
+          "立体几何",
+          "概览"
+        ],
+        "default_view_id": "3d_geometry",
+        "search_keywords": [
+          "已知空间中",
+          "直线",
+          "l",
+          "方向向量分别为",
+          "d",
+          "平面",
+          "分别法向量为",
+          "n",
+          "所成角",
+          "满足",
+          "cos",
+          "与平面",
+          "sin",
+          "所成二面角"
+        ]
+      }
+    }
+  ]
+}

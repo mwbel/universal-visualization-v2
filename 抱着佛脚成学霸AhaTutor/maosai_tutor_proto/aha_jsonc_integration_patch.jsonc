@@ -1,0 +1,29 @@
+{
+  "where_to_add_in_current_jsonc": [
+    {
+      "json_path": "appShell.leftNav.sidebarPanel.sections[Projects].items",
+      "add": "用 chapter_title 生成树：数学 -> 15章 -> 各 section -> 知识点(id)",
+      "data_source": "knowledge_nodes[].ui_binding.project_path"
+    },
+    {
+      "json_path": "mainArea.welcomeMode.cardGrid.quick_actions.items",
+      "add": "从 knowledge_nodes 里挑选常用/可视化最强的节点做 Quick Actions",
+      "example_ids": [
+        "math.C01.S01.P03",
+        "math.C04.S01.P04",
+        "math.C06.S01.P01",
+        "math.C07.S03.P04",
+        "math.C08.S01.P01",
+        "math.C14.S01.P01"
+      ]
+    },
+    {
+      "json_path": "interaction_model.dynamic_view_contract.view_spec_schema.view_id",
+      "add": "view_id 必须属于 view_registry[].view_id（模板白名单）"
+    },
+    {
+      "json_path": "api_surface",
+      "add": "为 stats_viz / combinatorics / 3d_geometry 增加后端计算端点（按需）"
+    }
+  ]
+}

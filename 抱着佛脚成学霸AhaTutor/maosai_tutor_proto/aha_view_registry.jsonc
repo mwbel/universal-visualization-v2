@@ -1,0 +1,400 @@
+{
+  "view_registry": [
+    {
+      "view_id": "venn",
+      "ui": "SVG Venn + toggles",
+      "best_for": [
+        "集合运算/子集关系"
+      ],
+      "tech": [
+        "SVG",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "subset_generator",
+      "ui": "Binary switches for subset generation",
+      "best_for": [
+        "集合子集/幂集"
+      ],
+      "tech": [
+        "CustomControls",
+        "HTML/CSS"
+      ]
+    },
+    {
+      "view_id": "venn_logic_lab",
+      "ui": "Interactive Venn diagram + logic laws",
+      "best_for": [
+        "集合运算/逻辑定律/摩根定律"
+      ],
+      "tech": [
+        "SVG",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "inequality_properties_lab",
+      "ui": "Properties Lab with Sugar Water Beaker",
+      "best_for": [
+        "不等式性质/糖水不等式"
+      ],
+      "tech": [
+        "HTML/CSS",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "inequality_solver_lab",
+      "ui": "Solver Lab with Wavy Curve",
+      "best_for": [
+        "解不等式/穿根法/二次不等式"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "inequality_basic_lab",
+      "ui": "Basic Inequality Lab with Mean Chain",
+      "best_for": [
+        "基本不等式/均值链"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "function_concept_lab",
+      "ui": "Mapping diagram & Domain/Range viz",
+      "best_for": [
+        "函数定义/三要素"
+      ],
+      "tech": [
+        "HTML/HTML5 Canvas",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "function_operations_lab",
+      "ui": "Arithmetic operations viz (f+g, fg)",
+      "best_for": [
+        "函数四则运算"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "function_composite_lab",
+      "ui": "Composite function pipeline animation",
+      "best_for": [
+        "复合函数"
+      ],
+      "tech": [
+        "HTML/SVG",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "trig_ratio_lab",
+      "ui": "Trigonometric Ratio Lab (8 Modules)",
+      "best_for": [
+        "三角比/单位圆/三角恒等式/解三角形"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "function_domain_range_lab",
+      "ui": "Domain mask & Range projection",
+      "best_for": [
+        "求定义域/求值域"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "function_expression_lab",
+      "ui": "Expression solver workbench",
+      "best_for": [
+        "求函数解析式"
+      ],
+      "tech": [
+        "HTML/Katex",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "truth_table",
+      "ui": "Truth-table grid",
+      "best_for": [
+        "命题/充要条件/逆否"
+      ],
+      "tech": [
+        "HTMLTable",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "number_line",
+      "ui": "Number line with interval shading",
+      "best_for": [
+        "不等式/解集/标根法"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "function_inverse_lab",
+      "ui": "Inverse function lab with 5 modules",
+      "best_for": [
+        "反函数/概念/性质/步骤/对称性"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "function_log_eq_ineq_lab",
+      "ui": "Logarithmic equation and inequality lab with 3 modules",
+      "best_for": [
+        "对数方程/对数不等式/解法/换元法"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "function_log_lab",
+      "ui": "Logarithmic function lab with 7 modules",
+      "best_for": [
+        "对数/对数函数/运算性质/图像性质"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "cartesian_plot",
+      "ui": "2D Cartesian plot + sliders",
+      "best_for": [
+        "函数/二次/三角/指数/对数"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "unit_circle",
+      "ui": "Unit circle + triangle overlay",
+      "best_for": [
+        "三角比/诱导/正弦余弦定理"
+      ],
+      "tech": [
+        "GeometryCanvas",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "trig_ratio_lab",
+      "ui": "Trig ratio lab with 8 modules",
+      "best_for": [
+        "三角比/诱导/正弦余弦定理"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "trig_function_lab",
+      "ui": "Trig function lab with 8 modules",
+      "best_for": [
+        "三角函数/图像/性质/反函数/方程"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "sequence_lab",
+      "ui": "Sequence Lab (8 Modules)",
+      "best_for": [
+        "数列/求和/极限/归纳/递推/性质"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "vector_canvas",
+      "ui": "Drag vectors + projection/angle/area",
+      "best_for": [
+        "向量/数量积/投影/叉积面积"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "matrix_view",
+      "ui": "Matrix table + determinant steps",
+      "best_for": [
+        "矩阵/行列式/克拉默"
+      ],
+      "tech": [
+        "HTMLTable",
+        "MathJax",
+        "CustomControls",
+        "Plotly"
+      ]
+    },
+    {
+      "view_id": "function_complex_lab",
+      "ui": "Complex number lab with 8 modules",
+      "best_for": [
+        "复数/模/共轭/几何意义/方程"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "complex_plane",
+      "ui": "Complex plane draggable point",
+      "best_for": [
+        "复数/模/共轭/几何意义"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "coordinate_geometry",
+      "ui": "Lines/circles/curves on xy-plane",
+      "best_for": [
+        "直线/圆/轨迹/曲线方程"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "conic_explorer",
+      "ui": "Conic params (a,b,p,e) explorer",
+      "best_for": [
+        "圆锥曲线/焦点/离心率"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "combinatorics",
+      "ui": "Tree / table / Pascal triangle",
+      "best_for": [
+        "排列组合/二项式/杨辉三角"
+      ],
+      "tech": [
+        "HTMLTable",
+        "Plotly",
+        "CustomControls"
+      ]
+    },
+    {
+      "view_id": "stats_viz",
+      "ui": "Distribution bars + sampling simulation",
+      "best_for": [
+        "概率/分布/期望方差/统计"
+      ],
+      "tech": [
+        "Plotly",
+        "NumPy",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "3d_geometry",
+      "ui": "3D lines/planes + angle/projection",
+      "best_for": [
+        "立体几何"
+      ],
+      "tech": [
+        "Plotly-3D",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "info_card",
+      "ui": "Concept card + worked steps",
+      "best_for": [
+        "纯概念/推导"
+      ],
+      "tech": [
+        "Markdown",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "function_exponential_lab",
+      "ui": "Exponential function lab with 3 modules",
+      "best_for": [
+        "指数函数/图像性质/方程不等式"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    },
+    {
+      "view_id": "vector_lab",
+      "ui": "Vector visualization lab with 8 modules",
+      "best_for": [
+        "平面向量/线性运算/共线/数量积/三角形四心/物理应用"
+      ],
+      "tech": [
+        "Plotly",
+        "CustomControls",
+        "MathJax"
+      ]
+    }
+  ]
+}
