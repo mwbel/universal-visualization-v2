@@ -79,6 +79,18 @@ PROJECTS = [
 def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/test", response_class=HTMLResponse)
+def test_page(request: Request):
+    return templates.TemplateResponse("test.html", {"request": request})
+
+@app.get("/debug", response_class=HTMLResponse)
+def debug_page(request: Request):
+    return templates.TemplateResponse("debug.html", {"request": request})
+
+@app.get("/simple", response_class=HTMLResponse)
+def simple_page(request: Request):
+    return templates.TemplateResponse("simple.html", {"request": request})
+
 @app.get("/knowledge/tree")
 def get_knowledge_tree():
     return kb.get_tree()

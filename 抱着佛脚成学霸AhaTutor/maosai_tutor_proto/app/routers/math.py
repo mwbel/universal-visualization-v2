@@ -141,7 +141,8 @@ def generate_ai_practice(topic: str, category: str = "基础练"):
 
 # --- OCR Problems Solving ---
 from fastapi import File, UploadFile
-from app.services.ocr_service import get_ocr_service
+# Temporarily disable OCR to avoid pypdfium2 architecture issue
+# from app.services.ocr_service import get_ocr_service
 import shutil
 import tempfile
 
@@ -191,7 +192,9 @@ async def render_plotly_code(request: dict):
 @router.post("/api/ocr/solve")
 async def ocr_solve(file: UploadFile = File(...)):
     """接收图片，识别题目并由 AI 解答"""
-    ocr_service = get_ocr_service()
+    # OCR temporarily disabled due to pypdfium2 architecture issue
+    return {"success": False, "error": "OCR 功能暂时不可用，请稍后重试"}
+    # ocr_service = get_ocr_service()
     
     # Save uploaded file to a temporary location
     with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp:
