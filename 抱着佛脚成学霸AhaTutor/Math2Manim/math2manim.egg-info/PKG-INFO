@@ -1,0 +1,389 @@
+Metadata-Version: 2.4
+Name: math2manim
+Version: 0.1.0
+Summary: 智能数学概念到 Manim 动画生成库 - 基于反向知识树
+Author: Math2Manim Team
+License: MIT
+Project-URL: Homepage, https://github.com/yourusername/math2manim
+Project-URL: Documentation, https://math2manim.readthedocs.io
+Project-URL: Repository, https://github.com/yourusername/math2manim
+Project-URL: Issues, https://github.com/yourusername/math2manim/issues
+Keywords: manim,animation,mathematics,education,visualization
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Education
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Education
+Classifier: Topic :: Multimedia :: Graphics
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: manim>=0.17.0
+Requires-Dist: numpy>=1.20.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: black>=22.0; extra == "dev"
+Requires-Dist: flake8>=4.0; extra == "dev"
+Requires-Dist: mypy>=0.950; extra == "dev"
+Provides-Extra: ai
+Requires-Dist: anthropic>=0.18.0; extra == "ai"
+Requires-Dist: openai>=1.0.0; extra == "ai"
+
+# Math2Manim - 数学生成 Manim 动画项目
+
+**创建日期**：2025-12-23
+**目的**：探索从数学概念到 Manim 动画的自动生成
+
+---
+
+## 📁 项目结构
+
+```
+Math2Manim/
+├── source_code/           # 源代码
+│   ├── csdn_version/     # CSDN 文章版本（122 KB）
+│   ├── manual_version/   # 手动优化版本（289 KB）
+│   └── github_version/   # GitHub 项目版本（590 KB）
+│
+├── animations/            # 生成的视频
+│   ├── csdn_version/     # CSDN 版本动画
+│   ├── manual_version/   # 手动版本动画（勾股定理 + 正弦函数）
+│   └── github_version/   # GitHub 版本动画
+│
+├── comparisons/          # 版本对比文档
+│   └── 三个版本完整对比.md
+│
+├── docs/                 # 核心思想解析
+│   └── Math-To-Manim项目核心思想解析-20251223.md
+│
+└── README.md             # 本文件
+```
+
+---
+
+## 🎬 三个版本对比
+
+### 🔵 版本 1: CSDN 文章版
+- **文件**：`source_code/csdn_version/RectangleDiagonal.py`
+- **视频**：`animations/csdn_version/RectangleDiagonal.mp4` (122 KB)
+- **来源**：https://blog.csdn.net/qq_45019121/article/details/145351760
+- **特点**：
+  - 简洁的 48 行代码
+  - 13 个动画序列
+  - 基础的矩形 + 对角线演示
+  - 无正方形面积可视化
+- **适用场景**：快速演示、API 测试、初学者学习
+
+---
+
+### 🟢 版本 2: 手动完美版
+- **文件**：
+  - `source_code/manual_version/勾股定理_完美版.py`
+  - `source_code/manual_version/正弦_完美版.py`
+- **视频**：
+  - `animations/manual_version/PythagoreanTheoremPerfect.mp4` (289 KB)
+  - `animations/manual_version/SineAnimationPerfect.mp4`
+- **来源**：根据用户反馈手动优化
+- **特点**：
+  - 200+ 行专业代码
+  - 25 个动画序列
+  - 完整的三个正方形可视化
+  - 箭头指示 + 详细面积计算
+  - 黄色正方形完整显示
+  - 正弦函数半径过原点
+- **适用场景**：教学视频、专业演示、公开分享
+
+---
+
+### 🟣 版本 3: GitHub 项目版
+- **文件**：`source_code/github_version/github_version.py`
+- **视频**：`animations/github_version/EnhancedPythagorean.mp4` (590 KB)
+- **来源**：https://github.com/HarleyCoops/Math-To-Manim
+- **特点**：
+  - 126 行专业级代码
+  - 23 个复杂动画序列
+  - TransformFromCopy 高级技术
+  - NumberPlane 坐标系背景
+  - Flash 闪光特效
+  - 颜色编码公式
+  - SurroundingRectangle 边框
+- **适用场景**：专业制作、学术演示、纪录片级别
+
+---
+
+## 📊 详细对比表
+
+| 特征 | CSDN 版本 | 手动完美版 | GitHub 项目版 |
+|------|----------|-----------|--------------|
+| **文件大小** | 122 KB | 289 KB | **590 KB** |
+| **代码行数** | 48 行 | 200+ 行 | 126 行 |
+| **动画数量** | 13 个 | 25 个 | 23 个 |
+| **时长** | ~20 秒 | ~25 秒 | ~25 秒 |
+| **代码质量** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | **⭐⭐⭐⭐⭐** |
+| **动画复杂度** | 简单 | 中等 | **专业级** |
+| **视觉效果** | 基础 | 良好 | **惊艳** |
+| **教学价值** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | **⭐⭐⭐⭐⭐** |
+| **技术亮点** | 基础 API | 自定义对齐 | TransformFromCopy, Flash |
+| **颜色编码** | 部分 | 完整 | **完美** |
+| **标题动画** | ❌ | ❌ | ✅ 精美 |
+| **坐标系** | ❌ | ❌ | ✅ NumberPlane |
+| **高级特效** | ❌ | 高亮填充 | **Flash, TransformFromCopy** |
+
+---
+
+## 🏆 质量排名
+
+| 排名 | 版本 | 总分 | 适用场景 |
+|------|------|------|----------|
+| 🥇 **第一名** | **GitHub 项目版** | **98/100** | 专业制作、学术演示 |
+| 🥈 第二名 | 手动完美版 | 92/100 | 教学视频、公开分享 |
+| 🥉 第三名 | CSDN 版本 | 75/100 | 快速演示、API 测试 |
+
+---
+
+## 🎯 核心区别
+
+### CSDN 版本 🔵
+**"简单直接的示例"**
+- 最小可演示版本
+- 代码易懂
+- 快速生成
+- 适合验证 AI 生成能力
+
+### 手动完美版 🟢
+**"用户反馈驱动的优化版"**
+- 根据用户反馈修复
+- 黄色正方形完整显示
+- 详细的面积关系
+- 适合教学使用
+
+### GitHub 项目版 🟣
+**"专业级动画作品"**
+- 项目官方示例
+- 最复杂的动画效果
+- 最精致的视觉呈现
+- 适合专业制作
+
+---
+
+## 🚀 快速开始
+
+### 1. 运行 CSDN 版本
+```bash
+cd Math2Manim/source_code/csdn_version
+manim -pql RectangleDiagonal.py RectangleDiagonal
+```
+
+### 2. 运行手动完美版
+```bash
+cd Math2Manim/source_code/manual_version
+manim -pql 勾股定理_完美版.py PythagoreanTheoremPerfect
+manim -pql 正弦_完美版.py SineAnimationPerfect
+```
+
+### 3. 运行 GitHub 项目版
+```bash
+cd Math2Manim/source_code/github_version
+manim -pql github_version.py EnhancedPythagorean
+```
+
+**参数说明**：
+- `-p`：渲染完成后预览
+- `-q`：质量设置（`l`=低质量快速，`m`=中等，`h`=高质量，`k`=4K）
+- `ql`：低质量（用于快速测试）
+
+---
+
+## 📚 相关文档
+
+### 1. 三个版本完整对比
+**位置**：`comparisons/三个版本完整对比.md`
+
+**内容**：
+- 快速识别指南
+- 每个版本的详细分析
+- 代码特点对比
+- 动画内容对比
+- 适用场景说明
+- 文件位置说明
+- 质量排名
+- 推荐使用场景
+
+---
+
+### 2. Math-To-Manim 项目核心思想解析
+**位置**：`docs/Math-To-Manim项目核心思想解析-20251223.md`
+
+**核心内容**：
+
+#### 🌳 反向知识树（革命性创新）
+```
+传统方法：用户输入 → AI 凭经验生成 → ❌ 容易出错
+Math-To-Manim：用户输入 → 递归分解前置知识 → ✅ 完整理解
+```
+
+**核心问题**："理解 X 前需要先理解什么？"
+- 递归分解直到基础概念
+- 从基础向上构建动画
+- 零训练数据，纯推理
+
+#### 🤖 六 Agent 协作流水线
+1. **ConceptAnalyzer**：分析用户意图
+2. **PrerequisiteExplorer**：递归发现前置知识 ⭐ 核心
+3. **MathematicalEnricher**：添加数学公式
+4. **VisualDesigner**：设计动画方案
+5. **NarrativeComposer**：编写叙述故事
+6. **CodeGenerator**：生成 Manim 代码
+
+#### 🎨 LaTeX 富提示策略
+```python
+# ❌ 模糊提示
+"创建量子场论动画"
+
+# ✅ LaTeX 富提示
+"""
+从闵可夫斯基时空开始：
+$$ds^2 = -c^2 dt^2 + dx^2 + dy^2 + dz^2$$
+引入 QED 拉格朗日量：
+$$\mathcal{L}_{\text{QED}} = \bar{\psi}(i \gamma^\mu D_\mu - m)\psi - \tfrac{1}{4}F_{\mu\nu}F^{\mu\nu}$$
+狄拉克旋量用橙色，协变导数用绿色...
+"""
+```
+
+#### 🔀 三重 AI 管道
+- **Pipeline 1**: Gemini 3（Google ADK）- 复杂拓扑
+- **Pipeline 2**: Claude Sonnet 4.5 - 通用场景 ⭐ 推荐
+- **Pipeline 3**: Kimi K2 - LaTeX 密集型
+
+---
+
+## 💡 核心哲学
+
+> **"Built with recursive reasoning, not training data."**
+>
+> **"用递归推理构建，而非训练数据。"**
+
+**这意味着**：
+- ✅ 不依赖海量训练数据集
+- ✅ 不受限于见过的模式
+- ✅ 使用 AI 推理能力，而非记忆
+- ✅ 适用于 AI 了解的任何主题
+- ✅ 随 AI 模型改进而自我改进
+
+---
+
+## 🎓 项目价值
+
+### 对个人学习者的价值：
+1. **完整理解路径**：从基础到目标的递进式学习
+2. **可视化辅助**：复杂概念的直观展示
+3. **代码学习**：高质量的 Manim 编程示例
+
+### 对教育工作者的价值：
+1. **教学素材**：可直接用于课堂教学的动画
+2. **课程设计**：参考知识树构建课程体系
+3. **差异化教学**：根据学生水平调整复杂度
+
+### 对研究者的价值：
+1. **方法创新**：反向知识树的递归分解方法
+2. **AI 应用**：多 Agent 协作的实践案例
+3. **可扩展性**：可应用于任何数学/科学主题
+
+---
+
+## 📊 项目统计数据
+
+- **源代码文件**：5 个
+- **生成的视频**：4 个
+- **文档**：2 个详细对比文档
+- **代码总行数**：400+ 行
+- **视频总大小**：~1 MB
+- **开发时间**：1 天（2025-12-23）
+
+---
+
+## 🔧 技术栈
+
+### 动画引擎：
+- **Manim Community Edition** v0.19.0
+- **Python** 3.10+
+- **FFmpeg**（视频渲染）
+
+### AI 模型（参考）：
+- GLM-4-Flash（智谱 AI）
+- Claude Sonnet 4.5（Anthropic）
+- DeepSeek R1
+
+### 开发环境：
+- macOS Darwin 24.6.0
+- VS Code IDE
+
+---
+
+## 📝 版本历史
+
+### v1.0 (2025-12-23)
+**初始版本**
+- ✅ 创建三个版本勾股定理动画
+- ✅ 生成对比文档
+- ✅ 编写核心思想解析
+- ✅ 整理项目结构
+
+---
+
+## 🎯 未来计划
+
+### 短期计划：
+- [ ] 添加更多数学概念动画（微积分、线性代数）
+- [ ] 优化手动版本代码质量
+- [ ] 创建 Web 界面生成器
+
+### 中期计划：
+- [ ] 实现 PrerequisiteExplorer Agent
+- [ ] 构建完整知识树系统
+- [ ] 集成 Claude Sonnet 4.5 API
+
+### 长期计划：
+- [ ] 开发完整 Math-To-Manim 系统
+- [ ] 建立动画知识库
+- [ ] 发布开源项目
+
+---
+
+## 🙏 致谢
+
+### 灵感来源：
+- **Manim Community** - 不可思议的动画框架
+- **3Blue1Brown** - 数学可视化的先驱
+- **HarleyCoops** - Math-To-Manim 项目作者
+
+### 参考资源：
+- CSDN 文章：https://blog.csdn.net/qq_45019121/article/details/145351760
+- GitHub 项目：https://github.com/HarleyCoops/Math-To-Manim
+- Manim 文档：https://docs.manim.community/
+
+---
+
+## 📞 联系方式
+
+**项目位置**：`/Users/Min369/Documents/同步空间/Manju/Projects/AlVisualization/Math2Manim`
+
+**创建者**：Claude Code + 用户协作
+
+**最后更新**：2025-12-23
+
+---
+
+## 📄 许可证
+
+本项目遵循 MIT License
+
+---
+
+**"从简单到复杂，从基础到专业，应有尽有！"** 🎉
+
+**"Built with recursive reasoning, not training data."** 🧠✨

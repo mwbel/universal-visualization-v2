@@ -80,10 +80,12 @@
 \newtcolorbox{myremark}[1][]{
     enhanced,
     breakable,
-    colback=blue!5,                      % 浅蓝色背景
+    colback=blue!5,                         % 浅蓝色背景
     colframe=blue!75!black,              % 深蓝色边框
     fonttitle=\bfseries,
-    title=注释,
+    % --- 将参数 #1 放入标题中 ---
+    title={注释\if\relax\detokenize{#1}\relax\else ：#1\fi}, 
+    % 解释：如果没有输入参数，只显示“注释”；如果有参数，显示“注释：副标题”
     arc=2mm,                             % 圆角
     drop shadow                          % 阴影效果
 }

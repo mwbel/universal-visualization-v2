@@ -144,7 +144,7 @@ $$f(x) = (f_1(x), \dots, f_k(x))$$
 
 上述定义中的$(U, \varphi)$ 称为 $M$ 的一个{\bf 坐标卡}; 此时, 开集  $U$  称为点  $p \in U$  的{\bf 坐标邻域},  $\varphi$  称为{\bf 坐标映射}. 于是, 所谓的拓扑流形实际上就是在局部上同胚于  $m$  维欧氏空间的 Hausdorff 空间, 即它的每一点都有同胚于  $\mathbb{R}^m$  中某个开集的坐标邻域.
 
-\begin{myremark}
+\begin{myremark}[拓扑流形]
 
 %\subsubsection*{宏观理解：流形的“哲理”}
 
@@ -160,8 +160,8 @@ $$f(x) = (f_1(x), \dots, f_k(x))$$
     \item \textbf{核心思想：} 它是“橡皮几何”，允许拉伸但不允许撕裂。它赋予了空间谈论“连续性”的资格。
 \end{itemize}
 
-\subsubsection*{核心概念拆解}
-\paragraph*{A. $M$ 是一个 Hausdorff 空间}
+\subsubsection*{核心概念}
+\paragraph*{(1)  $M$ 是一个 Hausdorff 空间}
 这是拓扑学中的一个“分离公理”，记作 $T_2$。
 \begin{itemize}
 \item \textbf{直观定义：} 空间中任意两个不同的点 $p$ 和 $q$，都可以被两个\textbf{互不相交}的开集包裹起来。
@@ -171,7 +171,7 @@ $$ \forall p, q \in M, p \neq q \implies \exists U, V \subset M \text{ s.t. } p 
 \item \textbf{为什么要这个：} 为了排除一些“病态”的空间（如分叉直线）。在 Hausdorff 空间中，序列的极限是唯一的，这保证了我们在流形上谈论“点”的位置时不会产生歧义。
 \end{itemize}
 
-\paragraph*{B. 局部同胚性 (Local Homeomorphism)}
+\paragraph*{(2) 局部同胚性 (Local Homeomorphism)}
 这是流形定义中最关键的一句：“存在从 $U$ 到 $\mathbb{R}^m$ 开集的同胚 $\varphi$”。
 \begin{itemize}
 \item \textbf{同胚 ($\cong$)：} 指的是映射 $\varphi: U \to \varphi(U) \subset \mathbb{R}^m$ 是\textbf{双射}、\textbf{连续}且其逆映射 $\varphi^{-1}$ 也\textbf{连续}。
@@ -180,7 +180,7 @@ $$ \forall p, q \in M, p \neq q \implies \exists U, V \subset M \text{ s.t. } p 
 
 同胚映射 $\varphi$ 可以看作是将流形上的一个弯曲“小片”拉平并贴在平面地图上的过程。虽然整体形状可能扭曲，但在拓扑上它们是等价的。
 
-\paragraph*{C. 坐标卡 (Coordinate Chart)}
+\paragraph*{(3) 坐标卡 (Coordinate Chart)}
 这里的 $(U, \varphi)$ 被称为一个\textbf{坐标卡}。
 \begin{itemize}
 \item $U$ 是流形上的一个区域（地理上的“一张地图”）。
@@ -321,18 +321,18 @@ $C^\infty$  微分结构称为光滑结构；  $C^\omega$  结构称为实解析
 特别地,  $C^\infty$  微分流形和  $C^\omega$  微分流形分别称为光滑流形和实解析流形。
 在不会引起混淆的情况下，也用  $M$  表示一个  $C^r$  微分流形  $(M, \mathcal{A})$.
 
-\begin{definition}[容许坐标卡]
-设  $M$  是一个  $m$  维拓扑流形,  $\mathcal{A}$  是  $M$  的一个  $C^r$  微分结构, 则称  $(M, \mathcal{A})$  是一个  $m$  维  $C^r$  微分流形. 此时,  $\mathcal{A}$  中的坐标卡称为  $C^r$  微分流形  $(M, \mathcal{A})$  的容许坐标卡.
-
-\begin{quote}
- $C^r$  足够光滑
-\end{quote}
-\end{definition}
-
-\begin{myremark}
-\textbf{\textcolor{blue}{直观解读：}}
+\begin{myremark}[微分结构的直观解读]
 “微分结构”就像是给流形贴了一层“光滑的皮肤”。有了这层皮肤，我们就可以在流形上像在欧氏空间一样进行微积分运算。极大性是为了确保这套“参考系”是最完备的。
 \end{myremark}
+
+\begin{definition}[容许坐标卡]
+设  $M$  是一个  $m$  维拓扑流形,  $\mathcal{A}$  是  $M$  的一个  $C^r$  微分结构, 则称  $(M, \mathcal{A})$  是一个  $m$  维  $C^r$  微分流形. 此时,  $\mathcal{A}$  中的坐标卡称为  $C^r$  微分流形  $(M, \mathcal{A})$  的容许坐标卡， 即相容坐标卡.
+
+%\begin{quote}
+% $C^r$  足够光滑
+%\end{quote}
+\end{definition}
+
 
 {\bf 注记 1.1} 对于  $r \geqslant 1$ ，并非每一个拓扑流形都有  $C^r$  的微分结构。
 
@@ -435,9 +435,8 @@ $$
 %    其 Jacobi 矩阵 $\left( \frac{\partial y^\alpha}{\partial x^i} \right)$ 是非退化的。
 %\end{definition}
 
-\begin{myremark}
-这一部分内容探讨了流形上不同坐标系之间如何“对话”。 Jacobi 矩阵是连接不同局部观察者的桥梁。
-
+\begin{myremark}[Jacobi 矩阵是连接不同局部观察者的桥梁]
+这一部分内容探讨了流形上不同坐标系之间如何“对话”。
 \subsubsection*{1. 坐标变换的直观含义}
 
 设 $(U, \varphi; x^i)$ 和 $(V, \psi; y^i)$ 是流形 $M$ 上两个重叠的坐标卡。变换映射：
@@ -515,9 +514,8 @@ $$ \det(I) = \det(J_{y;x} \cdot J_{x;y}) $$
 则称  $M$  是\textbf{可定向}的微分流形。
 \end{definition}
 
-\begin{myremark}
-%\begin{quote}
-\textbf{\textcolor{blue}{直观解读：}}
+\begin{myremark}[Jacobi 行列式的符号]
+
 Jacobi 行列式的\textbf{符号}具有极高的几何价值。可定向性意味着我们可以始终如一地定义“左右”和“内外”。若行列式恒正，意味着变换保持了空间的“手性”（如右手系）。
 \begin{itemize}
     \item $\det J > 0$：两套坐标系的“手性”一致（同为右手系或左手系）。
@@ -525,7 +523,7 @@ Jacobi 行列式的\textbf{符号}具有极高的几何价值。可定向性意�
 \end{itemize}
 如果一个流形上所有坐标卡都能调整到彼此变换的 $\det J > 0$，这个流形就是\textbf{可定向}的。
 莫比乌斯带就是典型的不可定向流形。
-%\end{quote}
+
 \end{myremark}
 
 \begin{definition}[定向]
@@ -546,10 +544,9 @@ $$
 
 {\bf 例 1.1} 设  $M$  是  $\mathbb{R}^m$  的任意一个开子集，令  $U = M$ ,  $\varphi: U \to \mathbb{R}^m$  为包含映射. 则对于任意的  $r$  (正整数、 $\infty$  或  $\omega$ )， $\mathcal{A}_0 = \{(U, \varphi)\}$  是  $M$  的一个  $C^r$  坐标覆盖. 于是  $\mathcal{A}_0$  在  $M$  上确定了一个  $C^r$  微分结构  $\mathcal{A}$，使  $M$  成为  $m$  维的  $C^r$  微分流形.
 
-\begin{myremark}
+\begin{myremark}[例1.1]
 这个例子是理解微分流形最基础、也是最重要的“原型”。它告诉我们：欧氏空间本身（以及它的开子集）就是最自然的微分流形。
 
-\subsubsection*{1. 构造过程}
 \begin{itemize}
     \item \textbf{空间 $M$：} 取 $\mathbb{R}^m$ 中的一个开子集。流形要求局部同胚于欧氏开集，而 $M$ 作为开集，“天生”符合此拓扑条件。
     \item \textbf{坐标映射 $\varphi$：} 采用“包含映射”（Inclusion Map），即 $\varphi(p) = p$。这允许我们直接用欧氏坐标描述 $M$ 中的点。
@@ -596,8 +593,7 @@ $$
 $$
 由此可见,  $\operatorname{GL}(n, \mathbb{R})$  是欧氏空间  $\mathbb{R}^{n\times n}$  的开子集，因而是一个  $n^2$  维的  $C^r$  微分流形.
 
-\begin{myremark}
-\subsection*{例 1.2 的直观解读：代数对象的几何化}
+\begin{myremark}[例 1.2 的直观解读---代数对象的几何化]
 
 这个例子将代数中的群论与几何中的流形结合，是\textbf{李群（Lie Group）}理论的基石，展示了如何将抽象代数对象（可逆矩阵）看做高维空间的几何属性（开集）。
 
@@ -633,12 +629,34 @@ $$
 %    \item \textbf{维数直观：} $2 \times 2$ 矩阵构成的流形是 $4$ 维的，其复杂度远超三维视觉直观。
 %\end{enumerate}
 
-
 \end{myremark}
 
 {\bf 例 1.3} 设  $M = \mathbb{R}, r$  为正整数、 $\infty$  或  $\omega$ . 例1.1已经给出了  $M$  上的一个  $C^r$  微分结构  $\mathcal{A}$. 现令  $V = M$莫比乌斯带就是典型的不可定向流形。映射  $\psi : V \to \mathbb{R}$  由  $\psi(x) = x^3$  ( $\forall x \in V$ ) 确定. 易见  $\psi$  和  $\psi^{-1}$  均为连续映射，所以  $\psi$  是同胚，即  $(V, \psi)$  是  $M$  的一个坐标卡. 由坐标覆盖  $\{(V, \psi)\}$  在  $M$  上确定的  $C^r$  微分结构记为  $\mathcal{A}_1$. 于是  $(M, \mathcal{A}_1)$  也是一个  $C^r$  的微分流形.
 
 注意到坐标变换  $\varphi \circ \psi^{-1}(x) = \sqrt[3]{x}$  在  $x = 0$  处是不可微的，于是这两个坐标卡  $(U, \varphi)$  和  $(V, \psi)$  不是  $C^1$  相关的。所以， $(M, \mathcal{A})$  与  $(M, \mathcal{A}_1)$  是两个不同的一维  $C^r$  微分流形.
+
+\begin{myremark}[同一空间的异构世界]
+这个例子展示了一个惊人的事实：同样的“点集”（实数轴 $\mathbb{R}$），可以承载完全不同的“平滑规则”。虽然它们作为拓扑空间是等价的，但作为微分流形，它们属于不同的微分世界。
+
+\begin{itemize}
+    \item \textbf{相同的舞台：} 基础集合均为 $M = \mathbb{R}$。
+    \item \textbf{两套规则的构造：}
+    \begin{enumerate}
+        \item \textbf{结构 $\mathcal{A}$：} 使用标准坐标卡 $(U, \varphi)$，其中 $\varphi(x) = x$。这对应于欧氏空间的标准度量方式。
+        \item \textbf{结构 $\mathcal{A}_1$：} 使用坐标卡 $(V, \psi)$，其中 $\psi(x) = x^3$。虽然 $\psi$ 是同胚，但在原点处存在奇异性。
+    \end{enumerate}
+    \item \textbf{冲突点（相容性检查）：} 
+    考虑转移映射 $\tau = \varphi \circ \psi^{-1}$。由 $\psi(x) = x^3 \implies \psi^{-1}(y) = y^{1/3}$，得：
+    \begin{equation}
+    \tau(y) = y^{1/3} \tag{转移映射}
+    \end{equation}
+    计算其在原点的导数：$\tau'(y) = \frac{1}{3}y^{-2/3}$。当 $y \to 0$ 时，$\tau'(0) = \infty$。
+    \item \textbf{结论：} 转移映射在 $0$ 处不可微，故两个坐标卡不是 $C^1$ 相关的。由此，$M$ 上确定了两个不相容的 $C^r$ 微分结构。
+
+    \item \textbf{“感觉”的差异：} 观察者 A 看到一个质点匀速通过原点；观察者 B 却看到该质点在原点瞬间达到了“无限大”的速度。
+    \item \textbf{光滑的本质：} “光滑”并非空间自带的属性，而是坐标卡赋予的一套协调的测量标准。在结构 $\mathcal{A}$ 中光滑的函数，在结构 $\mathcal{A}_1$ 看来可能是有“尖角”的。
+\end{itemize}
+\end{myremark}
 
 {\bf 例 1.4} 设  $f$  是定义在  $\mathbb{R}^{n+1}$  上的实值  $C^r$  函数， $r \geqslant 1$. 如果  $f$  的梯度
 $$
@@ -648,32 +666,135 @@ $$
 $$
 M _ {c} = \{p \in \mathbb {R} ^ {n + 1}; f (p) = c \}
 $$
-(c为常数)上恒不为零，则  $M_{c}$  是一个  $_{n}$  维的  $C^r$  微分流形。
+($c$为常数)上恒不为零，则  $M_{c}$  是一个  ${n}$  维的  $C^r$  微分流形。
 
-\begin{quote}
-\textbf{\textcolor{blue}{直观解读：}}
-隐函数定理告诉我们：如果一个方程 $f(x)=c$ 的梯度不为零，那么它的解集在局部上看起来就像是被“压平”后的欧氏空间。比如球面 $S^n$。
-\end{quote}
+，证明如下：
 
-证明如下：
+对于任意的  $p = (x_0^1,\dots ,x_0^{n + 1})\in M_c$  ，不妨设
 
-对于任意的  $p = (x_0^1,\dots ,x_0^{n + 1})\in M_c$，不妨设
 $$
 \frac {\partial f}{\partial x ^ {n + 1}} (p) \neq 0.
 $$
-根据隐函数定理，存在点  $(x_0^1,\dots ,x_0^n)$  在  $\mathbb{R}^n$  中的邻域  $\tilde{U}$， 以及定义在  $\tilde{U}$  上的  $C^r$  函数  $x^{n + 1} = h(x^{1},\dots ,x^{n})$，使得
+
+根据隐函数定理, 存在点  $(x_0^1,\dots ,x_0^n)$  在  $\mathbb{R}^n$  中的邻域  $\tilde{U}$ , 以及定义在  $\tilde{U}$  上的  $C^r$  函数  $x^{n + 1} = h(x^{1},\dots ,x^{n})$ , 使得
+
 $$
 x _ {0} ^ {n + 1} = h \left(x _ {0} ^ {1}, \dots , x _ {0} ^ {n}\right),
 $$
+
 并且在  $\tilde{U}$  上有恒等式
+
 $$
 f (x ^ {1}, \dots , x ^ {n}, h (x ^ {1}, \dots , x ^ {n})) \equiv c.
 $$
-由此可见，从点  $p$  在  $M_{c}$  中的一个邻域  $U$  到坐标平面  $x^{n + 1} = 0$  上的投影  $j: U \to \tilde{U}$  是一一对应，其逆映射  $j^{-1}$  由
+
+由此可见, 从点  $p$  在  $M_{c}$  中的一个邻域  $U$  到坐标平面  $x^{n + 1} = 0$  上的投影  $j: U \to \tilde{U}$  是一一对应, 其逆映射  $j^{-1}$  由
+
 $$
 (x ^ {1}, \dots , x ^ {n}) \longmapsto (x ^ {1}, \dots , x ^ {n}, h (x ^ {1}, \dots , x ^ {n}))
 $$
-确定. 易知， $j$  与  $j^{-1}$  都是连续的. 因此， $(U,j)$  是  $M_{c}$  在  $p$  点的一个坐标卡. 可以验证，对于所有的  $p \in M_{c}$，由上述方法得到的坐标卡彼此都是  $C^{r}$  相关的，并构成了  $M_{c}$  的一个  $C^{r}$  相关的坐标覆盖，它在  $M_{c}$  上确定了一个  $C^{r}$  微分结构  $\mathcal{A}$，使  $M_{c}$  成为一个  $n$  维的  $C^{r}$  微分流形.
+
+确定. 易知,  $j$  与  $j^{-1}$  都是连续的. 因此,  $(U,j)$  是  $M_{c}$  在  $p$  点的一个坐标卡. 可以验证, 对于所有的  $p \in M_{c}$ , 由上述方法得到的坐标卡彼此都是  $C^{r}$  相关的, 并构成了  $M_{c}$  的一个  $C^{r}$  相关的坐标覆盖, 它在  $M_{c}$  上确定了一个  $C^{r}$  微分结构  $\mathcal{A}$ , 使  $M_{c}$  成为一个  $n$  维的  $C^{r}$  微分流形.
+
+
+\begin{myremark}[例 1.4 深度解读---通过方程构造流形]
+
+这是微分几何中最重要的构造方法之一：\textbf{正则水平集定理}。它允许我们{\bf 通过高维空间中的方程来隐式地定义流形}。其核心理论基石正是数学分析中的\textbf{隐函数定理}。
+
+\subsection*{1. 隐函数定理：从隐式到显式的桥梁}
+
+隐函数定理告诉我们什么时候可以把一个“隐式方程”（如 $x^2 + y^2 = 1$）局部地改写为“显式函数”（如 $y = \sqrt{1-x^2}$）。
+
+\textbf{\textcolor{blue}{直观解读： “局部的一维化”}}
+\begin{itemize}
+    \item \textbf{“隐”在哪里？} 变量关系交织在方程 $F(x, y) = 0$ 中。
+    \item \textbf{什么时候能“解”出来？} 只要该处的曲线不是“垂直”的（即 $\frac{\partial F}{\partial y} \neq 0$），在这一点附近，总能找到一个小区间，使得 $y$ 可以被看作 $x$ 的平滑函数。
+    \item \textbf{几何本质：} 只要方程的梯度不为零，它所确定的点集在局部上就不会坍缩或分叉，而是像一段拉直的线或平整的面。
+\end{itemize}
+
+\begin{itemize}
+    \item \textbf{局部参数化：} 定理告诉我们，只要约束方程的导数不为零（不出现奇异），我们就能在局部用一部分坐标去“描述”另一部分坐标。
+    \item \textbf{流形的源头：} 隐函数定理是微分流形理论中判定“正则水平集”为流形的核心依据。这正是为什么我们可以把 $n+1$ 维空间里的球映射到 $n$ 维平面上而不丢失平滑性的原因。
+\end{itemize}
+
+\subsubsection*{隐函数定理)}
+\subsection*{1. 定理陈述 (二元形式)}
+设 $F: \mathbb{R}^n \times \mathbb{R}^m \to \mathbb{R}^m$ 是 $C^r$ 映射。记点为 $(x, y)$，其中 $x \in \mathbb{R}^n, y \in \mathbb{R}^m$。
+若在点 $(x_0, y_0)$ 满足：
+\begin{itemize}
+    \item $F(x_0, y_0) = \mathbf{0}$
+    \item 偏 Jacobi 矩阵 $D_y F = \left( \frac{\partial F_i}{\partial y_j} \right)_{m \times m}$ 在该点\textbf{可逆}。
+\end{itemize}
+则存在 $x_0$ 的邻域 $U \subset \mathbb{R}^n$ 和唯一的 $C^r$ 映射 $y = h(x)$，使得在 $U$ 上恒有 $F(x, h(x)) = \mathbf{0}$。
+
+设 $F(x, y)$ 是 $C^r$ 函数，且点~$(x_0, y_0)$ 满足 $F(x_0, y_0) = 0$。 若  
+$$\frac{\partial F}{\partial y}(x_0, y_0) \neq 0，$$
+则存在 $x_0$ 的邻域 $U$ 和 $y_0$ 的邻域 $V$，以及唯一的 $C^r$ 函数 $y = h(x)$，使得对于所有 $x \in U$，都有
+$$
+F(x,h(x))=0
+$$
+并且该函数的导数可以通过隐函数求导法给出：
+\begin{equation}
+\frac{dy}{dx} = -\frac{\frac{\partial F}{\partial x}}{\frac{\partial F}{\partial y}} \tag{隐函数求导}
+\end{equation}
+
+\subsection*{ 定理陈述 (多元形式)}
+设 $F: \mathbb{R}^n \times \mathbb{R}^m \to \mathbb{R}^m$ 是 $C^r$ 映射。记点为 $(x, y)$，其中 $x \in \mathbb{R}^n, y \in \mathbb{R}^m$。
+若在点 $(x_0, y_0)$ 满足：
+\begin{itemize}
+    \item $F(x_0, y_0) = \mathbf{0}$
+    \item 偏 Jacobi 矩阵 $D_y F = \left( \frac{\partial F_i}{\partial y_j} \right)_{m \times m}$ 在该点\textbf{可逆}。
+\end{itemize}
+则存在 $x_0$ 的邻域 $U \subset \mathbb{R}^n$ 和唯一的 $C^r$ 映射 $y = h(x)$，使得在 $U$ 上恒有 $F(x, h(x)) = \mathbf{0}$。
+
+\subsection*{2. 例 1.4 的严格证明逻辑}
+\begin{itemize}
+    \item \textbf{正则性条件：} $\operatorname{grad} f \neq 0$ 保证了 Jacobian 矩阵在每一点处满秩。
+    \item \textbf{维数匹配：} 一个标量方程消耗 1 个自由度：$\dim(M_c) = (n+1) - 1 = n$。
+    \item \textbf{坐标系生成器：} 隐函数定理保证了我们可以选取 $n$ 个坐标作为独立参数，将剩余坐标看作它们的 $C^r$ 函数，从而实现平滑性遗传。
+\end{itemize}
+
+\subsubsection*{构造证明}
+对于任意点 $p = (x_0^1,\dots ,x_0^{n + 1})\in M_c$，不妨设 $\frac {\partial f}{\partial x ^ {n + 1}} (p) \neq 0$。根据隐函数定理：
+\begin{enumerate}
+    \item 存在点 $\tilde{p} = (x_0^1,\dots ,x_0^n)$ 在 $\mathbb{R}^n$ 中的邻域 $\tilde{U}$。
+    \item 存在 $C^r$ 函数 $x^{n + 1} = h(x^{1},\dots ,x^{n})$，使得在 $\tilde{U}$ 上恒有：
+    \begin{equation}
+    f (x ^ {1}, \dots , x ^ {n}, h (x ^ {1}, \dots , x ^ {n})) \equiv c \tag{恒等式}
+    \end{equation}
+    \item \textbf{坐标卡映射：} 投影 $j: U \to \tilde{U}$ 是一一对应，其逆映射 $j^{-1}$ 为：
+    $$ (x ^ {1}, \dots , x ^ {n}) \longmapsto (x ^ {1}, \dots , x ^ {n}, h (x ^ {1}, \dots , x ^ {n})) $$
+\end{enumerate}
+这些投影构造的坐标卡在 $M_c$ 上确定了一个 $n$ 维 $C^r$ 微分结构。
+
+\subsection*{3. 直观化解读：不坍缩的表面}
+
+\begin{quote}
+\textbf{\textcolor{blue}{直观解读：}}
+\begin{itemize}
+    \item \textbf{梯度的几何意义：} $\operatorname{grad} f$ 构成了法向量场。梯度恒不为零，意味着表面处处有明确定义的切平面，没有褶皱或尖点。
+    \item \textbf{“压平”效应：} 隐函数定理直观上将曲面局部“压平”到了欧氏空间中。
+    \item \textbf{典型示例：球面 $S^n$} 
+    设 $f = \sum (x^i)^2$，则 $S^n(r) = \{x \mid f(x) = r^2\}$。其梯度 $(2x^i)$ 在球面上永不为零，故 $S^n$ 是 $n$ 维 $C^r$ 微分流形。
+\end{itemize}
+\end{quote}
+
+$§1.2$ 数学定义（$\mathbb{R}^2$ 特例）
+为了清晰起见，先看最简单的二维情况：
+设 $F(x, y)$ 是一个 $C^r$ 函数，且点 $(x_0, y_0)$ 满足 $F(x_0, y_0) = 0$。如果：
+$$\frac{\partial F}{\partial y}(x_0, y_0) \neq 0$$
+那么存在 $x_0$ 的邻域 $U$ 和 $y_0$ 的邻域 $V$，以及唯一的 $C^r$ 函数 $y = h(x)$，使得对于所有 $x \in U$，都有：
+$$F(x, h(x)) = 0$$
+并且该函数的导数可以通过隐函数求导法给出：
+$$\frac{dy}{dx} = -\frac{\frac{\partial F}{\partial x}}{\frac{\partial F}{\partial y}}$$
+
+$§1.3$ 隐函数定理与流形构造的关系
+在您的笔记 例 1.4 中，隐函数定理起到了“坐标系生成器”的作用：
+\begin{enumerate}
+\item \textbf{消除自由度：} 每一个独立的标量方程 $f(x^1, \dots, x^{n+1}) = c$ 理论上可以“消去”一个变量。
+\item \textbf{局部同胚：} 定理保证了我们可以选取其中的 $n$ 个坐标作为独立参数（即局部坐标卡的自变量），而将剩下的那个坐标看作它们的 $C^r$ 函数。
+\item \textbf{平滑性遗传：} 因为隐函数定理给出的解 $h(x)$ 具有与原方程 $F$ 相同的阶数 $C^r$，这保证了流形定义的转换映射也是平滑的。
+\end{enumerate}
 
 例1.4说明，欧氏空间  $\mathbb{R}^{n + 1}$  中的正则超曲面都是微分流形，其中包括许多最常见的例子。例如：设  $r > 0$，并设
 $$
@@ -684,8 +805,9 @@ $$
 S^{n} (r) = \{x \in \mathbb {R} ^ {n + 1}; f (x) = r^{2} \}
 $$
 是  $f$  的一个水平集，并且  $\operatorname{grad} f$  在  $S^n(r)$  上处处不为零，因此它是一个  $n$  维  $C^r$  微分流形. 为了简便起见， 以后记  $S^n = S^n(1)$.
+\end{myremark}
 
-\textbf{例1.4} 设 $f$ 是定义在 $\mathbb{R}^{n+1}$ 上的实值 $C^r$ 函数，如果 $\text{grad} f \neq 0$ 在水平集 $M_c = \{f=c\}$ 上成立，则 $M_c$ 是 $n$ 维微分流形。
+
 
 {\bf 例 1.5 开子流形}
 

@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/Min369/Documents/同步空间/Manju/Projects/共享/AlVisualization/抱着佛脚成学霸AhaTutor/math2manim_service/media/videos/tmpri6aot1k/720p30/partial_movie_files/SineFunction/1987512680_1904090172_223132457.mp4'
+file 'file:/Users/Min369/Documents/同步空间/Manju/Projects/共享/AlVisualization/抱着佛脚成学霸AhaTutor/math2manim_service/media/videos/tmpri6aot1k/720p30/partial_movie_files/SineFunction/2538612922_436149303_3096803300.mp4'
+file 'file:/Users/Min369/Documents/同步空间/Manju/Projects/共享/AlVisualization/抱着佛脚成学霸AhaTutor/math2manim_service/media/videos/tmpri6aot1k/720p30/partial_movie_files/SineFunction/2538612922_2844360058_2117441014.mp4'

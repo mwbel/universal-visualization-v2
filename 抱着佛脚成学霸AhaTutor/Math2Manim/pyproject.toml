@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "math2manim"
+version = "0.1.0"
+description = "智能数学概念到 Manim 动画生成库 - 基于反向知识树"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Math2Manim Team"}
+]
+keywords = ["manim", "animation", "mathematics", "education", "visualization"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+    "Topic :: Education",
+    "Topic :: Multimedia :: Graphics",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+dependencies = [
+    "manim>=0.17.0",
+    "numpy>=1.20.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "black>=22.0",
+    "flake8>=4.0",
+    "mypy>=0.950",
+]
+ai = [
+    "anthropic>=0.18.0",
+    "openai>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/math2manim"
+Documentation = "https://math2manim.readthedocs.io"
+Repository = "https://github.com/yourusername/math2manim"
+Issues = "https://github.com/yourusername/math2manim/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["math2manim*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
