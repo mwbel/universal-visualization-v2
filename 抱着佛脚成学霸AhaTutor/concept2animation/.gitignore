@@ -34,3 +34,8 @@ Thumbs.db
 # 临时文件
 *.tmp
 temp_*
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
