@@ -1,4 +1,21 @@
-/* Google DynamicView 风格三栏布局 */
+/* Google DynamicView 风格三栏布局 - 可配置主题 */
+
+/* CSS 变量定义 - 由 linear-algebra-loader.js 动态设置 */
+:root {
+    --la-primary-color: #4285f4;
+    --la-secondary-color: #ea4335;
+    --la-bg-color: #f5f5f5;
+    --la-card-bg: #ffffff;
+    --la-text-color: #202124;
+    --la-border-radius: 8px;
+    --la-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    /* 派生颜色 */
+    --la-text-secondary: #5f6368;
+    --la-border-color: #e0e0e0;
+    --la-hover-bg: #f8f9fa;
+    --la-active-bg: #e8f0fe;
+}
 
 /* 重置和基础样式 */
 * {
@@ -8,9 +25,9 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f5f5;
-    color: #333;
+    font-family: var(--la-font-family);
+    background: var(--la-bg-color);
+    color: var(--la-text-color);
     line-height: 1.6;
 }
 
@@ -22,15 +39,15 @@ body {
 
 /* 顶部导航 - 简洁风格 */
 .module-header {
-    background: #fff;
-    border-bottom: 3px solid #4285f4;
+    background: var(--la-card-bg);
+    border-bottom: 3px solid var(--la-primary-color);
     padding: 1rem 2rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .module-header h1 {
     font-size: 1.8rem;
-    color: #4285f4;
+    color: var(--la-primary-color);
     margin-bottom: 0.5rem;
     font-weight: 500;
 }
@@ -42,7 +59,7 @@ body {
 }
 
 .module-nav a {
-    color: #5f6368;
+    color: var(--la-text-secondary);
     text-decoration: none;
     padding: 0.4rem 0.8rem;
     border-radius: 4px;
@@ -51,13 +68,13 @@ body {
 }
 
 .module-nav a:hover {
-    background-color: #e8f0fe;
-    color: #4285f4;
+    background-color: var(--la-active-bg);
+    color: var(--la-primary-color);
 }
 
 .back-link {
-    background-color: #e8f0fe !important;
-    color: #4285f4 !important;
+    background-color: var(--la-active-bg) !important;
+    color: var(--la-primary-color) !important;
     font-weight: 500;
 }
 
@@ -75,8 +92,8 @@ body {
 
 /* 左侧栏 - 导航菜单 */
 .sidebar {
-    background: #fff;
-    border-radius: 8px;
+    background: var(--la-card-bg);
+    border-radius: var(--la-border-radius);
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     padding: 1.2rem;
     height: fit-content;
@@ -85,12 +102,12 @@ body {
 }
 
 .sidebar h3 {
-    color: #202124;
+    color: var(--la-text-color);
     font-size: 0.95rem;
     font-weight: 500;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #4285f4;
+    border-bottom: 2px solid var(--la-primary-color);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -104,7 +121,7 @@ body {
 }
 
 .nav-list a {
-    color: #5f6368;
+    color: var(--la-text-secondary);
     text-decoration: none;
     display: block;
     padding: 0.6rem 0.8rem;
@@ -115,37 +132,37 @@ body {
 }
 
 .nav-list a:hover {
-    background-color: #f8f9fa;
-    color: #4285f4;
-    border-left-color: #4285f4;
+    background-color: var(--la-hover-bg);
+    color: var(--la-primary-color);
+    border-left-color: var(--la-primary-color);
     padding-left: 1rem;
 }
 
 .nav-list a.current {
-    background-color: #e8f0fe;
-    color: #4285f4;
-    border-left-color: #4285f4;
+    background-color: var(--la-active-bg);
+    color: var(--la-primary-color);
+    border-left-color: var(--la-primary-color);
     font-weight: 500;
 }
 
 /* 中间内容区 */
 .content-area {
-    background: #fff;
-    border-radius: 8px;
+    background: var(--la-card-bg);
+    border-radius: var(--la-border-radius);
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     padding: 2rem;
     min-height: 600px;
 }
 
 .welcome-section h2 {
-    color: #202124;
+    color: var(--la-text-color);
     font-size: 1.8rem;
     font-weight: 500;
     margin-bottom: 1rem;
 }
 
 .welcome-section p {
-    color: #5f6368;
+    color: var(--la-text-secondary);
     font-size: 1rem;
     line-height: 1.8;
     margin-bottom: 2rem;
@@ -157,12 +174,12 @@ body {
 }
 
 .chapter-section h2 {
-    color: #202124;
+    color: var(--la-text-color);
     font-size: 1.6rem;
     font-weight: 500;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e8f0fe;
+    border-bottom: 2px solid var(--la-active-bg);
 }
 
 /* 功能卡片网格 */
@@ -174,9 +191,9 @@ body {
 }
 
 .feature-card {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    background: var(--la-card-bg);
+    border: 1px solid var(--la-border-color);
+    border-radius: var(--la-border-radius);
     padding: 1.5rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -184,18 +201,18 @@ body {
 .feature-card:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     transform: translateY(-2px);
-    border-color: #4285f4;
+    border-color: var(--la-primary-color);
 }
 
 .feature-card h3 {
-    color: #202124;
+    color: var(--la-text-color);
     font-size: 1.1rem;
     font-weight: 500;
     margin-bottom: 0.8rem;
 }
 
 .feature-card p {
-    color: #5f6368;
+    color: var(--la-text-secondary);
     font-size: 0.9rem;
     line-height: 1.6;
     margin-bottom: 1rem;
@@ -212,8 +229,8 @@ body {
 .chip-list a {
     display: inline-block;
     padding: 0.4rem 0.8rem;
-    background: #e8f0fe;
-    color: #4285f4;
+    background: var(--la-active-bg);
+    color: var(--la-primary-color);
     text-decoration: none;
     border-radius: 16px;
     font-size: 0.85rem;
@@ -222,15 +239,15 @@ body {
 }
 
 .chip-list a:hover {
-    background: #4285f4;
+    background: var(--la-primary-color);
     color: #fff;
     transform: scale(1.05);
 }
 
 /* 右侧栏 - 辅助信息 */
 .right-sidebar {
-    background: #fff;
-    border-radius: 8px;
+    background: var(--la-card-bg);
+    border-radius: var(--la-border-radius);
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     padding: 1.2rem;
     height: fit-content;
@@ -239,26 +256,26 @@ body {
 }
 
 .right-sidebar h3 {
-    color: #202124;
+    color: var(--la-text-color);
     font-size: 0.95rem;
     font-weight: 500;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #4285f4;
+    border-bottom: 2px solid var(--la-primary-color);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 /* 学习进度卡片 */
 .progress-card {
-    background: #f8f9fa;
-    border-radius: 8px;
+    background: var(--la-hover-bg);
+    border-radius: var(--la-border-radius);
     padding: 1rem;
     margin-bottom: 1.5rem;
 }
 
 .progress-card h4 {
-    color: #202124;
+    color: var(--la-text-color);
     font-size: 0.9rem;
     font-weight: 500;
     margin-bottom: 0.8rem;
@@ -272,20 +289,20 @@ body {
     display: flex;
     justify-content: space-between;
     font-size: 0.85rem;
-    color: #5f6368;
+    color: var(--la-text-secondary);
     margin-bottom: 0.3rem;
 }
 
 .progress-bar {
     height: 6px;
-    background: #e0e0e0;
+    background: var(--la-border-color);
     border-radius: 3px;
     overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #4285f4, #34a853);
+    background: linear-gradient(90deg, var(--la-primary-color), var(--la-secondary-color));
     border-radius: 3px;
     transition: width 0.3s;
 }
@@ -300,7 +317,7 @@ body {
 }
 
 .quick-links a {
-    color: #5f6368;
+    color: var(--la-text-secondary);
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -311,22 +328,22 @@ body {
 }
 
 .quick-links a:hover {
-    background-color: #f8f9fa;
-    color: #4285f4;
+    background-color: var(--la-hover-bg);
+    color: var(--la-primary-color);
     padding-left: 0.8rem;
 }
 
 .quick-links a::before {
     content: '→';
     margin-right: 0.5rem;
-    color: #4285f4;
+    color: var(--la-primary-color);
     font-weight: bold;
 }
 
 /* 统计信息 */
 .stats-info {
-    background: #f8f9fa;
-    border-radius: 8px;
+    background: var(--la-hover-bg);
+    border-radius: var(--la-border-radius);
     padding: 1rem;
     margin-bottom: 1.5rem;
 }
@@ -335,7 +352,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--la-border-color);
     font-size: 0.85rem;
 }
 
@@ -344,11 +361,11 @@ body {
 }
 
 .stat-label {
-    color: #5f6368;
+    color: var(--la-text-secondary);
 }
 
 .stat-value {
-    color: #202124;
+    color: var(--la-text-color);
     font-weight: 600;
 }
 
@@ -391,17 +408,17 @@ body {
     }
 }
 
-/* Google Material Design 色彩方案 */
+/* Google Material Design 色彩方案 - 使用 CSS 变量 */
 :root {
-    --google-blue: #4285f4;
-    --google-red: #ea4335;
+    --google-blue: var(--la-primary-color);
+    --google-red: var(--la-secondary-color);
     --google-yellow: #fbbc04;
     --google-green: #34a853;
-    --text-primary: #202124;
-    --text-secondary: #5f6368;
-    --background: #f5f5f5;
-    --surface: #ffffff;
-    --divider: #e0e0e0;
+    --text-primary: var(--la-text-color);
+    --text-secondary: var(--la-text-secondary);
+    --background: var(--la-bg-color);
+    --surface: var(--la-card-bg);
+    --divider: var(--la-border-color);
 }
 
 /* 平滑滚动 */
@@ -411,6 +428,6 @@ html {
 
 /* 选择文本样式 */
 ::selection {
-    background: #4285f4;
+    background: var(--la-primary-color);
     color: #fff;
 }

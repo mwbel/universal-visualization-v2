@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>正交分解可视化</title>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <style>
     :root { --bg:#0f0f14; --panel:#181824; --accent:#8a7bd1; --accent-2:#b39ddb; --text:#e6e6f0; --muted:#a9a9b8; --border:#2a2a3b; }
     body{ margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans','PingFang SC','Microsoft YaHei',sans-serif; }
@@ -26,8 +35,9 @@
     mjx-container{ overflow-x:auto; overflow-y:hidden; white-space:normal; }
     .viz{ height:480px; }
     .legend{ font-size:12px; color:var(--muted); margin-top:8px; }
+    :root { --bg:#f8f8ff; --panel:#ffffff; --accent:#3747ff; --accent-2:#6370d6; --text:#1e1e2e; --muted:#5f6368; --border:rgba(0,0,0,0.08); }
   /* 统一风格对齐：蓝紫渐变背景 + 白色内容卡片 + 左侧导航 */
-    body { background: linear-gradient(135deg, #3b3d7a 0%, #6b6ee8 100%); color: #1e1e2e; }
+    body { background: #f8f8ff; color: #1e1e2e; }
     header.page-header { display: none; }
     .page-content { display: flex; }
     .sidebar { width: 240px; position: fixed; top: 0; left: 0; bottom: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(6px); border-right: 1px solid rgba(0,0,0,0.06); padding: 16px 12px; overflow-y: auto; }
@@ -72,9 +82,9 @@
       <!-- 左栏：代数定义与公式 -->
       <section class="card">
         <h3>代数定义与公式</h3>
-        <div class="mathjax-block"><div class="formula">\\[ \\text{给定 } \\mathbf{a},\\mathbf{b}\\in\\mathbb{R}^2,\\; \\operatorname{proj}_{\\mathbf{b}}(\\mathbf{a}) = \\frac{\\mathbf{a}\\cdot\\mathbf{b}}{\\|\\mathbf{b}\\|^2}\\,\\mathbf{b} \\]</div></div>
-        <div class="mathjax-block"><div class="formula">\\[ \\mathbf{a} = \\operatorname{proj}_{\\mathbf{b}}(\\mathbf{a}) + \\mathbf{a}_\\perp,\\; \\text{其中 } \\mathbf{a}_\\perp \\perp \\mathbf{b} \\]</div></div>
-        <div class="mathjax-block"><div class="formula" id="decomp">\\[ \\operatorname{proj}_{\\mathbf{b}}(\\mathbf{a}) = -,\\; \\mathbf{a}_\\perp = - \\]</div></div>
+        <div class="mathjax-block"><div class="formula">\[ \text{给定 } \mathbf{a},\mathbf{b}\in\mathbb{R}^2,\; \operatorname{proj}_{\mathbf{b}}(\mathbf{a}) = \frac{\mathbf{a}\cdot\mathbf{b}}{\|\mathbf{b}\|^2}\,\mathbf{b} \]</div></div>
+        <div class="mathjax-block"><div class="formula">\[ \mathbf{a} = \operatorname{proj}_{\mathbf{b}}(\mathbf{a}) + \mathbf{a}_{\perp},\; \text{其中 } \mathbf{a}_{\perp} \perp \mathbf{b} \]</div></div>
+        <div class="mathjax-block"><div class="formula" id="decomp">\[ \operatorname{proj}_{\mathbf{b}}(\mathbf{a}) = -,\; \mathbf{a}_{\perp} = - \]</div></div>
 
         <div class="section-title">参数设置</div>
         <div class="control-grid">
@@ -95,39 +105,61 @@
   </div>
   </div>
 
-  <script type="module">
-    import { configureMathJax, ensureMathJaxScript, typesetPage } from '/app/lib/mathjax.js';
-    import { enableAutoMath } from '/app/lib/autoMath.js';
-    import { attachFormulaResizer } from '/app/lib/responsive-math.js';
+<script>
+(function () {
+  const fmt = v => v.toFixed(3);
 
-    configureMathJax();
-    ensureMathJaxScript();
-    const pageEl = document.querySelector('.page');
-    enableAutoMath(pageEl);
+  function update() {
+    const a1 = parseFloat(document.getElementById('a1').value) || 0;
+    const a2 = parseFloat(document.getElementById('a2').value) || 0;
+    const b1 = parseFloat(document.getElementById('b1').value) || 0;
+    const b2 = parseFloat(document.getElementById('b2').value) || 0;
 
-    function proj(a,b){ const dot=a[0]*b[0]+a[1]*b[1]; const bn=b[0]*b[0]+b[1]*b[1]; const k=bn===0?0:dot/bn; return [k*b[0], k*b[1]]; }
+    const dot = a1 * b1 + a2 * b2;
+    const b2len = b1 * b1 + b2 * b2;
+    const scalar = b2len !== 0 ? dot / b2len : 0;
+    const p1 = scalar * b1, p2 = scalar * b2;  // proj_b(a)
+    const r1 = a1 - p1, r2 = a2 - p2;           // a_perp
 
-    function render(){
-      const a=[parseFloat(document.getElementById('a1').value), parseFloat(document.getElementById('a2').value)];
-      const b=[parseFloat(document.getElementById('b1').value), parseFloat(document.getElementById('b2').value)];
-      const p=proj(a,b); const perp=[a[0]-p[0], a[1]-p[1]];
+    // Update decomp formula
+    const el = document.getElementById('decomp');
+    el.innerHTML = '\\[ \\operatorname{proj}_{\\mathbf{b}}(\\mathbf{a}) = (' + fmt(p1) + ',\\,' + fmt(p2) + '),\\;\\mathbf{a}_{\\perp} = (' + fmt(r1) + ',\\,' + fmt(r2) + ') \\]';
+    if (window.MathJax) MathJax.typesetPromise([el]);
 
-      const de=document.getElementById('decomp');
-      de.innerHTML = `\\[ \\operatorname{proj}_{\\mathbf{b}}(\\mathbf{a}) = \\begin{bmatrix} ${p[0].toFixed(2)} \\\\\\ ${p[1].toFixed(2)} \\end{bmatrix},\\; \\mathbf{a}_\\perp = \\begin{bmatrix} ${perp[0].toFixed(2)} \\\\\\ ${perp[1].toFixed(2)} \\end{bmatrix} \\]`;
-      typesetPage(pageEl).then(()=> attachFormulaResizer(pageEl));
+    const max = Math.max(3, Math.ceil(Math.max(Math.abs(a1), Math.abs(a2), Math.abs(b1), Math.abs(b2))) + 1);
 
-      const origin={ x:[0], y:[0], type:'scatter', mode:'markers', marker:{size:3, color:'#999'}, hoverinfo:'skip', showlegend:false };
-      const vecA={ x:[0,a[0]], y:[0,a[1]], type:'scatter', mode:'lines+markers', line:{color:'#8a7bd1', width:3}, marker:{color:'#8a7bd1'}, name:'a' };
-      const vecB={ x:[0,b[0]], y:[0,b[1]], type:'scatter', mode:'lines+markers', line:{color:'#6e63b6', width:2}, marker:{color:'#6e63b6'}, name:'b' };
-      const vecP={ x:[0,p[0]], y:[0,p[1]], type:'scatter', mode:'lines+markers', line:{color:'#b39ddb', width:3}, marker:{color:'#b39ddb'}, name:'proj_b(a)' };
-      const vecPerp={ x:[p[0], a[0]], y:[p[1], a[1]], type:'scatter', mode:'lines', line:{color:'#b39ddb', width:2, dash:'dot'}, name:'a_perp' };
+    const traces = [
+      // b vector
+      { x: [0, b1], y: [0, b2], mode: 'lines+markers',
+        line: { color: '#6370d6', width: 2 }, marker: { size: 6, color: '#6370d6' }, name: 'b' },
+      // a vector
+      { x: [0, a1], y: [0, a2], mode: 'lines+markers',
+        line: { color: '#8a7bd1', width: 3 }, marker: { size: 8, color: '#8a7bd1' }, name: 'a' },
+      // projection
+      { x: [0, p1], y: [0, p2], mode: 'lines+markers',
+        line: { color: '#b39ddb', width: 3 }, marker: { size: 8, color: '#b39ddb' }, name: 'proj_b(a)' },
+      // perpendicular component (from proj tip to a tip)
+      { x: [p1, a1], y: [p2, a2], mode: 'lines',
+        line: { color: '#d4c5f9', width: 2, dash: 'dash' }, name: 'a⊥' }
+    ];
 
-      const layout={ paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', xaxis:{range:[-5,5], color:'#a9a9b8'}, yaxis:{range:[-5,5], color:'#a9a9b8'}, margin:{l:40,r:20,t:20,b:40}, showlegend:true };
-      Plotly.react('plot', [origin, vecB, vecA, vecP, vecPerp], layout, {displayModeBar:false});
-    }
+    const layout = {
+      plot_bgcolor: '#ffffff', paper_bgcolor: '#ffffff',
+      xaxis: { range: [-max, max], zeroline: true, zerolinecolor: '#888', gridcolor: '#e8e8f0', title: 'x' },
+      yaxis: { range: [-max, max], zeroline: true, zerolinecolor: '#888', gridcolor: '#e8e8f0', title: 'y', scaleanchor: 'x' },
+      legend: { x: 0, y: 1, bgcolor: 'rgba(255,255,255,0.85)', font: { size: 12 } },
+      margin: { l: 50, r: 20, t: 20, b: 50 },
+      showlegend: true
+    };
 
-    ['a1','a2','b1','b2'].forEach(id=>{ document.getElementById(id).addEventListener('input', render); });
-    render();
-  </script>
+    Plotly.react('plot', traces, layout, { responsive: true });
+  }
+
+  ['a1', 'a2', 'b1', 'b2'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', update);
+  });
+  update();
+})();
+</script>
 </body>
 </html>

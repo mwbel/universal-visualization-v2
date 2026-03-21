@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>线性代数可视化模块 - 一图胜千言</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script src="../frontend/global-mathjax.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         * {
@@ -16,7 +23,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f8f8ff;
             min-height: 100vh;
             color: #333;
             display: flex;
@@ -57,16 +64,16 @@
         }
 
         .nav-item:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: rgba(55, 71, 255, 0.08);
+            color: #3747ff;
             transform: translateX(5px);
-            border-left-color: #667eea;
+            border-left-color: #3747ff;
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-left-color: #667eea;
+            background: rgba(55, 71, 255, 0.12);
+            color: #3747ff;
+            border-left-color: #3747ff;
         }
 
         .main-content {
@@ -84,7 +91,7 @@
         .header {
             text-align: center;
             margin-bottom: 40px;
-            color: white;
+            color: #2d3748;
         }
 
         .header h1 {
@@ -152,7 +159,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: #3747ff;
         }
 
         .module-card:hover {
@@ -164,13 +171,13 @@
             width: 80px;
             height: 80px;
             margin: 0 auto 20px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: rgba(55, 71, 255, 0.08);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5em;
-            color: white;
+            color: #3747ff;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
@@ -211,8 +218,8 @@
 
         .module-button {
             width: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: rgba(55, 71, 255, 0.08);
+            color: #3747ff;
             border: none;
             padding: 15px 25px;
             border-radius: 10px;
@@ -261,7 +268,7 @@
         }
 
         .concept-item:hover {
-            border-color: #667eea;
+            border-color: #3747ff;
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
@@ -322,8 +329,8 @@
         .step-number {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: rgba(55, 71, 255, 0.08);
+            color: #3747ff;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -348,7 +355,7 @@
 
         .path-arrow {
             font-size: 2em;
-            color: #667eea;
+            color: #3747ff;
             margin: 0 10px;
         }
 
@@ -357,7 +364,7 @@
             border-radius: 15px;
             padding: 30px;
             text-align: center;
-            color: white;
+            color: #2d3748;
         }
 
         .footer-info h3 {

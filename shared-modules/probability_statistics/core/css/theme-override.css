@@ -1,0 +1,345 @@
+/* 概率统计子页面主题覆盖 - Google Material Design 风格 */
+/* 此文件覆盖各子页面的蓝紫渐变样式，统一为白底 Material Design 风格 */
+
+:root {
+    --primary: #4285f4;
+    --primary-dark: #1967d2;
+    --primary-light: #e8f0fe;
+    --secondary: #ea4335;
+    --success: #34a853;
+    --warning: #fbbc04;
+    --bg: #f5f5f5;
+    --surface: #ffffff;
+    --text: #202124;
+    --text-secondary: #5f6368;
+    --border: #e0e0e0;
+    --hover: #f8f9fa;
+    --active: #e8f0fe;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+/* === 全局基础 === */
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    background: var(--bg) !important;
+    color: var(--text) !important;
+    line-height: 1.6;
+}
+
+/* === 覆盖渐变背景 === */
+body[style*="gradient"],
+body[style*="linear-gradient"] {
+    background: var(--bg) !important;
+}
+
+/* === 标题颜色统一 === */
+h1, h2, h3 {
+    color: var(--text) !important;
+    font-weight: 500;
+}
+
+h1 { font-size: 1.6rem; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.1rem; }
+
+/* 标题中的渐变文字 → 纯蓝 */
+h1[style*="gradient"],
+h2[style*="gradient"],
+.gradient-text,
+[class*="gradient-title"] {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: var(--primary) !important;
+    color: var(--primary) !important;
+}
+
+/* === 容器/卡片 === */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header,
+.card,
+.info-card,
+.section,
+.panel,
+.controls,
+.control-panel,
+.formula-box,
+.explanation,
+.description,
+[class*="-card"],
+[class*="-box"],
+[class*="-panel"],
+[class*="-section"] {
+    background: var(--surface) !important;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    color: var(--text) !important;
+}
+
+/* 消除渐变背景卡片 */
+[style*="linear-gradient"][class*="card"],
+[style*="linear-gradient"][class*="box"],
+[style*="linear-gradient"][class*="panel"],
+[style*="linear-gradient"][class*="header"] {
+    background: var(--surface) !important;
+    box-shadow: var(--shadow) !important;
+}
+
+/* === 信息提示框 === */
+.info-box,
+.tip-box,
+.note-box,
+.highlight-box,
+[class*="info-"],
+[class*="tip-"],
+[class*="note-"] {
+    background: var(--primary-light) !important;
+    border-left: 4px solid var(--primary) !important;
+    border-radius: 0 var(--radius) var(--radius) 0 !important;
+    color: var(--text) !important;
+    box-shadow: none !important;
+}
+
+/* === 按钮 === */
+button,
+.btn,
+[class*="-btn"],
+[class*="btn-"] {
+    border-radius: 4px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    border: none !important;
+    font-family: inherit !important;
+}
+
+/* 主要按钮（覆盖渐变） */
+button[style*="gradient"],
+.btn-primary,
+.primary-btn,
+.run-btn,
+.calc-btn,
+.generate-btn,
+.simulate-btn,
+.start-btn,
+.reset-btn {
+    background: var(--primary) !important;
+    color: white !important;
+    padding: 8px 20px !important;
+    box-shadow: none !important;
+}
+
+button[style*="gradient"]:hover,
+.btn-primary:hover,
+.primary-btn:hover,
+.run-btn:hover,
+.calc-btn:hover {
+    background: var(--primary-dark) !important;
+    box-shadow: 0 2px 6px rgba(66,133,244,0.4) !important;
+}
+
+/* 次要按钮 */
+.btn-secondary,
+.secondary-btn,
+.outline-btn {
+    background: var(--active) !important;
+    color: var(--primary) !important;
+}
+
+/* === 输入控件 === */
+input[type="range"] {
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary) !important;
+    cursor: pointer;
+    margin-top: -7px;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border);
+    height: 4px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 18px;
+    background: transparent;
+}
+
+select,
+input[type="number"],
+input[type="text"] {
+    border: 1px solid var(--border) !important;
+    border-radius: 4px !important;
+    padding: 6px 10px !important;
+    background: white !important;
+    color: var(--text) !important;
+    font-family: inherit !important;
+}
+
+select:focus,
+input:focus {
+    outline: 2px solid var(--primary) !important;
+    outline-offset: -1px;
+    border-color: var(--primary) !important;
+}
+
+/* === 侧边栏/导航 === */
+.sidebar {
+    background: var(--surface) !important;
+    box-shadow: var(--shadow) !important;
+    border-right: 1px solid var(--border);
+}
+
+.sidebar-title,
+.nav-section-title {
+    color: var(--text) !important;
+    border-bottom: 2px solid var(--primary) !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600 !important;
+}
+
+.nav-item,
+.sidebar a,
+.sidebar li a {
+    color: var(--text-secondary) !important;
+    border-radius: 4px !important;
+    text-decoration: none;
+    display: block;
+    padding: 8px 12px !important;
+    border-left: 3px solid transparent !important;
+    transition: all 0.2s !important;
+}
+
+.nav-item:hover,
+.sidebar a:hover,
+.nav-item.active,
+.nav-item.current {
+    background: var(--active) !important;
+    color: var(--primary) !important;
+    border-left-color: var(--primary) !important;
+}
+
+/* === 表格 === */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    background: var(--primary) !important;
+    color: white !important;
+    padding: 10px 12px;
+    font-weight: 500;
+    text-align: left;
+}
+
+th[style*="gradient"] {
+    background: var(--primary) !important;
+}
+
+td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+
+tr:hover td {
+    background: var(--hover);
+}
+
+/* === 标签/chip === */
+.tag,
+.chip,
+.badge,
+[class*="-tag"],
+[class*="-chip"],
+[class*="-badge"] {
+    background: var(--active) !important;
+    color: var(--primary) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    padding: 3px 10px !important;
+    font-size: 0.85em !important;
+    box-shadow: none !important;
+}
+
+/* === canvas/图表容器 === */
+canvas {
+    background: white !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius);
+}
+
+.plotly-graph-div {
+    background: white !important;
+}
+
+/* === 链接颜色 === */
+a {
+    color: var(--primary);
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* === 统计量展示框 === */
+.stat-value,
+.result-value,
+.metric-value {
+    color: var(--primary) !important;
+    font-weight: 600;
+}
+
+/* === 滚动条 === */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* === 选中文字 === */
+::selection {
+    background: var(--primary);
+    color: white;
+}
+
+/* === 动画优化 === */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}

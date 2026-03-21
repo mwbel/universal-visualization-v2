@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>旋转矩阵可视化</title>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <style>
     :root { --bg:#0f0f14; --panel:#181824; --accent:#8a7bd1; --accent-2:#b39ddb; --text:#e6e6f0; --muted:#a9a9b8; --border:#2a2a3b; }
     body{ margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans','PingFang SC','Microsoft YaHei',sans-serif; }
@@ -26,8 +35,9 @@
     mjx-container{ overflow-x:auto; overflow-y:hidden; white-space:normal; }
     .viz{ height:480px; }
     .legend{ font-size:12px; color:var(--muted); margin-top:8px; }
+    :root { --bg:#f8f8ff; --panel:#ffffff; --accent:#3747ff; --accent-2:#6370d6; --text:#1e1e2e; --muted:#5f6368; --border:rgba(0,0,0,0.08); }
   /* 统一风格对齐：蓝紫渐变背景 + 白色内容卡片 + 左侧导航 */
-    body { background: linear-gradient(135deg, #3b3d7a 0%, #6b6ee8 100%); color: #1e1e2e; }
+    body { background: #f8f8ff; color: #1e1e2e; }
     header.page-header { display: none; }
     .page-content { display: flex; }
     .sidebar { width: 240px; position: fixed; top: 0; left: 0; bottom: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(6px); border-right: 1px solid rgba(0,0,0,0.06); padding: 16px 12px; overflow-y: auto; }
@@ -72,20 +82,20 @@
       <!-- 左栏：代数定义与公式 -->
       <section class="card">
         <h3>代数定义与公式</h3>
-        <div class="mathjax-block"><div class="formula">\\[ R(\\theta) = \\begin{bmatrix} \\cos\\theta & -\\sin\\theta \\ \\sin\\theta & \\cos\\theta \\end{bmatrix} \\]</div></div>
-        <div class="mathjax-block"><div class="formula">\\[ \\mathbf{x}' = R(\\theta)\\,\\mathbf{x},\\quad \\text{保距且保角， } \\|\\mathbf{x}'\\|=\\|\\mathbf{x}\\| \\]</div></div>
+        <div class="mathjax-block"><div class="formula">\[ R(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix} \]</div></div>
+        <div class="mathjax-block"><div class="formula">\[ \mathbf{x}' = R(\theta)\,\mathbf{x},\quad \text{保距且保角， } \|\mathbf{x}'\|=\|\mathbf{x}\| \]</div></div>
 
         <div class="section-title">参数设置</div>
         <div class="control-grid">
           <div class="control" style="grid-column: span 2;">
-            <label>旋转角度 θ（度）</label>
+            <label>旋转角度 θ（度）：<span id="theta-val">45</span>°</label>
             <input id="theta" type="range" min="-180" max="180" step="1" value="45" />
           </div>
           <div class="control"><label>x</label><input id="x" type="number" step="0.1" value="2" /></div>
           <div class="control"><label>y</label><input id="y" type="number" step="0.1" value="1" /></div>
         </div>
 
-        <div class="mathjax-block"><div class="formula" id="rot-result">\\[ \\mathbf{x}' = \\begin{bmatrix} - \\\\ - \\end{bmatrix} \\]</div></div>
+        <div class="mathjax-block"><div class="formula" id="rot-result">\[ \mathbf{x}' = \begin{bmatrix} - \\\\ - \end{bmatrix} \]</div></div>
       </section>
 
       <!-- 右栏：几何意义与交互 -->
@@ -98,42 +108,63 @@
   </div>
   </div>
 
-  <script type="module">
-    import { configureMathJax, ensureMathJaxScript, typesetPage } from '/app/lib/mathjax.js';
-    import { enableAutoMath } from '/app/lib/autoMath.js';
-    import { attachFormulaResizer } from '/app/lib/responsive-math.js';
+<script>
+(function () {
+  const toRad = d => d * Math.PI / 180;
+  const fmt = v => v.toFixed(3);
 
-    configureMathJax();
-    ensureMathJaxScript();
-    const pageEl = document.querySelector('.page');
-    enableAutoMath(pageEl);
+  function update() {
+    const theta = parseFloat(document.getElementById('theta').value) || 0;
+    const x = parseFloat(document.getElementById('x').value) || 0;
+    const y = parseFloat(document.getElementById('y').value) || 0;
+    const rad = toRad(theta);
+    const cos = Math.cos(rad), sin = Math.sin(rad);
+    const xp = cos * x - sin * y;
+    const yp = sin * x + cos * y;
 
-    function deg2rad(d){ return d*Math.PI/180; }
-    function rotate(thetaDeg, v){ const t=deg2rad(thetaDeg); const ct=Math.cos(t), st=Math.sin(t); return [ct*v[0]-st*v[1], st*v[0]+ct*v[1]]; }
+    // Update result formula
+    const el = document.getElementById('rot-result');
+    el.innerHTML = '\\[ \\mathbf{x}\' = \\begin{bmatrix} ' + fmt(xp) + ' \\\\\\\\ ' + fmt(yp) + ' \\end{bmatrix} \\]';
+    if (window.MathJax) MathJax.typesetPromise([el]);
 
-    function render(theta, v){
-      const vr = rotate(theta, v);
-      const r = Math.hypot(v[0],v[1]);
-      const circle = { r, theta: Array.from({length:181}, (_,i)=>i*2), type:'scatterpolar', r: Array.from({length:181}, (_,i)=>r), theta: Array.from({length:181}, (_,i)=>i*2), mode:'lines', line:{color:'#2a2a3b'}, hoverinfo:'skip', showlegend:false };
-      const base = { x:[0,v[0]], y:[0,v[1]], type:'scatter', mode:'lines+markers', line:{color:'#8a7bd1', width:3}, marker:{color:'#8a7bd1'}, name:'原向量' };
-      const rot = { x:[0,vr[0]], y:[0,vr[1]], type:'scatter', mode:'lines+markers', line:{color:'#b39ddb', width:3}, marker:{color:'#b39ddb'}, name:'旋转后' };
-      const layout = { paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', xaxis:{range:[-r-1,r+1], color:'#a9a9b8'}, yaxis:{range:[-r-1,r+1], color:'#a9a9b8'}, margin:{l:40,r:20,t:20,b:40}, showlegend:false };
-      Plotly.react('plot', [base, rot], layout, {displayModeBar:false});
-    }
+    // Unit circle
+    const N = 120;
+    const cx = [], cy = [];
+    for (let i = 0; i <= N; i++) { const a = 2 * Math.PI * i / N; cx.push(Math.cos(a)); cy.push(Math.sin(a)); }
 
-    function update(){
-      const th = parseFloat(document.getElementById('theta').value);
-      const x = parseFloat(document.getElementById('x').value);
-      const y = parseFloat(document.getElementById('y').value);
-      const v=[x,y]; const vr=rotate(th,v);
-      const resEl=document.getElementById('rot-result');
-      resEl.innerHTML = `\\[ \\mathbf{x}' = \\begin{bmatrix} ${vr[0].toFixed(2)} \\\\\\ ${vr[1].toFixed(2)} \\end{bmatrix} \\]`;
-      typesetPage(pageEl).then(()=> attachFormulaResizer(pageEl));
-      render(th, v);
-    }
+    const traces = [
+      { x: cx, y: cy, mode: 'lines', line: { color: '#b0b0cc', width: 1, dash: 'dot' }, name: '单位圆', hoverinfo: 'skip' },
+      { x: [0, x], y: [0, y], mode: 'lines+markers',
+        line: { color: '#8a7bd1', width: 3 }, marker: { size: 8, color: '#8a7bd1' },
+        name: '原向量 (' + fmt(x) + ', ' + fmt(y) + ')' },
+      { x: [0, xp], y: [0, yp], mode: 'lines+markers',
+        line: { color: '#b39ddb', width: 3, dash: 'dash' }, marker: { size: 8, color: '#b39ddb' },
+        name: '旋转后 (' + fmt(xp) + ', ' + fmt(yp) + ')' }
+    ];
 
-    ['theta','x','y'].forEach(id=>{ document.getElementById(id).addEventListener('input', update); });
-    update();
-  </script>
+    const max = Math.max(3, Math.ceil(Math.sqrt(x*x + y*y)) + 0.5);
+    const layout = {
+      plot_bgcolor: '#ffffff', paper_bgcolor: '#ffffff',
+      xaxis: { range: [-max, max], zeroline: true, zerolinecolor: '#888', gridcolor: '#e8e8f0', title: 'x' },
+      yaxis: { range: [-max, max], zeroline: true, zerolinecolor: '#888', gridcolor: '#e8e8f0', title: 'y', scaleanchor: 'x' },
+      legend: { x: 0, y: 1, bgcolor: 'rgba(255,255,255,0.85)', font: { size: 12 } },
+      margin: { l: 50, r: 20, t: 20, b: 50 },
+      showlegend: true
+    };
+
+    Plotly.react('plot', traces, layout, { responsive: true });
+  }
+
+  ['theta', 'x', 'y'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', function () {
+      if (id === 'theta') {
+        document.getElementById('theta-val').textContent = document.getElementById('theta').value;
+      }
+      update();
+    });
+  });
+  update();
+})();
+</script>
 </body>
 </html>

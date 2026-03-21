@@ -1,0 +1,29 @@
+# Universal RAG Requirements
+# 核心依赖 - 最小化依赖，保持轻量级
+
+# 无必需的外部依赖！
+# 本模块使用 Python 标准库实现核心功能
+
+# 可选依赖（根据使用场景选择安装）:
+
+# 如果使用 embedding 向量方法（而非默认的 TF-IDF）:
+# sentence-transformers>=2.2.0
+# torch>=1.9.0
+
+# 如果需要更高级的 NLP 功能:
+# jieba>=0.42.1  # 中文分词
+
+# 如果使用 MongoDB 数据源:
+# pymongo>=4.0.0
+
+# 如果使用 PostgreSQL 数据源:
+# psycopg2-binary>=2.9.0
+
+# 如果需要 Web 服务集成:
+# fastapi>=0.95.0
+# uvicorn>=0.21.0
+# flask>=2.3.0
+
+# 开发依赖:
+# pytest>=7.0.0
+# pytest-cov>=4.0.0

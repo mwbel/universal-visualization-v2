@@ -5,13 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>矩阵高斯消元法可视化</title>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <style>
     :root {
-      --bg: #0f0f14; --panel: #181824; --accent: #8a7bd1; --accent-2: #b39ddb; --text: #e6e6f0; --muted: #a9a9b8; --border: #2a2a3b;
+      --bg: #f8f8ff; --panel: #ffffff; --accent: #3747ff; --accent-2: #6b6ee8; --text: #202124; --muted: #5f6368; --border: rgba(0,0,0,0.1);
     }
     body { margin:0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
     .page[data-autolatex="true"] { display:flex; flex-direction:column; min-height:100vh; }
-    header.page-header { border-bottom: 1px solid var(--border); background: linear-gradient(90deg, #151522, #141321); }
+    header.page-header { border-bottom: 1px solid var(--border); background: #ffffff; }
     .header-inner { max-width: 1200px; margin: 0 auto; padding: 20px 16px; display:flex; align-items:baseline; gap:16px; }
     .title { font-size:20px; font-weight:600; color: var(--text); }
     .subtitle { font-size:14px; color: var(--muted); }
@@ -21,14 +30,14 @@
     .section-title { font-size:14px; color: var(--muted); margin: 8px 0 12px; }
 
     .grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
-    .control { display:flex; flex-direction:column; gap:6px; background:#1e1e2b; border:1px solid var(--border); border-radius:8px; padding:8px; }
+    .control { display:flex; flex-direction:column; gap:6px; background:#f0f2f5; border:1px solid var(--border); border-radius:8px; padding:8px; }
     .control label { font-size:12px; color: var(--muted); }
-    .control input { background:#12121a; color: var(--text); border:1px solid var(--border); border-radius:6px; padding:6px 8px; font-size:13px; }
+    .control input { background:#ffffff; color: var(--text); border:1px solid var(--border); border-radius:6px; padding:6px 8px; font-size:13px; }
     .controls-row { display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-bottom: 8px; }
     .btn-row { display:flex; gap:8px; }
-    button { background: var(--accent); color: #0f0f14; border:none; border-radius:6px; padding:6px 10px; font-weight:600; cursor:pointer; }
+    button { background: var(--accent); color: #ffffff; border:none; border-radius:6px; padding:6px 10px; font-weight:600; cursor:pointer; }
 
-    .mathjax-block { background:#1c1c29; border:1px dashed var(--border); border-radius:10px; padding:10px 12px; margin:10px 0; }
+    .mathjax-block { background:#f0f2f5; border:1px dashed var(--border); border-radius:10px; padding:10px 12px; margin:10px 0; }
     .formula { color: var(--text); text-align:left; line-height:1.6; }
     mjx-container { overflow-x:auto; overflow-y:hidden; white-space:normal; }
 
@@ -36,16 +45,16 @@
     .legend { font-size:12px; color: var(--muted); margin-top:8px; }
     .steps { font-size: 13px; color: var(--muted); }
     /* —— 统一线性代数模块的浅色风格与侧栏导航 —— */
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #333; display: flex; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f8ff; min-height: 100vh; color: #333; display: flex; }
     .sidebar { width: 280px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 2px 0 15px rgba(0,0,0,0.1); padding: 20px; position: fixed; height: 100vh; overflow-y: auto; z-index: 1000; }
     .sidebar-title { font-size: 1.4em; font-weight: 700; color: #2d3748; margin-bottom: 20px; text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; }
     .nav-item { display: block; padding: 12px 15px; margin: 8px 0; color: #4a5568; text-decoration: none; border-radius: 10px; transition: all 0.3s; font-weight: 500; border-left: 4px solid transparent; }
-    .nav-item:hover { background: linear-gradient(135deg, #667eea, #764ba2); color: white; transform: translateX(5px); border-left-color: #667eea; }
-    .nav-item.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-left-color: #667eea; }
+    .nav-item:hover { background: rgba(55, 71, 255, 0.08); color: #3747ff; transform: translateX(5px); border-left-color: #3747ff; }
+    .nav-item.active { background: rgba(55, 71, 255, 0.08); color: #3747ff; border-left-color: #3747ff; }
     .page-content { margin-left: 280px; flex: 1; padding: 20px; }
     .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: none; }
     .card h3 { color: #4a5568; font-size: 18px; }
-    .section-title { font-size: 1.5em; color: #4a5568; margin-bottom: 12px; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+    .section-title { font-size: 1.5em; color: #4a5568; margin-bottom: 12px; border-bottom: 3px solid #3747ff; padding-bottom: 10px; }
     .content { gap: 30px; }
     .mathjax-block { background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 10px; padding: 15px; }
     .formula { color: #333; }
@@ -53,7 +62,7 @@
     .step-slider-row { display:flex; align-items:center; gap:10px; margin:8px 0 12px; }
     .step-slider-row label { font-size:12px; color: var(--muted); }
     .matrix-preview { display:grid; grid-template-columns: repeat(3, 1fr); gap:6px; margin-top:10px; }
-    .matrix-cell { background:#12121a; border:1px solid var(--border); border-radius:6px; padding:8px; text-align:center; font-size:13px; color: var(--text); }
+    .matrix-cell { background:#ffffff; border:1px solid var(--border); border-radius:6px; padding:8px; text-align:center; font-size:13px; color: var(--text); }
   </style>
 </head>
 <body>
@@ -78,8 +87,8 @@
       <!-- 左栏：定义与过程 -->
       <section class="card">
         <h3>代数定义与算法</h3>
-        <div class="mathjax-block"><div class="formula">\text{行初等变换：}\; R_i \leftrightarrow R_j,\; R_i \to k R_i,\; R_i \to R_i + k R_j</div></div>
-        <div class="mathjax-block"><div class="formula">\text{目标：经行变换将矩阵化为行阶梯形（或简化行阶梯形）}</div></div>
+        <div class="mathjax-block"><div class="formula">\[ \text{行初等变换：}\; R_i \leftrightarrow R_j,\; R_i \to k R_i,\; R_i \to R_i + k R_j \]</div></div>
+        <div class="mathjax-block"><div class="formula">\[ \text{目标：经行变换将矩阵化为行阶梯形（或简化行阶梯形）} \]</div></div>
 
         <div class="section-title">参数设置（3×3 矩阵）</div>
         <div class="controls-row">
@@ -99,7 +108,7 @@
         </div>
         <div class="btn-row"><button id="do-elim">执行消元</button><button id="reset">重置示例</button></div>
 
-        <div class="mathjax-block"><div class="formula" id="step-formula">\text{步骤显示：点击“执行消元”以查看每步行变换}</div></div>
+        <div class="mathjax-block"><div class="formula" id="step-formula">\[ \text{步骤显示：点击“执行消元”以查看每步行变换} \]</div></div>
         <div class="steps" id="text-steps"></div>
       </section>
 
@@ -120,15 +129,8 @@
     </div>
   </div>
 
-  <script type="module">
-    import { configureMathJax, ensureMathJaxScript, typesetPage } from '/app/lib/mathjax.js';
-    import { enableAutoMath } from '/app/lib/autoMath.js';
-    import { attachFormulaResizer } from '/app/lib/responsive-math.js';
-
-    configureMathJax();
-    ensureMathJaxScript();
+  <script>
     const pageEl = document.querySelector('.page');
-    enableAutoMath(pageEl);
     let currentSteps = [];
 
     function matrixFromInputs() {
@@ -183,7 +185,7 @@
     function renderHeat(mat) {
       const z = mat.map(row => row.map(v => +v.toFixed(3)));
       const data = [{ z, type: 'heatmap', colorscale: 'RdBu', zmid: 0, reversescale: true, colorbar: { title: '值' }, showscale: true }];
-      const layout = { paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', margin:{l:40,r:20,t:20,b:40}, xaxis:{color:'#a9a9b8'}, yaxis:{color:'#a9a9b8'} };
+      const layout = { paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', margin:{l:40,r:20,t:20,b:40}, xaxis:{color:'#5f6368'}, yaxis:{color:'#5f6368'} };
       Plotly.react('heat', data, layout, { displayModeBar:false });
     }
 
@@ -204,7 +206,7 @@
       renderMatrixPreview(s.mat);
       const stepEl = document.getElementById('step-formula');
       stepEl.innerHTML = `\\[ \\text{当前步骤： } ${idx}.\\; ${s.label} \\]`;
-      typesetPage(pageEl).then(()=> attachFormulaResizer(pageEl));
+      if (window.MathJax && window.MathJax.typesetPromise) { MathJax.typesetClear([stepEl]); MathJax.typesetPromise([stepEl]); }
     }
 
     function update() {

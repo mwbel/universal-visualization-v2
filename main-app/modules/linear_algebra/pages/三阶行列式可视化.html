@@ -26,7 +26,6 @@
             }
         };
     </script>
-    <script src="../frontend/global-mathjax.js"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         * {
@@ -39,7 +38,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f8f8ff;
             min-height: 100vh;
             color: #333;
             display: flex;
@@ -80,16 +79,16 @@
         }
 
         .nav-item:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: rgba(55, 71, 255, 0.08);
+            color: #3747ff;
             transform: translateX(5px);
-            border-left-color: #667eea;
+            border-left-color: #3747ff;
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-left-color: #667eea;
+            background: rgba(55, 71, 255, 0.12);
+            color: #3747ff;
+            border-left-color: #3747ff;
         }
 
         .page-content {
@@ -107,7 +106,7 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
-            color: white;
+            color: #2d3748;
         }
 
         .header h1 {
@@ -139,13 +138,13 @@
             font-size: 1.5em;
             color: #4a5568;
             margin-bottom: 20px;
-            border-bottom: 3px solid #667eea;
+            border-bottom: 3px solid #3747ff;
             padding-bottom: 10px;
         }
 
         .definition-box {
             background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-            border-left: 5px solid #667eea;
+            border-left: 5px solid #3747ff;
             padding: 20px;
             margin: 20px 0;
             border-radius: 8px;
@@ -206,11 +205,11 @@
 
         .control-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #3747ff;
         }
 
         .result-display {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #3747ff;
             color: white;
             padding: 20px;
             border-radius: 10px;
@@ -353,7 +352,7 @@
         }
 
         .preset-btn {
-            background: #667eea;
+            background: #3747ff;
             color: white;
             border: none;
             padding: 8px 12px;

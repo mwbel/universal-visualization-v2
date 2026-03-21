@@ -1,0 +1,277 @@
+/* 线性代数模块统一样式 - 可配置主题 */
+
+/* CSS 变量定义 - 由 linear-algebra-loader.js 动态设置 */
+:root {
+    --la-primary-color: #3747ff;
+    --la-secondary-color: #ff4737;
+    --la-bg-color: #f8f8ff;
+    --la-card-bg: #ffffff;
+    --la-text-color: #202124;
+    --la-border-radius: 12px;
+    --la-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* 派生颜色 */
+    --la-primary-light: rgba(55, 71, 255, 0.08);
+    --la-primary-medium: rgba(55, 71, 255, 0.12);
+    --la-text-secondary: #5f6368;
+    --la-border-color: rgba(0, 0, 0, 0.06);
+    --la-shadow: 0 6px 20px rgba(56, 72, 255, 0.14);
+}
+
+/* 基础重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 主体样式 */
+body {
+    font-family: var(--la-font-family);
+    background: var(--la-bg-color);
+    color: var(--la-text-color);
+    min-height: 100vh;
+    display: flex;
+}
+
+/* 侧边栏导航 */
+.sidebar {
+    width: 240px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: var(--la-card-bg);
+    backdrop-filter: blur(6px);
+    border-right: 1px solid var(--la-border-color);
+    padding: 16px 12px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.sidebar .nav-title {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--la-primary-color);
+    margin-bottom: 8px;
+}
+
+.sidebar .nav-subtitle {
+    font-size: 12px;
+    color: var(--la-text-secondary);
+    margin-bottom: 16px;
+}
+
+.sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 4px;
+}
+
+.sidebar li a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--la-text-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.sidebar li a:hover {
+    background: var(--la-primary-light);
+    color: var(--la-primary-color);
+    transform: translateX(2px);
+}
+
+.sidebar li.active a,
+.sidebar li a.active {
+    background: var(--la-primary-medium);
+    color: var(--la-primary-color);
+    font-weight: 600;
+}
+
+/* 页面内容区 */
+.page-content {
+    margin-left: 260px;
+    flex: 1;
+    padding: 24px 16px;
+}
+
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* 卡片样式 */
+.card {
+    background: var(--la-card-bg);
+    border: 1px solid var(--la-border-color);
+    border-radius: var(--la-border-radius);
+    padding: 20px;
+    box-shadow: var(--la-shadow);
+}
+
+.card h3 {
+    color: var(--la-primary-color);
+    font-size: 18px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.section-title {
+    font-size: 14px;
+    color: var(--la-text-secondary);
+    margin: 12px 0 8px;
+    font-weight: 500;
+}
+
+/* 控制面板 */
+.control-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--la-bg-color);
+    border: 1px solid var(--la-border-color);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.control label {
+    font-size: 12px;
+    color: var(--la-text-secondary);
+    font-weight: 500;
+}
+
+.control input {
+    background: var(--la-card-bg);
+    color: var(--la-text-color);
+    border: 1px solid var(--la-border-color);
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.control input:focus {
+    outline: none;
+    border-color: var(--la-primary-color);
+}
+
+/* 数学公式块 */
+.mathjax-block {
+    background: var(--la-bg-color);
+    border: 1px dashed var(--la-border-color);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 12px 0;
+}
+
+.formula {
+    color: var(--la-text-color);
+    text-align: left;
+    line-height: 1.8;
+}
+
+mjx-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* 可视化区域 */
+.viz {
+    height: 480px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.legend {
+    font-size: 12px;
+    color: var(--la-text-secondary);
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
+/* 按钮样式 */
+button {
+    background: var(--la-primary-color);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    filter: brightness(0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(55, 71, 255, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button.secondary {
+    background: var(--la-secondary-color);
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--la-border-color);
+    }
+
+    .page-content {
+        margin-left: 0;
+    }
+}
+
+/* 滚动条样式 */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: var(--la-border-color);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--la-primary-light);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--la-primary-medium);
+}

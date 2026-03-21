@@ -60,17 +60,9 @@ const CACHE_STRATEGIES = {
 
 // 关键资源列表 - 预缓存
 const CRITICAL_RESOURCES = [
-    '/',
-    '/index.html',
-    '/js/app.js',
-    '/css/main.css',
-    '/js/components/SmartInput.js',
-    '/js/components/ApiClient.js',
-    '/js/components/Router.js',
-    '/js/performance/code-splitting-lazy-loading.js',
-    '/js/performance/resource-optimizer.js',
-    '/images/logo.png',
-    '/images/icons/icon-192x192.png'
+    '/main-app/index.html',
+    '/main-app/js/performance/code-splitting-lazy-loading.js',
+    '/main-app/js/performance/resource-optimizer.js'
 ];
 
 // 离线页面

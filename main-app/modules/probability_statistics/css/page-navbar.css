@@ -1,0 +1,274 @@
+/*
+ * 期末速通 - 通用导航栏组件
+ * 供所有子页面复用
+ */
+
+/* ========== 导航栏容器 ========== */
+.page-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--surface, #ffffff);
+    border-radius: var(--radius-lg, 12px);
+    box-shadow: var(--shadow-1, 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24));
+    border: 1px solid var(--divider, #e0e0e0);
+}
+
+/* ========== 导航按钮组 ========== */
+.nav-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* ========== 基础按钮样式 ========== */
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--surface-variant, #f1f3f4);
+    color: var(--text-primary, #202124);
+    text-decoration: none;
+    border: 1px solid var(--divider, #e0e0e0);
+    border-radius: var(--radius-md, 8px);
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all var(--transition-base, 300ms cubic-bezier(0.4, 0, 0.2, 1));
+    cursor: pointer;
+    user-select: none;
+}
+
+.nav-btn:hover {
+    background: var(--primary-light, #e8f0fe);
+    color: var(--primary-color, #4285f4);
+    border-color: var(--primary-color, #4285f4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+}
+
+.nav-btn:active {
+    transform: translateY(0);
+}
+
+/* ========== 返回上一级按钮 ========== */
+.nav-btn-back {
+    position: relative;
+}
+
+.nav-btn-back::before {
+    content: '←';
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-right: 4px;
+}
+
+/* ========== 返回主页按钮 ========== */
+.nav-btn-home {
+    position: relative;
+}
+
+.nav-btn-home::before {
+    content: '🏠';
+    margin-right: 4px;
+}
+
+/* ========== 主按钮样式（强调） ========== */
+.nav-btn-primary {
+    background: var(--primary-color, #4285f4);
+    color: white;
+    border-color: var(--primary-color, #4285f4);
+}
+
+.nav-btn-primary:hover {
+    background: var(--primary-dark, #1967d2);
+    color: white;
+    border-color: var(--primary-dark, #1967d2);
+}
+
+/* ========== 页面标题区域 ========== */
+.page-title {
+    flex: 1;
+    text-align: center;
+}
+
+.page-title h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary, #202124);
+    margin: 0;
+}
+
+.page-title .subtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary, #5f6368);
+    margin-top: 4px;
+}
+
+/* ========== 面包屑导航 ========== */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #5f6368);
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.breadcrumb-item a {
+    color: var(--text-secondary, #5f6368);
+    text-decoration: none;
+    transition: color var(--transition-fast, 150ms);
+}
+
+.breadcrumb-item a:hover {
+    color: var(--primary-color, #4285f4);
+}
+
+.breadcrumb-separator {
+    color: var(--text-hint, #9aa0a6);
+}
+
+.breadcrumb-item:last-child a {
+    color: var(--text-primary, #202124);
+    font-weight: 500;
+    pointer-events: none;
+}
+
+/* ========== 响应式设计 ========== */
+@media (max-width: 768px) {
+    .page-navbar {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .nav-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+
+    .page-title {
+        text-align: center;
+        width: 100%;
+    }
+
+    .page-title h1 {
+        font-size: 1.2rem;
+    }
+
+    .breadcrumb {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* ========== 悬浮提示 ========== */
+.nav-btn[data-tooltip] {
+    position: relative;
+}
+
+.nav-btn[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    padding: 6px 12px;
+    background: var(--text-primary, #202124);
+    color: white;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    border-radius: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-fast, 150ms);
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.nav-btn[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-4px);
+}
+
+/* ========== 禁用状态 ========== */
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ========== 加载状态 ========== */
+.nav-btn.loading {
+    position: relative;
+    color: transparent;
+    pointer-events: none;
+}
+
+.nav-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid var(--primary-color, #4285f4);
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: navButtonSpin 0.6s linear infinite;
+}
+
+@keyframes navButtonSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========== 特殊效果 ========== */
+/* 主页按钮脉冲效果（可选） */
+.nav-btn-home.pulse {
+    animation: navbarPulse 2s ease-in-out infinite;
+}
+
+@keyframes navbarPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(66, 133, 244, 0);
+    }
+}
+
+/* ========== 紧凑模式 ========== */
+.page-navbar.compact {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+
+.page-navbar.compact .nav-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.page-navbar.compact .page-title h1 {
+    font-size: 1.2rem;
+}

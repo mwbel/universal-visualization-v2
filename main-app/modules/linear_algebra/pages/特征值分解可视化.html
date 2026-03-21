@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>特征值分解可视化</title>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <style>
     :root { --bg:#0f0f14; --panel:#181824; --accent:#8a7bd1; --accent-2:#b39ddb; --text:#e6e6f0; --muted:#a9a9b8; --border:#2a2a3b; }
     body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans','PingFang SC','Microsoft YaHei',sans-serif; }
@@ -26,8 +35,9 @@
     mjx-container{ overflow-x:auto; overflow-y:hidden; white-space:normal; }
     .viz{ height:480px; }
     .legend{ font-size:12px; color:var(--muted); margin-top:8px; }
+    :root { --bg:#f8f8ff; --panel:#ffffff; --accent:#3747ff; --accent-2:#6370d6; --text:#1e1e2e; --muted:#5f6368; --border:rgba(0,0,0,0.08); }
   /* 统一风格对齐：蓝紫渐变背景 + 白色内容卡片 + 左侧导航 */
-    body { background: linear-gradient(135deg, #3b3d7a 0%, #6b6ee8 100%); color: #1e1e2e; }
+    body { background: #f8f8ff; color: #1e1e2e; }
     header.page-header { display: none; }
     .page-content { display: flex; }
     .sidebar { width: 240px; position: fixed; top: 0; left: 0; bottom: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(6px); border-right: 1px solid rgba(0,0,0,0.06); padding: 16px 12px; overflow-y: auto; }
@@ -72,9 +82,9 @@
       <!-- 左栏：代数定义与公式 -->
       <section class="card">
         <h3>代数定义与公式</h3>
-        <div class="mathjax-block"><div class="formula">\\[ A = \\begin{bmatrix} a & b \\ c & d \\end{bmatrix},\\; \\chi_A(\\lambda) = \\lambda^2 - (a+d)\\lambda + (ad-bc) \\]</div></div>
-        <div class="mathjax-block"><div class="formula">\\[ \\Delta = (a+d)^2 - 4(ad-bc)\\;\\Rightarrow\\; \\lambda_{1,2} = \\frac{(a+d) \\pm \\sqrt{\\Delta}}{2} \\]</div></div>
-        <div class="mathjax-block"><div class="formula" id="eigvals">\\[ \\text{当前特征值： } \\lambda_1 = -,\\; \\lambda_2 = - \\]</div></div>
+        <div class="mathjax-block"><div class="formula">\[ A = \begin{bmatrix} a & b \\ c & d \end{bmatrix},\; \\chi_A(\lambda) = \lambda^2 - (a+d)\lambda + (ad-bc) \]</div></div>
+        <div class="mathjax-block"><div class="formula">\[ \Delta = (a+d)^2 - 4(ad-bc)\;\Rightarrow\; \lambda_{1,2} = \frac{(a+d) \pm \sqrt{\Delta}}{2} \]</div></div>
+        <div class="mathjax-block"><div class="formula" id="eigvals">\[ \text{当前特征值： } \lambda_1 = -,\; \lambda_2 = - \]</div></div>
 
         <div class="section-title">参数设置（2×2 矩阵）</div>
         <div class="control-grid">
@@ -84,29 +94,22 @@
           <div class="control"><label>d</label><input id="d" type="number" step="0.1" value="3" /></div>
         </div>
 
-        <div class="mathjax-block"><div class="formula" id="eigvecs">\\[ \\text{特征向量： } v_1 = -,\\; v_2 = - \\]</div></div>
-        <div class="mathjax-block"><div class="formula" id="diag">\\[ \\text{若可对角化： } A = PDP^{-1},\\; D=\\operatorname{diag}(\\lambda_1, \\lambda_2) \\]</div></div>
+        <div class="mathjax-block"><div class="formula" id="eigvecs">\[ \text{特征向量： } v_1 = -,\; v_2 = - \]</div></div>
+        <div class="mathjax-block"><div class="formula" id="diag">\[ \text{若可对角化： } A = PDP^{-1},\; D=\\operatorname{diag}(\lambda_1, \lambda_2) \]</div></div>
       </section>
 
       <!-- 右栏：几何意义与交互 -->
       <section class="card">
         <h3>几何意义与交互</h3>
         <div id="plot" class="viz"></div>
-        <div class="legend">展示特征向量方向（直线）与伸缩比例（特征值）。当 \\lambda 为负时显示反向伸缩。</div>
+        <div class="legend">展示特征向量方向（直线）与伸缩比例（特征值）。当 \lambda 为负时显示反向伸缩。</div>
       </section>
     </main>
   </div>
   </div>
 
-  <script type="module">
-    import { configureMathJax, ensureMathJaxScript, typesetPage } from '/app/lib/mathjax.js';
-    import { enableAutoMath } from '/app/lib/autoMath.js';
-    import { attachFormulaResizer } from '/app/lib/responsive-math.js';
-
-    configureMathJax();
-    ensureMathJaxScript();
+  <script>
     const pageEl = document.querySelector('.page');
-    enableAutoMath(pageEl);
 
     function eig(A){
       const a=A[0][0], b=A[0][1], c=A[1][0], d=A[1][1];
@@ -136,7 +139,7 @@
         eigEl.innerHTML = `\\[ \\lambda_1 = ${e.l1.toFixed(3)},\\; \\lambda_2 = ${e.l2.toFixed(3)} \\]`;
         vecEl.innerHTML = `\\[ v_1 = \\begin{bmatrix} ${e.v1[0].toFixed(3)} \\\\\\ ${e.v1[1].toFixed(3)} \\end{bmatrix},\\; v_2 = \\begin{bmatrix} ${e.v2[0].toFixed(3)} \\\\\\ ${e.v2[1].toFixed(3)} \\end{bmatrix} \\]`;
       }
-      typesetPage(pageEl).then(()=> attachFormulaResizer(pageEl));
+      if (window.MathJax && window.MathJax.typesetPromise) { MathJax.typesetClear([eigEl, vecEl]); MathJax.typesetPromise([eigEl, vecEl]); }
 
       const traces=[];
       // Axes
@@ -148,7 +151,7 @@
         traces.push({ x:[-scale*v1[0], scale*v1[0]], y:[-scale*v1[1], scale*v1[1]], type:'scatter', mode:'lines', name:`v1(λ=${l1.toFixed(2)})`, line:{color:'#8a7bd1', width:3} });
         traces.push({ x:[-scale*v2[0], scale*v2[0]], y:[-scale*v2[1], scale*v2[1]], type:'scatter', mode:'lines', name:`v2(λ=${l2.toFixed(2)})`, line:{color:'#b39ddb', width:3} });
       }
-      const layout={ paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', xaxis:{range:[-3,3], color:'#a9a9b8'}, yaxis:{range:[-3,3], color:'#a9a9b8'}, margin:{l:40,r:20,t:20,b:40}, showlegend:true };
+      const layout={ paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', xaxis:{range:[-3,3], color:'#5f6368'}, yaxis:{range:[-3,3], color:'#5f6368'}, margin:{l:40,r:20,t:20,b:40}, showlegend:true };
       Plotly.react('plot', traces, layout, {displayModeBar:false});
     }
 
